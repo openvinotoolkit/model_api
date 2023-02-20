@@ -109,15 +109,13 @@ jobs:
         pip install model_api/python/[tests]
 
         sudo bash model_api/cpp/install_dependencies.sh
-    - name: Build
-      run: |
-        mkdir build && cd build
-        cmake ../tests/cpp/
-        make -j
     - name: Prepare test data
       run: |
         source venv/bin/activate
         python tests/cpp/prepare_data.py
-    - name: Run test
+    - name: Build and run test
       run: |
-        bash ./build/test_sanity
+        mkdir build && cd build
+        cmake ../tests/cpp/
+        make -j
+        bash ./test_sanity
