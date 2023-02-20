@@ -59,12 +59,18 @@ jobs:
   #     uses: actions/setup-python@v2
   #     with:
   #       python-version: ${{ matrix.python-version }}
-  #   - name: Install dependencies
-  #     run: |
+    # - name: Create and start a virtual environment
+    #   run: |
+    #     python -m venv venv
+    #     source venv/bin/activate
+    # - name: Install dependencies
+    #   run: |
+    #     source venv/bin/activate
   #       python -m pip install --upgrade pip
   #       pip install model_api/python/[tests]
   #   - name: Run test
   #     run: |
+  #       source venv/bin/activate
   #       pytest tests/python/
   # Cppcheck:
   #   name: cppcheck-test
@@ -92,8 +98,13 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Create and start a virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
     - name: Install dependencies
       run: |
+        source venv/bin/activate
         python -m pip install --upgrade pip
         pip install model_api/python/[tests]
 
@@ -103,7 +114,10 @@ jobs:
         mkdir build && cd build
         cmake ../tests/cpp/
         make -j
+    - name: Prepare test data
+      run: |
+        source venv/bin/activate
+        python tests/cpp/prepare_data.py
     - name: Run test
       run: |
-        python tests/cpp/prepare_data
-        bash ./test_sanity
+        bash ./build/test_sanity
