@@ -15,13 +15,11 @@
 #include <models/input_data.h>
 #include <models/results.h>
 
-std::string MODEL_DIR="/home/alex/.cache/omz/public/ssd300/FP16/ssd300.xml";
+std::string MODEL_DIR="../tmp/public/ssd300/FP16/ssd300.xml";
 std::string IMAGE_PATH="../tmp/coco128/images/train2017/000000000074.jpg";
 
 TEST(test_sanity, simple_inference)
 {
-    //EXPECT_EQ(1000, 10 * std::stoi(argv[1]));	
-
     cv::Mat image = cv::imread(IMAGE_PATH);
     if (!image.data) {
         throw std::runtime_error{"Failed to read the image"};
