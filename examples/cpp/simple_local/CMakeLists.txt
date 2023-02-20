@@ -83,16 +83,14 @@ macro(add_example)
         target_include_directories(${OMZ_DEMO_NAME} PRIVATE ${OMZ_DEMO_INCLUDE_DIRECTORIES})
     endif()
 
-    target_link_libraries(${OMZ_DEMO_NAME} PRIVATE ${OpenCV_LIBRARIES} openvino::runtime
-                                                    ${OMZ_DEMO_DEPENDENCIES} utils gflags)
+    target_link_libraries(${OMZ_DEMO_NAME} PRIVATE ${OpenCV_LIBRARIES} ${OMZ_DEMO_DEPENDENCIES})
 
     if(UNIX)
         target_link_libraries(${OMZ_DEMO_NAME} PRIVATE pthread)
     endif()
 endmacro()
 
-find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
-find_package(OpenVINO REQUIRED COMPONENTS Runtime)
+find_package(OpenCV REQUIRED COMPONENTS imgcodecs)
 
 add_subdirectory(../../../model_api/cpp ${Samples_BINARY_DIR}/model_api/cpp)
 
