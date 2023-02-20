@@ -58,10 +58,10 @@ print(f"Detection results: {detections}")
 #include <models/results.h>
 
 // Load the model fetched using Python API
-auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
+auto model = DetectionModel::create_model("\~/.cache/omz/public/ssd300/FP16/ssd300.xml");
 
 // Run synchronous inference locally
- auto result = model->infer(ImageInputData(image)); # image is cv::Mat
+ auto result = model->infer(ImageInputData(image)); // image is cv::Mat
  
  // Access and process results
  auto detections = result->asRef<DetectionResult>();
