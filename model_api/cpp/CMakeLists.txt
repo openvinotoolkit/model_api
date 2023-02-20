@@ -25,13 +25,13 @@ endif()
 
 set(model_api_VERSION 0.0.0)
 
-find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 
 file(GLOB MODELS_SOURCES ./models/src/*.cpp)
 file(GLOB MODELS_HEADERS ./models/include/models/*.h)
-file(GLOB_RECURSE UTILS_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/*")
-file(GLOB_RECURSE UTILS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/utils/src/*")
+file(GLOB_RECURSE UTILS_HEADERS ./utils/include/*)
+file(GLOB_RECURSE UTILS_SOURCES ./utils/src/*.cpp)
 
 # Create named folders for the sources within the .vcproj
 # Empty name lists them directly under the .vcproj
@@ -44,69 +44,32 @@ add_library(model_api STATIC ${MODELS_SOURCES} ${UTILS_SOURCES})
 target_include_directories(model_api PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/models/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/utils/include>" "$<INSTALL_INTERFACE:include>")
 target_link_libraries(model_api PUBLIC openvino::runtime opencv_core opencv_imgproc)
 
-# TODO: need?
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
-
 include(GenerateExportHeader)
 
 generate_export_header(model_api)
 set_property(TARGET model_api PROPERTY VERSION ${model_api_VERSION})
 set_property(TARGET model_api PROPERTY SOVERSION 3)
-set_property(TARGET model_api PROPERTY
-  INTERFACE_model_api_MAJOR_VERSION 3)
-set_property(TARGET model_api APPEND PROPERTY
-  COMPATIBLE_INTERFACE_STRING model_api_MAJOR_VERSION
-)
+set_property(TARGET model_api PROPERTY INTERFACE_model_api_MAJOR_VERSION 3)
+set_property(TARGET model_api APPEND PROPERTY COMPATIBLE_INTERFACE_STRING model_api_MAJOR_VERSION)
 
 install(TARGETS model_api EXPORT model_apiTargets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
-)
-install(
-  DIRECTORY
-  "${CMAKE_CURRENT_SOURCE_DIR}/models/include/"
-  "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/"
-  DESTINATION
-    include
-  COMPONENT
-    Devel
-)
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/models/include/" "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/"
+    DESTINATION include COMPONENT Devel)
 
 include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/model_apiConfigVersion.cmake"
-  VERSION ${model_api_VERSION}
-  COMPATIBILITY AnyNewerVersion
-)
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/model_apiConfigVersion.cmake" VERSION ${model_api_VERSION} COMPATIBILITY AnyNewerVersion)
 
-export(EXPORT model_apiTargets
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/model_apiTargets.cmake"
-  NAMESPACE Upstream::
-)
-configure_file(cmake/model_apiConfig.cmake
-  "${CMAKE_CURRENT_BINARY_DIR}/model_apiConfig.cmake"
-  COPYONLY
-)
+export(EXPORT model_apiTargets FILE "${CMAKE_CURRENT_BINARY_DIR}/model_apiTargets.cmake")
+configure_file(cmake/model_apiConfig.cmake "${CMAKE_CURRENT_BINARY_DIR}/model_apiConfig.cmake" COPYONLY)
 
 set(ConfigPackageLocation lib/cmake/model_api)
-install(EXPORT model_apiTargets
-  FILE
-  model_apiTargets.cmake
-  DESTINATION
-    ${ConfigPackageLocation}
-)
-install(
-  FILES
-    cmake/model_apiConfig.cmake
-    "${CMAKE_CURRENT_BINARY_DIR}/model_apiConfigVersion.cmake"
-  DESTINATION
-    ${ConfigPackageLocation}
-  COMPONENT
-    Devel
-)
+install(EXPORT model_apiTargets FILE model_apiTargets.cmake DESTINATION ${ConfigPackageLocation})
+install(FILES cmake/model_apiConfig.cmake "${CMAKE_CURRENT_BINARY_DIR}/model_apiConfigVersion.cmake"
+    DESTINATION ${ConfigPackageLocation} COMPONENT Devel)
 
 set(CPACK_PACKAGE_VERSION ${model_api_VERSION})
 include(CPack)
