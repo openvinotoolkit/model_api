@@ -97,7 +97,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install model_api/python/[tests]
 
-        sudo model_api/cpp/install_dependencies.sh
+        sudo bash model_api/cpp/install_dependencies.sh
     - name: Build
       run: |
         mkdir build && cd build
@@ -106,4 +106,4 @@ jobs:
     - name: Run test
       run: |
         python tests/cpp/prepare_data
-        ./test_sanity
+        bash ./test_sanity
