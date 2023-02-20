@@ -4,7 +4,9 @@ CACHE_DIR = "./tmp/"
 def parepare_model():
     from openvino.model_api.models import DetectionModel
 
-    ssd = DetectionModel.create_model("ssd300", cache_dir=CACHE_DIR, download_dir=CACHE_DIR)
+    ssd = DetectionModel.create_model(
+        "ssd300", cache_dir=CACHE_DIR, download_dir=CACHE_DIR
+    )
 
 
 def prepare_data():
