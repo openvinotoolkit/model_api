@@ -72,7 +72,7 @@ jobs:
       run: |
         source venv/bin/activate
         pytest tests/python/
-  Cppcheck:
+  CPP-Code-Quality:
     name: cppcheck-test
     runs-on: ubuntu-latest
     steps:

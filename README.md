@@ -48,7 +48,10 @@ from openvino.model_api.models import DetectionModel
 ssd = DetectionModel.create_model("ssd300")
 
 # Run synchronous inference locally
-detections = ssd(image) # list of Detection objects with box coordinates, confidence and label string
+detections = ssd(image)  # image is numpy.ndarray
+
+# Print the list of Detection objects with box coordinates, confidence and label string
+print(f"Detection results: {detections}")
 ```
 - C++
 ```cpp
@@ -57,10 +60,10 @@ detections = ssd(image) # list of Detection objects with box coordinates, confid
 #include <models/results.h>
 
 // Load the model fetched using Python API
-auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
+auto model = DetectionModel::create_model("\~/.cache/omz/public/ssd300/FP16/ssd300.xml");
 
 // Run synchronous inference locally
- auto result = model->infer(ImageInputData(image));
+ auto result = model->infer(ImageInputData(image)); // image is cv::Mat
  
  // Access and process results
  auto detections = result->asRef<DetectionResult>();
