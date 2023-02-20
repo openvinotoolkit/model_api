@@ -118,4 +118,5 @@ jobs:
         mkdir build && cd build
         cmake ../tests/cpp/
         make -j
-        bash ./test_sanity
+        chmod +x test_sanity
+        ./test_sanity

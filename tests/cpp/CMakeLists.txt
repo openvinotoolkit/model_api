@@ -80,7 +80,7 @@ macro(add_test)
     endif()
 
     target_link_libraries(${TEST_NAME} PRIVATE ${OpenCV_LIBRARIES} openvino::runtime
-                                                    ${TEST_DEPENDENCIES} utils gflags)
+                                                    ${TEST_DEPENDENCIES} gflags)
 
     if(UNIX)
         target_link_libraries(${TEST_NAME} PRIVATE pthread)
