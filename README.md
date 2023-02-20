@@ -14,26 +14,28 @@ Model API is a set of wrapper classes for particular tasks and model architectur
 - Navigate to `model_api/python` folder
 - Run `pip install .`
 ### C++
-- Install dependencies. For example, for Ubuntu:
-  - Install OpenCV:
+- Install dependencies. For installation on Ubuntu, you can use the following script:
+  ```bash
+  sudo model_api/install_dependencies.sh
   ```
-  sudo apt-get install libopencv-dev 
-  ```
-  - Install [OpenVINO](https://docs.openvino.ai/latest/openvino_docs_install_guides_installing_openvino_apt.html).
-- Build example and library:
-   - Navigate to `examples/cpp/simple_local`
+
+- Build library:
    - Create `build` folder and navigate into it:
    ```
    mkdir build && cd build
    ```
    - Run cmake:
    ```
-   cmake ../
+   cmake ../model_api/cpp
    ```
    - Build:
    ```
    make -j 
    ```
+   - To build a `.tar.gz` package with the library, run:
+   ```
+    make package
+    ```
 
 ## Usage
 For more details please refer to the [examples](https://github.com/openvinotoolkit/model_api/tree/master/examples) of this project.
@@ -43,13 +45,10 @@ For more details please refer to the [examples](https://github.com/openvinotoolk
 from openvino.model_api.models import DetectionModel
 
 # Create a model (downloaded and cached automatically)
-ssd = DetectionModel.create_model("ssd300") 
+ssd = DetectionModel.create_model("ssd300")
 
 # Run synchronous inference locally
-detections = ssd(image)  # image is numpy.ndarray
-
-# Print the list of Detection objects with box coordinates, confidence and label string
-print(f"Detection results: {detections}")
+detections = ssd(image) # list of Detection objects with box coordinates, confidence and label string
 ```
 - C++
 ```cpp
@@ -58,10 +57,10 @@ print(f"Detection results: {detections}")
 #include <models/results.h>
 
 // Load the model fetched using Python API
-auto model = DetectionModel::create_model("\~/.cache/omz/public/ssd300/FP16/ssd300.xml");
+auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
 
 // Run synchronous inference locally
- auto result = model->infer(ImageInputData(image)); // image is cv::Mat
+ auto result = model->infer(ImageInputData(image));
  
  // Access and process results
  auto detections = result->asRef<DetectionResult>();
