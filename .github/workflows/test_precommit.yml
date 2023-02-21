@@ -59,15 +59,21 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Create and start a virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
     - name: Install dependencies
       run: |
+        source venv/bin/activate
         python -m pip install --upgrade pip
         pip install model_api/python/[tests]
-    - name: Test with Pytest
+    - name: Run test
       run: |
+        source venv/bin/activate
         pytest tests/python/
-  Cppcheck:
-    name: cppcheck-test
+  CPP-Code-Quality:
+    name: CPP-Code-Quality
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -78,3 +84,39 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN}}
           # missingInclude: cppcheck can't find stl, openvino, opencv
           other_options: --suppress=missingInclude -Imodel_api/cpp/models/include -Imodel_api/cpp/utils/include -Imodel_api/cpp/pipelines/include --check-config
+  CPP-Precommit:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.8]
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Create and start a virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+    - name: Install dependencies
+      run: |
+        source venv/bin/activate
+        python -m pip install --upgrade pip
+        pip install model_api/python/[tests]
+
+        sudo bash model_api/cpp/install_dependencies.sh
+    - name: Prepare test data
+      run: |
+        source venv/bin/activate
+        python tests/cpp/prepare_data.py
+    - name: Build and run test
+      run: |
+        mkdir build && cd build
+        cmake ../tests/cpp/
+        make -j
+        chmod +x test_sanity
+        ./test_sanity
