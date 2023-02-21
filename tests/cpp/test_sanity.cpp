@@ -26,6 +26,6 @@ TEST(test_sanity, simple_inference)
     }
 
     auto model = DetectionModel::create_model(MODEL_DIR);
-    auto result = model->infer(ImageInputData(image));
-    ASSERT_TRUE(result->asRef<DetectionResult>().objects.size() > 0);
+    auto result = model->infer(image);
+    ASSERT_TRUE(result->objects.size() > 0);
 }
