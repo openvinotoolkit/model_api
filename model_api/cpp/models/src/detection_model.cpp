@@ -30,6 +30,8 @@
 #include <vector>
 
 #include "models/image_model.h"
+#include "models/input_data.h"
+#include "models/results.h"
 
 DetectionModel::DetectionModel(const std::string& modelFileName,
                                float confidenceThreshold,

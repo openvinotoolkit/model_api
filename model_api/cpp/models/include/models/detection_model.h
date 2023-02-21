@@ -24,6 +24,9 @@
 #include "input_data.h"
 #include "results.h"
 
+struct DetectionResult;
+struct ImageInputData;
+
 class DetectionModel : public ImageModel {
 public:
     /// Constructor

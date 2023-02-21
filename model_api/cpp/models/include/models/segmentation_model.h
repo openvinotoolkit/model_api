@@ -26,6 +26,7 @@ class Model;
 }  // namespace ov
 struct InferenceResult;
 struct ResultBase;
+struct ImageInputData;
 
 #pragma once
 class SegmentationModel : public ImageModel {
@@ -40,6 +41,8 @@ public:
     static std::vector<std::string> loadLabels(const std::string& labelFilename);
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
+
+    virtual std::unique_ptr<ResultBase> infer(const ImageInputData& inputData);
 
 protected:
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
