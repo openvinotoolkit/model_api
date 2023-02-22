@@ -129,8 +129,7 @@ std::vector<std::string> DetectionModel::loadLabels(const std::string& labelFile
     return labelsList;
 }
 
-std::unique_ptr<DetectionResult> DetectionModel::infer(const ImageInputData& inputData)
-{
+std::unique_ptr<DetectionResult> DetectionModel::infer(const ImageInputData& inputData) {
     auto result = ModelBase::infer(static_cast<const InputData&>(inputData));
     return std::unique_ptr<DetectionResult>(static_cast<DetectionResult*>(result.release()));
 }
