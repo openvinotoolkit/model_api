@@ -157,8 +157,7 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
     return std::unique_ptr<ResultBase>(result);
 }
 
-std::unique_ptr<ResultBase> SegmentationModel::infer(const ImageInputData& inputData)
-{
+std::unique_ptr<ResultBase> SegmentationModel::infer(const ImageInputData& inputData) {
     auto result = ModelBase::infer(static_cast<const InputData&>(inputData));
     return std::unique_ptr<ResultBase>(static_cast<ResultBase*>(result.release()));
 }
