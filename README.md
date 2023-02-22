@@ -56,19 +56,18 @@ print(f"Detection results: {detections}")
 - C++
 ```cpp
 #include <models/detection_model.h>
-#include <models/input_data.h>
 #include <models/results.h>
 
 // Load the model fetched using Python API
 auto model = DetectionModel::create_model("\~/.cache/omz/public/ssd300/FP16/ssd300.xml");
 
 // Run synchronous inference locally
- auto result = model->infer(ImageInputData(image)); // image is cv::Mat
+ auto result = model->infer(image); // image is cv::Mat
  
- // Access and process results
- auto detections = result->asRef<DetectionResult>();
- for (auto& obj : result.objects) {
- ...
+ // Iterate over the vector of DetectedObject with box coordinates, confidence and label string
+ for (auto& obj : result->objects) {
+    std::cout << obj.label << " | " << obj.confidence << " | " << int(obj.x) << " | " << int(obj.y) << " | "
+                    << int(obj.x + obj.width) << " | " << int(obj.y + obj.height) << std::endl;
  }
 ```
 

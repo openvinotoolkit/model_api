@@ -66,8 +66,8 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
 
     auto model = DetectionModel::create_model(model_path);
-    auto result = model->infer(ImageInputData(image));
-    ASSERT_TRUE(result->asRef<DetectionResult>().objects.size() > 0);
+    auto result = model->infer(image);
+    ASSERT_TRUE(result->objects.size() > 0);
 }
  
 INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTests("../public_scope.json")));
