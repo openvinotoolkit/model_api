@@ -1,12 +1,17 @@
+from openvino.model_api.models import DetectionModel
+
 CACHE_DIR = "./tmp/"
+
+PUBLIC_MODELS = {
+    "ssd300": DetectionModel,
+    "ssd_mobilenet_v1_fpn_coco": DetectionModel,
+    "ssdlite_mobilenet_v2": DetectionModel,
+}
 
 
 def parepare_model():
-    from openvino.model_api.models import DetectionModel
-
-    ssd = DetectionModel.create_model(
-        "ssd300", cache_dir=CACHE_DIR, download_dir=CACHE_DIR
-    )
+    for name, class_name in PUBLIC_MODELS.items():
+        model = class_name.create_model(name, download_dir=CACHE_DIR)
 
 
 def prepare_data():
