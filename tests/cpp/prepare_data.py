@@ -1,17 +1,18 @@
-from openvino.model_api.models import DetectionModel
+
 
 CACHE_DIR = "./tmp/"
-
-PUBLIC_MODELS = {
-    "ssd300": DetectionModel,
-    "ssd_mobilenet_v1_fpn_coco": DetectionModel,
-    "ssdlite_mobilenet_v2": DetectionModel,
-}
+PUBLIC_SCOPE_PATH = "./public_scope.json"
 
 
 def parepare_model():
-    for name, class_name in PUBLIC_MODELS.items():
-        model = class_name.create_model(name, download_dir=CACHE_DIR)
+    import json
+    from openvino.model_api.models import DetectionModel
+    
+    with open(PUBLIC_SCOPE_PATH, "r") as f:
+        public_scope = json.load(f)
+    
+    for model in public_scope:
+        model = eval(model["type"]).create_model(model["name"], download_dir=CACHE_DIR)
 
 
 def prepare_data():

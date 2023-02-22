@@ -70,4 +70,4 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
     ASSERT_TRUE(result->asRef<DetectionResult>().objects.size() > 0);
 }
  
-INSTANTIATE_TEST_SUITE_P(TestSanity, ModelParameterizedTest, testing::ValuesIn(GetTests("../input.json")));
+INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTests("../public_scope.json")));
