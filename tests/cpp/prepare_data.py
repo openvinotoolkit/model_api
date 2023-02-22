@@ -1,12 +1,19 @@
+from pathlib import Path
+
 CACHE_DIR = "./tmp/"
+PUBLIC_SCOPE_PATH = Path(__file__).resolve().parent / "public_scope.json"
 
 
 def parepare_model():
+    import json
+
     from openvino.model_api.models import DetectionModel
 
-    ssd = DetectionModel.create_model(
-        "ssd300", cache_dir=CACHE_DIR, download_dir=CACHE_DIR
-    )
+    with open(PUBLIC_SCOPE_PATH, "r") as f:
+        public_scope = json.load(f)
+
+    for model in public_scope:
+        model = eval(model["type"]).create_model(model["name"], download_dir=CACHE_DIR)
 
 
 def prepare_data():

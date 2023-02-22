@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
 
 # Multi config generators such as Visual Studio ignore CMAKE_BUILD_TYPE. Multi config generators are configured with
 # CMAKE_CONFIGURATION_TYPES, but limiting options in it completely removes such build options
@@ -47,6 +47,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include(CMakeParseArguments)
+include(FetchContent)
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 macro(add_test)
     set(oneValueArgs NAME OPENCV_VERSION_REQUIRED)
@@ -87,6 +91,7 @@ macro(add_test)
     endif()
 
     target_link_libraries(${TEST_NAME} PRIVATE gtest gtest_main pthread)
+    target_link_libraries(${TEST_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 endmacro()
 
