@@ -20,7 +20,7 @@
 
 using json = nlohmann::json;
 
-std::string PUBLIC_SCOPE_PATH = "../public_scope.json";
+std::string PUBLIC_SCOPE_PATH = "../tests/cpp/public_scope.json";
 std::string MODEL_PATH_TEMPLATE = "../tmp/public/%s/FP16/%s.xml";
 std::string IMAGE_PATH = "../tmp/coco128/images/train2017/000000000074.jpg";
 
