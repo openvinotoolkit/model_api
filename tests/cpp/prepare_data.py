@@ -1,5 +1,7 @@
+from pathlib import Path
+
 CACHE_DIR = "./tmp/"
-PUBLIC_SCOPE_PATH = "./public_scope.json"
+PUBLIC_SCOPE_PATH = Path(__file__).parent / "public_scope.json"
 
 
 def parepare_model():
