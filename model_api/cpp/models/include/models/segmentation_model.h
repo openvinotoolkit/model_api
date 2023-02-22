@@ -26,6 +26,7 @@ class Model;
 }  // namespace ov
 struct InferenceResult;
 struct ResultBase;
+struct ImageResult;
 struct ImageInputData;
 
 #pragma once
@@ -42,7 +43,7 @@ public:
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
-    virtual std::unique_ptr<ResultBase> infer(const ImageInputData& inputData);
+    virtual std::unique_ptr<ImageResult> infer(const ImageInputData& inputData);
 
 protected:
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
