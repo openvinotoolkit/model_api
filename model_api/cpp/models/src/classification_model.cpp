@@ -196,8 +196,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     model = ppp.build();
 }
 
-std::unique_ptr<ClassificationResult> ClassificationModel::infer(const ImageInputData& inputData)
-{
+std::unique_ptr<ClassificationResult> ClassificationModel::infer(const ImageInputData& inputData) {
     auto result = ModelBase::infer(static_cast<const InputData&>(inputData));
     return std::unique_ptr<ClassificationResult>(static_cast<ClassificationResult*>(result.release()));
 }
