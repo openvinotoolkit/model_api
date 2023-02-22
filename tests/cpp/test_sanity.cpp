@@ -20,6 +20,7 @@
 
 using json = nlohmann::json;
 
+std::string PUBLIC_SCOPE_PATH = "../public_scope.json";
 std::string MODEL_PATH_TEMPLATE = "../tmp/public/%s/FP16/%s.xml";
 std::string IMAGE_PATH = "../tmp/coco128/images/train2017/000000000074.jpg";
 
@@ -70,4 +71,4 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
     ASSERT_TRUE(result->objects.size() > 0);
 }
  
-INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTests("../public_scope.json")));
+INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTests(PUBLIC_SCOPE_PATH)));

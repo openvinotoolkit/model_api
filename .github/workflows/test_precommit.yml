@@ -115,8 +115,8 @@ jobs:
         python tests/cpp/prepare_data.py
     - name: Build and run test
       run: |
-        mkdir build && cd build
-        cmake ../tests/cpp/
+        mkdir tests/cpp/build && cd tests/cpp/build
+        cmake ../
         make -j
         chmod +x test_sanity
         ./test_sanity
