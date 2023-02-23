@@ -71,7 +71,6 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
     auto result = model->infer(image);
     ASSERT_TRUE(result->objects.size() > 0);
 }
-
  
 INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
 
