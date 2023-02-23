@@ -1,22 +1,26 @@
+import argparse
+import json
 from pathlib import Path
 
-CACHE_DIR = "./tmp/"
-PUBLIC_SCOPE_PATH = Path(__file__).resolve().parent / "public_scope.json"
 
+def parepare_model(
+    data_dir="./data",
+    public_scope=Path(__file__).resolve().parent / "public_scope.json",
+):
+    from openvino.model_api.models import (
+        ClassificationModel,
+        DetectionModel,
+        SegmentationModel,
+    )
 
-def parepare_model():
-    import json
-
-    from openvino.model_api.models import DetectionModel
-
-    with open(PUBLIC_SCOPE_PATH, "r") as f:
+    with open(public_scope, "r") as f:
         public_scope = json.load(f)
 
     for model in public_scope:
-        model = eval(model["type"]).create_model(model["name"], download_dir=CACHE_DIR)
+        model = eval(model["type"]).create_model(model["name"], download_dir=data_dir)
 
 
-def prepare_data():
+def prepare_data(data_dir="./data"):
     from io import BytesIO
     from urllib.request import urlopen
     from zipfile import ZipFile
@@ -25,9 +29,25 @@ def prepare_data():
 
     with urlopen(COCO128_URL) as zipresp:
         with ZipFile(BytesIO(zipresp.read())) as zfile:
-            zfile.extractall(CACHE_DIR)
+            zfile.extractall(data_dir)
 
 
 if __name__ == "__main__":
-    parepare_model()
-    prepare_data()
+    parser = argparse.ArgumentParser(description="Data and model preparate script")
+    parser.add_argument(
+        "-d",
+        dest="data_dir",
+        default="./data",
+        help="Directory to store downloaded models and datasets",
+    )
+    parser.add_argument(
+        "-p",
+        dest="public_scope",
+        default=Path(__file__).resolve().parent / "public_scope.json",
+        help="JSON file with public model description",
+    )
+
+    args = parser.parse_args()
+
+    parepare_model(args.data_dir, args.public_scope)
+    prepare_data(args.data_dir)

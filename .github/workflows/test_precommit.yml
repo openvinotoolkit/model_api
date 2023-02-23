@@ -112,11 +112,12 @@ jobs:
     - name: Prepare test data
       run: |
         source venv/bin/activate
-        python tests/cpp/prepare_data.py
-    - name: Build and run test
+        python tests/cpp/prepare_data.py -d data -p tests/cpp/public_scope.json
+    - name: Build
       run: |
         mkdir build && cd build
         cmake ../tests/cpp/
         make -j
-        chmod +x test_sanity
-        ./test_sanity
+    - name: Run test
+      run: |
+        build/test_sanity -d data -p tests/cpp/public_scope.json
