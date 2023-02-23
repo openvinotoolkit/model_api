@@ -19,7 +19,7 @@ from .detection_model import DetectionModel
 from .utils import Detection
 
 
-class SSD(DetectionModel):
+class SSDModel(DetectionModel):
     __model__ = "SSD"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

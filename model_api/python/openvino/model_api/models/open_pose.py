@@ -28,7 +28,7 @@ from .image_model import ImageModel
 from .types import NumericalValue
 
 
-class OpenPose(ImageModel):
+class OpenPoseModel(ImageModel):
     __model__ = "OpenPose"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

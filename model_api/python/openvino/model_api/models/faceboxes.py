@@ -23,7 +23,7 @@ from .types import NumericalValue
 from .utils import Detection, nms
 
 
-class FaceBoxes(DetectionModel):
+class FaceBoxesModel(DetectionModel):
     __model__ = "FaceBoxes"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

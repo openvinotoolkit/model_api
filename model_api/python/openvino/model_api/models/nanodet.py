@@ -22,7 +22,7 @@ from .types import NumericalValue
 from .utils import Detection, clip_detections, nms, softmax
 
 
-class NanoDet(DetectionModel):
+class NanoDetModel(DetectionModel):
     __model__ = "NanoDet"
 
     def __init__(self, model_adapter, configuration=None, preload=False):
@@ -166,7 +166,7 @@ class NanoDet(DetectionModel):
         return clip_detections(detections, meta["original_shape"])
 
 
-class NanoDetPlus(NanoDet):
+class NanoDetPlusModel(NanoDetModel):
     __model__ = "NanoDet-Plus"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

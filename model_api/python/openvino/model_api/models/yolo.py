@@ -111,7 +111,7 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
 
-class YOLO(DetectionModel):
+class YOLOModel(DetectionModel):
     __model__ = "YOLO"
 
     class Params:
@@ -316,7 +316,7 @@ class YOLO(DetectionModel):
         return detections
 
 
-class YoloV4(YOLO):
+class YoloV4Model(YOLOModel):
     __model__ = "YOLOV4"
 
     class Params:
@@ -400,7 +400,7 @@ class YoloV4(YOLO):
         return DetectionBox(x, y, width, height)
 
 
-class YOLOF(YOLO):
+class YOLOFModel(YOLOModel):
     __model__ = "YOLOF"
 
     class Params:
@@ -453,7 +453,7 @@ class YOLOF(YOLO):
         return DetectionBox(x, y, width, height)
 
 
-class YOLOX(DetectionModel):
+class YOLOXModel(DetectionModel):
     __model__ = "YOLOX"
 
     def __init__(self, model_adapter, configuration=None, preload=False):
@@ -568,7 +568,7 @@ class YOLOX(DetectionModel):
         return y
 
 
-class YoloV3ONNX(DetectionModel):
+class YoloV3ONNXModel(DetectionModel):
     __model__ = "YOLOv3-ONNX"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

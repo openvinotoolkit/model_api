@@ -19,7 +19,7 @@ from .detection_model import DetectionModel
 from .utils import Detection, softmax
 
 
-class DETR(DetectionModel):
+class DETRModel(DetectionModel):
     __model__ = "DETR"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

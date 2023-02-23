@@ -19,7 +19,7 @@ import numpy as np
 from .image_model import ImageModel
 
 
-class Deblurring(ImageModel):
+class DeblurringModel(ImageModel):
     __model__ = "Deblurring"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

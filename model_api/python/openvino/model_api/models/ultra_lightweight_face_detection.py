@@ -20,7 +20,7 @@ from .types import NumericalValue
 from .utils import Detection, nms
 
 
-class UltraLightweightFaceDetection(DetectionModel):
+class UltraLightweightFaceDetectionModel(DetectionModel):
     __model__ = "Ultra_LightWeight_Face_Detection"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

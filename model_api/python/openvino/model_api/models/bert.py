@@ -17,7 +17,7 @@ from .model import Model
 from .types import BooleanValue, DictValue, NumericalValue, StringValue
 
 
-class Bert(Model):
+class BertModel(Model):
     __model__ = "bert"
 
     def __init__(self, model_adapter, configuration, preload=False):
@@ -106,7 +106,7 @@ class Bert(Model):
         )
 
 
-class BertNamedEntityRecognition(Bert):
+class BertNamedEntityRecognitionModel(BertModel):
     __model__ = "bert-named-entity-recognition"
 
     def __init__(self, model_adapter, configuration, preload=False):
@@ -136,7 +136,7 @@ class BertNamedEntityRecognition(Bert):
         return score, filtered_labels_id
 
 
-class BertEmbedding(Bert):
+class BertEmbeddingModel(BertModel):
     __model__ = "bert-embedding"
 
     def __init__(self, model_adapter, configuration, preload=False):
@@ -157,7 +157,7 @@ class BertEmbedding(Bert):
         return output.squeeze(0)
 
 
-class BertQuestionAnswering(Bert):
+class BertQuestionAnsweringModel(BertModel):
     __model__ = "bert-question-answering"
 
     def __init__(self, model_adapter, configuration, preload=False):

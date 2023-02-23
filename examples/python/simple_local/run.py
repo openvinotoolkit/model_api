@@ -18,7 +18,7 @@
 import sys
 
 import cv2
-from openvino.model_api.models import Classification, DetectionModel, SegmentationModel
+from openvino.model_api.models import ClassificationModel, DetectionModel, SegmentationModel
 from PIL import Image
 
 
@@ -39,7 +39,7 @@ def main():
         raise RuntimeError("Failed to read the image")
 
     # Create Image Classification model using mode name and download from Open Model Zoo
-    mobilenetv2 = Classification.create_model("efficientnet-b0-pytorch")
+    mobilenetv2 = ClassificationModel.create_model("efficientnet-b0-pytorch")
     classifications = mobilenetv2(image)
     print(f"Classification results: {classifications}")
 

@@ -23,7 +23,7 @@ from .detection_model import DetectionModel
 from .utils import Detection, DetectionWithLandmarks, clip_detections, nms
 
 
-class RetinaFace(DetectionModel):
+class RetinaFaceModel(DetectionModel):
     __model__ = "RetinaFace"
 
     def __init__(self, model_adapter, configuration=None, preload=False):
@@ -57,7 +57,7 @@ class RetinaFace(DetectionModel):
         return clip_detections(outputs, meta["original_shape"])
 
 
-class RetinaFacePyTorch(DetectionModel):
+class RetinaFacePyTorchModel(DetectionModel):
     __model__ = "RetinaFace-PyTorch"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

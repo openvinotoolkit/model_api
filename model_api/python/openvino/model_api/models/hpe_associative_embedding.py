@@ -22,7 +22,7 @@ from .types import NumericalValue, StringValue
 from .utils import resize_image
 
 
-class HpeAssociativeEmbedding(ImageModel):
+class HpeAssociativeEmbeddingModel(ImageModel):
     __model__ = "HPE-assosiative-embedding"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

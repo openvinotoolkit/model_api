@@ -22,7 +22,7 @@ from .types import ListValue, NumericalValue
 from .utils import Detection, clip_detections, nms
 
 
-class CTPN(DetectionModel):
+class CTPNModel(DetectionModel):
     __model__ = "CTPN"
 
     def __init__(self, model_adapter, configuration=None, preload=False):

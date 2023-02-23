@@ -22,7 +22,7 @@ from .detection_model import DetectionModel
 from .utils import Detection, clip_detections
 
 
-class CenterNet(DetectionModel):
+class CenterNetModel(DetectionModel):
     __model__ = "centernet"
 
     def __init__(self, model_adapter, configuration=None, preload=False):
@@ -127,7 +127,7 @@ class CenterNet(DetectionModel):
     def _tranpose_and_gather_feat(feat, ind):
         feat = np.transpose(feat, (1, 2, 0))
         feat = feat.reshape((-1, feat.shape[2]))
-        feat = CenterNet._gather_feat(feat, ind)
+        feat = CenterNetModel._gather_feat(feat, ind)
         return feat
 
     @staticmethod
@@ -145,13 +145,13 @@ class CenterNet(DetectionModel):
         topk_ind = np.argpartition(topk_scores, -K)[-K:]
         topk_score = topk_scores[topk_ind]
         topk_clses = topk_ind / K
-        topk_inds = CenterNet._gather_feat(
+        topk_inds = CenterNetModel._gather_feat(
             topk_inds.reshape((-1, 1)), topk_ind
         ).reshape((K))
-        topk_ys = CenterNet._gather_feat(topk_ys.reshape((-1, 1)), topk_ind).reshape(
+        topk_ys = CenterNetModel._gather_feat(topk_ys.reshape((-1, 1)), topk_ind).reshape(
             (K)
         )
-        topk_xs = CenterNet._gather_feat(topk_xs.reshape((-1, 1)), topk_ind).reshape(
+        topk_xs = CenterNetModel._gather_feat(topk_xs.reshape((-1, 1)), topk_ind).reshape(
             (K)
         )
 
@@ -189,17 +189,17 @@ class CenterNet(DetectionModel):
             return new_pt[:2]
 
         target_coords = np.zeros(coords.shape)
-        trans = CenterNet.get_affine_transform(center, scale, 0, output_size, inv=True)
+        trans = CenterNetModel.get_affine_transform(center, scale, 0, output_size, inv=True)
         for p in range(coords.shape[0]):
             target_coords[p, 0:2] = affine_transform(coords[p, 0:2], trans)
         return target_coords
 
     @staticmethod
     def _transform(dets, center, scale, height, width):
-        dets[:, :2] = CenterNet._transform_preds(
+        dets[:, :2] = CenterNetModel._transform_preds(
             dets[:, 0:2], center, scale, (width, height)
         )
-        dets[:, 2:4] = CenterNet._transform_preds(
+        dets[:, 2:4] = CenterNetModel._transform_preds(
             dets[:, 2:4], center, scale, (width, height)
         )
         return dets

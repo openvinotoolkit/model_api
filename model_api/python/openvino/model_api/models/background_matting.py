@@ -20,7 +20,7 @@ import numpy as np
 from .image_model import ImageModel
 
 
-class VideoBackgroundMatting(ImageModel):
+class VideoBackgroundMattingModel(ImageModel):
     __model__ = "Robust-video-matting"
 
     def __init__(self, model_adapter, configuration, preload=False):

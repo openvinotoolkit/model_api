@@ -18,27 +18,27 @@
 from .background_matting import (
     ImageMattingWithBackground,
     PortraitBackgroundMatting,
-    VideoBackgroundMatting,
+    VideoBackgroundMattingModel,
 )
-from .bert import BertEmbedding, BertNamedEntityRecognition, BertQuestionAnswering
-from .centernet import CenterNet
-from .classification import Classification
-from .ctpn import CTPN
-from .deblurring import Deblurring
+from .bert import BertEmbeddingModel, BertNamedEntityRecognitionModel, BertQuestionAnsweringModel
+from .centernet import CenterNetModel
+from .classification import ClassificationModel
+from .ctpn import CTPNModel
+from .deblurring import DeblurringModel
 from .detection_model import DetectionModel
-from .detr import DETR
-from .faceboxes import FaceBoxes
-from .hpe_associative_embedding import HpeAssociativeEmbedding
+from .detr import DETRModel
+from .faceboxes import FaceBoxesModel
+from .hpe_associative_embedding import HpeAssociativeEmbeddingModel
 from .image_model import ImageModel
 from .instance_segmentation import MaskRCNNModel, YolactModel
 from .model import Model
 from .monodepth import MonoDepthModel
-from .nanodet import NanoDet, NanoDetPlus
-from .open_pose import OpenPose
-from .retinaface import RetinaFace, RetinaFacePyTorch
+from .nanodet import NanoDetModel, NanoDetPlusModel
+from .open_pose import OpenPoseModel
+from .retinaface import RetinaFaceModel, RetinaFacePyTorchModel
 from .segmentation import SalientObjectDetectionModel, SegmentationModel
-from .ssd import SSD
-from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
+from .ssd import SSDModel
+from .ultra_lightweight_face_detection import UltraLightweightFaceDetectionModel
 from .utils import (
     RESIZE_TYPES,
     Detection,
@@ -46,7 +46,7 @@ from .utils import (
     InputTransform,
     OutputTransform,
 )
-from .yolo import YOLO, YOLOF, YOLOX, YoloV3ONNX, YoloV4
+from .yolo import YOLOModel, YOLOFModel, YOLOXModel, YoloV3ONNXModel, YoloV4Model
 
 classification_models = [
     "resnet-18-pytorch",
@@ -68,43 +68,43 @@ segmentation_models = [
 
 
 __all__ = [
-    "BertEmbedding",
-    "BertNamedEntityRecognition",
-    "BertQuestionAnswering",
-    "CenterNet",
-    "Classification",
-    "CTPN",
-    "Deblurring",
+    "BertEmbeddingModel",
+    "BertNamedEntityRecognitionModel",
+    "BertQuestionAnsweringModel",
+    "CenterNetModel",
+    "ClassificationModel",
+    "CTPNModel",
+    "DeblurringModel",
     "DetectionModel",
     "DetectionWithLandmarks",
-    "DETR",
-    "FaceBoxes",
-    "HpeAssociativeEmbedding",
+    "DETRModel",
+    "FaceBoxesModel",
+    "HpeAssociativeEmbeddingModel",
     "ImageMattingWithBackground",
     "ImageModel",
     "InputTransform",
     "MaskRCNNModel",
     "Model",
     "MonoDepthModel",
-    "NanoDet",
-    "NanoDetPlus",
-    "OpenPose",
+    "NanoDetModel",
+    "NanoDetPlusModel",
+    "OpenPoseModel",
     "OutputTransform",
     "PortraitBackgroundMatting",
     "RESIZE_TYPES",
-    "RetinaFace",
-    "RetinaFacePyTorch",
+    "RetinaFaceModel",
+    "RetinaFacePyTorchModel",
     "SalientObjectDetectionModel",
     "SegmentationModel",
-    "SSD",
-    "UltraLightweightFaceDetection",
-    "VideoBackgroundMatting",
+    "SSDModel",
+    "UltraLightweightFaceDetectionModel",
+    "VideoBackgroundMattingModel",
     "YolactModel",
-    "YOLO",
-    "YoloV3ONNX",
-    "YoloV4",
-    "YOLOF",
-    "YOLOX",
+    "YOLOModel",
+    "YoloV3ONNXModel",
+    "YoloV4Model",
+    "YOLOFModel",
+    "YOLOXModel",
     "Detection",
     "DetectionWithLandmarks",
     "classification_models" "detection_models",
