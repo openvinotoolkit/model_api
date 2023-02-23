@@ -18,8 +18,6 @@
 #include <models/input_data.h>
 #include <models/results.h>
 
-namespace {
-
 using json = nlohmann::json;
 
 std::string PUBLIC_SCOPE_PATH = "../tests/cpp/public_scope.json";
@@ -32,7 +30,7 @@ struct TestData {
     std::string type;
 };
 
-class ModelParameterizedTest : public testing::TestWithParam<Test> {
+class ModelParameterizedTest : public testing::TestWithParam<TestData> {
 };
 
 template<typename... Args>
@@ -46,7 +44,7 @@ std::string string_format(const std::string &fmt, Args... args)
     return buf;
 }
 
-inline void from_json(const nlohmann::json& j, Test& test)
+inline void from_json(const nlohmann::json& j, TestData& test)
 {
     test.name = j.at("name").get<std::string>();
     test.type = j.at("type").get<std::string>();
@@ -74,19 +72,65 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
     ASSERT_TRUE(result->objects.size() > 0);
 }
 
-} // namespace
  
 INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
 
-int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
+class InputParser{
+    public:
+        InputParser (int &argc, char **argv){
+            for (int i=1; i < argc; ++i)
+                this->tokens.push_back(std::string(argv[i]));
+        }
+        /// @author iain
+        const std::string& getCmdOption(const std::string &option) const{
+            std::vector<std::string>::const_iterator itr;
+            itr =  std::find(this->tokens.begin(), this->tokens.end(), option);
+            if (itr != this->tokens.end() && ++itr != this->tokens.end()){
+                return *itr;
+            }
+            static const std::string empty_string("");
+            return empty_string;
+        }
+        /// @author iain
+        bool cmdOptionExists(const std::string &option) const{
+            return std::find(this->tokens.begin(), this->tokens.end(), option)
+                   != this->tokens.end();
+        }
+    private:
+        std::vector <std::string> tokens;
+};
 
-    if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " <path_to_public_scope.json>" << std::endl;
+void print_help(const char* program_name) 
+{
+    std::cout << "Usage: " << program_name << " -p <path_to_public_scope.json> -d <path_to_data>" << std::endl;
+}
+
+int main(int argc, char **argv) 
+{
+    InputParser input(argc, argv);
+
+    if(input.cmdOptionExists("-h")){
+        print_help(argv[0]);
+        return 1;
+    }
+    const std::string &public_scope = input.getCmdOption("-p");
+    if (!public_scope.empty()){
+        PUBLIC_SCOPE_PATH = public_scope;
+    }
+    else{
+        print_help(argv[0]);
+        return 1;
+    }
+    const std::string &data_dir = input.getCmdOption("-d");
+    if (!data_dir.empty()){
+        DATA_DIR = data_dir;
+    }
+    else{
+        print_help(argv[0]);
         return 1;
     }
 
-    DATA_DIR = argv[1];
+    testing::InitGoogleTest(&argc, argv);
 
     return RUN_ALL_TESTS();
 }
