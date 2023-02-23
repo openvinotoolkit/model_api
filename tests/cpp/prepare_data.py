@@ -8,7 +8,7 @@ def parepare_model(
     public_scope=Path(__file__).resolve().parent / "public_scope.json",
 ):
     from openvino.model_api.models import (
-        Classification,
+        ClassificationModel,
         DetectionModel,
         SegmentationModel,
     )
