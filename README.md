@@ -16,7 +16,8 @@ Model API is a set of wrapper classes for particular tasks and model architectur
 ### C++
 - Install dependencies. For installation on Ubuntu, you can use the following script:
   ```bash
-  sudo model_api/install_dependencies.sh
+  chmod +x model_api/cpp/install_dependencies.sh
+  sudo model_api/cpp/install_dependencies.sh
   ```
 
 - Build library:
