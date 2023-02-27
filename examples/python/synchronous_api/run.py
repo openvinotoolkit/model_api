@@ -51,9 +51,9 @@ def main():
     # Replace numpy preprocessing and embed it directly into a model graph to speed up inference
     # download_dir is used to store downloaded model
     ssd_mobilenet_fpn = DetectionModel.create_model(
-        "ssd_mobilenet_v1_fpn_coco", 
+        "ssd_mobilenet_v1_fpn_coco",
         configuration={"embed_preprocessing": True},
-        download_dir="tmp"
+        download_dir="tmp",
     )
     detections = ssd_mobilenet_fpn(image)
     print(f"Detection results: {detections}")
