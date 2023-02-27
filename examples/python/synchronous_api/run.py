@@ -25,15 +25,6 @@ from openvino.model_api.models import (
 )
 from PIL import Image
 
-
-def from_local_xml(image):
-    ssd_local = DetectionModel.create_model(
-        "/home/alex/.cache/omz/public/ssd_mobilenet_v1_fpn_coco/FP16/ssd_mobilenet_v1_fpn_coco.xml"
-    )
-    detections = ssd_local(image)
-    print(f"Detection results local: {detections}")
-
-
 def main():
     if len(sys.argv) != 2:
         raise RuntimeError(f"Usage: {sys.argv[0]} <path_to_image>")
