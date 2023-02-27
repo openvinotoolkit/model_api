@@ -1,5 +1,5 @@
 # Synchronous API example
-This example demonstrated how to use a Python API of OpenVINO Model API for synchronous inference as well as basic features such as:
+This example demonstrates how to use a Python API of OpenVINO Model API for synchronous inference as well as basic features such as:
 - Automatic download and convertion of public models
 - Preprocessing embedding
 - Creating model from local source
