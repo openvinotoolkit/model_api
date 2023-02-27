@@ -43,19 +43,27 @@ def main():
         raise RuntimeError("Failed to read the image")
 
     # Create Image Classification model using mode name and download from Open Model Zoo
-    mobilenetv2 = ClassificationModel.create_model("efficientnet-b0-pytorch")
-    classifications = mobilenetv2(image)
+    efficientnet_b0 = ClassificationModel.create_model("efficientnet-b0-pytorch")
+    classifications = efficientnet_b0(image)
     print(f"Classification results: {classifications}")
 
     # Create Object Detection model using mode name and download from Open Model Zoo
     # Replace numpy preprocessing and embed it directly into a model graph to speed up inference
-    ssd = DetectionModel.create_model(
-        "ssd_mobilenet_v1_fpn_coco", configuration={"embed_preprocessing": True}
+    # download_dir is used to store downloaded model
+    ssd_mobilenet_fpn = DetectionModel.create_model(
+        "ssd_mobilenet_v1_fpn_coco",
+        configuration={"embed_preprocessing": True},
+        download_dir="tmp",
     )
-    detections = ssd(image)
+    detections = ssd_mobilenet_fpn(image)
     print(f"Detection results: {detections}")
 
-    # from_local_xml(image)
+    # Instantiate from a local model (downloaded previously)
+    ssd_mobilenet_fpn_local = DetectionModel.create_model(
+        "tmp/public/ssd_mobilenet_v1_fpn_coco/FP16/ssd_mobilenet_v1_fpn_coco.xml"
+    )
+    detections = ssd_mobilenet_fpn_local(image)
+    print(f"Detection results for local: {detections}")
 
     # Create Image Segmentation model
     hrnet = SegmentationModel.create_model("hrnet-v2-c1-segmentation")
