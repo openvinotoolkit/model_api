@@ -33,13 +33,12 @@ def main():
     # Replace numpy preprocessing and embed it directly into a model graph to speed up inference
     # download_dir is used to store downloaded model
     model = DetectionModel.create_model(
-        "yolo-v4-tf",
-        configuration={"embed_preprocessing": True}
+        "yolo-v4-tf", configuration={"embed_preprocessing": True}
     )
-    
+
     ITERATIONS = 10
     results = {}  # container for results
-    
+
     def callback(result, userdata):
         print(f"Done! Number: {userdata}")
         results[userdata] = result
@@ -48,10 +47,10 @@ def main():
     ## Run parallel inference
     for i in range(ITERATIONS):
         model.infer_async(image, user_data=i)
-        
+
     model.await_all()
-    assert(len(results) == ITERATIONS)
-    
+    assert len(results) == ITERATIONS
+
     for i in range(ITERATIONS):
         print(f"Request {i}: {results[i]}")
 

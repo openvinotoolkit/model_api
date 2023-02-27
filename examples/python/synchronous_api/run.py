@@ -25,6 +25,7 @@ from openvino.model_api.models import (
 )
 from PIL import Image
 
+
 def main():
     if len(sys.argv) != 2:
         raise RuntimeError(f"Usage: {sys.argv[0]} <path_to_image>")
