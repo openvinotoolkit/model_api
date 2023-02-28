@@ -16,49 +16,30 @@
 """
 
 import sys
-from pathlib import Path
 
 import cv2
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools/model_tools/src"))
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "demos/common/python"))
-
 from openvino.model_api.models import DetectionModel
-from visualizers import ColorPalette
 
-
-def draw_detections(frame, detections, palette):
-    for detection in detections:
-        class_id = int(detection.id)
-        color = palette[class_id]
-        xmin, ymin, xmax, ymax = detection.get_coords()
-        cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), color, 2)
-        cv2.putText(
-            frame,
-            "{} {:.1%}".format(detection.str_label, detection.score),
-            (xmin, ymin - 7),
-            cv2.FONT_HERSHEY_COMPLEX,
-            0.6,
-            color,
-            1,
-        )
-    return frame
+from PIL import Image
 
 
 def main():
     if len(sys.argv) != 2:
         raise RuntimeError(f"Usage: {sys.argv[0]} <path_to_image>")
-    model = DetectionModel.create_model(
-        "localhost:9000/models/yolo-v4-tf", model_type="yolov4"
-    )  # yolo-v4-tf.xml
+
     image = cv2.imread(sys.argv[1])
     if image is None:
         raise RuntimeError("Failed to read the image")
-    objects = model(image)
-    draw_detections(image, objects, ColorPalette(n=100))
-    cv2.imshow("Detection Results", image)
-    cv2.waitKey(0)
+
+    # Create Object Detection model specifying the OVMS server URL
+    model = DetectionModel.create_model(
+        "localhost:9000/models/ssd_mobilenet_v1_fpn_coco", model_type="ssd"
+    )
+    detections = model(image)
+    print(f"Detection results: {detections}")
 
 
 if __name__ == "__main__":
     main()
+    
+
