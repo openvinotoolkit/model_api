@@ -18,7 +18,7 @@ import logging as log
 import re
 
 from openvino.model_api.adapters.inference_adapter import InferenceAdapter
-from model_api.python.openvino.model_api.adapters.inference_adapter import (
+from openvino.model_api.adapters.openvino_adapter import (
     OpenvinoAdapter,
     create_core,
     get_user_config,
