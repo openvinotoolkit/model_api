@@ -35,7 +35,7 @@ try:
 except ImportError:
     openvino_absent = True
 
-from .inference_adapter import Metadata, InferenceAdapter
+from .inference_adapter import InferenceAdapter, Metadata
 from .utils import (
     Layout,
     crop_resize,

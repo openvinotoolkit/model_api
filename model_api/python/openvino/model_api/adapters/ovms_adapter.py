@@ -28,7 +28,7 @@ import re
 
 import numpy as np
 
-from .inference_adapter import Metadata, InferenceAdapter
+from .inference_adapter import InferenceAdapter, Metadata
 from .utils import Layout
 
 
