@@ -33,20 +33,20 @@
 #include "models/input_data.h"
 #include "models/results.h"
 
-DetectionModel::DetectionModel(const std::string& modelFileName,
+DetectionModel::DetectionModel(const std::string& modelFile,
                                float confidenceThreshold,
                                bool useAutoResize,
                                const std::vector<std::string>& labels,
                                const std::string& layout)
-    : ImageModel(modelFileName, useAutoResize, layout),
+    : ImageModel(modelFile, useAutoResize, layout),
       labels(labels),
       confidenceThreshold(confidenceThreshold) {}
 
-std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFileName, std::string model_type, const ov::AnyMap& configuration, std::shared_ptr<ov::Core> core) {
+std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile, std::string model_type, const ov::AnyMap& configuration, std::shared_ptr<ov::Core> core) {
     if (!core) {
         core.reset(new ov::Core{});
     }
-    std::shared_ptr<ov::Model> model = core->read_model(modelFileName);
+    std::shared_ptr<ov::Model> model = core->read_model(modelFile);
     if (model_type.empty()) {
         model_type = model->get_rt_info<std::string>("model_info", "model_type");
     }
@@ -93,28 +93,28 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     std::unique_ptr<DetectionModel> detectionModel;
     if (model_type == "centernet") {
     } else if (model_type == "faceboxes") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelFaceBoxes(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelFaceBoxes(modelFile,
                                         confidence_threshold,
                                         auto_resize,
                                         iou_t,
                                         layout));
     } else if (model_type == "retinaface") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFace(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFace(modelFile,
                                         confidence_threshold,
                                         auto_resize,
                                         iou_t,
                                         layout));
     } else if (model_type == "retinaface-pytorch") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFacePT(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFacePT(modelFile,
                                             confidence_threshold,
                                             auto_resize,
                                             iou_t,
                                             layout));
     } else if (model_type == "ssd" || model_type == "SSD") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelSSD(modelFileName, confidence_threshold, auto_resize, labels, layout));
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelSSD(modelFile, confidence_threshold, auto_resize, labels, layout));
     } else if (model_type == "yolo") {
         bool FLAGS_yolo_af = true;  // Use advanced postprocessing/filtering algorithm for YOLO
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelYolo(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYolo(modelFile,
                                     confidence_threshold,
                                     auto_resize,
                                     FLAGS_yolo_af,
@@ -124,12 +124,12 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
                                     masks,
                                     layout));
     } else if (model_type == "yolov3-onnx") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloV3ONNX(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloV3ONNX(modelFile,
                                         confidence_threshold,
                                         labels,
                                         layout));
     } else if (model_type == "yolox") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloX(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloX(modelFile,
                                     confidence_threshold,
                                     iou_t,
                                     labels,

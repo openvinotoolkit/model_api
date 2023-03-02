@@ -38,12 +38,12 @@ struct ResultBase;
 class HPEOpenPose : public ImageModel {
 public:
     /// Constructor
-    /// @param modelFileName name of model to load
+    /// @param modelFile name of model to load
     /// @param aspectRatio - the ratio of input width to its height.
     /// @param targetSize - the height used for model reshaping.
     /// @param confidenceThreshold - threshold to eliminate low-confidence keypoints.
     /// @param layout - model input layout
-    HPEOpenPose(const std::string& modelFileName,
+    HPEOpenPose(const std::string& modelFile,
                 double aspectRatio,
                 int targetSize,
                 float confidenceThreshold,

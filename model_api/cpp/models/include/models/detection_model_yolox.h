@@ -26,7 +26,7 @@
 class ModelYoloX: public DetectionModel {
 public:
     /// Constructor.
-    /// @param modelFileName name of model to load
+    /// @param modelFile name of model to load
     /// @param confidenceThreshold - threshold to eliminate low-confidence detections.
     /// Any detected object with confidence lower than this threshold will be ignored.
     /// @param boxIOUThreshold - threshold to treat separate output regions as one object for filtering
@@ -34,7 +34,7 @@ public:
     /// @param labels - array of labels for every class. If this array is empty or contains less elements
     /// than actual classes number, default "Label #N" will be shown for missing items.
     /// @param layout - model input layout
-    ModelYoloX(const std::string& modelFileName,
+    ModelYoloX(const std::string& modelFile,
                     float confidenceThreshold,
                     float boxIOUThreshold = 0.5,
                     const std::vector<std::string>& labels = std::vector<std::string>(),

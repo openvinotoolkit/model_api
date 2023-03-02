@@ -34,9 +34,9 @@ struct ResultBase;
 
 class ModelBase {
 public:
-    ModelBase(const std::string& modelFileName, const std::string& layout = "");
-    ModelBase(const std::string& modelFileName, const std::shared_ptr<InferenceAdapter>& inferenceAdapter, const std::string& layout = "")
-            : modelFileName(modelFileName),
+    ModelBase(const std::string& modelFile, const std::string& layout = "");
+    ModelBase(const std::string& modelFile, const std::shared_ptr<InferenceAdapter>& inferenceAdapter, const std::string& layout = "")
+            : modelFile(modelFile),
              inferenceAdapter(inferenceAdapter),
              inputsLayouts(parseLayoutString(layout)) {}
 
@@ -48,15 +48,15 @@ public:
     virtual std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) = 0;
     virtual std::unique_ptr<ResultBase> infer(const InputData& inputData);
 
-    const std::vector<std::string>& getOutputsNames() const {
-        return outputsNames;
+    const std::vector<std::string>& getoutputNames() const {
+        return outputNames;
     }
-    const std::vector<std::string>& getInputsNames() const {
-        return inputsNames;
+    const std::vector<std::string>& getinputNames() const {
+        return inputNames;
     }
 
-    std::string getModelFileName() {
-        return modelFileName;
+    std::string getmodelFile() {
+        return modelFile;
     }
 
     void setInputsPreprocessing(bool reverseInputChannels,
@@ -71,11 +71,11 @@ protected:
     void prepareModel(ov::Core& core);
 
     InputTransform inputTransform = InputTransform();
-    std::shared_ptr<InferenceAdapter> inferenceAdapter;
 
-    std::vector<std::string> inputsNames;
-    std::vector<std::string> outputsNames;
-    std::string modelFileName;
+    std::vector<std::string> inputNames;
+    std::vector<std::string> outputNames;
+    std::string modelFile;
+    std::shared_ptr<InferenceAdapter> inferenceAdapter;
     ModelConfig config = {};
     std::map<std::string, ov::Layout> inputsLayouts;
     ov::Layout getInputLayout(const ov::Output<ov::Node>& input);

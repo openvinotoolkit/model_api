@@ -47,7 +47,7 @@ public:
     };
     static const int INIT_VECTOR_SIZE = 200;
 
-    ModelCenterNet(const std::string& modelFileName,
+    ModelCenterNet(const std::string& modelFile,
                    float confidenceThreshold,
                    const std::vector<std::string>& labels = std::vector<std::string>(),
                    const std::string& layout = "");

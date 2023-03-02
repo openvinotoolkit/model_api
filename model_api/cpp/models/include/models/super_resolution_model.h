@@ -34,9 +34,9 @@ struct ResultBase;
 class SuperResolutionModel : public ImageModel {
 public:
     /// Constructor
-    /// @param modelFileName name of model to load
+    /// @param modelFile name of model to load
     /// @param layout - model input layout
-    SuperResolutionModel(const std::string& modelFileName,
+    SuperResolutionModel(const std::string& modelFile,
                          const cv::Size& inputImgSize,
                          const std::string& layout = "");
 
