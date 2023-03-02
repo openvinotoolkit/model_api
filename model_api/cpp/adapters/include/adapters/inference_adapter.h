@@ -35,8 +35,8 @@ class InferenceAdapter
 public:
     InferenceAdapter() {};
 
-    virtual InferenceOutput infer(const InferenceInput& input) {printf("InferenceAdapter::infer");}
+    virtual InferenceOutput infer(const InferenceInput& input) = 0;
     virtual void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
-                                                    const std::string& device, const ov::AnyMap& compilationConfig) {printf("InferenceAdapter::loadModel");}
-    virtual ov::Shape getInputShape(const std::string& inputName) const {printf("InferenceAdapter::getInputShape");}
+                                                    const std::string& device, const ov::AnyMap& compilationConfig) = 0;
+    virtual ov::Shape getInputShape(const std::string& inputName) const = 0;
 };

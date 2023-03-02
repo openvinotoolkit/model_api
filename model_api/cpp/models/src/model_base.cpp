@@ -33,13 +33,9 @@ ModelBase::ModelBase(const std::string& modelFileName, const std::string& layout
         : modelFileName(modelFileName),
           inputsLayouts(parseLayoutString(layout)) {
     inferenceAdapter = std::make_shared<OpenVINOInferenceAdapter>();
-    auto core = ov::Core();
-    prepareModel(core);
 }
 
-ModelBase::ModelBase(const std::shared_ptr<InferenceAdapter>& inferenceAdapter, const std::string& layout)
-        : inferenceAdapter(inferenceAdapter),
-          inputsLayouts(parseLayoutString(layout)) {
+void ModelBase::load() {
     auto core = ov::Core();
     prepareModel(core);
 }

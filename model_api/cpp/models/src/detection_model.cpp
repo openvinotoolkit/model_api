@@ -89,31 +89,32 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     if (masks_iter != configuration.end()) {
         masks = masks_iter->second.as<std::vector<int64_t>>();
     }
+
+    std::unique_ptr<DetectionModel> detectionModel;
     if (model_type == "centernet") {
-        return std::unique_ptr<DetectionModel>(new ModelCenterNet(modelFileName, confidence_threshold, labels, layout));
     } else if (model_type == "faceboxes") {
-        return std::unique_ptr<DetectionModel>(new ModelFaceBoxes(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelFaceBoxes(modelFileName,
                                         confidence_threshold,
                                         auto_resize,
                                         iou_t,
                                         layout));
     } else if (model_type == "retinaface") {
-        return std::unique_ptr<DetectionModel>(new ModelRetinaFace(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFace(modelFileName,
                                         confidence_threshold,
                                         auto_resize,
                                         iou_t,
                                         layout));
     } else if (model_type == "retinaface-pytorch") {
-        return std::unique_ptr<DetectionModel>(new ModelRetinaFacePT(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFacePT(modelFileName,
                                             confidence_threshold,
                                             auto_resize,
                                             iou_t,
                                             layout));
     } else if (model_type == "ssd" || model_type == "SSD") {
-        return std::unique_ptr<DetectionModel>(new ModelSSD(modelFileName, confidence_threshold, auto_resize, labels, layout));
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelSSD(modelFileName, confidence_threshold, auto_resize, labels, layout));
     } else if (model_type == "yolo") {
         bool FLAGS_yolo_af = true;  // Use advanced postprocessing/filtering algorithm for YOLO
-        return std::unique_ptr<DetectionModel>(new ModelYolo(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYolo(modelFileName,
                                     confidence_threshold,
                                     auto_resize,
                                     FLAGS_yolo_af,
@@ -123,12 +124,12 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
                                     masks,
                                     layout));
     } else if (model_type == "yolov3-onnx") {
-        return std::unique_ptr<DetectionModel>(new ModelYoloV3ONNX(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloV3ONNX(modelFileName,
                                         confidence_threshold,
                                         labels,
                                         layout));
     } else if (model_type == "yolox") {
-        return std::unique_ptr<DetectionModel>(new ModelYoloX(modelFileName,
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloX(modelFileName,
                                     confidence_threshold,
                                     iou_t,
                                     labels,
@@ -136,6 +137,9 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     } else {
         throw std::runtime_error{"No model type or invalid model type (-at) provided: " + model_type};
     }
+
+    detectionModel->load();
+    return detectionModel;
 }
 
 std::vector<std::string> DetectionModel::loadLabels(const std::string& labelFilename) {
