@@ -105,7 +105,7 @@ void ModelYoloV3ONNX::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
 }
 
 std::shared_ptr<InternalModelData> ModelYoloV3ONNX::preprocess(const InputData& inputData,
-                                                               ov::InferRequest& request) {
+                                                               InferenceInput& input) {
     const auto& origImg = inputData.asRef<ImageInputData>().inputImage;
 
     cv::Mat info(cv::Size(1, 2), CV_32SC1);
@@ -114,9 +114,9 @@ std::shared_ptr<InternalModelData> ModelYoloV3ONNX::preprocess(const InputData& 
     auto allocator = std::make_shared<SharedTensorAllocator>(info);
     ov::Tensor infoInput = ov::Tensor(ov::element::i32, ov::Shape({1, 2}),  ov::Allocator(allocator));
 
-    request.set_tensor(inputsNames[1], infoInput);
+     input.emplace(inputsNames[1], infoInput);
 
-    return ImageModel::preprocess(inputData, request);
+    return ImageModel::preprocess(inputData, input);
 }
 
 namespace {

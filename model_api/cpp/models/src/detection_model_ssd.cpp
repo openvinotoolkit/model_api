@@ -40,17 +40,20 @@ ModelSSD::ModelSSD(const std::string& modelFileName,
                    const std::string& layout)
     : DetectionModel(modelFileName, confidenceThreshold, useAutoResize, labels, layout) {}
 
-std::shared_ptr<InternalModelData> ModelSSD::preprocess(const InputData& inputData, ov::InferRequest& request) {
+std::shared_ptr<InternalModelData> ModelSSD::preprocess(const InputData& inputData, InferenceInput& input) {
     if (inputsNames.size() > 1) {
-        const auto& imageInfoTensor = request.get_tensor(inputsNames[1]);
-        const auto info = imageInfoTensor.data<float>();
-        info[0] = static_cast<float>(netInputHeight);
-        info[1] = static_cast<float>(netInputWidth);
-        info[2] = 1;
-        request.set_tensor(inputsNames[1], imageInfoTensor);
+        cv::Mat info(cv::Size(1, 3), CV_32SC1);
+        info.at<int>(0, 0) = static_cast<float>(netInputHeight);
+        info.at<int>(0, 1) = static_cast<float>(netInputWidth);
+        info.at<int>(0, 2) = 1;
+        auto allocator = std::make_shared<SharedTensorAllocator>(info);
+        ov::Tensor infoInput = ov::Tensor(ov::element::i32, ov::Shape({1, 3}),  ov::Allocator(allocator));
+
+        input.emplace(inputsNames[1], infoInput);
+
     }
 
-    return DetectionModel::preprocess(inputData, request);
+    return DetectionModel::preprocess(inputData, input);
 }
 
 std::unique_ptr<ResultBase> ModelSSD::postprocess(InferenceResult& infResult) {

@@ -105,7 +105,7 @@ void DeblurringModel::changeInputSize(std::shared_ptr<ov::Model>& model) {
     model->reshape(inputShape);
 }
 
-std::shared_ptr<InternalModelData> DeblurringModel::preprocess(const InputData& inputData, ov::InferRequest& request) {
+std::shared_ptr<InternalModelData> DeblurringModel::preprocess(const InputData& inputData, InferenceInput& input) {
     auto& image = inputData.asRef<ImageInputData>().inputImage;
     size_t h = image.rows;
     size_t w = image.cols;
@@ -119,7 +119,7 @@ std::shared_ptr<InternalModelData> DeblurringModel::preprocess(const InputData& 
         slog::warn << "\tChosen model aspect ratio doesn't match image aspect ratio" << slog::endl;
         cv::resize(image, resizedImage, cv::Size(netInputWidth, netInputHeight));
     }
-    request.set_input_tensor(wrapMat2Tensor(resizedImage));
+    input.emplace(inputsNames[0], wrapMat2Tensor(resizedImage));
 
     return std::make_shared<InternalImageModelData>(image.cols, image.rows);
 }

@@ -138,7 +138,7 @@ void HPEOpenPose::changeInputSize(std::shared_ptr<ov::Model>& model) {
     model->reshape(inputShape);
 }
 
-std::shared_ptr<InternalModelData> HPEOpenPose::preprocess(const InputData& inputData, ov::InferRequest& request) {
+std::shared_ptr<InternalModelData> HPEOpenPose::preprocess(const InputData& inputData, InferenceInput& input) {
     auto& image = inputData.asRef<ImageInputData>().inputImage;
     cv::Rect roi;
     auto paddedImage =
@@ -150,7 +150,8 @@ std::shared_ptr<InternalModelData> HPEOpenPose::preprocess(const InputData& inpu
         slog::warn << "\tChosen model aspect ratio doesn't match image aspect ratio" << slog::endl;
     }
 
-    request.set_input_tensor(wrapMat2Tensor(paddedImage));
+    input.emplace(inputsNames[0], wrapMat2Tensor(paddedImage));
+
     return std::make_shared<InternalScaleData>(paddedImage.cols,
                                                paddedImage.rows,
                                                image.cols / static_cast<float>(roi.width),

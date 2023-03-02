@@ -144,32 +144,32 @@ void SuperResolutionModel::changeInputSize(std::shared_ptr<ov::Model>& model, in
 }
 
 std::shared_ptr<InternalModelData> SuperResolutionModel::preprocess(const InputData& inputData,
-                                                                    ov::InferRequest& request) {
+                                                                    InferenceInput& input) {
     auto imgData = inputData.asRef<ImageInputData>();
     auto& img = imgData.inputImage;
 
-    const ov::Tensor lrInputTensor = request.get_tensor(inputsNames[0]);
+    auto lrShape = inferenceAdapter->getInputShape(inputsNames[0]);
     const ov::Layout layout("NHWC");
 
-    if (img.channels() != static_cast<int>(lrInputTensor.get_shape()[ov::layout::channels_idx(layout)])) {
+    if (img.channels() != static_cast<int>(lrShape[ov::layout::channels_idx(layout)])) {
         cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
     }
 
     if (static_cast<size_t>(img.cols) != netInputWidth || static_cast<size_t>(img.rows) != netInputHeight) {
         slog::warn << "\tChosen model aspect ratio doesn't match image aspect ratio" << slog::endl;
     }
-    const size_t height = lrInputTensor.get_shape()[ov::layout::height_idx(layout)];
-    const size_t width = lrInputTensor.get_shape()[ov::layout::width_idx(layout)];
+    const size_t height = lrShape[ov::layout::height_idx(layout)];
+    const size_t width = lrShape[ov::layout::width_idx(layout)];
     img = resizeImageExt(img, width, height);
-    request.set_tensor(inputsNames[0], wrapMat2Tensor(img));
+    input.emplace(inputsNames[0], wrapMat2Tensor(img));
 
     if (inputsNames.size() == 2) {
-        const ov::Tensor bicInputTensor = request.get_tensor(inputsNames[1]);
-        const int h = static_cast<int>(bicInputTensor.get_shape()[ov::layout::height_idx(layout)]);
-        const int w = static_cast<int>(bicInputTensor.get_shape()[ov::layout::width_idx(layout)]);
+        auto bicShape = inferenceAdapter->getInputShape(inputsNames[1]);
+        const int h = static_cast<int>(bicShape[ov::layout::height_idx(layout)]);
+        const int w = static_cast<int>(bicShape[ov::layout::width_idx(layout)]);
         cv::Mat resized;
         cv::resize(img, resized, cv::Size(w, h), 0, 0, cv::INTER_CUBIC);
-        request.set_tensor(inputsNames[1], wrapMat2Tensor(resized));
+        input.emplace(inputsNames[1], wrapMat2Tensor(resized));
     }
 
     return std::make_shared<InternalImageModelData>(img.cols, img.rows);

@@ -135,14 +135,14 @@ void HpeAssociativeEmbedding::changeInputSize(std::shared_ptr<ov::Model>& model)
 }
 
 std::shared_ptr<InternalModelData> HpeAssociativeEmbedding::preprocess(const InputData& inputData,
-                                                                       ov::InferRequest& request) {
+                                                                       InferenceInput& input) {
     auto& image = inputData.asRef<ImageInputData>().inputImage;
     cv::Rect roi;
     auto paddedImage = resizeImageExt(image, inputLayerSize.width, inputLayerSize.height, resizeMode, interpolationMode, &roi);
     if (inputLayerSize.height - stride >= roi.height || inputLayerSize.width - stride >= roi.width) {
         slog::warn << "\tChosen model aspect ratio doesn't match image aspect ratio" << slog::endl;
     }
-    request.set_input_tensor(wrapMat2Tensor(paddedImage));
+    input.emplace(inputsNames[0], wrapMat2Tensor(paddedImage));
 
     return std::make_shared<InternalScaleData>(paddedImage.cols,
                                                paddedImage.rows,

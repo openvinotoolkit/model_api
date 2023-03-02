@@ -51,7 +51,7 @@ public:
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
-    std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, ov::InferRequest& request) override;
+    std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
 
     static const size_t keypointsNumber = 18;
 

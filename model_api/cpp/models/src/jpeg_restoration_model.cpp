@@ -109,7 +109,7 @@ void JPEGRestorationModel::changeInputSize(std::shared_ptr<ov::Model>& model) {
 }
 
 std::shared_ptr<InternalModelData> JPEGRestorationModel::preprocess(const InputData& inputData,
-                                                                    ov::InferRequest& request) {
+                                                                    InferenceInput& input) {
     cv::Mat image = inputData.asRef<ImageInputData>().inputImage;
     const size_t h = image.rows;
     const size_t w = image.cols;
@@ -129,7 +129,7 @@ std::shared_ptr<InternalModelData> JPEGRestorationModel::preprocess(const InputD
         slog::warn << "\tChosen model aspect ratio doesn't match image aspect ratio" << slog::endl;
         cv::resize(image, resizedImage, cv::Size(netInputWidth, netInputHeight));
     }
-    request.set_input_tensor(wrapMat2Tensor(resizedImage));
+    input.emplace(inputsNames[0], wrapMat2Tensor(resizedImage));
 
     return std::make_shared<InternalImageModelData>(image.cols, image.rows);
 }

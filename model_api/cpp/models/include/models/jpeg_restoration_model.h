@@ -43,7 +43,7 @@ public:
                          bool jpegCompression,
                          const std::string& layout = "");
 
-    std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, ov::InferRequest& request) override;
+    std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
 protected:

@@ -25,6 +25,7 @@
 #include <utils/args_helper.hpp>
 #include <utils/config_factory.h>
 #include <utils/ocv_common.hpp>
+#include <adapters/inference_adapter.h>
 
 struct InferenceResult;
 struct InputData;
@@ -33,16 +34,12 @@ struct ResultBase;
 
 class ModelBase {
 public:
-    ModelBase(const std::string& modelFileName, const std::string& layout = "")
-        : isCompiled(false),
-          modelFileName(modelFileName),
-          inputsLayouts(parseLayoutString(layout)) {}
+    ModelBase(const std::string& modelFileName, const std::string& layout = "");
+    ModelBase(const std::shared_ptr<InferenceAdapter>& inferenceAdapter, const std::string& layout = "");
 
     virtual ~ModelBase() = default;
 
-    virtual std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, ov::InferRequest& request) = 0;
-    virtual ov::CompiledModel compileModel(const ModelConfig& config, ov::Core& core);
-    virtual void onLoadCompleted(const std::vector<ov::InferRequest>& requests) {}
+    virtual std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) = 0;
     virtual std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) = 0;
     virtual std::unique_ptr<ResultBase> infer(const InputData& inputData);
 
@@ -66,14 +63,13 @@ public:
 protected:
     virtual void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) = 0;
 
-    std::shared_ptr<ov::Model> prepareModel(ov::Core& core);
+    void prepareModel(ov::Core& core);
 
     InputTransform inputTransform = InputTransform();
+    std::shared_ptr<InferenceAdapter> inferenceAdapter;
+
     std::vector<std::string> inputsNames;
     std::vector<std::string> outputsNames;
-    ov::CompiledModel compiledModel;
-    ov::InferRequest inferRequest;
-    bool isCompiled;
     std::string modelFileName;
     ModelConfig config = {};
     std::map<std::string, ov::Layout> inputsLayouts;

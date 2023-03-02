@@ -129,11 +129,11 @@ cv::Mat getAffineTransform(float centerX,
     return trans;
 }
 
-std::shared_ptr<InternalModelData> ModelCenterNet::preprocess(const InputData& inputData, ov::InferRequest& request) {
+std::shared_ptr<InternalModelData> ModelCenterNet::preprocess(const InputData& inputData, InferenceInput& input) {
     auto& img = inputData.asRef<ImageInputData>().inputImage;
     const auto& resizedImg = resizeImageExt(img, netInputWidth, netInputHeight, RESIZE_KEEP_ASPECT_LETTERBOX);
 
-    request.set_input_tensor(wrapMat2Tensor(inputTransform(resizedImg)));
+    input.emplace(inputsNames[0], wrapMat2Tensor(inputTransform(resizedImg)));
     return std::make_shared<InternalImageModelData>(img.cols, img.rows);
 }
 
