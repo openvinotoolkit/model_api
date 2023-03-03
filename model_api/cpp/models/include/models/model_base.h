@@ -34,15 +34,12 @@ struct ResultBase;
 
 class ModelBase {
 public:
-    ModelBase(const std::string& modelFile, const std::string& layout = "");
-    ModelBase(const std::string& modelFile, const std::shared_ptr<InferenceAdapter>& inferenceAdapter, const std::string& layout = "")
-            : modelFile(modelFile),
-             inferenceAdapter(inferenceAdapter),
-             inputsLayouts(parseLayoutString(layout)) {}
-
+    ModelBase(const std::string& modelFile, const std::string& layout = "")
+        : modelFile(modelFile),
+          inputsLayouts(parseLayoutString(layout)) {}
     virtual ~ModelBase() = default;
 
-    void load();
+    void load(std::shared_ptr<InferenceAdapter> adapter = nullptr);
 
     virtual std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) = 0;
     virtual std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) = 0;
