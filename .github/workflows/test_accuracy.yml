@@ -1,0 +1,49 @@
+name: Test - Accuracy
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '41 1 * * *'  # run every day at 1:11
+  push:
+    paths:
+    # - 'tests/python/accuracy/test_accuracy.py'
+    # - '.github/workflows/test_accuracy.yml'
+      branches: [ master ]
+  pull_request:
+    paths:
+    # - 'tests/python/accuracy/test_accuracy.py'
+    # - '.github/workflows/test_accuracy.yml'
+      branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  CPP-Precommit:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.8]
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Create and start a virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+    - name: Prepare test data
+      run: |
+        source venv/bin/activate
+        python tests/python/accuracy/prepare_data.py -d data
+    - name: Run Python Test
+      run: |
+        source venv/bin/activate
+        pytest --data=./data tests/python/accuracy/test_accuracy.py
+

@@ -23,12 +23,6 @@ if __name__ == "__main__":
         default="./data",
         help="Directory to store downloaded models and datasets",
     )
-    parser.add_argument(
-        "-p",
-        dest="public_scope",
-        default=Path(__file__).resolve().parent / "public_scope.json",
-        help="JSON file with public model description",
-    )
 
     args = parser.parse_args()
 
