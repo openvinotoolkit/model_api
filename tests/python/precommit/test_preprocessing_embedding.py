@@ -10,8 +10,6 @@ import cv2
 import numpy as np
 import pytest
 import requests
-
-
 from openvino.model_api.models import (
     Detection,
     Model,
