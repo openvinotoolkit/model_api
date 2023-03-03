@@ -4,10 +4,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron:  '11 1 * * *'  # run every day at 1:11
-  push:
-    paths:
-    - 'tests/python/accuracy/test_accuracy.py'
-    - '.github/workflows/test_accuracy.yml'
   pull_request:
     paths:
     - 'tests/python/accuracy/test_accuracy.py'
