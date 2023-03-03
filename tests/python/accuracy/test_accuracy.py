@@ -18,11 +18,15 @@ from openvino.model_api.models import (
 )
 
 
-def process_output(ouput, model_type):
+def process_output(output, model_type):
     if model_type == DetectionModel.__name__:
-        return f"{ouput}"
+        return f"{output}"
     elif model_type == ClassificationModel.__name__:
-        return f"({ouput[0]}, {ouput[1]}, {ouput[2]:.3f})"
+        return f"({output[0]}, {output[1]}, {output[2]:.3f})"
+    elif model_type == SegmentationModel.__name__:
+        hist = cv2.calcHist(output, [0], None, [256], (0, 256), accumulate=False)
+        hist = np.nonzero(hist)[0]
+        return f"{hist}"
     else:
         raise ValueError("Unknown model type to precess ouput")
 
@@ -65,6 +69,8 @@ def test_image_models(data, dump, result, model_data):
         if image is None:
             raise RuntimeError("Failed to read the image")
         outputs = model(image)
+        if not isinstance(outputs, list):
+            outputs = [outputs]
 
         image_result = []
 

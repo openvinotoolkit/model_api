@@ -1,5 +1,17 @@
 [
     {
+        "name": "hrnet-v2-c1-segmentation",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg",
+                "reference": [
+                    "[1 2]"
+                ]
+            }
+        ]
+    },
+    {
         "name": "ssd300",
         "type": "DetectionModel",
         "test_data": [
