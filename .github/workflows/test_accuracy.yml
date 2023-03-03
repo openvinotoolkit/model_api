@@ -5,15 +5,15 @@ on:
   schedule:
     - cron:  '41 1 * * *'  # run every day at 1:11
   push:
-    paths:
+    # paths:
     # - 'tests/python/accuracy/test_accuracy.py'
     # - '.github/workflows/test_accuracy.yml'
-      branches: [ master ]
+    branches: [ master ]
   pull_request:
-    paths:
+    # paths:
     # - 'tests/python/accuracy/test_accuracy.py'
     # - '.github/workflows/test_accuracy.yml'
-      branches: [ master ]
+    branches: [ master ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
