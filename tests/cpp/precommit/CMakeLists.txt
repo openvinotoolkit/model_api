@@ -99,6 +99,6 @@ find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 find_package(GTest REQUIRED)
 
-add_subdirectory(../../model_api/cpp ${tests_BINARY_DIR}/model_api/cpp)
+add_subdirectory(../../../model_api/cpp ${tests_BINARY_DIR}/model_api/cpp)
 
 add_test(NAME test_sanity SOURCES test_sanity.cpp DEPENDENCIES model_api)
