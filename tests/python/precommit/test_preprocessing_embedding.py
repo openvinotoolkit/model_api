@@ -11,9 +11,6 @@ import numpy as np
 import pytest
 import requests
 
-# Temporary WA
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "tools/model_tools/src"))
-sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "demos/common/python"))
 
 from openvino.model_api.models import (
     Detection,
