@@ -1,14 +1,45 @@
 [
     {
         "name": "ssd300",
-        "type": "DetectionModel"
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg",
+                "reference": [
+                    "(0, 12, 169, 337, 0.869, 2, bicycle)",
+                    "(58, 275, 360, 383, 0.998, 12, dog)",
+                    "(324, 98, 344, 147, 0.653, 15, person)"
+                ]
+            }
+        ]
     },
     {
         "name": "ssd_mobilenet_v1_fpn_coco",
-        "type": "DetectionModel"
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg",
+                "reference": [
+                    "(0, 12, 171, 330, 0.697, 2, bicycle)",
+                    "(61, 275, 362, 383, 0.645, 18, horse)"
+                ]
+            }
+        ]
     },
     {
         "name": "ssdlite_mobilenet_v2",
-        "type": "DetectionModel"
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg",
+                "reference": [
+                    "(319, 94, 335, 142, 0.842, 1, bicycle)",
+                    "(283, 94, 300, 142, 0.823, 1, bicycle)",
+                    "(352, 95, 371, 144, 0.669, 1, bicycle)",
+                    "(2, 0, 158, 312, 0.889, 2, car)",
+                    "(50, 277, 363, 381, 0.913, 18, sheep)"
+                ]
+            }
+        ]
     }
 ]
