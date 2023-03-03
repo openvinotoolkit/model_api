@@ -41,5 +41,58 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "yolo-v4-tf",
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg",
+                "reference": [
+                    "(61, 277, 362, 376, 0.994, 16, dog)",
+                    "(0, 0, 161, 345, 0.959, 1, bicycle)",
+                    "(460, 102, 494, 147, 0.845, 0, person)",
+                    "(323, 95, 341, 153, 0.762, 0, person)",
+                    "(291, 94, 310, 153, 0.646, 0, person)",
+                    "(272, 101, 291, 150, 0.606, 0, person)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "resnet-18-pytorch",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg",
+                "reference": [
+                    "(257, Great_Pyrenees, 1.000)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "se-resnext-50",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg",
+                "reference": [
+                    "(175, Labrador_retriever, 0.928)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "efficientnet-b0-pytorch",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg",
+                "reference": [
+                    "(245, French_bulldog, 1.000)"
+                ]
+            }
+        ]
     }
 ]

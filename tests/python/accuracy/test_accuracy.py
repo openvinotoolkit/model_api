@@ -67,7 +67,10 @@ def test_image_models(data, dump, result, model_data):
         
         for i, output in enumerate(outputs):
             output_str = process_output(output, model_data["type"])
-            test_result.append(test_data["reference"][i] == output_str)
+            if len(test_data["reference"]) > i:
+                test_result.append(test_data["reference"][i] == output_str)
+            else:
+                test_result.append(False)
             
             if dump:
                 image_result.append(output_str)
