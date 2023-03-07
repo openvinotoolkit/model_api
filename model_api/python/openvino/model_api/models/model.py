@@ -256,6 +256,7 @@ class Model:
                 self.logger.warning(
                     f'The parameter "{name}" not found in {self.__model__} wrapper, will be omitted'
                 )
+
     @classmethod
     def raise_error(cls, message):
         """Raises the WrapperError.
