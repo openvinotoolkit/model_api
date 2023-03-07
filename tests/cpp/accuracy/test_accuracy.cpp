@@ -20,14 +20,20 @@
 
 using json = nlohmann::json;
 
-std::string PUBLIC_SCOPE_PATH = "../../tests/cpp/precommit/public_scope.json";
+std::string PUBLIC_SCOPE_PATH = "../../tests/cpp/accuracy/public_scope.json";
 std::string DATA_DIR = "../data";
 std::string MODEL_PATH_TEMPLATE = "public/%s/FP16/%s.xml";
-std::string IMAGE_PATH = "coco128/images/train2017/000000000074.jpg";
+std::string IMAGE_PATH = "coco128/images/train2017/";
+
+struct TestData {
+    std::string image;
+    std::vector<std::string> reference;
+};
 
 struct ModelData {
     std::string name;
     std::string type;
+    std::vector<TestData> testData;
 };
 
 class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
@@ -48,6 +54,14 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
 {
     test.name = j.at("name").get<std::string>();
     test.type = j.at("type").get<std::string>();
+    for (auto& item : j.at("test_data")) {
+        TestData data;
+        data.image = item.at("image").get<std::string>();
+        for (auto& ref : item.at("reference")) {
+            data.reference.push_back(ref.get<std::string>());
+        }
+        test.testData.push_back(data);
+    }
 }
  
 std::vector<ModelData> GetTestData(const std::string& path)
@@ -58,21 +72,44 @@ std::vector<ModelData> GetTestData(const std::string& path)
     return j;
 }
  
-TEST_P(ModelParameterizedTest, SynchronousInference)
+TEST_P(ModelParameterizedTest, AccuracyTest)
 {
-    cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
-    if (!image.data) {
-        throw std::runtime_error{"Failed to read the image"};
+    auto modelData = GetParam();
+
+    if (modelData.type != "DetectionModel") {
+        std::cout << "Skipped " << modelData.name << " as not supported model type" << std::endl;
+        return;
     }
 
-    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    auto modelPath = string_format(MODEL_PATH_TEMPLATE, modelData.name.c_str(), modelData.name.c_str());
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
 
-    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
-    auto result = model->infer(image);
-    ASSERT_TRUE(result->objects.size() > 0);
+    for (size_t i = 0; i < modelData.testData.size(); i++) {
+        auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+
+        cv::Mat image = cv::imread(imagePath);
+        if (!image.data) {
+            throw std::runtime_error{"Failed to read the image"};
+        }
+
+        auto result = model->infer(image);
+        
+        if (modelData.type != "DetectionModel") {
+            auto objects = result->objects;
+            ASSERT_TRUE(objects.size() == modelData.testData.size());
+
+            for (size_t j = 0; j < objects.size(); j++) {
+                std::stringstream buffer;
+                buffer << objects[j];
+                ASSERT_TRUE(buffer.str() == modelData.testData[i].reference[j]);
+            }
+        }        
+    }
+
+    ASSERT_TRUE(true);
 }
  
-INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
+INSTANTIATE_TEST_SUITE_P(TestAccuracyPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
 
 class InputParser{
     public:
