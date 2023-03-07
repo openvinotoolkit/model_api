@@ -14,6 +14,7 @@
 
 #include <gtest/gtest.h>
 
+#include <models/classification_model.h>
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
@@ -67,11 +68,18 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
 
-    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
-    auto result = model->infer(image);
-    ASSERT_TRUE(result->objects.size() > 0);
+    if ("DetectionModel" == GetParam().type) {
+        auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
+        auto result = model->infer(image);
+        ASSERT_GT(result->objects.size(), 0);
+    } else if ("ClassificationModel" == GetParam().type) {
+        auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+        std::unique_ptr<ClassificationResult> result = model->infer(image);
+        ASSERT_GT(result->topLabels.size(), 0);
+        ASSERT_GT(result->topLabels.front().score, 0);
+    }
 }
- 
+
 INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
 
 class InputParser{
