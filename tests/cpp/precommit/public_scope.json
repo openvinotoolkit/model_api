@@ -41,5 +41,14 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "efficientnet-b0-pytorch",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "000000000074.jpg"
+            }
+        ]
     }
 ]
