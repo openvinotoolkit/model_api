@@ -21,17 +21,17 @@
 
 using json = nlohmann::json;
 
-std::string PUBLIC_SCOPE_PATH = "../tests/cpp/public_scope.json";
+std::string PUBLIC_SCOPE_PATH = "../../tests/cpp/precommit/public_scope.json";
 std::string DATA_DIR = "../data";
 std::string MODEL_PATH_TEMPLATE = "public/%s/FP16/%s.xml";
 std::string IMAGE_PATH = "coco128/images/train2017/000000000074.jpg";
 
-struct TestData {
+struct ModelData {
     std::string name;
     std::string type;
 };
 
-class ModelParameterizedTest : public testing::TestWithParam<TestData> {
+class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
 };
 
 template<typename... Args>
@@ -45,13 +45,13 @@ std::string string_format(const std::string &fmt, Args... args)
     return buf;
 }
 
-inline void from_json(const nlohmann::json& j, TestData& test)
+inline void from_json(const nlohmann::json& j, ModelData& test)
 {
     test.name = j.at("name").get<std::string>();
     test.type = j.at("type").get<std::string>();
 }
  
-std::vector<TestData> GetTestData(const std::string& path)
+std::vector<ModelData> GetTestData(const std::string& path)
 {
     std::ifstream input(path);
     nlohmann::json j;
@@ -88,7 +88,7 @@ class InputParser{
             for (int i=1; i < argc; ++i)
                 this->tokens.push_back(std::string(argv[i]));
         }
-        /// @author iain
+
         const std::string& getCmdOption(const std::string &option) const{
             std::vector<std::string>::const_iterator itr;
             itr =  std::find(this->tokens.begin(), this->tokens.end(), option);
@@ -98,7 +98,7 @@ class InputParser{
             static const std::string empty_string("");
             return empty_string;
         }
-        /// @author iain
+
         bool cmdOptionExists(const std::string &option) const{
             return std::find(this->tokens.begin(), this->tokens.end(), option)
                    != this->tokens.end();
