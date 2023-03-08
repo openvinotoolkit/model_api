@@ -84,7 +84,9 @@ struct ClassificationResult : public ResultBase {
 
         friend std::ostream& operator<< (std::ostream& stream, const Classification& prediction)
         {
-            stream << "(" << prediction.id << ", " << prediction.label << ", " << std::setprecision(3) << prediction.score << ")";
+            stream << "(" << prediction.id << ", " << prediction.label << ", ";
+            stream << std::fixed;
+            stream << std::setprecision(3) << prediction.score << ")";
             return stream;
         }
     };
@@ -99,8 +101,11 @@ struct DetectedObject : public cv::Rect2f {
 
     friend std::ostream& operator<< (std::ostream& stream, const DetectedObject& detection)
     {
-        stream << "(" << detection.x << ", " << detection.y << ", " << detection.width << ", " << detection.height << ", " 
-            << std::setprecision(3) << detection.confidence << detection.labelID << ", " << detection.label << ", " << ")";
+        stream << "(" << int(detection.x) << ", " << int(detection.y) << ", " << int(detection.x + detection.width) 
+            << ", " << int(detection.y + detection.height) << ", ";
+        stream << std::fixed;
+        stream << std::setprecision(3) << detection.confidence << ", ";
+        stream << std::setprecision(-1) << detection.labelID << ", " << detection.label << ")";
         return stream;
     }
 };

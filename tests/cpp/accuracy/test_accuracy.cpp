@@ -14,6 +14,7 @@
 
 #include <gtest/gtest.h>
 
+#include <models/classification_model.h>
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
@@ -75,38 +76,59 @@ std::vector<ModelData> GetTestData(const std::string& path)
 TEST_P(ModelParameterizedTest, AccuracyTest)
 {
     auto modelData = GetParam();
-
-    if (modelData.type != "DetectionModel") {
-        std::cout << "Skipped " << modelData.name << " as not supported model type" << std::endl;
-        return;
-    }
-
     auto modelPath = string_format(MODEL_PATH_TEMPLATE, modelData.name.c_str(), modelData.name.c_str());
-    auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
 
-    for (size_t i = 0; i < modelData.testData.size(); i++) {
-        auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
-
-        cv::Mat image = cv::imread(imagePath);
-        if (!image.data) {
-            throw std::runtime_error{"Failed to read the image"};
-        }
-
-        auto result = model->infer(image);
+    if (modelData.type == "DetectionModel") {
         
-        if (modelData.type != "DetectionModel") {
+        auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
+
+        for (size_t i = 0; i < modelData.testData.size(); i++) {
+            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+
+            cv::Mat image = cv::imread(imagePath);
+            if (!image.data) {
+                throw std::runtime_error{"Failed to read the image"};
+            }
+
+            auto result = model->infer(image);
             auto objects = result->objects;
-            ASSERT_TRUE(objects.size() == modelData.testData.size());
+            ASSERT_TRUE(objects.size() == modelData.testData[i].reference.size());
 
             for (size_t j = 0; j < objects.size(); j++) {
                 std::stringstream buffer;
                 buffer << objects[j];
+                std::cout << "Buffer: " << buffer.str() << std::endl;
+                std::cout << "Reference: " << modelData.testData[i].reference[j] << std::endl;
                 ASSERT_TRUE(buffer.str() == modelData.testData[i].reference[j]);
             }
-        }        
+        }
     }
+    else if (modelData.type == "ClassificationModel") {
+        auto model = ClassificationModel::create_model(DATA_DIR + "/" + modelPath);
 
-    ASSERT_TRUE(true);
+        for (size_t i = 0; i < modelData.testData.size(); i++) {
+            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+
+            cv::Mat image = cv::imread(imagePath);
+            if (!image.data) {
+                throw std::runtime_error{"Failed to read the image"};
+            }
+
+            auto result = model->infer(image);
+            auto topLabels = result->topLabels;
+
+            ASSERT_GT(topLabels.size(), 0);
+            
+            std::stringstream buffer;
+            buffer << topLabels[0];
+            std::cout << "Buffer: " << buffer.str() << std::endl;
+            std::cout << "Reference: " << modelData.testData[i].reference[0] << std::endl;
+            ASSERT_TRUE(buffer.str() == modelData.testData[i].reference[0]); // Check top-1 only
+        }
+    }
+    else {
+        std::cout << "Skipped " << modelData.name << " as not supported model type" << std::endl;
+    }
 }
  
 INSTANTIATE_TEST_SUITE_P(TestAccuracyPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
