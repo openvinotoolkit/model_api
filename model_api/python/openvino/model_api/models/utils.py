@@ -125,9 +125,7 @@ def resize_image(image, size, keep_aspect_ratio=False, interpolation=cv2.INTER_L
     if keep_aspect_ratio:
         h, w = image.shape[:2]
         scale = min(size[1] / h, size[0] / w)
-        return cv2.resize(
-            image, None, fx=scale, fy=scale, interpolation=interpolation
-        )
+        return cv2.resize(image, None, fx=scale, fy=scale, interpolation=interpolation)
     return cv2.resize(image, size, interpolation=interpolation)
 
 
