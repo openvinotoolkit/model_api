@@ -1,16 +1,9 @@
 import json
-import math
-import os
-import sys
-import tempfile
-import time
-from copy import deepcopy
 from pathlib import Path
 
 import cv2
 import numpy as np
 import pytest
-import requests
 from openvino.model_api.models import (
     ClassificationModel,
     DetectionModel,

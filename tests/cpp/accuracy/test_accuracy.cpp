@@ -92,14 +92,12 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
 
             auto result = model->infer(image);
             auto objects = result->objects;
-            ASSERT_TRUE(objects.size() == modelData.testData[i].reference.size());
+            ASSERT_EQ(objects.size(), modelData.testData[i].reference.size());
 
             for (size_t j = 0; j < objects.size(); j++) {
-                std::stringstream buffer;
-                buffer << objects[j];
-                std::cout << "Buffer: " << buffer.str() << std::endl;
-                std::cout << "Reference: " << modelData.testData[i].reference[j] << std::endl;
-                ASSERT_TRUE(buffer.str() == modelData.testData[i].reference[j]);
+                std::stringstream prediction_buffer;
+                prediction_buffer << objects[j];
+                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
             }
         }
     }
@@ -119,11 +117,9 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
 
             ASSERT_GT(topLabels.size(), 0);
             
-            std::stringstream buffer;
-            buffer << topLabels[0];
-            std::cout << "Buffer: " << buffer.str() << std::endl;
-            std::cout << "Reference: " << modelData.testData[i].reference[0] << std::endl;
-            ASSERT_TRUE(buffer.str() == modelData.testData[i].reference[0]); // Check top-1 only
+            std::stringstream prediction_buffer;
+            prediction_buffer << topLabels[0];
+            ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
         }
     }
     else {

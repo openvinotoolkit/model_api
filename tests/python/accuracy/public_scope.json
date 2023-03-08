@@ -61,7 +61,7 @@
             {
                 "image": "000000000074.jpg",
                 "reference": [
-                    "(257, Great_Pyrenees, 1.000)"
+                    "(222, kuvasz, 0.145)"
                 ]
             }
         ]
@@ -73,7 +73,7 @@
             {
                 "image": "000000000074.jpg",
                 "reference": [
-                    "(175, Labrador_retriever, 0.928)"
+                    "(175, Labrador_retriever, 0.613)"
                 ]
             }
         ]
@@ -85,7 +85,7 @@
             {
                 "image": "000000000074.jpg",
                 "reference": [
-                    "(245, French_bulldog, 1.000)"
+                    "(245, French_bulldog, 0.152)"
                 ]
             }
         ]
