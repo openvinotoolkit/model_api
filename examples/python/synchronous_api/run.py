@@ -25,6 +25,7 @@ from openvino.model_api.models import (
 )
 from PIL import Image
 
+import openvino.runtime as ov
 
 def main():
     if len(sys.argv) != 2:
@@ -49,6 +50,8 @@ def main():
     )
     detections = ssd_mobilenet_fpn(image)
     print(f"Detection results: {detections}")
+    ov.serialize(ssd_mobilenet_fpn.get_model(),
+                 "ssd_mobilenet_v1_fpn_coco_with_preprocessing.xml")
 
     # Instantiate from a local model (downloaded previously)
     ssd_mobilenet_fpn_local = DetectionModel.create_model(

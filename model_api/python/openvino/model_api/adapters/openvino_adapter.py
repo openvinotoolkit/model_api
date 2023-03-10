@@ -407,6 +407,14 @@ class OpenvinoAdapter(InferenceAdapter):
 
         self.model = ppp.build()
         self.load_model()
+        
+    def get_model(self):
+        """Returns the ov.Model object
+        
+        Returns:
+            ov.Model object
+        """
+        return self.model
 
 
 def get_input_shape(input_tensor):
