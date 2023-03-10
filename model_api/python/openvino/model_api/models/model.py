@@ -84,10 +84,10 @@ class Model:
         self.model_loaded = False
         if preload:
             self.load()
-            
+
     def get_model(self):
         """Returns the ov.Model object stored in the InferenceAdapter.
-        
+
         Note: valid only for local inference
 
         Returns:
@@ -97,7 +97,7 @@ class Model:
         """
         if isinstance(self.inference_adapter, OpenvinoAdapter):
             return self.inference_adapter.get_model()
-        
+
         raise RuntimeError("get_model() is not supported for remote inference")
 
     @classmethod
