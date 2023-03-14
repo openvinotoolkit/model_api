@@ -181,7 +181,7 @@ class BertQuestionAnswering(Bert):
                 ),
                 "max_answer_token_num": NumericalValue(value_type=int),
                 "squad_ver": StringValue(
-                    description='SQuAD dataset version used for training. Affects how postprocessing'
+                    description="SQuAD dataset version used for training. Affects how postprocessing"
                 ),
             }
         )
