@@ -40,7 +40,7 @@ class MaskRCNNModel(ImageModel):
             {
                 "confidence_threshold": NumericalValue(
                     default_value=0.5,
-                    description="probability threshold value for bounding box filtering",
+                    description="Probability threshold value for bounding box filtering",
                 ),
                 "labels": ListValue(description="List of class labels"),
                 "path_to_labels": StringValue(
