@@ -39,7 +39,7 @@ Model API is a set of wrapper classes for particular tasks and model architectur
     ```
 
 ## Usage
-For more details please refer to the [examples](https://github.com/openvinotoolkit/model_api/tree/master/examples) of this project.
+For more details please refer to the [examples](examples) of this project.
 ### Local inference
 - Python
 ```python
@@ -73,3 +73,5 @@ auto model = DetectionModel::create_model("\~/.cache/omz/public/ssd300/FP16/ssd3
 ```
 
 More examples of how to use asynchronous inference and serving are coming soon.
+
+See [Model configuration](docs/model-configuration.md) for explanation how a model can be configured.
