@@ -129,10 +129,10 @@ class OpenPose(ImageModel):
                 "target_size": NumericalValue(value_type=int, min=1,
                     description='Image resolution which is going to be processed. Reshapes network to match a given size'),
                 "aspect_ratio": NumericalValue(
-                    description='Image aspect ration which is going to be processed. Reshapes network to match a given size'
+                    description='Image aspect ratio which is going to be processed. Reshapes network to match a given size'
                 ),
                 "confidence_threshold": NumericalValue(
-                    description='pose confidence threshhold'
+                    description='pose confidence threshold'
                 ),
                 "upsample_ratio": NumericalValue(default_value=1, value_type=int
                     description='Upsample ratio of a model backbone'),

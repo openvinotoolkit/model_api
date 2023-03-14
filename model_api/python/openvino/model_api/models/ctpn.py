@@ -102,7 +102,7 @@ class CTPN(DetectionModel):
         parameters.update(
             {
                 "iou_threshold": NumericalValue(
-                    default_value=0.5, description="Threshold for non-maximum supression (NMS) intersection over union (IOU) filtering"
+                    default_value=0.5, description="Threshold for non-maximum suppression (NMS) intersection over union (IOU) filtering"
                 ),
                 "input_size": ListValue(
                     description='Image resolution which is going to be processed. Reshapes network to match a given size'

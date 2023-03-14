@@ -94,10 +94,10 @@ class HpeAssociativeEmbedding(ImageModel):
                 "target_size": NumericalValue(value_type=int, min=1,
                     description='Image resolution which is going to be processed. Reshapes network to match a given size'),
                 "aspect_ratio": NumericalValue(
-                    description='Image aspect ration which is going to be processed. Reshapes network to match a given size'
+                    description='Image aspect ratio which is going to be processed. Reshapes network to match a given size'
                 ),
                 "confidence_threshold": NumericalValue(
-                    description='Pose confidence threshhold'
+                    description='Pose confidence threshold'
                 ),
                 "delta": NumericalValue(default_value=0.0),
                 "size_divisor": NumericalValue(default_value=32, value_type=int
