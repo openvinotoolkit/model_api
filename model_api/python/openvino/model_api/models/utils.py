@@ -42,13 +42,12 @@ class Detection:
     def __repr__(self):
         return self.__to_str()
 
-
 def clip_detections(detections, size):
     for detection in detections:
-        detection.xmin = max(int(detection.xmin), 0)
-        detection.ymin = max(int(detection.ymin), 0)
-        detection.xmax = min(int(detection.xmax), size[1])
-        detection.ymax = min(int(detection.ymax), size[0])
+        detection.xmin = min(max(round(detection.xmin), 0), size[1])
+        detection.ymin = min(max(round(detection.ymin), 0), size[0])
+        detection.xmax = min(max(round(detection.xmax), 0), size[1])
+        detection.ymax = min(max(round(detection.ymax), 0), size[0])
     return detections
 
 
@@ -148,21 +147,17 @@ def pad_image(image, size):
 
 
 def resize_image_letterbox(image, size, interpolation=cv2.INTER_LINEAR):
-    ih, iw = image.shape[0:2]
-    w, h = size
-    scale = min(w / iw, h / ih)
-    nw = int(iw * scale)
-    nh = int(ih * scale)
-    image = cv2.resize(image, (nw, nh), interpolation=interpolation)
-    dx = (w - nw) // 2
-    dy = (h - nh) // 2
-    resized_image = np.pad(
+    target_w, target_h = size
+    scale = min(target_w / image.shape[1], target_h / image.shape[0])
+    image = cv2.resize(image, None, fx=scale, fy=scale, interpolation=interpolation)
+    dx = (target_w - image.shape[1]) // 2
+    dy = (target_h - image.shape[0]) // 2
+    return np.pad(
         image,
-        ((dy, dy + (h - nh) % 2), (dx, dx + (w - nw) % 2), (0, 0)),
+        ((dy, target_h - image.shape[0] - dy), (dx, target_w - image.shape[1] - dx), (0, 0)),
         mode="constant",
         constant_values=0,
     )
-    return resized_image
 
 
 def crop_resize(image, size):

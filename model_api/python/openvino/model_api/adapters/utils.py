@@ -104,8 +104,8 @@ def resize_image_letterbox_graph(input: Output, size, interpolation="linear"):
     w_ratio = opset.divide(opset.constant(w, dtype=float), iw)
     h_ratio = opset.divide(opset.constant(h, dtype=float), ih)
     scale = opset.minimum(w_ratio, h_ratio)
-    nw = opset.convert(opset.multiply(iw, scale), destination_type="i32")
-    nh = opset.convert(opset.multiply(ih, scale), destination_type="i32")
+    nw = opset.convert(opset.round(opset.multiply(iw, scale)), destination_type="i32")
+    nh = opset.convert(opset.round(opset.multiply(ih, scale)), destination_type="i32")
     new_size = opset.concat([opset.unsqueeze(nh, 0), opset.unsqueeze(nw, 0)], axis=-1)
     image = opset.interpolate(
         input,
