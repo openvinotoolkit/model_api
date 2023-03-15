@@ -33,6 +33,20 @@ ImageModel::ImageModel(const std::string& modelFile, bool useAutoResize, const s
     : ModelBase(modelFile, layout),
       useAutoResize(useAutoResize) {}
 
+ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : ModelBase(model, configuration) {
+    auto layout_iter = configuration.find("layout");
+    std::string layout;
+    if (layout_iter != configuration.end()) {
+        layout = layout_iter->second.as<std::string>();
+        inputsLayouts = parseLayoutString(layout);
+    }
+    auto auto_resize_iter = configuration.find("auto_resize");
+    if (auto_resize_iter != configuration.end()) {
+        useAutoResize = auto_resize_iter->second.as<bool>();
+    }
+}
+
 std::shared_ptr<InternalModelData> ImageModel::preprocess(const InputData& inputData, InferenceInput& input) {
     const auto& origImg = inputData.asRef<ImageInputData>().inputImage;
     auto img = inputTransform(origImg);

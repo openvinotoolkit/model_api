@@ -22,7 +22,7 @@
 
 #include "adapters/inference_adapter.h"
 
-struct ModelConfig;
+struct InferenceConfig;
 
 class OpenVINOInferenceAdapter :public InferenceAdapter
 {

@@ -38,6 +38,9 @@ public:
 
     ModelBase(std::shared_ptr<InferenceAdapter>& adapter)
         : inferenceAdapter(adapter) {}
+
+    ModelBase(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+        : model(model) {}
     
     virtual ~ModelBase() = default;
 
@@ -65,7 +68,7 @@ protected:
     std::vector<std::string> outputNames;
     std::string modelFile;
     std::shared_ptr<InferenceAdapter> inferenceAdapter;
-    ModelConfig config = {};
+    InferenceConfig config = {};
     std::map<std::string, ov::Layout> inputsLayouts;
     ov::Layout getInputLayout(const ov::Output<ov::Node>& input);
 };

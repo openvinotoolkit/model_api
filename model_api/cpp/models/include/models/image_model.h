@@ -37,12 +37,14 @@ public:
     /// @param layout - model input layout
     ImageModel(const std::string& modelFile, bool useAutoResize, const std::string& layout = "");
 
+    ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+
     using ModelBase::ModelBase;
 
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
 
 protected:
-    bool useAutoResize;
+    bool useAutoResize = false;
 
     size_t netInputHeight = 0;
     size_t netInputWidth = 0;

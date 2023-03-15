@@ -43,6 +43,28 @@ ClassificationModel::ClassificationModel(const std::string& modelFile,
       topk(topk),
       labels(labels) {}
 
+ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : ImageModel(model, configuration) {
+    auto topk_iter = configuration.find("topk");
+    if (topk_iter == configuration.end()) {
+        if (model->has_rt_info<std::string>("model_info", "topk")) {
+            topk = stoi(model->get_rt_info<std::string>("model_info", "topk"));
+        }
+    } else {
+        topk = topk_iter->second.as<size_t>();
+    }
+
+    auto labels_iter = configuration.find("labels");
+    if (labels_iter == configuration.end()) {
+        if (!model->has_rt_info<std::string>("model_info", "labels")) {
+            throw std::runtime_error("configuraiot arg or model xml or must contain model_info/labels rt_info");
+        }
+        labels = split(model->get_rt_info<std::string>("model_info", "labels"), ' ');
+    } else {
+        labels = labels_iter->second.as<std::vector<std::string>>();
+    }
+}
+
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
@@ -52,37 +74,8 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
             throw std::runtime_error("Model xml claims the model type is not Classificaction but " + modelType);
         }
     }
-    auto topk_iter = configuration.find("topk");
-    size_t topk = 1;
-    if (topk_iter == configuration.end()) {
-        if (model->has_rt_info<std::string>("model_info", "topk")) {
-            topk = stoi(model->get_rt_info<std::string>("model_info", "topk"));
-        }
-    } else {
-        topk = topk_iter->second.as<size_t>();
-    }
-    auto labels_iter = configuration.find("labels");
-    std::vector<std::string> labels;
-    if (labels_iter == configuration.end()) {
-        if (!model->has_rt_info<std::string>("model_info", "labels")) {
-            throw std::runtime_error("configuraiot arg or model xml or must contain model_info/labels rt_info");
-        }
-        labels = split(model->get_rt_info<std::string>("model_info", "labels"), ' ');
-    } else {
-        labels = labels_iter->second.as<std::vector<std::string>>();
-    }
-    auto layout_iter = configuration.find("layout");
-    std::string layout;
-    if (layout_iter != configuration.end()) {
-        layout = layout_iter->second.as<std::string>();
-    }
-    auto auto_resize_iter = configuration.find("auto_resize");
-    bool auto_resize = false;
-    if (auto_resize_iter != configuration.end()) {
-        auto_resize = auto_resize_iter->second.as<bool>();
-    }
 
-    std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(modelFile, topk, auto_resize, labels, layout)};
+    std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(model, configuration)};
     classifier->prepare();
     classifier->load(core);
     return classifier;

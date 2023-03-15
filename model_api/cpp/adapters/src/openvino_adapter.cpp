@@ -38,8 +38,7 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
 
     if (model->has_rt_info({"model_info"}) && model->get_rt_info().count("model_info")) {
         modelConfig = model->get_rt_info().at("model_info");
-    }
-    else {
+    } else {
         slog::info << "No model_info is defined in the IR" << slog::endl;
     }
 

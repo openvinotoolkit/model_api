@@ -47,6 +47,10 @@ public:
                         const std::vector<std::string>& labels,
                         const std::string& layout = "");
 
+    ClassificationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+
+    using ImageModel::ImageModel;
+
     static std::unique_ptr<ClassificationModel> create_model(const std::string& modelFile, const ov::AnyMap& configuration = {});
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
@@ -56,7 +60,7 @@ public:
     virtual std::unique_ptr<ClassificationResult> infer(const ImageInputData& inputData);
 
 protected:
-    size_t topk;
+    size_t topk = 1;
     std::vector<std::string> labels;
 
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
