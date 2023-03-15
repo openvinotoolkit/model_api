@@ -61,6 +61,6 @@ The list features only model wrappers which intoduce new configuration values in
 #### `BertQuestionAnswering`
 1. `output_names`: str - comma-separated names of output layers
 1. `max_answer_token_num`: int
-1. `squad_ver`: str - SQuAD dataset version used for training. Affects how postprocessing
+1. `squad_ver`: str - SQuAD dataset version used for training. Affects postprocessing
 
-> Geti Anomaly model wrapper adds `image_threshold`, `pixel_threshold`, `min`, `max`, `threshold`.
+> **NOTE**: OTX `AnomalyBase` model wrapper adds `image_threshold`, `pixel_threshold`, `min`, `max`, `threshold`.
