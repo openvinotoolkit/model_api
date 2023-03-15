@@ -52,7 +52,7 @@ ImageModel::ImageModel(const std::string& modelFile, const std::string& resize_t
         } else {
             throw std::runtime_error("Unknown value for resize_type arg");
         }
-      }
+    }
 
 std::shared_ptr<InternalModelData> ImageModel::preprocess(const InputData& inputData, InferenceInput& input) {
     const auto& origImg = inputData.asRef<ImageInputData>().inputImage;

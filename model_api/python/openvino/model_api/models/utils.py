@@ -42,6 +42,7 @@ class Detection:
     def __repr__(self):
         return self.__to_str()
 
+
 def clip_detections(detections, size):
     for detection in detections:
         detection.xmin = min(max(round(detection.xmin), 0), size[1])
@@ -154,7 +155,11 @@ def resize_image_letterbox(image, size, interpolation=cv2.INTER_LINEAR):
     dy = (target_h - image.shape[0]) // 2
     return np.pad(
         image,
-        ((dy, target_h - image.shape[0] - dy), (dx, target_w - image.shape[1] - dx), (0, 0)),
+        (
+            (dy, target_h - image.shape[0] - dy),
+            (dx, target_w - image.shape[1] - dx),
+            (0, 0),
+        ),
         mode="constant",
         constant_values=0,
     )

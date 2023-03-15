@@ -70,7 +70,7 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
     const auto& internalData = infResult.internalModelData->asRef<InternalImageModelData>();
     float floatInputImgWidth = internalData.inputImgWidth,
          floatInputImgHeight = internalData.inputImgHeight;
-    float invertedScaleX = floatInputImgWidth / netInputWidth;
+    float invertedScaleX = floatInputImgWidth / netInputWidth,
           invertedScaleY = floatInputImgHeight / netInputHeight;
     int padLeft = 0, padTop = 0;
     if (RESIZE_KEEP_ASPECT == resizeMode || RESIZE_KEEP_ASPECT_LETTERBOX == resizeMode) {
