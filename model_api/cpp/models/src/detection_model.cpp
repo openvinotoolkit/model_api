@@ -42,8 +42,9 @@ DetectionModel::DetectionModel(const std::string& modelFile,
       labels(labels),
       confidenceThreshold(confidenceThreshold) {}
 
-std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile, std::shared_ptr<InferenceAdapter> adapter, std::string model_type, const ov::AnyMap& configuration) {
-    std::shared_ptr<ov::Model> model = ov::Core{}.read_model(modelFile);
+std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile, std::string model_type, const ov::AnyMap& configuration) {
+    auto core = ov::Core();
+    std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     if (model_type.empty()) {
         model_type = model->get_rt_info<std::string>("model_info", "model_type");
     }
@@ -135,7 +136,8 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
         throw std::runtime_error{"No model type or invalid model type (-at) provided: " + model_type};
     }
 
-    detectionModel->load(adapter);
+    detectionModel->prepare();
+    detectionModel->load(core);
     return detectionModel;
 }
 

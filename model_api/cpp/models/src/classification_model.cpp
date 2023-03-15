@@ -43,8 +43,9 @@ ClassificationModel::ClassificationModel(const std::string& modelFile,
       topk(topk),
       labels(labels) {}
 
-std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, std::shared_ptr<InferenceAdapter> adapter, const ov::AnyMap& configuration) {
-    std::shared_ptr<ov::Model> model = ov::Core{}.read_model(modelFile);
+std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration) {
+    auto core = ov::Core();
+    std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     if (model->has_rt_info("model_info", "model_type") ) {
         std::string modelType = model->get_rt_info<std::string>("model_info", "model_type");
         if ("Classification" != modelType) {
@@ -64,7 +65,7 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
     std::vector<std::string> labels;
     if (labels_iter == configuration.end()) {
         if (!model->has_rt_info<std::string>("model_info", "labels")) {
-            throw std::runtime_error("configuraiot arg or model xml or must contain model_info/labesl rt_info");
+            throw std::runtime_error("configuraiot arg or model xml or must contain model_info/labels rt_info");
         }
         labels = split(model->get_rt_info<std::string>("model_info", "labels"), ' ');
     } else {
@@ -81,9 +82,10 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
         auto_resize = auto_resize_iter->second.as<bool>();
     }
 
-    std::unique_ptr<ClassificationModel> classificationModel{new ClassificationModel(modelFile, topk, auto_resize, labels, layout)};
-    classificationModel->load(adapter);
-    return classificationModel;
+    std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(modelFile, topk, auto_resize, labels, layout)};
+    classifier->prepare();
+    classifier->load(core);
+    return classifier;
 }
 
 std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& infResult) {

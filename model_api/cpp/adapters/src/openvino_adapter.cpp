@@ -35,6 +35,8 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
     inferRequest = compiledModel.create_infer_request();
 
     initInputsOutputs();
+
+    modelConfig = model->get_rt_info().at("model_info");
 }
 
 InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {
@@ -55,7 +57,7 @@ InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {
     return output;
 }
 
-ov::Shape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {
+const ov::Shape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {
     return compiledModel.input(inputName).get_shape();
 }
 
@@ -67,6 +69,18 @@ void OpenVINOInferenceAdapter::initInputsOutputs() {
     for (const auto& output : compiledModel.outputs()) {
         outputNames.push_back(output.get_any_name());
     }
+}
+
+const std::vector<std::string> OpenVINOInferenceAdapter::getInputNames() const {
+    return inputNames;
+}
+
+const std::vector<std::string> OpenVINOInferenceAdapter::getOutputNames() const {
+    return outputNames;
+}
+
+const ov::AnyMap& OpenVINOInferenceAdapter::getModelConfig() const {
+    return modelConfig;
 }
 
 

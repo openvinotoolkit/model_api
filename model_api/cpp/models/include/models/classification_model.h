@@ -47,7 +47,7 @@ public:
                         const std::vector<std::string>& labels,
                         const std::string& layout = "");
 
-    static std::unique_ptr<ClassificationModel> create_model(const std::string& modelFile, std::shared_ptr<InferenceAdapter> adapter = nullptr, const ov::AnyMap& configuration = {});
+    static std::unique_ptr<ClassificationModel> create_model(const std::string& modelFile, const ov::AnyMap& configuration = {});
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 

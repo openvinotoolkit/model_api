@@ -24,7 +24,7 @@
 #include <openvino/openvino.hpp>
 
 struct ModelConfig {
-    std::string deviceName;
+    std::string deviceName = "AUTO";
     std::string cpuExtensionsPath;
     std::string clKernelsConfigPath;
     unsigned int maxAsyncRequests;

@@ -37,6 +37,8 @@ public:
     /// @param layout - model input layout
     ImageModel(const std::string& modelFile, bool useAutoResize, const std::string& layout = "");
 
+    using ModelBase::ModelBase;
+
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
 
 protected:
