@@ -80,12 +80,11 @@ For more details please refer to the [examples](https://github.com/openvinotoolk
 ## Supported models
 ### Python:
 - Image Classification:
-  - All the [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#classification-models)
-  - Any model converted to OpenVION IR format
+  - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#classification-models)
 - Object Detection:
   - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#object-detection-models):
-    - All SSD-based models (e.g. "ssd300", "ssdlite_mobilenet_v2", etc.)
-    - All YOLO-based models (e.g. "yolov3", "yolov4", etc.)
+    - SSD-based models (e.g. "ssd300", "ssdlite_mobilenet_v2", etc.)
+    - YOLO-based models (e.g. "yolov3", "yolov4", etc.)
     - CTPN: "ctpn"
     - DETR: "detr-resnet50"
     - CenterNet: "ctdet_coco_dlav0_512"
@@ -102,11 +101,10 @@ For more details please refer to the [examples](https://github.com/openvinotoolk
 
 ### C++:
 - Image Classification:
-  - All the [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#classification-models)
-  - Any model converted to OpenVINO IR format
-- - Object Detection:
-  - All SSD-based models (e.g. "ssd300", "ssdlite_mobilenet_v2", etc.)
-    - All YOLO-based models (e.g. "yolov3", "yolov4", etc.)
+  - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#classification-models)
+- Object Detection:
+  - SSD-based models (e.g. "ssd300", "ssdlite_mobilenet_v2", etc.)
+    - YOLO-based models (e.g. "yolov3", "yolov4", etc.)
     - CenterNet: "ctdet_coco_dlav0_512"
     - FaceBoxes: "faceboxes-pytorch"
     - RetinaFace: "retinaface-resnet50-pytorch"
