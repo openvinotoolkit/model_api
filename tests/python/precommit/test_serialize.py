@@ -2,14 +2,6 @@ import tempfile
 
 from openvino.model_api.models import Model
 
-configurationImageModel = (
-    "mean_values",
-    "scale_values",
-    "reverse_input_channels",
-    "resize_type",
-    "embed_preprocessing",
-)
-
 
 def test_detector_serialize():
     downloaded = Model.create_model(
@@ -19,14 +11,10 @@ def test_detector_serialize():
         suffix=".bin"
     ) as bin:
         downloaded.serialize(xml.name, bin.name)
-        restored = Model.create_model(xml.name, weights_path=bin.name)
-    assert type(downloaded) == type(restored)
-    for attr in configurationImageModel + (
-        "confidence_threshold",
-        "labels",
-        "path_to_labels",
-    ):
-        assert getattr(downloaded, attr) == getattr(restored, attr)
+        deserialized = Model.create_model(xml.name, weights_path=bin.name)
+    assert type(downloaded) == type(deserialized)
+    for attr in downloaded.parameters():
+        assert getattr(downloaded, attr) == getattr(deserialized, attr)
 
 
 def test_classifier_serialize():
@@ -37,10 +25,10 @@ def test_classifier_serialize():
         suffix=".bin"
     ) as bin:
         downloaded.serialize(xml.name, bin.name)
-        restored = Model.create_model(xml.name, weights_path=bin.name)
-    assert type(downloaded) == type(restored)
-    for attr in configurationImageModel + ("topk", "labels", "path_to_labels"):
-        assert getattr(downloaded, attr) == getattr(restored, attr)
+        deserialized = Model.create_model(xml.name, weights_path=bin.name)
+    assert type(downloaded) == type(deserialized)
+    for attr in downloaded.parameters():
+        assert getattr(downloaded, attr) == getattr(deserialized, attr)
 
 
 def test_segmentor_serialize():
@@ -52,7 +40,7 @@ def test_segmentor_serialize():
         suffix=".bin"
     ) as bin:
         downloaded.serialize(xml.name, bin.name)
-        restored = Model.create_model(xml.name, weights_path=bin.name)
-    assert type(downloaded) == type(restored)
-    for attr in configurationImageModel + ("labels", "path_to_labels"):
-        assert getattr(downloaded, attr) == getattr(restored, attr)
+        deserialized = Model.create_model(xml.name, weights_path=bin.name)
+    assert type(downloaded) == type(deserialized)
+    for attr in downloaded.parameters():
+        assert getattr(downloaded, attr) == getattr(deserialized, attr)

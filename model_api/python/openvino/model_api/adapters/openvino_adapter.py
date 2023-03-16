@@ -340,7 +340,11 @@ class OpenvinoAdapter(InferenceAdapter):
         return self.model.get_rt_info(path)
 
     def set_rt_info(self, obj, path):
-        return self.model.set_rt_info(obj, path)
+        if [] == obj:
+            # ov cant serialize empty list. Replace it with ""
+            # TODO: remove when Anastasia Kuporosova fixes that
+            obj = ""
+        self.model.set_rt_info(obj, path)
 
     def serialize(self, xml_path, bin_path="", version="UNSPECIFIED"):
         serialize(self.model, xml_path, bin_path, version)
