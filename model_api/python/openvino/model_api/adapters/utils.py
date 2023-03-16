@@ -101,8 +101,8 @@ def resize_image_letterbox_graph(input: Output, size, interpolation="linear"):
         opset.gather(image_shape, opset.constant(h_axis), axis=0),
         destination_type="f32",
     )
-    w_ratio = opset.divide(opset.constant(w, dtype=Type.f32), iw)
-    h_ratio = opset.divide(opset.constant(h, dtype=Type.f32), ih)
+    w_ratio = opset.divide(opset.constant(w, dtype=float), iw)
+    h_ratio = opset.divide(opset.constant(h, dtype=float), ih)
     scale = opset.minimum(w_ratio, h_ratio)
     nw = opset.convert(opset.multiply(iw, scale), destination_type="i32")
     nh = opset.convert(opset.multiply(ih, scale), destination_type="i32")
@@ -123,19 +123,11 @@ def resize_image_letterbox_graph(input: Output, size, interpolation="linear"):
         opset.subtract(opset.constant(h, dtype=np.int32), nh),
         opset.constant(2, dtype=np.int32),
     )
-    dx_border = opset.add(
-        dx,
-        opset.mod(
-            opset.subtract(opset.constant(w, dtype=np.int32), nw),
-            opset.constant(2, dtype=np.int32),
-        ),
+    dx_border = opset.subtract(
+        opset.subtract(opset.constant(w, dtype=np.int32), nw), dx
     )
-    dy_border = opset.add(
-        dy,
-        opset.mod(
-            opset.subtract(opset.constant(h, dtype=np.int32), nh),
-            opset.constant(2, dtype=np.int32),
-        ),
+    dy_border = opset.subtract(
+        opset.subtract(opset.constant(h, dtype=np.int32), nh), dy
     )
     pads_begin = opset.concat(
         [

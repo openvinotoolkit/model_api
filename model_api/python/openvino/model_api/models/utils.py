@@ -148,18 +148,17 @@ def pad_image(image, size):
 
 
 def resize_image_letterbox(image, size, interpolation=cv2.INTER_LINEAR):
-    target_w, target_h = size
-    scale = min(target_w / image.shape[1], target_h / image.shape[0])
-    image = cv2.resize(image, None, fx=scale, fy=scale, interpolation=interpolation)
-    dx = (target_w - image.shape[1]) // 2
-    dy = (target_h - image.shape[0]) // 2
+    ih, iw = image.shape[0:2]
+    w, h = size
+    scale = min(w / iw, h / ih)
+    nw = int(iw * scale)
+    nh = int(ih * scale)
+    image = cv2.resize(image, (nw, nh), interpolation=interpolation)
+    dx = (w - nw) // 2
+    dy = (h - nh) // 2
     return np.pad(
         image,
-        (
-            (dy, target_h - image.shape[0] - dy),
-            (dx, target_w - image.shape[1] - dx),
-            (0, 0),
-        ),
+        ((dy, h - nh - dy), (dx, w - nw - dx), (0, 0)),
         mode="constant",
         constant_values=0,
     )

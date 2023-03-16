@@ -155,8 +155,8 @@ def resize_detections_letterbox(detections, original_image_size, resized_image_s
         original_image_size[0] / resized_image_size[0],
         original_image_size[1] / resized_image_size[1],
     )
-    pad_left = (resized_image_size[0] - round(original_image_size[0] / inverted_scale)) // 2
-    pad_top = (resized_image_size[1] - round(original_image_size[1] / inverted_scale)) // 2
+    pad_left = (resized_image_size[0] - original_image_size[0] / inverted_scale) // 2
+    pad_top = (resized_image_size[1] - original_image_size[1] / inverted_scale) // 2
     for detection in detections:
         detection.xmin = (
             detection.xmin * resized_image_size[0] - pad_left

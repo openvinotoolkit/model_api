@@ -76,8 +76,8 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
     if (RESIZE_KEEP_ASPECT == resizeMode || RESIZE_KEEP_ASPECT_LETTERBOX == resizeMode) {
         invertedScaleX = invertedScaleY = std::max(invertedScaleX, invertedScaleY);
         if (RESIZE_KEEP_ASPECT_LETTERBOX == resizeMode) {
-            padLeft = (netInputWidth - lround(floatInputImgWidth / invertedScaleX)) / 2;
-            padTop = (netInputHeight - lround(floatInputImgHeight / invertedScaleY)) / 2;
+            padLeft = (netInputWidth - floatInputImgWidth / invertedScaleX) / 2;
+            padTop = (netInputHeight - floatInputImgHeight / invertedScaleY) / 2;
         }
     }
 
