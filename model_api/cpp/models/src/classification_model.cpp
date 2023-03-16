@@ -64,26 +64,11 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
             throw std::runtime_error("Model xml claims the model type is not Classificaction but " + modelType);
         }
     }
-    auto resize_type_iter = configuration.find("resize_type");
-    std::string resize_type = "standard";
-    if (resize_type_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "resize_type")) {
-            resize_type = model->get_rt_info<std::string>("model_info", "resize_type");
-        }
-    } else {
-        resize_type = resize_type_iter->second.as<std::string>();
-    }
 
-<<<<<<< HEAD
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(model, configuration)};
     classifier->prepare();
     classifier->load(core);
     return classifier;
-=======
-    std::unique_ptr<ClassificationModel> classificationModel{new ClassificationModel(modelFile, topk, resize_type, auto_resize, labels, layout)};
-    classificationModel->load(adapter);
-    return classificationModel;
->>>>>>> origin/master
 }
 
 std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& infResult) {
@@ -105,28 +90,6 @@ std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& in
     }
 
     return retVal;
-}
-
-std::vector<std::string> ClassificationModel::loadLabels(const std::string& labelFilename) {
-    std::vector<std::string> labels;
-
-    /* Read labels */
-    std::ifstream inputFile(labelFilename);
-    if (!inputFile.is_open())
-        throw std::runtime_error("Can't open the labels file: " + labelFilename);
-    std::string labelsLine;
-    while (std::getline(inputFile, labelsLine)) {
-        size_t labelBeginIdx = labelsLine.find(' ');
-        size_t labelEndIdx = labelsLine.find(',');  // can be npos when class has only one label
-        if (labelBeginIdx == std::string::npos) {
-            throw std::runtime_error("The labels file has incorrect format.");
-        }
-        labels.push_back(labelsLine.substr(labelBeginIdx + 1, labelEndIdx - (labelBeginIdx + 1)));
-    }
-    if (labels.empty())
-        throw std::logic_error("File is empty: " + labelFilename);
-
-    return labels;
 }
 
 void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {

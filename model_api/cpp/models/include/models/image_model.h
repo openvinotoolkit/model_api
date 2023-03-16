@@ -41,14 +41,24 @@ public:
                const std::vector<std::string>& labels,
                const std::string& layout = "");
 
+    ImageModel(const std::string& modelFile,
+               const std::string& resize_type,
+               bool useAutoResize,
+               const std::string& layout = "")
+        : ModelBase(modelFile, layout),
+          useAutoResize(useAutoResize),
+          resizeMode(selectResizeMode(resize_type)) {}
+          
     ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
 
     using ModelBase::ModelBase;
 
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
 
+    static std::vector<std::string> loadLabels(const std::string& labelFilename);
+
 protected:
-    void selectResizeMode(const std::string& resize_type);
+    RESIZE_MODE selectResizeMode(const std::string& resize_type);
 
 protected:
     bool useAutoResize = false;

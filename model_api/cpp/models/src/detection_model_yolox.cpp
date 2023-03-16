@@ -35,13 +35,15 @@
 #include "utils/image_utils.h"
 #include "utils/nms.hpp"
 
-ModelYoloX::ModelYoloX(const std::string& modelFile,
-                                 float confidenceThreshold,
-                                 float boxIOUThreshold,
-                                 const std::vector<std::string>& labels,
-                                 const std::string& layout)
-    : DetectionModel(modelFile, confidenceThreshold, "fit_to_window", false, labels, layout),
-      boxIOUThreshold(boxIOUThreshold) {}
+
+ModelYoloX::ModelYoloX(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration) 
+    : DetectionModelExt(model, configuration) {
+    auto resize_type = configuration.find("resize_type");
+    if (resize_type != configuration.end()) {
+        resizeMode = RESIZE_KEEP_ASPECT;
+    }
+    useAutoResize = false;
+}
 
 void ModelYoloX::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output -------------------------------------------------

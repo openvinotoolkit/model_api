@@ -98,21 +98,21 @@ static inline float linear(float x) {
     return x;
 }
 
-ModelYolo::ModelYolo(const std::string& modelFile,
-                     float confidenceThreshold,
-                     bool useAutoResize,
-                     bool useAdvancedPostprocessing,
-                     float boxIOUThreshold,
-                     const std::vector<std::string>& labels,
-                     const std::vector<float>& anchors,
-                     const std::vector<int64_t>& masks,
-                     const std::string& layout)
-    : DetectionModel(modelFile, confidenceThreshold, "standard", useAutoResize, labels, layout),
-      boxIOUThreshold(boxIOUThreshold),
-      useAdvancedPostprocessing(useAdvancedPostprocessing),
-      yoloVersion(YOLO_V3),
-      presetAnchors(anchors),
-      presetMasks(masks) {}
+ModelYolo::ModelYolo(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : DetectionModelExt(model, configuration) {    
+    auto anchors_iter = configuration.find("anchors");
+    if (anchors_iter != configuration.end()) {
+        presetAnchors = anchors_iter->second.as<std::vector<float>>();
+    }
+    auto masks_iter = configuration.find("masks");
+    if (masks_iter != configuration.end()) {
+        presetMasks = masks_iter->second.as<std::vector<int64_t>>();
+    }
+    auto resize_type = configuration.find("resize_type");
+    if (resize_type != configuration.end()) {
+        resizeMode = RESIZE_FILL; // "standard"
+    }
+}
 
 void ModelYolo::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output -------------------------------------------------

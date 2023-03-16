@@ -40,24 +40,21 @@ ImageModel::ImageModel(const std::string& modelFile,
       resizeMode(selectResizeMode(resize_type)) {
     }
 
-void ImageModel::selectResizeMode(const std::string& resize_type) {
+RESIZE_MODE ImageModel::selectResizeMode(const std::string& resize_type) {
     RESIZE_MODE resize = RESIZE_FILL;
     if ("crop" == resize_type) {
         throw std::runtime_error("crop resize_type is not implemented");
     } else if ("standard" == resize_type) {
-        interpolationMode = cv::INTER_LINEAR;
         resize = RESIZE_FILL;
     } else if ("fit_to_window" == resize_type) {
         if (useAutoResize) {
             throw std::runtime_error("useAutoResize supports only standard resize_type");
         }
-        interpolationMode = cv::INTER_LINEAR;
         resize = RESIZE_KEEP_ASPECT;
     } else if ("fit_to_window_letterbox" == resize_type) {
         if (useAutoResize) {
             throw std::runtime_error("useAutoResize supports only standard resize_type");
         }
-        interpolationMode = cv::INTER_LINEAR;
         resize = RESIZE_KEEP_ASPECT_LETTERBOX;
     } else {
         throw std::runtime_error("Unknown value for resize_type arg");
@@ -125,4 +122,23 @@ std::shared_ptr<InternalModelData> ImageModel::preprocess(const InputData& input
     }
     input.emplace(inputNames[0], wrapMat2Tensor(img));
     return std::make_shared<InternalImageModelData>(origImg.cols, origImg.rows);
+}
+
+std::vector<std::string> ImageModel::loadLabels(const std::string& labelFilename) {
+    std::vector<std::string> labelsList;
+
+    /* Read labels (if any) */
+    if (!labelFilename.empty()) {
+        std::ifstream inputFile(labelFilename);
+        if (!inputFile.is_open())
+            throw std::runtime_error("Can't open the labels file: " + labelFilename);
+        std::string label;
+        while (std::getline(inputFile, label)) {
+            labelsList.push_back(label);
+        }
+        if (labelsList.empty())
+            throw std::logic_error("File is empty: " + labelFilename);
+    }
+
+    return labelsList;
 }

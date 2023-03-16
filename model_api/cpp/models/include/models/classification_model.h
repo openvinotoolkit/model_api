@@ -56,8 +56,6 @@ public:
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
-    static std::vector<std::string> loadLabels(const std::string& labelFilename);
-
     virtual std::unique_ptr<ClassificationResult> infer(const ImageInputData& inputData);
 
 protected:

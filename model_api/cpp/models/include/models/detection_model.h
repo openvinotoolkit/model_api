@@ -48,8 +48,6 @@ public:
 
     static std::unique_ptr<DetectionModel> create_model(const std::string& modelFile, std::string model_type = "", const ov::AnyMap& configuration = {});
 
-    static std::vector<std::string> loadLabels(const std::string& labelFilename);
-
     virtual std::unique_ptr<DetectionResult> infer(const ImageInputData& inputData);
 
 protected:

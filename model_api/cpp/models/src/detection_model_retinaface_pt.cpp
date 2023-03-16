@@ -34,12 +34,18 @@
 #include "models/internal_model_data.h"
 #include "models/results.h"
 
-ModelRetinaFacePT::ModelRetinaFacePT(const std::string& modelFile,
-                                     float confidenceThreshold,
-                                     bool useAutoResize,
-                                     float boxIOUThreshold,
-                                     const std::string& layout)
-    : DetectionModelExt(modelFile, confidenceThreshold, "standard", useAutoResize, {"Face"}, boxIOUThreshold, layout) {}
+ModelRetinaFacePT::ModelRetinaFacePT(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : DetectionModelExt(model, configuration) {
+
+    auto resize_type = configuration.find("resize_type");
+    if (resize_type != configuration.end()) {
+        resizeMode = RESIZE_FILL; 
+    }
+    auto labels_string = configuration.find("labels");
+    if (labels_string != configuration.end()) {
+        labels = {"Face"};
+    }
+}
 
 void ModelRetinaFacePT::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output -------------------------------------------------
