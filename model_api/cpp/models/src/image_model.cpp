@@ -18,6 +18,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <fstream>
 
 #include <opencv2/core.hpp>
 #include <openvino/openvino.hpp>

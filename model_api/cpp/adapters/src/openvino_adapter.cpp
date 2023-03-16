@@ -85,7 +85,7 @@ const std::vector<std::string> OpenVINOInferenceAdapter::getOutputNames() const 
 }
 
 const ov::AnyMap& OpenVINOInferenceAdapter::getModelConfig() const {
-    return modelConfig;
+    return std::move(modelConfig);
 }
 
 
