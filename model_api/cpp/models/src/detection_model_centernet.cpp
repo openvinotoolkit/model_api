@@ -36,11 +36,16 @@
 #include "models/internal_model_data.h"
 #include "models/results.h"
 
-ModelCenterNet::ModelCenterNet(const std::string& modelFile,
-                               float confidenceThreshold,
-                               const std::vector<std::string>& labels,
-                               const std::string& layout)
-    : DetectionModel(modelFile, confidenceThreshold, "fit_to_window_letterbox", false, labels, layout) {}
+
+ModelCenterNet::ModelCenterNet(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : DetectionModel(model, configuration) {
+    auto resize_type = configuration.find("resize_type");
+    if (resize_type != configuration.end()) {
+        resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; // "fit_to_window_letterbox"
+    }
+
+    useAutoResize = false;
+}
 
 void ModelCenterNet::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output -------------------------------------------------

@@ -46,6 +46,8 @@ public:
 
     DetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
 
+    using ImageModel::ImageModel;
+
     static std::unique_ptr<DetectionModel> create_model(const std::string& modelFile, std::string model_type = "", const ov::AnyMap& configuration = {});
 
     virtual std::unique_ptr<DetectionResult> infer(const ImageInputData& inputData);

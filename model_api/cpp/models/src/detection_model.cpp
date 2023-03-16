@@ -74,6 +74,8 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
         detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloV3ONNX(model, configuration));
     } else if (model_type == "yolox") {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloX(model, configuration));
+    } else if (model_type == "centernet") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelCenterNet(model, configuration));
     } else {
         throw std::runtime_error{"No model type or invalid model type (-at) provided: " + model_type};
     }
