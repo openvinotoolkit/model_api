@@ -38,7 +38,7 @@ public:
 
     ModelFaceBoxes(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
     using DetectionModelExt::DetectionModelExt;
-    
+
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
 protected:

@@ -31,7 +31,7 @@
 #include "models/results.h"
 
 
-ModelFaceBoxes(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+ModelFaceBoxes::ModelFaceBoxes(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : DetectionModelExt(model, configuration) {
     auto resize_type = configuration.find("resize_type");
     if (resize_type != configuration.end()) {
