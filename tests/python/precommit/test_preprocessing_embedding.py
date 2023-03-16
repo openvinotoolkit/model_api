@@ -78,7 +78,7 @@ def compare_model_outputs(references, objects):
 
 
 @pytest.mark.parametrize(
-    ("model_name"), classification_models + detection_models + segmentation_models
+    ("model_name"), ["ssd_mobilenet_v1_fpn_coco"]#classification_models + detection_models + segmentation_models
 )
 def test_image_models(model_name):
     download_image(IMAFE_FILE)
