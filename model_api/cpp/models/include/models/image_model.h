@@ -48,7 +48,7 @@ public:
         : ModelBase(modelFile, layout),
           useAutoResize(useAutoResize),
           resizeMode(selectResizeMode(resize_type)) {}
-          
+
     ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
 
     using ModelBase::ModelBase;
@@ -61,11 +61,11 @@ protected:
     RESIZE_MODE selectResizeMode(const std::string& resize_type);
 
 protected:
+    std::vector<std::string> labels = {};
     bool useAutoResize = false;
 
     size_t netInputHeight = 0;
     size_t netInputWidth = 0;
     cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR;
     RESIZE_MODE resizeMode = RESIZE_FILL;
-    std::vector<std::string> labels = {};
 };
