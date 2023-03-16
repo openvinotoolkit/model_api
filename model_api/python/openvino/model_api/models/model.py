@@ -124,7 +124,7 @@ class Model:
         configuration={},
         preload=True,
         core=None,
-        weights_path=None,
+        weights_path="",
         adaptor_parameters={},
         device="AUTO",
         nstreams="1",

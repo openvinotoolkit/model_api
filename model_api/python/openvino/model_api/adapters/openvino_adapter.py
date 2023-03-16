@@ -132,7 +132,7 @@ class OpenvinoAdapter(InferenceAdapter):
         self,
         core,
         model,
-        weights_path=None,
+        weights_path="",
         model_parameters={},
         device="CPU",
         plugin_config=None,
@@ -171,8 +171,7 @@ class OpenvinoAdapter(InferenceAdapter):
                     "from buffer" if self.model_from_buffer else self.model_path
                 )
             )
-            weights = "" if self.model_from_buffer else weights_path
-            self.model = core.read_model(self.model_path, weights)
+            self.model = core.read_model(self.model_path, weights_path)
             return
         if isinstance(model, str):
             from openvino.model_zoo.models import OMZModel, list_models
