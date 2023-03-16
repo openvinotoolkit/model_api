@@ -166,6 +166,12 @@ class InferenceAdapter(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
+    def set_rt_info(self, obj, path):
+        """
+        Forwards to openvino.runtime.Model.set_rt_info(obj, path)
+        """
+
+    @abc.abstractmethod
     def embed_preprocessing(
         self,
         layout=None,

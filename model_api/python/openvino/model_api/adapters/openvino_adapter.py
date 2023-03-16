@@ -20,7 +20,7 @@ from typing import Dict, Set, Tuple
 
 try:
     import openvino.runtime as ov
-    from openvino.preprocess import ColorFormat, PrePostProcessor, ResizeAlgorithm
+    from openvino.preprocess import ColorFormat, PrePostProcessor
     from openvino.runtime import (
         AsyncInferQueue,
         Core,
@@ -29,6 +29,7 @@ try:
         Type,
         get_version,
         layout_helpers,
+        serialize,
     )
 
     openvino_absent = False
@@ -170,7 +171,7 @@ class OpenvinoAdapter(InferenceAdapter):
                     "from buffer" if self.model_from_buffer else self.model_path
                 )
             )
-            weights = weights_path if self.model_from_buffer else ""
+            weights = "" if self.model_from_buffer else weights_path
             self.model = core.read_model(self.model_path, weights)
             return
         if isinstance(model, str):
@@ -338,6 +339,12 @@ class OpenvinoAdapter(InferenceAdapter):
     def get_rt_info(self, path):
         return self.model.get_rt_info(path)
 
+    def set_rt_info(self, obj, path):
+        return self.model.set_rt_info(obj, path)
+
+    def serialize(self, xml_path, bin_path="", version="UNSPECIFIED"):
+        serialize(self.model, xml_path, bin_path, version)
+
     def embed_preprocessing(
         self,
         layout="NCHW",
@@ -409,10 +416,10 @@ class OpenvinoAdapter(InferenceAdapter):
         self.load_model()
 
     def get_model(self):
-        """Returns the ov.Model object
+        """Returns the openvino.runtime.Model object
 
         Returns:
-            ov.Model object
+            openvino.runtime.Model object
         """
         return self.model
 

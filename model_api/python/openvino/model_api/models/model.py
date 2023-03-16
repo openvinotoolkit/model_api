@@ -469,3 +469,13 @@ class Model:
                     name, metadata.shape, metadata.precision, metadata.layout
                 )
             )
+
+    def serialize(self, xml_path, bin_path="", version="UNSPECIFIED"):
+        self.inference_adapter.set_rt_info(self.__model__, ["model_info", "model_type"])
+        for name in self.parameters():
+            try:
+                self.inference_adapter.set_rt_info(getattr(self, name), ["model_info", name])
+            except RuntimeError:
+                # TODO: remove when Anastasia Kuporosova fixes that
+                pass  # ov cant serialize empty list: mean_values and scale_values
+        self.inference_adapter.serialize(xml_path, bin_path, version)

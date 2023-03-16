@@ -203,6 +203,9 @@ class OVMSAdapter(InferenceAdapter):
     def get_rt_info(self, path):
         raise NotImplementedError("OVMSAdapter does not support RT info getting")
 
+    def set_rt_info(self, obj, path):
+        raise NotImplementedError("OVMSAdapter does not support RT info setting")
+
     def embed_preprocessing(
         self,
         layout="NCHW",

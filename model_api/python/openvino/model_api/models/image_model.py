@@ -67,6 +67,7 @@ class ImageModel(Model):
         else:
             self.n, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
+        print(self.mean_values)
         self.input_transform = InputTransform(
             self.reverse_input_channels, self.mean_values, self.scale_values
         )
@@ -89,11 +90,11 @@ class ImageModel(Model):
         parameters.update(
             {
                 "mean_values": ListValue(
-                    default_value=None,
+                    default_value=[],
                     description="Normalization values, which will be subtracted from image channels for image-input layer during preprocessing",
                 ),
                 "scale_values": ListValue(
-                    default_value=None,
+                    default_value=[],
                     description="Normalization values, which will divide the image channels for image-input layer",
                 ),
                 "reverse_input_channels": BooleanValue(
