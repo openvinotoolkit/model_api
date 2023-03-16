@@ -479,11 +479,10 @@ class Model:
                 # TODO: remove when Anastasia Kuporosova fixes that
                 model.set_rt_info("", ["model_info", name])
             else:
-                model.set_rt_info(
-                    getattr(self, name), ["model_info", name]
-                )
+                model.set_rt_info(getattr(self, name), ["model_info", name])
         return model
 
     def save(self, xml_path, bin_path="", version="UNSPECIFIED"):
         import openvino.runtime as ov
+
         ov.serialize(self.get_model(), xml_path, bin_path, version)
