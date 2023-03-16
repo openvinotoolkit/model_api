@@ -39,7 +39,7 @@ ModelRetinaFacePT::ModelRetinaFacePT(const std::string& modelFile,
                                      bool useAutoResize,
                                      float boxIOUThreshold,
                                      const std::string& layout)
-    : DetectionModelExt(modelFile, confidenceThreshold, useAutoResize, {"Face"}, boxIOUThreshold, layout) {}
+    : DetectionModelExt(modelFile, confidenceThreshold, "standard", useAutoResize, {"Face"}, boxIOUThreshold, layout) {}
 
 void ModelRetinaFacePT::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output -------------------------------------------------

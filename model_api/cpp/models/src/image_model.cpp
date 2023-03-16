@@ -30,21 +30,61 @@
 #include "models/internal_model_data.h"
 
 ImageModel::ImageModel(const std::string& modelFile,
-               bool useAutoResize,
-               const std::vector<std::string>& labels,
-               const std::string& layout = "")
+                       const std::string& resize_type,
+                       bool useAutoResize,
+                       const std::vector<std::string>& labels,
+                       const std::string& layout)
     : ModelBase(modelFile, layout),
       labels(labels),
-      useAutoResize(useAutoResize) {}
+      useAutoResize(useAutoResize),
+      resizeMode(selectResizeMode(resize_type)) {
+    }
+
+void ImageModel::selectResizeMode(const std::string& resize_type) {
+    RESIZE_MODE resize = RESIZE_FILL;
+    if ("crop" == resize_type) {
+        throw std::runtime_error("crop resize_type is not implemented");
+    } else if ("standard" == resize_type) {
+        interpolationMode = cv::INTER_LINEAR;
+        resize = RESIZE_FILL;
+    } else if ("fit_to_window" == resize_type) {
+        if (useAutoResize) {
+            throw std::runtime_error("useAutoResize supports only standard resize_type");
+        }
+        interpolationMode = cv::INTER_LINEAR;
+        resize = RESIZE_KEEP_ASPECT;
+    } else if ("fit_to_window_letterbox" == resize_type) {
+        if (useAutoResize) {
+            throw std::runtime_error("useAutoResize supports only standard resize_type");
+        }
+        interpolationMode = cv::INTER_LINEAR;
+        resize = RESIZE_KEEP_ASPECT_LETTERBOX;
+    } else {
+        throw std::runtime_error("Unknown value for resize_type arg");
+    }
+
+    return resize;
+}
 
 ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : ModelBase(model, configuration) {
     auto layout_iter = configuration.find("layout");
-    std::string layout;
+    std::string layout = "";
     if (layout_iter != configuration.end()) {
         layout = layout_iter->second.as<std::string>();
         inputsLayouts = parseLayoutString(layout);
     }
+
+    auto resize_type_iter = configuration.find("resize_type");
+    std::string resize_type = "standard";
+    if (resize_type_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "resize_type")) {
+            resize_type = model->get_rt_info<std::string>("model_info", "resize_type");
+        }
+    } else {
+        resize_type = resize_type_iter->second.as<std::string>();
+    }
+    resizeMode = selectResizeMode(resize_type);
 
     auto auto_resize_iter = configuration.find("auto_resize");
     if (auto_resize_iter != configuration.end()) {
@@ -61,6 +101,8 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
         labels = labels_iter->second.as<std::vector<std::string>>();
     }
 }
+
+
 
 std::shared_ptr<InternalModelData> ImageModel::preprocess(const InputData& inputData, InferenceInput& input) {
     const auto& origImg = inputData.asRef<ImageInputData>().inputImage;

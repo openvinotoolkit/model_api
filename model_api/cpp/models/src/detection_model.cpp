@@ -35,10 +35,11 @@
 
 DetectionModel::DetectionModel(const std::string& modelFile,
                                float confidenceThreshold,
+                               const std::string& resize_type,
                                bool useAutoResize,
                                const std::vector<std::string>& labels,
                                const std::string& layout)
-    : ImageModel(modelFile, useAutoResize, layout),
+    : ImageModel(modelFile, resize_type, useAutoResize, layout),
       labels(labels),
       confidenceThreshold(confidenceThreshold) {}
 
@@ -60,6 +61,7 @@ DetectionModel::DetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyM
     if (masks_iter != configuration.end()) {
         masks = masks_iter->second.as<std::vector<int64_t>>();
     }
+<<<<<<< HEAD
 }
 
 std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile, std::string model_type, const ov::AnyMap& configuration) {
@@ -67,6 +69,16 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     if (model_type.empty()) {
         model_type = model->get_rt_info<std::string>("model_info", "model_type");
+=======
+    auto resize_type_iter = configuration.find("resize_type");
+    std::string resize_type = "standard";
+    if (resize_type_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "resize_type")) {
+            resize_type = model->get_rt_info<std::string>("model_info", "resize_type");
+        }
+    } else {
+        resize_type = resize_type_iter->second.as<std::string>();
+>>>>>>> origin/master
     }
 
     std::unique_ptr<DetectionModel> detectionModel;
@@ -78,7 +90,11 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     } else if (model_type == "retinaface-pytorch") {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFacePT(model, configuration));
     } else if (model_type == "ssd" || model_type == "SSD") {
+<<<<<<< HEAD
         detectionModel = std::unique_ptr<DetectionModel>(new ModelSSD(model, configuration));
+=======
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelSSD(modelFile, confidence_threshold, resize_type, auto_resize, labels, layout));
+>>>>>>> origin/master
     } else if (model_type == "yolo") {
         bool FLAGS_yolo_af = true;  // Use advanced postprocessing/filtering algorithm for YOLO
         detectionModel = std::unique_ptr<DetectionModel>(new ModelYolo(modelFile,

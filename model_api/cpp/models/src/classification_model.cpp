@@ -36,10 +36,11 @@
 
 ClassificationModel::ClassificationModel(const std::string& modelFile,
                                          size_t topk,
+                                         const std::string& resize_type,
                                          bool useAutoResize,
                                          const std::vector<std::string>& labels,
                                          const std::string& layout)
-    : ImageModel(modelFile, useAutoResize, labels, layout),
+    : ImageModel(modelFile, resize_type, useAutoResize, labels, layout),
       topk(topk) {}
 
 ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
@@ -63,11 +64,26 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
             throw std::runtime_error("Model xml claims the model type is not Classificaction but " + modelType);
         }
     }
+    auto resize_type_iter = configuration.find("resize_type");
+    std::string resize_type = "standard";
+    if (resize_type_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "resize_type")) {
+            resize_type = model->get_rt_info<std::string>("model_info", "resize_type");
+        }
+    } else {
+        resize_type = resize_type_iter->second.as<std::string>();
+    }
 
+<<<<<<< HEAD
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(model, configuration)};
     classifier->prepare();
     classifier->load(core);
     return classifier;
+=======
+    std::unique_ptr<ClassificationModel> classificationModel{new ClassificationModel(modelFile, topk, resize_type, auto_resize, labels, layout)};
+    classificationModel->load(adapter);
+    return classificationModel;
+>>>>>>> origin/master
 }
 
 std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& infResult) {

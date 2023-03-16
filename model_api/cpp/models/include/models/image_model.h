@@ -36,6 +36,7 @@ public:
     /// @param useAutoResize - if true, image is resized by openvino
     /// @param layout - model input layout
     ImageModel(const std::string& modelFile,
+               const std::string& resize_type,
                bool useAutoResize,
                const std::vector<std::string>& labels,
                const std::string& layout = "");
@@ -45,6 +46,9 @@ public:
     using ModelBase::ModelBase;
 
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
+
+protected:
+    void selectResizeMode(const std::string& resize_type);
 
 protected:
     bool useAutoResize = false;
