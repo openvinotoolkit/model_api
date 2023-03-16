@@ -19,7 +19,7 @@ from typing import Optional
 
 import numpy as np
 import openvino.runtime as ov
-from openvino.runtime import Output, layout_helpers, Type
+from openvino.runtime import Output, layout_helpers
 from openvino.runtime import opset10 as opset
 from openvino.runtime.utils.decorators import custom_preprocess_function
 
