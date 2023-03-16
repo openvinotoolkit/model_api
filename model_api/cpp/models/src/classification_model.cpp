@@ -39,9 +39,8 @@ ClassificationModel::ClassificationModel(const std::string& modelFile,
                                          bool useAutoResize,
                                          const std::vector<std::string>& labels,
                                          const std::string& layout)
-    : ImageModel(modelFile, useAutoResize, layout),
-      topk(topk),
-      labels(labels) {}
+    : ImageModel(modelFile, useAutoResize, labels, layout),
+      topk(topk) {}
 
 ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : ImageModel(model, configuration) {
@@ -52,16 +51,6 @@ ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, cons
         }
     } else {
         topk = topk_iter->second.as<size_t>();
-    }
-
-    auto labels_iter = configuration.find("labels");
-    if (labels_iter == configuration.end()) {
-        if (!model->has_rt_info<std::string>("model_info", "labels")) {
-            throw std::runtime_error("configuraiot arg or model xml or must contain model_info/labels rt_info");
-        }
-        labels = split(model->get_rt_info<std::string>("model_info", "labels"), ' ');
-    } else {
-        labels = labels_iter->second.as<std::vector<std::string>>();
     }
 }
 

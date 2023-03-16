@@ -39,9 +39,7 @@ ModelRetinaFacePT::ModelRetinaFacePT(const std::string& modelFile,
                                      bool useAutoResize,
                                      float boxIOUThreshold,
                                      const std::string& layout)
-    : DetectionModel(modelFile, confidenceThreshold, useAutoResize, {"Face"}, layout),  // Default label is "Face"
-      landmarksNum(0),
-      boxIOUThreshold(boxIOUThreshold) {}
+    : DetectionModelExt(modelFile, confidenceThreshold, useAutoResize, {"Face"}, boxIOUThreshold, layout) {}
 
 void ModelRetinaFacePT::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output -------------------------------------------------

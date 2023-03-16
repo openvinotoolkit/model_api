@@ -61,7 +61,6 @@ public:
 
 protected:
     size_t topk = 1;
-    std::vector<std::string> labels;
 
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
 };

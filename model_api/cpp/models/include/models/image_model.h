@@ -35,7 +35,10 @@ public:
     /// @param modelFile name of model to load
     /// @param useAutoResize - if true, image is resized by openvino
     /// @param layout - model input layout
-    ImageModel(const std::string& modelFile, bool useAutoResize, const std::string& layout = "");
+    ImageModel(const std::string& modelFile,
+               bool useAutoResize,
+               const std::vector<std::string>& labels,
+               const std::string& layout = "");
 
     ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
 
@@ -50,4 +53,5 @@ protected:
     size_t netInputWidth = 0;
     cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR;
     RESIZE_MODE resizeMode = RESIZE_FILL;
+    std::vector<std::string> labels = {};
 };

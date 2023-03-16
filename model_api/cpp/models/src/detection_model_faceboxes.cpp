@@ -35,12 +35,7 @@ ModelFaceBoxes::ModelFaceBoxes(const std::string& modelFile,
                                bool useAutoResize,
                                float boxIOUThreshold,
                                const std::string& layout)
-    : DetectionModel(modelFile, confidenceThreshold, useAutoResize, {"Face"}, layout),
-      maxProposalsCount(0),
-      boxIOUThreshold(boxIOUThreshold),
-      variance({0.1f, 0.2f}),
-      steps({32, 64, 128}),
-      minSizes({{32, 64, 128}, {256}, {512}}) {}
+    : DetectionModelExt(modelFile, confidenceThreshold, useAutoResize, {"Face"}, boxIOUThreshold, layout) {}
 
 void ModelFaceBoxes::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output -------------------------------------------------

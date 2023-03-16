@@ -36,13 +36,7 @@ ModelRetinaFace::ModelRetinaFace(const std::string& modelFile,
                                  bool useAutoResize,
                                  float boxIOUThreshold,
                                  const std::string& layout)
-    : DetectionModel(modelFile, confidenceThreshold, useAutoResize, {"Face"}, layout),  // Default label is "Face"
-      shouldDetectMasks(false),
-      shouldDetectLandmarks(false),
-      boxIOUThreshold(boxIOUThreshold),
-      maskThreshold(0.8f),
-      landmarkStd(1.0f),
-      anchorCfg({{32, {32, 16}, 16, {1}}, {16, {8, 4}, 16, {1}}, {8, {2, 1}, 16, {1}}}) {
+    : DetectionModelExt(modelFile, confidenceThreshold, useAutoResize, {"Face"}, boxIOUThreshold, layout) {
     generateAnchorsFpn();
 }
 

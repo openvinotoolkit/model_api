@@ -29,8 +29,12 @@
 #include "models/input_data.h"
 #include "models/internal_model_data.h"
 
-ImageModel::ImageModel(const std::string& modelFile, bool useAutoResize, const std::string& layout)
+ImageModel::ImageModel(const std::string& modelFile,
+               bool useAutoResize,
+               const std::vector<std::string>& labels,
+               const std::string& layout = "")
     : ModelBase(modelFile, layout),
+      labels(labels),
       useAutoResize(useAutoResize) {}
 
 ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
@@ -41,9 +45,20 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
         layout = layout_iter->second.as<std::string>();
         inputsLayouts = parseLayoutString(layout);
     }
+
     auto auto_resize_iter = configuration.find("auto_resize");
     if (auto_resize_iter != configuration.end()) {
         useAutoResize = auto_resize_iter->second.as<bool>();
+    }
+
+    auto labels_iter = configuration.find("labels");
+    if (labels_iter == configuration.end()) {
+        if (!model->has_rt_info<std::string>("model_info", "labels")) {
+            throw std::runtime_error("Configuration or model rt_info should contain labels"); //TODO
+        }
+        labels = split(model->get_rt_info<std::string>("model_info", "labels"), ' ');
+    } else {
+        labels = labels_iter->second.as<std::vector<std::string>>();
     }
 }
 

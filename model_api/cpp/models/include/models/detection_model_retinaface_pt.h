@@ -24,7 +24,7 @@
 #include <opencv2/core/types.hpp>
 #include <utils/nms.hpp>
 
-#include "models/detection_model.h"
+#include "models/detection_model_ext.h"
 
 namespace ov {
 class Model;
@@ -33,7 +33,7 @@ class Tensor;
 struct InferenceResult;
 struct ResultBase;
 
-class ModelRetinaFacePT : public DetectionModel {
+class ModelRetinaFacePT : public DetectionModelExt {
 public:
     struct Box {
         float cX;
@@ -54,11 +54,11 @@ public:
                       bool useAutoResize,
                       float boxIOUThreshold,
                       const std::string& layout = "");
+    using DetectionModelExt::DetectionModelExt;
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
 protected:
-    size_t landmarksNum;
-    const float boxIOUThreshold;
+    size_t landmarksNum = 0;
     float variance[2] = {0.1f, 0.2f};
 
     enum OutputType { OUT_BOXES, OUT_SCORES, OUT_LANDMARKS, OUT_MAX };
