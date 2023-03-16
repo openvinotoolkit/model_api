@@ -2,7 +2,6 @@ import tempfile
 
 from openvino.model_api.models import Model
 
-
 configurationImageModel = (
     "mean_values",
     "scale_values",

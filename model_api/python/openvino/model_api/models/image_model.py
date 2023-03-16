@@ -67,7 +67,6 @@ class ImageModel(Model):
         else:
             self.n, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
-        print(self.mean_values)
         self.input_transform = InputTransform(
             self.reverse_input_channels, self.mean_values, self.scale_values
         )
