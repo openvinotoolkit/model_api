@@ -53,6 +53,7 @@ public:
     using ImageModel::ImageModel;
 
     static std::unique_ptr<ClassificationModel> create_model(const std::string& modelFile, const ov::AnyMap& configuration = {});
+    static std::unique_ptr<ClassificationModel> create_model(std::shared_ptr<InferenceAdapter>& adapter);
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 

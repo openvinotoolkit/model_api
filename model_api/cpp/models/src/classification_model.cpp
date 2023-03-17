@@ -71,6 +71,21 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
     return classifier;
 }
 
+std::unique_ptr<ClassificationModel> ClassificationModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
+    auto configuration = adapter->getModelConfig();
+    auto model_type_iter = configuration.find("model_type");
+    std::string model_type;
+    if (model_type_iter != configuration.end()) {
+        model_type = model_type_iter->second.as<std::string>();
+    } else {
+        std::runtime_error("No model_type provided in the config");
+    }
+
+    std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(adapter)};
+
+    return classifier;
+}
+
 std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& infResult) {
     const ov::Tensor& indicesTensor = infResult.outputsData.find(outputNames[0])->second;
     const int* indicesPtr = indicesTensor.data<int>();

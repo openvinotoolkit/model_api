@@ -79,11 +79,46 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     } else {
         throw std::runtime_error{"No model type or invalid model type (-at) provided: " + model_type};
     }
-
+    
     detectionModel->prepare();
     detectionModel->load(core);
     return detectionModel;
 }
+
+std::unique_ptr<DetectionModel> DetectionModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
+    auto configuration = adapter->getModelConfig();
+    auto model_type_iter = configuration.find("model_type");
+    std::string model_type;
+    if (model_type_iter != configuration.end()) {
+        model_type = model_type_iter->second.as<std::string>();
+    } else {
+        std::runtime_error("No model_type provided in the config");
+    }
+
+    std::unique_ptr<DetectionModel> detectionModel;
+    if (model_type == "faceboxes") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelFaceBoxes(adapter));
+    } else if (model_type == "retinaface") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFace(adapter));
+    } else if (model_type == "retinaface-pytorch") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFacePT(adapter));
+    } else if (model_type == "ssd" || model_type == "SSD") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelSSD(adapter));
+    } else if (model_type == "yolo") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYolo(adapter));
+    } else if (model_type == "yolov3-onnx") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloV3ONNX(adapter));
+    } else if (model_type == "yolox") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloX(adapter));
+    } else if (model_type == "centernet") {
+        detectionModel = std::unique_ptr<DetectionModel>(new ModelCenterNet(adapter));
+    } else {
+        throw std::runtime_error{"No model type or invalid model type (-at) provided: " + model_type};
+    }
+    
+    return detectionModel;
+}
+
 
 std::unique_ptr<DetectionResult> DetectionModel::infer(const ImageInputData& inputData) {
     auto result = ModelBase::infer(static_cast<const InputData&>(inputData));
