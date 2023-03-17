@@ -1,16 +1,9 @@
 import json
-import math
-import os
-import sys
-import tempfile
-import time
-from copy import deepcopy
 from pathlib import Path
 
 import cv2
 import numpy as np
 import pytest
-import requests
 from openvino.model_api.models import (
     ClassificationModel,
     DetectionModel,
@@ -77,6 +70,7 @@ def test_image_models(data, dump, result, model_data):
         for i, output in enumerate(outputs):
             output_str = process_output(output, model_data["type"])
             if len(test_data["reference"]) > i:
+                print(f'{test_data["reference"][i]=}, {output_str=}')
                 test_result.append(test_data["reference"][i] == output_str)
             else:
                 test_result.append(False)

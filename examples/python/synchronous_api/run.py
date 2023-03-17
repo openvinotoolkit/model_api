@@ -18,6 +18,7 @@
 import sys
 
 import cv2
+import openvino.runtime as ov
 from openvino.model_api.models import (
     ClassificationModel,
     DetectionModel,
@@ -49,6 +50,7 @@ def main():
     )
     detections = ssd_mobilenet_fpn(image)
     print(f"Detection results: {detections}")
+    ssd_mobilenet_fpn.save("ssd_mobilenet_v1_fpn_coco_with_preprocessing.xml")
 
     # Instantiate from a local model (downloaded previously)
     ssd_mobilenet_fpn_local = DetectionModel.create_model(

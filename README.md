@@ -30,11 +30,11 @@ Model API searches for additional information required for model inference, data
    ```
    - Run cmake:
    ```
-   cmake ../model_api/cpp
+   cmake ../model_api/cpp -DOpenCV_DIR=<OpenCV cmake dir> -DOpenVINO_DIR=<OpenVINO cmake dir>
    ```
    - Build:
    ```
-   make -j 
+   cmake --build . -j
    ```
    - To build a `.tar.gz` package with the library, run:
    ```
@@ -63,16 +63,16 @@ print(f"Detection results: {detections}")
 #include <models/results.h>
 
 // Load the model fetched using Python API
-auto model = DetectionModel::create_model("\~/.cache/omz/public/ssd300/FP16/ssd300.xml");
+auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
 
 // Run synchronous inference locally
- auto result = model->infer(image); // image is cv::Mat
- 
- // Iterate over the vector of DetectedObject with box coordinates, confidence and label string
- for (auto& obj : result->objects) {
+auto result = model->infer(image); // image is cv::Mat
+
+// Iterate over the vector of DetectedObject with box coordinates, confidence and label string
+for (auto& obj : result->objects) {
     std::cout << obj.label << " | " << obj.confidence << " | " << int(obj.x) << " | " << int(obj.y) << " | "
-                    << int(obj.x + obj.width) << " | " << int(obj.y + obj.height) << std::endl;
- }
+        << int(obj.x + obj.width) << " | " << int(obj.y + obj.height) << std::endl;
+}
 ```
 
 For more details please refer to the [examples](https://github.com/openvinotoolkit/model_api/tree/master/examples) of this project.

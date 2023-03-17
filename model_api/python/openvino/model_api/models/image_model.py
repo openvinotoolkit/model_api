@@ -89,15 +89,15 @@ class ImageModel(Model):
         parameters.update(
             {
                 "mean_values": ListValue(
-                    default_value=None,
+                    default_value=[],
                     description="Normalization values, which will be subtracted from image channels for image-input layer during preprocessing",
                 ),
                 "scale_values": ListValue(
-                    default_value=None,
+                    default_value=[],
                     description="Normalization values, which will divide the image channels for image-input layer",
                 ),
                 "reverse_input_channels": BooleanValue(
-                    default_value=False, description="Reverse the channel order"
+                    default_value=False, description="Reverse the input channel order"
                 ),
                 "resize_type": StringValue(
                     default_value="standard",
@@ -106,7 +106,7 @@ class ImageModel(Model):
                 ),
                 "embed_preprocessing": BooleanValue(
                     default_value=False,
-                    description="Whether embed preprocessing into the model",
+                    description="Whether to embed preprocessing into the model",
                 ),
             }
         )
