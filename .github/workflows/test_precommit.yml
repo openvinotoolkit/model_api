@@ -135,11 +135,11 @@ jobs:
       shell: bash
       run: |
         python -m venv venv
-        source venv/bin/activate
+        source venv/Scripts/activate
     - name: Install dependencies
       shell: bash
       run: |
-        source venv/bin/activate
+        source venv/Scripts/activate
         python -m pip install --upgrade pip
         pip install model_api/python/[tests]
         echo cmake
@@ -148,7 +148,7 @@ jobs:
     - name: Prepare test data
       shell: bash
       run: |
-        source venv/bin/activate
+        source venv/Scripts/activate
         python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
     - name: Build
       shell: bash
