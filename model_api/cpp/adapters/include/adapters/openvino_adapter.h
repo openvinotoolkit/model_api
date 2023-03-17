@@ -33,9 +33,9 @@ public:
     virtual InferenceOutput infer(const InferenceInput& input) override;
     virtual void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
                                                     const std::string& device = "", const ov::AnyMap& compilationConfig = {}) override;
-    virtual const ov::Shape getInputShape(const std::string& inputName) const override;
-    virtual const std::vector<std::string> getInputNames() const override;
-    virtual const std::vector<std::string> getOutputNames() const override;
+    virtual ov::Shape getInputShape(const std::string& inputName) const override;
+    virtual std::vector<std::string> getInputNames() const override;
+    virtual std::vector<std::string> getOutputNames() const override;
     virtual const ov::AnyMap& getModelConfig() const override;
 
 protected:
@@ -47,5 +47,5 @@ protected:
     std::vector<std::string> outputNames;
     ov::CompiledModel compiledModel;
     ov::InferRequest inferRequest;
-    ov::Any modelConfig; // the content of model_info section of rt_info
+    ov::AnyMap modelConfig; // the content of model_info section of rt_info
 };

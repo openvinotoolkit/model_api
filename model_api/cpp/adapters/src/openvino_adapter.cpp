@@ -37,7 +37,7 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
     initInputsOutputs();
 
     if (model->has_rt_info({"model_info"})) {
-        modelConfig = model->get_rt_info().at("model_info");
+        modelConfig = model->get_rt_info<ov::AnyMap>("model_info");
     } else {
         slog::info << "No model_info is defined in the IR" << slog::endl;
     }
@@ -62,7 +62,7 @@ InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {
     return output;
 }
 
-const ov::Shape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {
+ov::Shape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {
     return compiledModel.input(inputName).get_shape();
 }
 
@@ -76,16 +76,16 @@ void OpenVINOInferenceAdapter::initInputsOutputs() {
     }
 }
 
-const std::vector<std::string> OpenVINOInferenceAdapter::getInputNames() const {
+std::vector<std::string> OpenVINOInferenceAdapter::getInputNames() const {
     return inputNames;
 }
 
-const std::vector<std::string> OpenVINOInferenceAdapter::getOutputNames() const {
+std::vector<std::string> OpenVINOInferenceAdapter::getOutputNames() const {
     return outputNames;
 }
 
 const ov::AnyMap& OpenVINOInferenceAdapter::getModelConfig() const {
-    return std::move(modelConfig);
+    return modelConfig;
 }
 
 

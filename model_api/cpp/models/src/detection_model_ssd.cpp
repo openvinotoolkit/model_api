@@ -90,15 +90,15 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
             desc.label = getLabelName(desc.labelID);
             desc.x = clamp(
                 round((detections[i * objectSize + 3] * netInputWidth - padLeft) * invertedScaleX),
-                           0.f,
+                0.f,
                 floatInputImgWidth);
             desc.y = clamp(
                 round((detections[i * objectSize + 4] * netInputHeight - padTop) * invertedScaleY),
-                           0.f,
+                0.f,
                 floatInputImgHeight);
             desc.width = clamp(
                 round((detections[i * objectSize + 5] * netInputWidth - padLeft) * invertedScaleX - desc.x),
-                               0.f,
+                0.f,
                 floatInputImgWidth);
             desc.height = clamp(
                 round((detections[i * objectSize + 6] * netInputHeight - padTop) * invertedScaleY - desc.y),
