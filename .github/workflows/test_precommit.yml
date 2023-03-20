@@ -132,11 +132,9 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Temp
-      shell: bash
+      shell: pwsh
       run: |
-        curl https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe --output opencv-4.7.0-windows.exe
-        chmod +x opencv-4.7.0-windows.exe
-        ls
+        Invoke-WebRequest https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe -O opencv-4.7.0-windows.exe
     - name: extract
       shell: cmd
       run: |
