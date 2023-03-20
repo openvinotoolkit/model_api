@@ -38,16 +38,8 @@ public:
     ImageModel(const std::string& modelFile,
                const std::string& resize_type,
                bool useAutoResize,
-               const std::vector<std::string>& labels,
+               const std::vector<std::string>& labels = {},
                const std::string& layout = "");
-
-    ImageModel(const std::string& modelFile,
-               const std::string& resize_type,
-               bool useAutoResize,
-               const std::string& layout = "")
-        : ModelBase(modelFile, layout),
-          useAutoResize(useAutoResize),
-          resizeMode(selectResizeMode(resize_type)) {}
 
     ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
     ImageModel(std::shared_ptr<InferenceAdapter>& adapter);
