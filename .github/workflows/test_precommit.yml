@@ -131,6 +131,17 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Temp
+      shell: bash
+      run: |
+        curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.3/windows/w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64.zip --output w_openvino_toolkit_windows.zip
+        unzip w_openvino_toolkit_windows.zip
+        rm w_openvino_toolkit_windows.zip
+        curl https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe --output opencv-4.7.0-windows.exe
+        ./opencv-4.7.0-windows.exe -oopencv -y
+        mkdir build && cd build
+        ls ../opencv/opencv/build
+        cmake ../tests/cpp/precommit/ -DOpenVINO_DIR=../w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64/runtime/cmake -DOpenCV_DIR=../opencv/opencv/build
     - name: Create and start a virtual environment
       shell: bash
       run: |
