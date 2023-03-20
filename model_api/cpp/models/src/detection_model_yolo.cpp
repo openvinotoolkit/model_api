@@ -109,7 +109,7 @@ ModelYolo::ModelYolo(std::shared_ptr<ov::Model>& model, const ov::AnyMap& config
         presetMasks = masks_iter->second.as<std::vector<int64_t>>();
     }
     auto resize_type = configuration.find("resize_type");
-    if (resize_type != configuration.end()) {
+    if (resize_type == configuration.end()) {
         resizeMode = RESIZE_FILL; // "standard"
     }
 }

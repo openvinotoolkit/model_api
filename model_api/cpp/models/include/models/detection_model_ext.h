@@ -38,15 +38,8 @@ public:
         : DetectionModel(modelFile, confidenceThreshold, resize_type, useAutoResize, labels, layout),
           boxIOUThreshold(boxIOUThreshold) {}
 
-    DetectionModelExt(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
-        : DetectionModel(model, configuration) {
-        auto iou_t_iter = configuration.find("iou_t");
-        if (iou_t_iter != configuration.end()) {
-            boxIOUThreshold = iou_t_iter->second.as<bool>();
-        }
-    }
-
-    using DetectionModel::DetectionModel;
+    DetectionModelExt(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    DetectionModelExt(std::shared_ptr<InferenceAdapter>& adapter);
 
 protected:
     float boxIOUThreshold = 0.5f;

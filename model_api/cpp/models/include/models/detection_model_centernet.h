@@ -48,7 +48,7 @@ public:
     static const int INIT_VECTOR_SIZE = 200;
 
     ModelCenterNet(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
-    using DetectionModel::DetectionModel;
+    ModelCenterNet(std::shared_ptr<InferenceAdapter>& adapter);
     
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;

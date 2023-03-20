@@ -38,7 +38,7 @@
 ModelYoloV3ONNX::ModelYoloV3ONNX(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : DetectionModel(model, configuration) {
     auto resize_type = configuration.find("resize_type");
-    if (resize_type != configuration.end()) {
+    if (resize_type == configuration.end()) {
         resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; // "fit_to_window_letterbox"
     }
 

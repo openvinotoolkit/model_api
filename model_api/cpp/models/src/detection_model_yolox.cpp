@@ -39,7 +39,7 @@
 ModelYoloX::ModelYoloX(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration) 
     : DetectionModelExt(model, configuration) {
     auto resize_type = configuration.find("resize_type");
-    if (resize_type != configuration.end()) {
+    if (resize_type == configuration.end()) {
         resizeMode = RESIZE_KEEP_ASPECT;
     }
     useAutoResize = false;

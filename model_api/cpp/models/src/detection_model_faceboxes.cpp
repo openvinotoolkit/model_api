@@ -38,7 +38,7 @@ ModelFaceBoxes::ModelFaceBoxes(std::shared_ptr<ov::Model>& model, const ov::AnyM
         resizeMode = RESIZE_FILL; 
     }
     auto labels_string = configuration.find("labels");
-    if (labels_string != configuration.end()) {
+    if (labels_string == configuration.end()) {
         labels = {"Face"};
     }
 }

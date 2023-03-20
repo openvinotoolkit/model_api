@@ -55,6 +55,15 @@ ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, cons
     }
 }
 
+ClassificationModel::ClassificationModel(std::shared_ptr<InferenceAdapter>& adapter)
+    : ImageModel(adapter) {
+    auto configuration = adapter->getModelConfig();
+    auto topk_iter = configuration.find("topk");
+    if (topk_iter != configuration.end()) {
+        topk = topk_iter->second.as<size_t>();
+    }
+}
+
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);

@@ -46,7 +46,7 @@ void ModelBase::load(ov::Core& core) {
 std::shared_ptr<ov::Model> ModelBase::prepare() {
     prepareInputsOutputs(model);
     logBasicModelInfo(model);
-    ov::set_batch(model, 1);    
+    ov::set_batch(model, 1);
 
     return model;
 }

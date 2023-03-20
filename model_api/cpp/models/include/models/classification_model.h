@@ -49,6 +49,7 @@ public:
                         const std::string& layout = "");
 
     ClassificationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    ClassificationModel(std::shared_ptr<InferenceAdapter>& adapter);
 
     using ImageModel::ImageModel;
 

@@ -73,6 +73,11 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
         inputsLayouts = parseLayoutString(layout);
     }
 
+    auto auto_resize_iter = configuration.find("auto_resize");
+    if (auto_resize_iter != configuration.end()) {
+        useAutoResize = auto_resize_iter->second.as<bool>();
+    }
+
     auto resize_type_iter = configuration.find("resize_type");
     std::string resize_type = "standard";
     if (resize_type_iter == configuration.end()) {
@@ -83,11 +88,6 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
         resize_type = resize_type_iter->second.as<std::string>();
     }
     resizeMode = selectResizeMode(resize_type);
-
-    auto auto_resize_iter = configuration.find("auto_resize");
-    if (auto_resize_iter != configuration.end()) {
-        useAutoResize = auto_resize_iter->second.as<bool>();
-    }
 
     auto labels_iter = configuration.find("labels");
     if (labels_iter == configuration.end()) {

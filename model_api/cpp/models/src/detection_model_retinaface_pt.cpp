@@ -38,11 +38,11 @@ ModelRetinaFacePT::ModelRetinaFacePT(std::shared_ptr<ov::Model>& model, const ov
     : DetectionModelExt(model, configuration) {
 
     auto resize_type = configuration.find("resize_type");
-    if (resize_type != configuration.end()) {
+    if (resize_type == configuration.end()) {
         resizeMode = RESIZE_FILL; 
     }
     auto labels_string = configuration.find("labels");
-    if (labels_string != configuration.end()) {
+    if (labels_string == configuration.end()) {
         labels = {"Face"};
     }
 }
