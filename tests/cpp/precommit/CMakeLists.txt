@@ -50,13 +50,16 @@ include(CMakeParseArguments)
 include(FetchContent)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
-FetchContent_MakeAvailable(json)
+FetchContent_Declare(googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG 471087fbfcbc3c66071189a67c313eb1d525ee51  # latest main
+)
+FetchContent_MakeAvailable(json googletest)
 
 include(../cmake/common.cmake)
 
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
-find_package(GTest REQUIRED)
 
 add_subdirectory(../../../model_api/cpp ${tests_BINARY_DIR}/model_api/cpp)
 
