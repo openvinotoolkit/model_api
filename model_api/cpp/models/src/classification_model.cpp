@@ -58,11 +58,15 @@ ClassificationModel::ClassificationModel(std::shared_ptr<InferenceAdapter>& adap
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
+    
+    // Check model_type in the rt_info, ignore configuration
+    std::string model_type = "Classification"; 
     if (model->has_rt_info("model_info", "model_type") ) {
         std::string modelType = model->get_rt_info<std::string>("model_info", "model_type");
-        if ("Classification" != modelType) {
-            throw std::runtime_error("Model xml claims the model type is not Classificaction but " + modelType);
-        }
+    }
+
+    if (model_type != "Classification") {
+        throw std::runtime_error("Passed model type is incorrect: " + model_type);
     }
 
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(model, configuration)};
@@ -74,11 +78,13 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
     auto configuration = adapter->getModelConfig();
     auto model_type_iter = configuration.find("model_type");
-    std::string model_type;
+    std::string model_type = "Classification";
     if (model_type_iter != configuration.end()) {
         model_type = model_type_iter->second.as<std::string>();
-    } else {
-        std::runtime_error("No model_type provided in the config");
+    }
+
+    if (model_type != "Classification") {
+        throw std::runtime_error("Passed model type is incorrect: " + model_type);
     }
 
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(adapter)};
