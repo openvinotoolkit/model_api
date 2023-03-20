@@ -50,7 +50,7 @@ public:
           resizeMode(selectResizeMode(resize_type)) {}
 
     ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
-
+    ImageModel(std::shared_ptr<InferenceAdapter>& adapter);
     using ModelBase::ModelBase;
 
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;

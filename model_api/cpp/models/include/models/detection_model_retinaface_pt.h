@@ -43,6 +43,7 @@ public:
     };
 
     ModelRetinaFacePT(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    ModelRetinaFacePT(std::shared_ptr<InferenceAdapter>& adapter);
     using DetectionModelExt::DetectionModelExt;
     
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
@@ -68,4 +69,5 @@ protected:
                                              int imgHeight);
 
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
+    void initDefaultParameters(const ov::AnyMap& configuration);
 };

@@ -36,13 +36,23 @@
 #include "utils/nms.hpp"
 
 
-ModelYoloX::ModelYoloX(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration) 
-    : DetectionModelExt(model, configuration) {
-    auto resize_type = configuration.find("resize_type");
+void ModelYoloX::initDefaultParameters(const ov::AnyMap& configuration) {
+    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
     if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_KEEP_ASPECT;
+        resizeMode = RESIZE_KEEP_ASPECT; 
     }
     useAutoResize = false;
+}
+
+ModelYoloX::ModelYoloX(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : DetectionModelExt(model, configuration) {
+    initDefaultParameters(configuration);
+}
+
+ModelYoloX::ModelYoloX(std::shared_ptr<InferenceAdapter>& adapter)
+    : DetectionModelExt(adapter) {
+    auto configuration = adapter->getModelConfig();
+    initDefaultParameters(configuration);
 }
 
 void ModelYoloX::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {

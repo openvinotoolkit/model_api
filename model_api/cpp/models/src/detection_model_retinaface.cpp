@@ -32,19 +32,30 @@
 #include "models/results.h"
 
 
-ModelRetinaFace::ModelRetinaFace(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
-    : DetectionModelExt(model, configuration) {
-    auto resize_type = configuration.find("resize_type");
-    if (resize_type != configuration.end()) {
+void ModelRetinaFace::initDefaultParameters(const ov::AnyMap& configuration) {
+    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
+    if (resize_type == configuration.end()) {
         resizeMode = RESIZE_FILL; 
     }
-    auto labels_string = configuration.find("labels");
-    if (labels_string != configuration.end()) {
+    auto labels_string = configuration.find("labels"); // Override default if it is not set
+    if (labels_string == configuration.end()) {
         labels = {"Face"};
     }
 
     generateAnchorsFpn();
 }
+
+ModelRetinaFace::ModelRetinaFace(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : DetectionModelExt(model, configuration) {
+    initDefaultParameters(configuration);
+}
+
+ModelRetinaFace::ModelRetinaFace(std::shared_ptr<InferenceAdapter>& adapter)
+    : DetectionModelExt(adapter) {
+    auto configuration = adapter->getModelConfig();
+    initDefaultParameters(configuration);
+}
+
 
 void ModelRetinaFace::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output -------------------------------------------------

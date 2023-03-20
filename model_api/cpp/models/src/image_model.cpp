@@ -66,15 +66,12 @@ RESIZE_MODE ImageModel::selectResizeMode(const std::string& resize_type) {
 
 ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : ModelBase(model, configuration) {
-    auto layout_iter = configuration.find("layout");
-    std::string layout = "";
-    if (layout_iter != configuration.end()) {
-        layout = layout_iter->second.as<std::string>();
-        inputsLayouts = parseLayoutString(layout);
-    }
-
     auto auto_resize_iter = configuration.find("auto_resize");
-    if (auto_resize_iter != configuration.end()) {
+    if (auto_resize_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "auto_resize")) {
+            useAutoResize = model->get_rt_info<bool>("model_info", "auto_resize");
+        }
+    } else {
         useAutoResize = auto_resize_iter->second.as<bool>();
     }
 
@@ -100,7 +97,26 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
     }
 }
 
+ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
+    : ModelBase(adapter) {
+    auto configuration = adapter->getModelConfig();
+    auto auto_resize_iter = configuration.find("auto_resize");
+    if (auto_resize_iter != configuration.end()) {
+        useAutoResize = auto_resize_iter->second.as<bool>();
+    }
 
+    auto resize_type_iter = configuration.find("resize_type");
+    std::string resize_type = "standard";
+    if (resize_type_iter != configuration.end()) {
+        resize_type = resize_type_iter->second.as<std::string>();
+    }
+    resizeMode = selectResizeMode(resize_type);
+
+    auto labels_iter = configuration.find("labels");
+    if (labels_iter != configuration.end()) {
+        labels = labels_iter->second.as<std::vector<std::string>>();
+    }
+}
 
 std::shared_ptr<InternalModelData> ImageModel::preprocess(const InputData& inputData, InferenceInput& input) {
     const auto& origImg = inputData.asRef<ImageInputData>().inputImage;

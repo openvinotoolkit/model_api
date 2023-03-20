@@ -35,14 +35,23 @@
 #include "utils/image_utils.h"
 
 
+void ModelYoloV3ONNX::initDefaultParameters(const ov::AnyMap& configuration) {
+    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
+    if (resize_type == configuration.end()) {
+        resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; 
+    }
+    useAutoResize = false;
+}
+
 ModelYoloV3ONNX::ModelYoloV3ONNX(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : DetectionModel(model, configuration) {
-    auto resize_type = configuration.find("resize_type");
-    if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; // "fit_to_window_letterbox"
-    }
+    initDefaultParameters(configuration);
+}
 
-    useAutoResize = false;
+ModelYoloV3ONNX::ModelYoloV3ONNX(std::shared_ptr<InferenceAdapter>& adapter)
+    : DetectionModel(adapter) {
+    auto configuration = adapter->getModelConfig();
+    initDefaultParameters(configuration);
 }
 
 void ModelYoloV3ONNX::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {

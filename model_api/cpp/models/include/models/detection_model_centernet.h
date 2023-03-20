@@ -54,5 +54,6 @@ public:
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
 protected:
+    void initDefaultParameters(const ov::AnyMap& configuration);
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
 };

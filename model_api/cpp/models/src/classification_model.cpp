@@ -47,7 +47,7 @@ ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, cons
     : ImageModel(model, configuration) {
     auto topk_iter = configuration.find("topk");
     if (topk_iter == configuration.end()) {
-        if (model->has_rt_info<std::string>("model_info", "topk")) {
+        if (model->has_rt_info("model_info", "topk")) {
             topk = stoi(model->get_rt_info<std::string>("model_info", "topk"));
         }
     } else {

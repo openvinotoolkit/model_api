@@ -56,6 +56,7 @@ public:
     enum YoloVersion { YOLO_V1V2, YOLO_V3, YOLO_V4, YOLO_V4_TINY, YOLOF };
 
     ModelYolo(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    ModelYolo(std::shared_ptr<InferenceAdapter>& adapter);
     using DetectionModelExt::DetectionModelExt;
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;

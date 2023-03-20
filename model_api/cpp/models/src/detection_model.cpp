@@ -46,8 +46,19 @@ DetectionModel::DetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyM
     : ImageModel(model, configuration) {
     auto confidence_threshold_iter = configuration.find("confidence_threshold");
     if (confidence_threshold_iter == configuration.end()) {
-        confidenceThreshold = stof(model->get_rt_info<std::string>("model_info", "confidence_threshold"));
+        if (model->has_rt_info("model_info", "confidence_threshold")) {
+            confidenceThreshold = stof(model->get_rt_info<std::string>("model_info", "confidence_threshold"));
+        }
     } else {
+        confidenceThreshold = confidence_threshold_iter->second.as<float>();
+    }
+}
+
+DetectionModel::DetectionModel(std::shared_ptr<InferenceAdapter>& adapter)
+   : ImageModel(adapter) {
+    auto configuration = adapter->getModelConfig();
+    auto confidence_threshold_iter = configuration.find("confidence_threshold");
+    if (confidence_threshold_iter == configuration.end()) {
         confidenceThreshold = confidence_threshold_iter->second.as<float>();
     }
 }

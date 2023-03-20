@@ -36,29 +36,23 @@
 #include "models/internal_model_data.h"
 #include "models/results.h"
 
-
-ModelCenterNet::ModelCenterNet(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
-    : DetectionModel(model, configuration) {
-    auto resize_type = configuration.find("resize_type");
+void ModelCenterNet::initDefaultParameters(const ov::AnyMap& configuration) {
+    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
     if (resize_type == configuration.end()) {
         resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; // "fit_to_window_letterbox"
     }
-
     useAutoResize = false;
+}
+
+ModelCenterNet::ModelCenterNet(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : DetectionModel(model, configuration) {
+    initDefaultParameters(configuration);
 }
 
 ModelCenterNet::ModelCenterNet(std::shared_ptr<InferenceAdapter>& adapter)
     : DetectionModel(adapter) {
     auto configuration = adapter->getModelConfig();
-
-    auto resize_type = configuration.find("resize_type");
-    if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; // "fit_to_window_letterbox"
-    } else {
-        
-    }
-
-    useAutoResize = false;
+    initDefaultParameters(configuration);
 }
 
 void ModelCenterNet::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {

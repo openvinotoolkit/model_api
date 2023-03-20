@@ -101,6 +101,33 @@ static inline float linear(float x) {
 ModelYolo::ModelYolo(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : DetectionModelExt(model, configuration) {    
     auto anchors_iter = configuration.find("anchors");
+    if (anchors_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "anchors")) {
+            //presetAnchors = model->get_rt_info().at("model_info").as<ov::VariantWrapper<ov::AnyMap>>().get().at("anchors").as<std::vector<float>>();
+            presetAnchors = model->get_rt_info<std::vector<float>>("model_info", "anchors");
+        }
+    } else {
+        presetAnchors = anchors_iter->second.as<std::vector<float>>();
+    }
+    auto masks_iter = configuration.find("masks");
+    if (masks_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "masks")) {
+            presetMasks = model->get_rt_info<std::vector<int64_t>>("model_info", "masks");
+        }
+    } else {
+        presetMasks = masks_iter->second.as<std::vector<int64_t>>();
+    }
+
+    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
+    if (resize_type == configuration.end()) {
+        resizeMode = RESIZE_FILL; // "standard"
+    }
+}
+
+ModelYolo::ModelYolo(std::shared_ptr<InferenceAdapter>& adapter)
+    : DetectionModelExt(adapter) {
+    auto configuration = adapter->getModelConfig();
+    auto anchors_iter = configuration.find("anchors");
     if (anchors_iter != configuration.end()) {
         presetAnchors = anchors_iter->second.as<std::vector<float>>();
     }
@@ -108,7 +135,8 @@ ModelYolo::ModelYolo(std::shared_ptr<ov::Model>& model, const ov::AnyMap& config
     if (masks_iter != configuration.end()) {
         presetMasks = masks_iter->second.as<std::vector<int64_t>>();
     }
-    auto resize_type = configuration.find("resize_type");
+
+    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
     if (resize_type == configuration.end()) {
         resizeMode = RESIZE_FILL; // "standard"
     }

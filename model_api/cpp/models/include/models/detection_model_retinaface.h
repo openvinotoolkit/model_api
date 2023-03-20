@@ -36,6 +36,7 @@ public:
     static const int INIT_VECTOR_SIZE = 200;
     
     ModelRetinaFace(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    ModelRetinaFace(std::shared_ptr<InferenceAdapter>& adapter);
     using DetectionModelExt::DetectionModelExt;
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
@@ -63,4 +64,5 @@ protected:
 
     void generateAnchorsFpn();
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
+    void initDefaultParameters(const ov::AnyMap& configuration);
 };

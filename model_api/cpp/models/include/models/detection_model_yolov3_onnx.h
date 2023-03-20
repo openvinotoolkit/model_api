@@ -26,6 +26,7 @@
 class ModelYoloV3ONNX: public DetectionModel {
 public:
     ModelYoloV3ONNX(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    ModelYoloV3ONNX(std::shared_ptr<InferenceAdapter>& adapter);
     using DetectionModel::DetectionModel;
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
@@ -33,6 +34,7 @@ public:
 
 protected:
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
+    void initDefaultParameters(const ov::AnyMap& configuration);
 
     std::string boxesOutputName;
     std::string scoresOutputName;

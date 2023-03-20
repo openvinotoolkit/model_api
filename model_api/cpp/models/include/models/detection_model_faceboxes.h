@@ -37,6 +37,7 @@ public:
     static const int INIT_VECTOR_SIZE = 200;
 
     ModelFaceBoxes(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    ModelFaceBoxes(std::shared_ptr<InferenceAdapter>& adapter);
     using DetectionModelExt::DetectionModelExt;
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
@@ -49,4 +50,5 @@ protected:
     std::vector<Anchor> anchors;
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void priorBoxes(const std::vector<std::pair<size_t, size_t>>& featureMaps);
+    void initDefaultParameters(const ov::AnyMap& configuration);
 };

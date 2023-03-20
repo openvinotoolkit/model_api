@@ -45,7 +45,7 @@ public:
                    const std::string& layout = "");
 
     DetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
-
+    DetectionModel(std::shared_ptr<InferenceAdapter>& adapter);
     using ImageModel::ImageModel;
 
     static std::unique_ptr<DetectionModel> create_model(const std::string& modelFile, std::string model_type = "", const ov::AnyMap& configuration = {});
@@ -54,7 +54,7 @@ public:
     virtual std::unique_ptr<DetectionResult> infer(const ImageInputData& inputData);
 
 protected:
-    float confidenceThreshold;
+    float confidenceThreshold = 0.5f;
 
     std::string getLabelName(int labelID) {
         return (size_t)labelID < labels.size() ? labels[labelID] : std::string("Label #") + std::to_string(labelID);

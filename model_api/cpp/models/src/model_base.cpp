@@ -35,6 +35,31 @@ ModelBase::ModelBase(const std::string& modelFile, const std::string& layout)
     model = core.read_model(modelFile);
 }
 
+ModelBase::ModelBase(std::shared_ptr<InferenceAdapter>& adapter)
+        : inferenceAdapter(adapter) {
+    auto configuration = adapter->getModelConfig();
+    auto layout_iter = configuration.find("layout");
+    std::string layout = "";
+    if (layout_iter != configuration.end()) {
+        layout = layout_iter->second.as<std::string>();
+    }
+    inputsLayouts = parseLayoutString(layout);
+}
+
+ModelBase::ModelBase(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+        : model(model) {
+    auto layout_iter = configuration.find("layout");
+    std::string layout = "";
+    if (layout_iter != configuration.end()) {
+       layout = layout_iter->second.as<std::string>();
+    } else {
+        if (model->has_rt_info("model_info", "layout")) {
+            layout = model->get_rt_info<std::string>("model_info", "layout");
+        }
+    }
+    inputsLayouts = parseLayoutString(layout);
+}
+
 void ModelBase::load(ov::Core& core) {
     if (!inferenceAdapter) {
         inferenceAdapter = std::make_shared<OpenVINOInferenceAdapter>();

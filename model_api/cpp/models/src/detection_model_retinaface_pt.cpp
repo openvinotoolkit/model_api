@@ -34,17 +34,27 @@
 #include "models/internal_model_data.h"
 #include "models/results.h"
 
-ModelRetinaFacePT::ModelRetinaFacePT(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
-    : DetectionModelExt(model, configuration) {
 
-    auto resize_type = configuration.find("resize_type");
+void ModelRetinaFacePT::initDefaultParameters(const ov::AnyMap& configuration) {
+    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
     if (resize_type == configuration.end()) {
         resizeMode = RESIZE_FILL; 
     }
-    auto labels_string = configuration.find("labels");
+    auto labels_string = configuration.find("labels"); // Override default if it is not set
     if (labels_string == configuration.end()) {
         labels = {"Face"};
     }
+}
+
+ModelRetinaFacePT::ModelRetinaFacePT(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : DetectionModelExt(model, configuration) {
+    initDefaultParameters(configuration);
+}
+
+ModelRetinaFacePT::ModelRetinaFacePT(std::shared_ptr<InferenceAdapter>& adapter)
+    : DetectionModelExt(adapter) {
+    auto configuration = adapter->getModelConfig();
+    initDefaultParameters(configuration);
 }
 
 void ModelRetinaFacePT::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
