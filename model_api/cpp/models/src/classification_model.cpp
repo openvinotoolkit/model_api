@@ -60,13 +60,17 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     
     // Check model_type in the rt_info, ignore configuration
-    std::string model_type = "Classification"; 
-    if (model->has_rt_info("model_info", "model_type") ) {
-        std::string modelType = model->get_rt_info<std::string>("model_info", "model_type");
+    std::string model_type = "Classification";
+    try {
+        if (model->has_rt_info("model_info", "model_type") ) {
+            model_type = model->get_rt_info<std::string>("model_info", "model_type");
+        }
+    } catch (const std::exception& e) {
+        slog::warn << "Model type is not specified in the rt_info, use default model type: " << model_type << slog::endl;
     }
-
+    
     if (model_type != "Classification") {
-        throw std::runtime_error("Passed model type is incorrect: " + model_type);
+        throw ov::Exception("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
     }
 
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(model, configuration)};
@@ -84,11 +88,10 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(std::shar
     }
 
     if (model_type != "Classification") {
-        throw std::runtime_error("Passed model type is incorrect: " + model_type);
+        throw ov::Exception("Incorrect or unsupported model_type is provided: " + model_type);
     }
 
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(adapter)};
-
     return classifier;
 }
 

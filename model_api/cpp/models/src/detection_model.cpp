@@ -59,7 +59,13 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     if (model_type.empty()) {
-        model_type = model->get_rt_info<std::string>("model_info", "model_type");
+        try {
+            if (model->has_rt_info("model_info", "model_type") ) {
+                model_type = model->get_rt_info<std::string>("model_info", "model_type");
+            }
+        } catch (const std::exception& e) {
+            slog::warn << "Model type is not specified in the rt_info, use default model type: " << model_type << slog::endl;
+        }
     }
 
     std::unique_ptr<DetectionModel> detectionModel;
@@ -80,7 +86,7 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     } else if (model_type == "centernet") {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelCenterNet(model, configuration));
     } else {
-        throw std::runtime_error{"No or invalid model_type provided for detection model: " + model_type};
+        throw ov::Exception("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
     }
     
     detectionModel->prepare();
@@ -114,12 +120,11 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(std::shared_ptr<Inf
     } else if (model_type == "centernet") {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelCenterNet(adapter));
     } else {
-        throw std::runtime_error{"No or invalid model_type provided for detection model: " + model_type};
+        throw ov::Exception("Incorrect or unsupported model_type is provided: " + model_type);
     }
     
     return detectionModel;
 }
-
 
 std::unique_ptr<DetectionResult> DetectionModel::infer(const ImageInputData& inputData) {
     auto result = ModelBase::infer(static_cast<const InputData&>(inputData));
