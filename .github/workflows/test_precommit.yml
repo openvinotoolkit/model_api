@@ -142,6 +142,7 @@ jobs:
       shell: cmd
       run: |
         cd ../../..
+        dir opencv-4.7.0-windows.exe
         .\opencv-4.7.0-windows.exe -oopencv -y
         ls
     - name: Temp2
