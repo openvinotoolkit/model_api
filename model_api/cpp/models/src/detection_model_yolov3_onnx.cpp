@@ -36,10 +36,7 @@
 
 
 void ModelYoloV3ONNX::initDefaultParameters(const ov::AnyMap& configuration) {
-    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
-    if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; 
-    }
+    resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; // Ignore configuration for now
     useAutoResize = false;
 }
 

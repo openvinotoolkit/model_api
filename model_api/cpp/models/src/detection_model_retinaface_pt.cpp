@@ -36,10 +36,7 @@
 
 
 void ModelRetinaFacePT::initDefaultParameters(const ov::AnyMap& configuration) {
-    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
-    if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_FILL; 
-    }
+    resizeMode = RESIZE_FILL; // Ignore resize_type for now
     auto labels_string = configuration.find("labels"); // Override default if it is not set
     if (labels_string == configuration.end()) {
         labels = {"Face"};

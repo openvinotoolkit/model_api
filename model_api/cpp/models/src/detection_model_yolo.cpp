@@ -118,10 +118,7 @@ ModelYolo::ModelYolo(std::shared_ptr<ov::Model>& model, const ov::AnyMap& config
         presetMasks = masks_iter->second.as<std::vector<int64_t>>();
     }
 
-    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
-    if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_FILL; // "standard"
-    }
+    resizeMode = RESIZE_FILL; // Ignore resize_type for now
 }
 
 ModelYolo::ModelYolo(std::shared_ptr<InferenceAdapter>& adapter)
@@ -136,10 +133,7 @@ ModelYolo::ModelYolo(std::shared_ptr<InferenceAdapter>& adapter)
         presetMasks = masks_iter->second.as<std::vector<int64_t>>();
     }
 
-    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
-    if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_FILL; // "standard"
-    }
+    resizeMode = RESIZE_FILL; // Ignore resize_type for now
 }
 
 void ModelYolo::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {

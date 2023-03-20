@@ -37,10 +37,7 @@
 
 
 void ModelYoloX::initDefaultParameters(const ov::AnyMap& configuration) {
-    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
-    if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_KEEP_ASPECT; 
-    }
+    resizeMode = RESIZE_KEEP_ASPECT; // Ignore configuration for now
     useAutoResize = false;
 }
 

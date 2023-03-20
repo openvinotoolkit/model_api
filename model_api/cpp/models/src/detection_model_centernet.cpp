@@ -37,10 +37,7 @@
 #include "models/results.h"
 
 void ModelCenterNet::initDefaultParameters(const ov::AnyMap& configuration) {
-    auto resize_type = configuration.find("resize_type"); // Override default if it is not set
-    if (resize_type == configuration.end()) {
-        resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; // "fit_to_window_letterbox"
-    }
+    resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX; // Ignore configuration for now
     useAutoResize = false;
 }
 
