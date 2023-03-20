@@ -30,7 +30,6 @@ class DetectionModel : public ImageModel {
 public:
     DetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
     DetectionModel(std::shared_ptr<InferenceAdapter>& adapter);
-    using ImageModel::ImageModel;
 
     static std::unique_ptr<DetectionModel> create_model(const std::string& modelFile, std::string model_type = "", const ov::AnyMap& configuration = {});
     static std::unique_ptr<DetectionModel> create_model(std::shared_ptr<InferenceAdapter>& adapter);
