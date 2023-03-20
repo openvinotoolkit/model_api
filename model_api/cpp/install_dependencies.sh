@@ -14,6 +14,3 @@ apt-get install libopencv-dev
 
 # Install OpenVINO
 apt install openvino
-
-# Install GTest for CPP tests
-apt-get install libgtest-dev
