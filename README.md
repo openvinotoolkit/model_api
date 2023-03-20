@@ -1,12 +1,15 @@
 # OpenVINO Model API
 Model API is a set of wrapper classes for particular tasks and model architectures, simplifying data preprocess and postprocess as well as routine procedures (model loading, asynchronous execution, etc.). It is aimed at simplifying end-to-end model inference for different deployment scenarious, including local execution and serving. The Model API is based on the OpenVINO inference API.
 
+## How it works
+Model API searches for additional information required for model inference, data, pre/postprocessing, label names, etc. directly in OpenVINO Intermediate Representation. This information is used to prepare the inference data, process and ouput the inference results in a human-readable format.
+
 ## Features
 - Python and C++ API
 - Automatic prefetch of public models from [OpenVINO Model Zoo](https://github.com/openvinotoolkit/open_model_zoo) (Python only)
 - Syncronous and asynchronous inference
-- Local inference and servring through the rest API (Python only).
-- Model preprocessing embedding for faster inference (Python only)
+- Local inference and servring through the rest API (Python only)
+- Model preprocessing embedding for faster inference
 
 ## Installation
 ### Python
@@ -39,13 +42,12 @@ Model API is a set of wrapper classes for particular tasks and model architectur
     ```
 
 ## Usage
-For more details please refer to the [examples](examples) of this project.
-### Local inference
-- Python
+### Python
 ```python
 from openvino.model_api.models import DetectionModel
 
-# Create a model (downloaded and cached automatically)
+# Create a model (downloaded and cached automatically for OpenVINO Model Zoo models)
+# Use URL to work with served model, e.g. "localhost:9000/models/ssd300"
 ssd = DetectionModel.create_model("ssd300")
 
 # Run synchronous inference locally
@@ -54,7 +56,8 @@ detections = ssd(image)  # image is numpy.ndarray
 # Print the list of Detection objects with box coordinates, confidence and label string
 print(f"Detection results: {detections}")
 ```
-- C++
+
+### C++
 ```cpp
 #include <models/detection_model.h>
 #include <models/results.h>
@@ -72,6 +75,38 @@ for (auto& obj : result->objects) {
 }
 ```
 
-More examples of how to use asynchronous inference and serving are coming soon.
+For more details please refer to the [examples](https://github.com/openvinotoolkit/model_api/tree/master/examples) of this project.
 
-See [Model configuration](docs/model-configuration.md) for explanation how a model can be configured.
+## Supported models
+### Python:
+- Image Classification:
+  - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#classification-models)
+- Object Detection:
+  - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#object-detection-models):
+    - SSD-based models (e.g. "ssd300", "ssdlite_mobilenet_v2", etc.)
+    - YOLO-based models (e.g. "yolov3", "yolov4", etc.)
+    - CTPN: "ctpn"
+    - DETR: "detr-resnet50"
+    - CenterNet: "ctdet_coco_dlav0_512"
+    - FaceBoxes: "faceboxes-pytorch"
+    - RetinaFace: "retinaface-resnet50-pytorch"
+    - Ultra Lightweight Face Detection: "ultra-lightweight-face-detection-rfb-320" and "ultra-lightweight-face-detection-slim-320"
+    - NanoDet with ShuffleNetV2: "nanodet-m-1.5x-416"
+    - NanoDet Plus with ShuffleNetV2: "nanodet-plus-m-1.5x-416"
+- Semantic Segmentation:
+  - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#semantic-segmentation-models)
+- Instance Segmentation:
+  - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#instance-segmentation-models)
+
+
+### C++:
+- Image Classification:
+  - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#classification-models)
+- Object Detection:
+  - SSD-based models (e.g. "ssd300", "ssdlite_mobilenet_v2", etc.)
+    - YOLO-based models (e.g. "yolov3", "yolov4", etc.)
+    - CenterNet: "ctdet_coco_dlav0_512"
+    - FaceBoxes: "faceboxes-pytorch"
+    - RetinaFace: "retinaface-resnet50-pytorch"
+- Semantic Segmentation:
+  - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#semantic-segmentation-models)
