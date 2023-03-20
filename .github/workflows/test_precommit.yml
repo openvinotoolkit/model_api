@@ -139,10 +139,10 @@ jobs:
         chmod +x opencv-4.7.0-windows.exe
         ls
     - name: extract
-      shell: pwsh
+      shell: cmd
       run: |
         cd ../../..
-        ./opencv-4.7.0-windows.exe -oopencv -y
+        .\opencv-4.7.0-windows.exe -oopencv -y
         ls
     - name: Temp2
       shell: bash
