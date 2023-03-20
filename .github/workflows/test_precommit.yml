@@ -146,24 +146,24 @@ jobs:
         unzip w_openvino_toolkit_windows.zip
         rm w_openvino_toolkit_windows.zip
     - name: Cache OpenCV
-        id: opencv-cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/opencv
-          key: ${{ runner.os }}-opencv-cache
-      - if: ${{ steps.opencv-cache.outputs.cache-hit != 'true' }}
-        name: Checlout OpenCV
-        uses: actions/checkout@v3
-        with:
-          repository: opencv/opencv
-          path: opencv
-      - if: ${{ steps.opencv-cache.outputs.cache-hit != 'true' }}
-        name: Compile OpenCV
-        run: |
-          mkdir opencv/build
-          cd opencv/build
-          cmake -DCMAKE_BUILD_TYPE=Release -DWITH_INF_ENGINE=ON -DOpenVINO_DIR=$GITHUB_WORKSPACE/l_openvino_toolkit_ubuntu20_2022.3.0.9052.9752fafe8eb_x86_64/runtime/cmake/ ..
-          cmake --build . -j $((`nproc`*2+2))
+      id: opencv-cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ github.workspace }}/opencv
+        key: ${{ runner.os }}-opencv-cache
+    - if: ${{ steps.opencv-cache.outputs.cache-hit != 'true' }}
+      name: Checlout OpenCV
+      uses: actions/checkout@v3
+      with:
+        repository: opencv/opencv
+        path: opencv
+    - if: ${{ steps.opencv-cache.outputs.cache-hit != 'true' }}
+      name: Compile OpenCV
+      run: |
+        mkdir opencv/build
+        cd opencv/build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . -j $((`nproc`*2+2))
     - name: Prepare test data
       shell: bash
       run: |
