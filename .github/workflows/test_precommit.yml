@@ -134,6 +134,7 @@ jobs:
     - name: Create and start a virtual environment
       shell: bash
       run: |
+        nproc
         python -m venv venv
         source venv/Scripts/activate
     - name: Install dependencies
