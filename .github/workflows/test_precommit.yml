@@ -137,6 +137,7 @@ jobs:
         cd ../../..
         curl https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe --output opencv-4.7.0-windows.exe
         chmod +x opencv-4.7.0-windows.exe
+        ls
     - name: extract
       shell: pwsh
       run: |
