@@ -28,16 +28,6 @@ struct InferenceAdatper;
 
 class DetectionModelExt : public DetectionModel {
 public:
-    DetectionModelExt(const std::string& modelFile,
-                   float confidenceThreshold,
-                   const std::string& resize_type,
-                   bool useAutoResize,
-                   const std::vector<std::string>& labels,
-                   float boxIOUThreshold,
-                   const std::string& layout = "")
-        : DetectionModel(modelFile, confidenceThreshold, resize_type, useAutoResize, labels, layout),
-          boxIOUThreshold(boxIOUThreshold) {}
-
     DetectionModelExt(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
     DetectionModelExt(std::shared_ptr<InferenceAdapter>& adapter);
 

@@ -33,14 +33,6 @@
 #include "models/input_data.h"
 #include "models/results.h"
 
-DetectionModel::DetectionModel(const std::string& modelFile,
-                               float confidenceThreshold,
-                               const std::string& resize_type,
-                               bool useAutoResize,
-                               const std::vector<std::string>& labels,
-                               const std::string& layout)
-    : ImageModel(modelFile, resize_type, useAutoResize, labels, layout),
-      confidenceThreshold(confidenceThreshold) {}
 
 DetectionModel::DetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : ImageModel(model, configuration) {
