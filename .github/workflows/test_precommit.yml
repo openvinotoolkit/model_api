@@ -145,25 +145,8 @@ jobs:
         curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.3/windows/w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64.zip --output w_openvino_toolkit_windows.zip
         unzip w_openvino_toolkit_windows.zip
         rm w_openvino_toolkit_windows.zip
-    - name: Cache OpenCV
-      id: opencv-cache
-      uses: actions/cache@v3
-      with:
-        path: ${{ github.workspace }}/opencv
-        key: ${{ runner.os }}-opencv-cache
-    - if: ${{ steps.opencv-cache.outputs.cache-hit != 'true' }}
-      name: Checlout OpenCV
-      uses: actions/checkout@v3
-      with:
-        repository: opencv/opencv
-        path: opencv
-    - if: ${{ steps.opencv-cache.outputs.cache-hit != 'true' }}
-      name: Compile OpenCV
-      run: |
-        mkdir opencv/build
-        cd opencv/build
-        cmake -DCMAKE_BUILD_TYPE=Release ..
-        cmake --build . -j $((`nproc`*2+2))
+        curl https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe --output opencv-4.7.0-windows.exe
+        opencv-4.7.0-windows.exe -oopencv -y
     - name: Prepare test data
       shell: bash
       run: |
@@ -173,7 +156,7 @@ jobs:
       shell: bash
       run: |
         mkdir build && cd build
-        cmake ../tests/cpp/precommit/ -DOpenVINO_DIR=w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64/runtime/cmake -DOpenCV_DIR=$GITHUB_WORKSPACE/opencv/build
+        cmake ../tests/cpp/precommit/ -DOpenVINO_DIR=w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64/runtime/cmake -DOpenCV_DIR=opencv/opencv/build
         cmake --build . -j $((`nproc`*2+2))
     - name: Run test
       shell: bash
