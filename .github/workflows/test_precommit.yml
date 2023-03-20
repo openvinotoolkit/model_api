@@ -134,11 +134,13 @@ jobs:
     - name: Temp
       shell: bash
       run: |
+        cd ..
         curl https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe --output opencv-4.7.0-windows.exe
         chmod +x opencv-4.7.0-windows.exe
     - name: extract
       shell: pwsh
       run: |
+        cd ..
         ./opencv-4.7.0-windows.exe -oopencv -y
         ls
     - name: Temp2
