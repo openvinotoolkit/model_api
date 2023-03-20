@@ -80,7 +80,7 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     } else if (model_type == "centernet") {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelCenterNet(model, configuration));
     } else {
-        throw std::runtime_error{"No or invalid invalid model_type provided: " + model_type};
+        throw std::runtime_error{"No or invalid model_type provided for detection model: " + model_type};
     }
     
     detectionModel->prepare();
@@ -94,8 +94,6 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(std::shared_ptr<Inf
     std::string model_type;
     if (model_type_iter != configuration.end()) {
         model_type = model_type_iter->second.as<std::string>();
-    } else {
-        std::runtime_error("No or invalid invalid model_type provided: " + model_type);
     }
 
     std::unique_ptr<DetectionModel> detectionModel;
@@ -116,7 +114,7 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(std::shared_ptr<Inf
     } else if (model_type == "centernet") {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelCenterNet(adapter));
     } else {
-        throw std::runtime_error{"No model type or invalid model type (-at) provided: " + model_type};
+        throw std::runtime_error{"No or invalid model_type provided for detection model: " + model_type};
     }
     
     return detectionModel;
