@@ -20,26 +20,17 @@
 #include <string>
 #include <vector>
 
-#include "models/image_model.h"
+#include "models/detection_model.h"
 
 struct DetectionResult;
 struct ImageInputData;
 struct InferenceAdatper;
 
-class DetectionModel : public ImageModel {
+class DetectionModelExt : public DetectionModel {
 public:
-    DetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
-    DetectionModel(std::shared_ptr<InferenceAdapter>& adapter);
-
-    static std::unique_ptr<DetectionModel> create_model(const std::string& modelFile, std::string model_type = "", const ov::AnyMap& configuration = {});
-    static std::unique_ptr<DetectionModel> create_model(std::shared_ptr<InferenceAdapter>& adapter);
-
-    virtual std::unique_ptr<DetectionResult> infer(const ImageInputData& inputData);
+    DetectionModelExt(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    DetectionModelExt(std::shared_ptr<InferenceAdapter>& adapter);
 
 protected:
-    float confidenceThreshold = 0.5f;
-
-    std::string getLabelName(int labelID) {
-        return (size_t)labelID < labels.size() ? labels[labelID] : std::string("Label #") + std::to_string(labelID);
-    }
+    float boxIOUThreshold = 0.5f;
 };
