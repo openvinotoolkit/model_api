@@ -33,13 +33,10 @@
 ImageModel::ImageModel(const std::string& modelFile,
                        const std::string& resize_type,
                        bool useAutoResize,
-                       const std::vector<std::string>& labels,
                        const std::string& layout)
     : ModelBase(modelFile, layout),
-      labels(labels),
       useAutoResize(useAutoResize),
-      resizeMode(selectResizeMode(resize_type)) {
-    }
+      resizeMode(selectResizeMode(resize_type)) {}
 
 RESIZE_MODE ImageModel::selectResizeMode(const std::string& resize_type) {
     RESIZE_MODE resize = RESIZE_FILL;

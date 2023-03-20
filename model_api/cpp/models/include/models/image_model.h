@@ -38,7 +38,6 @@ public:
     ImageModel(const std::string& modelFile,
                const std::string& resize_type,
                bool useAutoResize,
-               const std::vector<std::string>& labels = {},
                const std::string& layout = "");
 
     ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
