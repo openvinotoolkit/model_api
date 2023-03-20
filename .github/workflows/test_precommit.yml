@@ -159,6 +159,6 @@ jobs:
         cmake ../tests/cpp/precommit/ -DOpenVINO_DIR=$GITHUB_WORKSPACE/w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64/runtime/cmake -DOpenCV_DIR=$GITHUB_WORKSPACE/opencv/opencv/build
         cmake --build . --config Release -j $((`nproc`*2+2))
     - name: Run test
-      shell: bash
+      shell: cmd
       run: |
         build/Release/test_sanity -d data -p tests/cpp/precommit/public_scope.json
