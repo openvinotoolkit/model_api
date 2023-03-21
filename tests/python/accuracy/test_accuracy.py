@@ -17,9 +17,7 @@ def process_output(output, model_type):
     elif model_type == ClassificationModel.__name__:
         return f"({output[0]}, {output[1]}, {output[2]:.3f})"
     elif model_type == SegmentationModel.__name__:
-        hist = cv2.calcHist(output, [0], None, [256], (0, 256), accumulate=False)
-        hist = np.nonzero(hist)[0]
-        return f"{hist}"
+        return str(np.unique(output))
     else:
         raise ValueError("Unknown model type to precess ouput")
 
