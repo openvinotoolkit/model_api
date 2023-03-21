@@ -45,18 +45,26 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+# Something: OpenCV or OpenVINO links gflags with /MT instead of default flag.
+# Set the same to avoid linkage conflicts
+if(WIN32)
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+endif()
 
 include(CMakeParseArguments)
 include(FetchContent)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
-FetchContent_MakeAvailable(json)
+FetchContent_Declare(googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG 471087fbfcbc3c66071189a67c313eb1d525ee51  # latest main
+)
+FetchContent_MakeAvailable(json googletest)
 
 include(../cmake/common.cmake)
 
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
-find_package(GTest REQUIRED)
 
 add_subdirectory(../../../model_api/cpp ${tests_BINARY_DIR}/model_api/cpp)
 

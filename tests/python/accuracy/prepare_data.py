@@ -1,6 +1,4 @@
 import argparse
-import json
-from pathlib import Path
 
 
 def prepare_data(data_dir="./data"):
