@@ -94,8 +94,7 @@ ov::Layout ModelBase::getInputLayout(const ov::Output<ov::Node>& input) {
     return layout;
 }
 
-std::unique_ptr<ResultBase> ModelBase::infer(const InputData& inputData)
-{
+std::unique_ptr<ResultBase> ModelBase::infer(const InputData& inputData) {
     InferenceInput inputs;
     InferenceResult result;
     auto internalModelData = this->preprocess(inputData, inputs);
@@ -106,4 +105,13 @@ std::unique_ptr<ResultBase> ModelBase::infer(const InputData& inputData)
     auto retVal = this->postprocess(result);
     *retVal = static_cast<ResultBase&>(result);
     return retVal;
+}
+
+std::shared_ptr<ov::Model> ModelBase::getModel() const {
+    if (model) {
+        return model;
+    }
+
+    std::runtime_error(std::string("ov::Model is not accessible for the current model adapter: ") + typeid(inferenceAdapter).name());
+    return nullptr;
 }

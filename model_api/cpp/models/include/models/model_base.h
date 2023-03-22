@@ -42,6 +42,7 @@ public:
 
     std::shared_ptr<ov::Model> prepare();
     void load(ov::Core& core);
+    std::shared_ptr<ov::Model> getModel() const;
 
     virtual std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) = 0;
     virtual std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) = 0;

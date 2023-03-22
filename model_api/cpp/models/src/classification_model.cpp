@@ -55,7 +55,7 @@ ClassificationModel::ClassificationModel(std::shared_ptr<InferenceAdapter>& adap
     }
 }
 
-std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration) {
+std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     
@@ -75,7 +75,9 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
 
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(model, configuration)};
     classifier->prepare();
-    classifier->load(core);
+    if (preload) {
+        classifier->load(core);
+    }
     return classifier;
 }
 

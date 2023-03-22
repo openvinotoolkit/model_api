@@ -55,7 +55,10 @@ DetectionModel::DetectionModel(std::shared_ptr<InferenceAdapter>& adapter)
     }
 }
 
-std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile, std::string model_type, const ov::AnyMap& configuration) {
+std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile, 
+                                                             std::string model_type, 
+                                                             const ov::AnyMap& configuration, 
+                                                             bool preload) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     if (model_type.empty()) {
@@ -90,7 +93,9 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     }
     
     detectionModel->prepare();
-    detectionModel->load(core);
+    if (preload) {
+        detectionModel->load(core);
+    }
     return detectionModel;
 }
 
