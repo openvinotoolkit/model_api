@@ -83,7 +83,13 @@ void removeLastChar(std::stringstream& stringstream) {
 TEST_P(ModelParameterizedTest, AccuracyTest)
 {
     auto modelData = GetParam();
-    auto modelPath = string_format(MODEL_PATH_TEMPLATE, modelData.name.c_str(), modelData.name.c_str());
+    std::string modelPath;
+    const std::string& name = modelData.name;
+    if (name.substr(name.size() - 4) == ".xml") {
+        modelPath = name;
+    } else {
+        modelPath = string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
+    }
 
     if (modelData.type == "DetectionModel") {
         auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);

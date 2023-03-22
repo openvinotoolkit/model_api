@@ -69,7 +69,7 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
         slog::warn << "Model type is not specified in the rt_info, use default model type: " << model_type << slog::endl;
     }
     
-    if (model_type != "Classification") {
+    if (model_type != "Classification" && model_type != "classification") {    // TODO reupload IRs
         throw ov::Exception("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
     }
 
@@ -125,7 +125,11 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     const auto& input = model->input();
     inputNames.push_back(input.get_any_name());
 
-    const ov::Shape& inputShape = input.get_shape();
+    ov::PartialShape partialInputShape = input.get_partial_shape();
+    // TODO check how python is implemented
+    // ModelAPI works with batch 1 only. ModelBase::prepare() will reshape it
+    partialInputShape[0] = 1;
+    const ov::Shape& inputShape = partialInputShape.to_shape();
     const ov::Layout& inputLayout = getInputLayout(input);
 
     if (inputShape.size() != 4 || inputShape[ov::layout::channels_idx(inputLayout)] != 3) {
@@ -159,7 +163,10 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
         throw std::logic_error("Classification model wrapper supports topologies with only 1 output");
     }
 
-    const ov::Shape& outputShape = model->output().get_shape();
+    ov::PartialShape partialOutputShape = model->output().get_partial_shape();
+    // ModelAPI works with batch 1 only. ModelBase::prepare() will reshape it
+    partialOutputShape[0] = 1;
+    const ov::Shape& outputShape = partialOutputShape.get_shape();
     if (outputShape.size() != 2 && outputShape.size() != 4) {
         throw std::logic_error("Classification model wrapper supports topologies only with"
                                " 2-dimensional or 4-dimensional output");

@@ -66,7 +66,13 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
         throw std::runtime_error{"Failed to read the image"};
     }
 
-    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    std::string model_path;
+    const std::string& name = GetParam().name;
+    if (name.substr(name.size() - 4) == ".xml") {
+        model_path = name;
+    } else {
+        model_path = string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
+    }
 
     if ("DetectionModel" == GetParam().type) {
         auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);

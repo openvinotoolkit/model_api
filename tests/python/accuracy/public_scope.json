@@ -89,5 +89,17 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "otx_models/mlc_mobilenetv3_large_voc.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "000000000081.jpg",
+                "reference": [
+                    "(0, aeroplane, 0.858)"
+                ]
+            }
+        ]
     }
 ]

@@ -46,7 +46,10 @@ def result(pytestconfig):
     ("model_data"), read_config(Path(__file__).resolve().parent / "public_scope.json")
 )
 def test_image_models(data, dump, result, model_data):
-    model = eval(model_data["type"]).create_model(model_data["name"], download_dir=data)
+    name = model_data["name"]
+    if name.endswith('.xml'):
+        name = f"{data}/{name}"
+    model = eval(model_data["type"]).create_model(name, download_dir=data)
 
     test_result = []
 
