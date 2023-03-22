@@ -18,6 +18,7 @@
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
+#include <models/segmentation_model.h>
 
 using json = nlohmann::json;
 
@@ -65,12 +66,18 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
     }
 }
  
+namespace {
 std::vector<ModelData> GetTestData(const std::string& path)
 {
     std::ifstream input(path);
     nlohmann::json j;
     input >> j;
     return j;
+}
+
+void removeLastChar(std::stringstream& stringstream) {
+    stringstream.seekp(-1, std::ios_base::end);
+}
 }
  
 TEST_P(ModelParameterizedTest, AccuracyTest)
@@ -79,7 +86,6 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     auto modelPath = string_format(MODEL_PATH_TEMPLATE, modelData.name.c_str(), modelData.name.c_str());
 
     if (modelData.type == "DetectionModel") {
-        
         auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
 
         for (size_t i = 0; i < modelData.testData.size(); i++) {
@@ -122,8 +128,43 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
         }
     }
+    else if (modelData.type == "SegmentationModel") {
+        auto model = SegmentationModel::create_model(DATA_DIR + "/" + modelPath);
+
+        for (size_t i = 0; i < modelData.testData.size(); i++) {
+            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+
+            cv::Mat image = cv::imread(imagePath);
+            if (!image.data) {
+                throw std::runtime_error{"Failed to read the image"};
+            }
+            cv::Mat predicted_mask[] = {model->infer(image)->resultImage};
+            int nimages = 1;
+            int *channels = nullptr;
+            cv::Mat mask;
+            cv::Mat outHist;
+            int dims = 1;
+            int histSize[] = {256};
+            float range[] = {0, 256};
+            const float *ranges[] = {range};
+            cv::calcHist(&predicted_mask[0], nimages, channels, mask, outHist, dims, histSize, ranges);
+
+            std::stringstream prediction_buffer;
+            prediction_buffer << '[';
+            for (int i = 0; i < range[1]; ++i) {
+                const int count = static_cast<int>(outHist.at<float>(i));
+                if (count > 0) {
+                    prediction_buffer << std::setw(3) << i << ' ';
+                }
+            }
+            removeLastChar(prediction_buffer);
+            prediction_buffer << std::setw(1) << ']';
+
+            ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+        }
+    }
     else {
-        std::cout << "Skipped " << modelData.name << " as not supported model type" << std::endl;
+        throw std::runtime_error("Unknown model type: " + modelData.type);
     }
 }
  
