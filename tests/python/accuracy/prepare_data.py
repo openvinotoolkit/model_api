@@ -8,11 +8,11 @@ def retrieve_otx_model(data_dir, model_name):
     os.makedirs(destenation_folder, exist_ok=True)
     urlretrieve(
         f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
-        f"{destenation_folder}/{model_name}.xml"
+        f"{destenation_folder}/{model_name}.xml",
     )
     urlretrieve(
         f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
-        f"{destenation_folder}/{model_name}.bin"
+        f"{destenation_folder}/{model_name}.bin",
     )
 
 
