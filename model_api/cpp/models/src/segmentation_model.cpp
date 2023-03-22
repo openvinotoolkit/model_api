@@ -32,7 +32,7 @@
 #include "models/input_data.h"
 #include "models/results.h"
 
-std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration) {
+std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
 
@@ -52,7 +52,9 @@ std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::st
 
     std::unique_ptr<SegmentationModel> segmentor{new SegmentationModel(model, configuration)};
     segmentor->prepare();
-    segmentor->load(core);
+    if (preload) {
+        segmentor->load(core);
+    }
     return segmentor;
 }
 
