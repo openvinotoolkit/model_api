@@ -116,10 +116,6 @@ ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
 }
 
 void ImageModel::updateModelInfo() {
-    if (!model) {
-        std::runtime_error("The ov::Model object is not accessible");
-    }
-
     ModelBase::updateModelInfo();
 
     model->set_rt_info(useAutoResize, "model_info", "auto_resize");

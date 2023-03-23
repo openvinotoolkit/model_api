@@ -55,6 +55,13 @@ DetectionModel::DetectionModel(std::shared_ptr<InferenceAdapter>& adapter)
     }
 }
 
+void DetectionModel::updateModelInfo() {
+    ImageModel::updateModelInfo();
+
+    model->set_rt_info("Detection", "model_info", "model_type");
+    model->set_rt_info(confidenceThreshold, "model_info", "confidence_threshold");
+}
+
 std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile, 
                                                              std::string model_type, 
                                                              const ov::AnyMap& configuration, 
@@ -72,21 +79,17 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
     }
 
     std::unique_ptr<DetectionModel> detectionModel;
-    if (model_type == "faceboxes") {
+    if (model_type == ModelFaceBoxes::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelFaceBoxes(model, configuration));
-    } else if (model_type == "retinaface") {
+    } else if (model_type == ModelRetinaFace::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFace(model, configuration));
-    } else if (model_type == "retinaface-pytorch") {
+    } else if (model_type == ModelRetinaFacePT::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFacePT(model, configuration));
-    } else if (model_type == "ssd" || model_type == "SSD") {
+    } else if (model_type == ModelSSD::ModelType || model_type == "SSD") {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelSSD(model, configuration));
-    } else if (model_type == "yolo") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelYolo(model, configuration));
-    } else if (model_type == "yolov3-onnx") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloV3ONNX(model, configuration));
-    } else if (model_type == "yolox") {
+    } else if (model_type == ModelYoloX::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloX(model, configuration));
-    } else if (model_type == "centernet") {
+    } else if (model_type == ModelCenterNet::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelCenterNet(model, configuration));
     } else {
         throw ov::Exception("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
@@ -108,21 +111,17 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(std::shared_ptr<Inf
     }
 
     std::unique_ptr<DetectionModel> detectionModel;
-    if (model_type == "faceboxes") {
+    if (model_type == ModelFaceBoxes::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelFaceBoxes(adapter));
-    } else if (model_type == "retinaface") {
+    } else if (model_type == ModelRetinaFace::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFace(adapter));
-    } else if (model_type == "retinaface-pytorch") {
+    } else if (model_type == ModelRetinaFacePT::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelRetinaFacePT(adapter));
-    } else if (model_type == "ssd" || model_type == "SSD") {
+    } else if (model_type == ModelSSD::ModelType || model_type == "SSD") {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelSSD(adapter));
-    } else if (model_type == "yolo") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelYolo(adapter));
-    } else if (model_type == "yolov3-onnx") {
-        detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloV3ONNX(adapter));
-    } else if (model_type == "yolox") {
+    } else if (model_type == ModelYoloX::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelYoloX(adapter));
-    } else if (model_type == "centernet") {
+    } else if (model_type == ModelCenterNet::ModelType) {
         detectionModel = std::unique_ptr<DetectionModel>(new ModelCenterNet(adapter));
     } else {
         throw ov::Exception("Incorrect or unsupported model_type is provided: " + model_type);

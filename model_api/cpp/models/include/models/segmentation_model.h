@@ -46,6 +46,7 @@ public:
 
 protected:
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
+    void updateModelInfo() override;
 
     int outHeight = 0;
     int outWidth = 0;

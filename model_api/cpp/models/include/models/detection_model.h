@@ -45,4 +45,5 @@ protected:
     std::string getLabelName(int labelID) {
         return (size_t)labelID < labels.size() ? labels[labelID] : std::string("Label #") + std::to_string(labelID);
     }
+    void updateModelInfo() override;
 };

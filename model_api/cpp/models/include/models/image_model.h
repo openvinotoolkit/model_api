@@ -50,7 +50,7 @@ public:
 
 protected:
     RESIZE_MODE selectResizeMode(const std::string& resize_type);
-    virtual void updateModelInfo() override;
+    void updateModelInfo() override;
 
 protected:
     std::vector<std::string> labels = {};

@@ -74,6 +74,12 @@ std::unique_ptr<SegmentationModel> SegmentationModel::create_model(std::shared_p
     return segmentor;
 }
 
+void SegmentationModel::updateModelInfo() {
+    ImageModel::updateModelInfo();
+
+    model->set_rt_info("segmentation", "model_info", "model_type");
+}
+
 void SegmentationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     // --------------------------- Configure input & output ---------------------------------------------
     // --------------------------- Prepare input  -----------------------------------------------------

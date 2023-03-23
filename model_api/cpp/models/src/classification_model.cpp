@@ -81,6 +81,13 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
     return classifier;
 }
 
+void ClassificationModel::updateModelInfo() {
+    ImageModel::updateModelInfo();
+
+    model->set_rt_info("Classification", "model_info", "model_type");
+    model->set_rt_info(topk, "model_info", "topk");
+}
+
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
     auto configuration = adapter->getModelConfig();
     auto model_type_iter = configuration.find("model_type");

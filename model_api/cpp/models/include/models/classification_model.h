@@ -47,4 +47,5 @@ protected:
     size_t topk = 1;
 
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
+    void updateModelInfo() override;
 };
