@@ -26,8 +26,6 @@ def prepare_data(data_dir="./data"):
         with ZipFile(BytesIO(zipresp.read())) as zfile:
             zfile.extractall(data_dir)
 
-    retrieve_otx_model(data_dir, "mlc_mobilenetv3_large_voc")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Data and model preparate script")
@@ -41,3 +39,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     prepare_data(args.data_dir)
+    retrieve_otx_model(args.data_dir, "mlc_mobilenetv3_large_voc")

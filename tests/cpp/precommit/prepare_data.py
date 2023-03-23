@@ -1,6 +1,21 @@
 import argparse
 import json
 from pathlib import Path
+import os
+from urllib.request import urlopen, urlretrieve
+
+
+def retrieve_otx_model(data_dir, model_name):
+    destenation_folder = os.path.join(data_dir, "otx_models")
+    os.makedirs(destenation_folder, exist_ok=True)
+    urlretrieve(
+        f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
+        f"{destenation_folder}/{model_name}.xml",
+    )
+    urlretrieve(
+        f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
+        f"{destenation_folder}/{model_name}.bin",
+    )
 
 
 def parepare_model(
@@ -53,3 +68,4 @@ if __name__ == "__main__":
 
     parepare_model(args.data_dir, args.public_scope)
     prepare_data(args.data_dir)
+    retrieve_otx_model(args.data_dir, "mlc_mobilenetv3_large_voc")
