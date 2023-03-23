@@ -93,7 +93,12 @@ std::string formatLayouts(const std::map<std::string, ov::Layout>& layouts) {
     // Serialize layout as "input0:NCHW,input1:NC"
     std::string result;
     for (const auto& layout : layouts) {
-        result += layout.first + ":" + layout.second.to_string() + ",";
+        auto layout_string = layout.second.to_string();
+        layout_string.erase(layout_string.begin()); // remove "["
+        layout_string.pop_back(); // remove "]"
+        layout_string.erase(std::remove(layout_string.begin(), layout_string.end(), ','), 
+                            layout_string.end()); // remove ","
+        result += layout.first + ":" + layout_string + ",";
     }
     if (!result.empty()) {
         result.pop_back();

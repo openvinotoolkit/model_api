@@ -50,6 +50,7 @@ ModelBase::ModelBase(std::shared_ptr<ov::Model>& model, const ov::AnyMap& config
         : model(model) {
     auto layout_iter = configuration.find("layout");
     std::string layout = "";
+
     if (layout_iter != configuration.end()) {
        layout = layout_iter->second.as<std::string>();
     } else {
@@ -68,7 +69,6 @@ void ModelBase::updateModelInfo() {
     if (!inputsLayouts.empty()) {
         auto layouts = formatLayouts(inputsLayouts);
         model->set_rt_info(layouts, "model_info", "layout");
-        slog::info << "Model info: layout=" << layouts << slog::endl;    
     }
 }
 
@@ -76,6 +76,9 @@ void ModelBase::load(ov::Core& core) {
     if (!inferenceAdapter) {
         inferenceAdapter = std::make_shared<OpenVINOInferenceAdapter>();
     }
+
+    // Update model_info erased by pre/postprocessing
+    updateModelInfo();
 
     inferenceAdapter->loadModel(model, core, config.deviceName, config.compilationConfig);
 }

@@ -49,14 +49,32 @@ std::string string_format(const std::string &fmt, Args... args)
 
 // TODO: Add tests for create_model
  
-TEST_P(ModelParameterizedTest, EfficientnNetTest)
+TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig)
 {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
     
     auto ov_model = model->getModel();
 
-    ov::serialize(ov_model, "tmp_model.xml");
+    ASSERT_EQ(ov_model->get_rt_info<std::string>("model_info", "model_type"), ClassificationModel::ModelType);
+    
+    SUCCEED();
+}
+
+TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
+{
+    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    ov::AnyMap configuration = {
+        {"layout", "data:HWC"},
+        {"auto_resize", false},
+        {"resize_type", "fit_to_window"}
+    };
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
+    
+    auto ov_model = model->getModel();
+
+    auto layout = ov_model->get_rt_info<std::string>("model_info", "layout");
+    ASSERT_EQ(layout, configuration.at("layout").as<std::string>());
     
     SUCCEED();
 }

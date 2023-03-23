@@ -58,7 +58,6 @@ DetectionModel::DetectionModel(std::shared_ptr<InferenceAdapter>& adapter)
 void DetectionModel::updateModelInfo() {
     ImageModel::updateModelInfo();
 
-    model->set_rt_info("Detection", "model_info", "model_type");
     model->set_rt_info(confidenceThreshold, "model_info", "confidence_threshold");
 }
 

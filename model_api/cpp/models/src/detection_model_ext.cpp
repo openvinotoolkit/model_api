@@ -33,6 +33,5 @@ DetectionModelExt::DetectionModelExt(std::shared_ptr<InferenceAdapter>& adapter)
 void DetectionModelExt::updateModelInfo() {
     DetectionModel::updateModelInfo();
 
-    model->set_rt_info("Detection", "model_info", "model_type");
     model->set_rt_info(boxIOUThreshold, "model_info", "iou_t");
 }

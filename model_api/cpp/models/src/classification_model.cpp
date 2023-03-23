@@ -71,7 +71,7 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
     // Check model_type in the rt_info, ignore configuration
     std::string model_type = ClassificationModel::ModelType;
     try {
-        if (model->has_rt_info("model_info", "model_type") ) {
+        if (model->has_rt_info("model_info", "model_type")) {
             model_type = model->get_rt_info<std::string>("model_info", "model_type");
         }
     } catch (const std::exception& e) {
