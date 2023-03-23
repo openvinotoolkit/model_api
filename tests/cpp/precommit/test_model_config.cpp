@@ -53,6 +53,8 @@ TEST_P(ModelParameterizedTest, EfficientnNtTest)
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
     
     auto ov_model = model->getModel();
+
+    ov::serialize(ov_model, "tmp_model.xml");
     
     SUCCEED();
 }

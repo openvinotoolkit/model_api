@@ -60,6 +60,18 @@ ModelBase::ModelBase(std::shared_ptr<ov::Model>& model, const ov::AnyMap& config
     inputsLayouts = parseLayoutString(layout);
 }
 
+void ModelBase::updateModelInfo() {
+    if (!model) {
+        std::runtime_error("The ov::Model object is not accessible");
+    }
+
+    if (!inputsLayouts.empty()) {
+        auto layouts = formatLayouts(inputsLayouts);
+        model->set_rt_info(layouts, "model_info", "layout");
+        slog::info << "Model info: layout=" << layouts << slog::endl;    
+    }
+}
+
 void ModelBase::load(ov::Core& core) {
     if (!inferenceAdapter) {
         inferenceAdapter = std::make_shared<OpenVINOInferenceAdapter>();
@@ -107,11 +119,11 @@ std::unique_ptr<ResultBase> ModelBase::infer(const InputData& inputData) {
     return retVal;
 }
 
-std::shared_ptr<ov::Model> ModelBase::getModel() const {
-    if (model) {
-        return model;
+std::shared_ptr<ov::Model> ModelBase::getModel() {
+    if (!model) {
+        std::runtime_error(std::string("ov::Model is not accessible for the current model adapter: ") + typeid(inferenceAdapter).name());
     }
 
-    std::runtime_error(std::string("ov::Model is not accessible for the current model adapter: ") + typeid(inferenceAdapter).name());
-    return nullptr;
+    updateModelInfo();
+    return model;
 }

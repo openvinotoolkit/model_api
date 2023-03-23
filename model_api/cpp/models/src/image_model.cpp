@@ -115,6 +115,22 @@ ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
     }
 }
 
+void ImageModel::updateModelInfo() {
+    if (!model) {
+        std::runtime_error("The ov::Model object is not accessible");
+    }
+
+    ModelBase::updateModelInfo();
+
+    model->set_rt_info(useAutoResize, "model_info", "auto_resize");
+    model->set_rt_info(formatResizeMode(resizeMode), "model_info", "resize_type");
+
+    if (!labels.empty()) {
+        model->set_rt_info(labels, "model_info", "labels");  
+    }
+
+}
+
 std::shared_ptr<InternalModelData> ImageModel::preprocess(const InputData& inputData, InferenceInput& input) {
     const auto& origImg = inputData.asRef<ImageInputData>().inputImage;
     auto img = inputTransform(origImg);

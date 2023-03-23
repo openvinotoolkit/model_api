@@ -37,7 +37,7 @@ public:
     SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter)
         : ImageModel(adapter) {}
 
-    static std::unique_ptr<SegmentationModel> create_model(const std::string& modelFile, const ov::AnyMap& configuration = {}), bool preload = true;
+    static std::unique_ptr<SegmentationModel> create_model(const std::string& modelFile, const ov::AnyMap& configuration = {}, bool preload = true);
     static std::unique_ptr<SegmentationModel> create_model(std::shared_ptr<InferenceAdapter>& adapter);
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
