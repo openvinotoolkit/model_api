@@ -1,7 +1,7 @@
 import argparse
 import json
-from pathlib import Path
 import os
+from pathlib import Path
 from urllib.request import urlopen, urlretrieve
 
 
