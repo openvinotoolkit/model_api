@@ -43,6 +43,7 @@ public:
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
     virtual std::unique_ptr<ImageResult> infer(const ImageInputData& inputData);
+    static std::string ModelType;
 
 protected:
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;

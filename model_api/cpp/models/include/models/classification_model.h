@@ -42,6 +42,7 @@ public:
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
     virtual std::unique_ptr<ClassificationResult> infer(const ImageInputData& inputData);
+    static std::string ModelType;
 
 protected:
     size_t topk = 1;

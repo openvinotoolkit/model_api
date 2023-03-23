@@ -34,6 +34,8 @@
 #include "models/results.h"
 #include "models/input_data.h"
 
+std::string ClassificationModel::ModelType = "centernet";
+
 ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : ImageModel(model, configuration) {
     auto topk_iter = configuration.find("topk");
@@ -55,12 +57,19 @@ ClassificationModel::ClassificationModel(std::shared_ptr<InferenceAdapter>& adap
     }
 }
 
+void ClassificationModel::updateModelInfo() {
+    ImageModel::updateModelInfo();
+
+    model->set_rt_info(ClassificationModel::ModelType, "model_info", "model_type");
+    model->set_rt_info(topk, "model_info", "topk");
+}
+
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     
     // Check model_type in the rt_info, ignore configuration
-    std::string model_type = "Classification";
+    std::string model_type = ClassificationModel::ModelType;
     try {
         if (model->has_rt_info("model_info", "model_type") ) {
             model_type = model->get_rt_info<std::string>("model_info", "model_type");
@@ -69,7 +78,7 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
         slog::warn << "Model type is not specified in the rt_info, use default model type: " << model_type << slog::endl;
     }
     
-    if (model_type != "Classification") {
+    if (model_type != ClassificationModel::ModelType) {
         throw ov::Exception("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
     }
 
@@ -81,22 +90,15 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
     return classifier;
 }
 
-void ClassificationModel::updateModelInfo() {
-    ImageModel::updateModelInfo();
-
-    model->set_rt_info("Classification", "model_info", "model_type");
-    model->set_rt_info(topk, "model_info", "topk");
-}
-
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
     auto configuration = adapter->getModelConfig();
     auto model_type_iter = configuration.find("model_type");
-    std::string model_type = "Classification";
+    std::string model_type = ClassificationModel::ModelType;
     if (model_type_iter != configuration.end()) {
         model_type = model_type_iter->second.as<std::string>();
     }
 
-    if (model_type != "Classification") {
+    if (model_type != ClassificationModel::ModelType) {
         throw ov::Exception("Incorrect or unsupported model_type is provided: " + model_type);
     }
 
