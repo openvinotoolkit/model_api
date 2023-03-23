@@ -32,7 +32,7 @@
 #include "models/input_data.h"
 #include "models/results.h"
 
-std::string SegmentationModel::ModelType = "centernet";
+std::string SegmentationModel::ModelType = "Segmentation";
 
 std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
     auto core = ov::Core();

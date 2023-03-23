@@ -34,7 +34,7 @@
 #include "models/results.h"
 #include "models/input_data.h"
 
-std::string ClassificationModel::ModelType = "centernet";
+std::string ClassificationModel::ModelType = "Classification";
 
 ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
     : ImageModel(model, configuration) {

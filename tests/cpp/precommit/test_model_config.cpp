@@ -49,7 +49,7 @@ std::string string_format(const std::string &fmt, Args... args)
 
 // TODO: Add tests for create_model
  
-TEST_P(ModelParameterizedTest, EfficientnNtTest)
+TEST_P(ModelParameterizedTest, EfficientnNetTest)
 {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
