@@ -17,6 +17,8 @@ def parepare_model(
         public_scope = json.load(f)
 
     for model in public_scope:
+        if model["name"].endswith(".xml"):
+            continue
         model = eval(model["type"]).create_model(model["name"], download_dir=data_dir)
 
 
