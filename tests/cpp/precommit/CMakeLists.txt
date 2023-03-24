@@ -69,3 +69,4 @@ find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 add_subdirectory(../../../model_api/cpp ${tests_BINARY_DIR}/model_api/cpp)
 
 add_test(NAME test_sanity SOURCES test_sanity.cpp DEPENDENCIES model_api)
+add_test(NAME test_model_config SOURCES test_model_config.cpp DEPENDENCIES model_api)
