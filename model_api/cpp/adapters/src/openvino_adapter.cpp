@@ -27,12 +27,6 @@
 #include <utils/ocv_common.hpp>
 #include <utils/slog.hpp>
 
-OpenVINOInferenceAdapter::OpenVINOInferenceAdapter(std::string modelPath) {
-    auto core = ov::Core();
-    auto model = core.read_model(modelPath);
-    loadModel(model, core, "AUTO");
-}
-
 void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
                                                             const std::string& device, const ov::AnyMap& compilationConfig) {
     slog::info << "Loading model to the plugin" << slog::endl;

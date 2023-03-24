@@ -35,6 +35,16 @@ struct ModelData {
         : name(name) {}
 };
 
+class MockAdapter : public OpenVINOInferenceAdapter {
+    public:
+        MockAdapter(const std::string& modelPath)
+            : OpenVINOInferenceAdapter() {
+            auto core = ov::Core();
+            auto model = core.read_model(modelPath);
+            loadModel(model, core, "AUTO");
+        }
+};
+
 class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
 };
 
@@ -113,7 +123,7 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
 
-    std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>(TMP_MODEL_FILE);
+    std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     auto model_restored = ClassificationModel::create_model(adapter);
     auto result_data = model_restored->infer(image);
     auto result_restored = result_data->topLabels; 
