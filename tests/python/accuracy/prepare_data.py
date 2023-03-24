@@ -26,6 +26,11 @@ def prepare_data(data_dir="./data"):
         with ZipFile(BytesIO(zipresp.read())) as zfile:
             zfile.extractall(data_dir)
 
+    urlretrieve(
+        "https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/BCCD/JPEGImages/BloodImage_00007.jpg",
+        os.path.join(data_dir, "BloodImage_00007.jpg"),
+    )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Data and model preparate script")

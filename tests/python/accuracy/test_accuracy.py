@@ -58,7 +58,6 @@ def test_image_models(data, dump, result, model_data):
         inference_results = []
 
     for test_data in model_data["test_data"]:
-        print(test_data["image"])
         if "BloodImage_00007.jpg" == test_data["image"]:
             image_path = Path(data) / "BloodImage_00007.jpg"
         else:

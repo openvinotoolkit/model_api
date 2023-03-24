@@ -39,7 +39,6 @@ def parepare_model(
 
 def prepare_data(data_dir="./data"):
     from io import BytesIO
-    from urllib.request import urlopen
     from zipfile import ZipFile
 
     COCO128_URL = "https://ultralytics.com/assets/coco128.zip"
@@ -47,6 +46,11 @@ def prepare_data(data_dir="./data"):
     with urlopen(COCO128_URL) as zipresp:
         with ZipFile(BytesIO(zipresp.read())) as zfile:
             zfile.extractall(data_dir)
+
+    urlretrieve(
+        "https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/BCCD/JPEGImages/BloodImage_00007.jpg",
+        os.path.join(data_dir, "BloodImage_00007.jpg"),
+    )
 
 
 if __name__ == "__main__":
