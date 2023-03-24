@@ -44,6 +44,9 @@ ModelBase::ModelBase(std::shared_ptr<InferenceAdapter>& adapter)
         layout = layout_iter->second.as<std::string>();
     }
     inputsLayouts = parseLayoutString(layout);
+
+    inputNames = adapter->getInputNames();
+    outputNames = adapter->getOutputNames();
 }
 
 ModelBase::ModelBase(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)

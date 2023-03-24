@@ -55,6 +55,7 @@ protected:
 protected:
     std::vector<std::string> labels = {};
     bool useAutoResize = false;
+    bool embedded_processing = false;
 
     size_t netInputHeight = 0;
     size_t netInputWidth = 0;

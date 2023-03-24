@@ -139,6 +139,11 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     const ov::Shape& inputShape = input.get_shape();
     const ov::Layout& inputLayout = getInputLayout(input);
 
+    // Skip next steps if pre/postprocessing was embedded previously
+    if (embedded_processing) {
+        return;
+    }
+
     if (inputShape.size() != 4 || inputShape[ov::layout::channels_idx(inputLayout)] != 3) {
         throw std::logic_error("3-channel 4-dimensional model's input is expected");
     }
@@ -235,6 +240,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     ppp.output("indices").tensor().set_element_type(ov::element::i32);
     ppp.output("scores").tensor().set_element_type(ov::element::f32);
     model = ppp.build();
+    embedded_processing = true;
 }
 
 std::unique_ptr<ClassificationResult> ClassificationModel::infer(const ImageInputData& inputData) {

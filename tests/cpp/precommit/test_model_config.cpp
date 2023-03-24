@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <fstream>
+#include <cstdio>
 
 #include <nlohmann/json.hpp>
 
@@ -18,6 +19,7 @@
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
+#include <adapters/openvino_adapter.h>
 
 using json = nlohmann::json;
 
@@ -25,7 +27,7 @@ std::string DATA_DIR = "../data";
 std::string MODEL_PATH_TEMPLATE = "public/%s/FP16/%s.xml";
 std::string IMAGE_PATH = "coco128/images/train2017/000000000074.jpg";
 
-std::vector<std::string> model_list = {"efficientnet-b0-pytorch"};
+std::string TMP_MODEL_FILE = "tmp_model.xml";
 
 struct ModelData {
     std::string name;
@@ -34,6 +36,15 @@ struct ModelData {
 };
 
 class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
+};
+
+class ModelParameterizedTestSaveLoad : public testing::TestWithParam<ModelData> {
+    protected:
+        void TearDown() override {
+            auto fileName = TMP_MODEL_FILE;
+            std::remove(fileName.c_str());
+            std::remove(fileName.replace(fileName.end() - 4, fileName.end(), ".bin").c_str());
+        }
 };
 
 template<typename... Args>
@@ -48,7 +59,6 @@ std::string string_format(const std::string &fmt, Args... args)
 }
 
 // TODO: Add tests for create_model
- 
 TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig)
 {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
@@ -56,7 +66,11 @@ TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig)
     
     auto ov_model = model->getModel();
 
-    ASSERT_EQ(ov_model->get_rt_info<std::string>("model_info", "model_type"), ClassificationModel::ModelType);
+    EXPECT_EQ(ov_model->get_rt_info<std::string>("model_info", "model_type"), ClassificationModel::ModelType);
+
+    //Check if processing is embedded in the model
+    auto embedded_processing = ov_model->get_rt_info<bool>("model_info", "embedded_processing");
+    EXPECT_TRUE(embedded_processing);
     
     SUCCEED();
 }
@@ -74,12 +88,44 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
     auto ov_model = model->getModel();
 
     auto layout = ov_model->get_rt_info<std::string>("model_info", "layout");
-    ASSERT_EQ(layout, configuration.at("layout").as<std::string>());
+    EXPECT_EQ(layout, configuration.at("layout").as<std::string>());
+
+    auto auto_resize = ov_model->get_rt_info<bool>("model_info", "auto_resize");
+    EXPECT_EQ(auto_resize, configuration.at("auto_resize").as<bool>());
+
+    auto resize_type = ov_model->get_rt_info<std::string>("model_info", "resize_type");
+    EXPECT_EQ(resize_type, configuration.at("resize_type").as<std::string>());
     
     SUCCEED();
 }
 
-INSTANTIATE_TEST_CASE_P(ClassificationTestInstance, ModelParameterizedTest, ::testing::Values("efficientnet-b0-pytorch"));
+TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoad)
+{
+    cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
+    if (!image.data) {
+        throw std::runtime_error{"Failed to read the image"};
+    }
+
+    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+    auto result = model->infer(image)->topLabels;
+    
+    auto ov_model = model->getModel();
+    ov::serialize(ov_model, TMP_MODEL_FILE);
+
+    std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>(TMP_MODEL_FILE);
+    auto model_restored = ClassificationModel::create_model(adapter);
+    auto result_data = model_restored->infer(image);
+    auto result_restored = result_data->topLabels; 
+
+    EXPECT_EQ(result_restored[0].id, result[0].id);
+    EXPECT_EQ(result_restored[0].score, result[0].score);
+    
+    SUCCEED();
+}
+
+INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance, ModelParameterizedTest, ::testing::Values(ModelData("efficientnet-b0-pytorch")));
+INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance, ModelParameterizedTestSaveLoad, ::testing::Values(ModelData("efficientnet-b0-pytorch")));
 
 class InputParser{
     public:

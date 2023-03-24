@@ -28,7 +28,8 @@ class OpenVINOInferenceAdapter :public InferenceAdapter
 {
 
 public:
-    OpenVINOInferenceAdapter() {};
+    OpenVINOInferenceAdapter() {}
+    OpenVINOInferenceAdapter(std::string modelPath);
 
     virtual InferenceOutput infer(const InferenceInput& input) override;
     virtual void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,

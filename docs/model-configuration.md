@@ -3,6 +3,8 @@ Model's static method `create_model()` configures a created model with values ta
 ## List of values
 The list features only model wrappers which intoduce new configuration values in their hirachy.
 1. `model_type`: str - name of a model wrapper to be created
+1. `layout`: str - layout of input data in the format: "input0:NCHW,input1:NC" 
+
 ### `ImageModel` and its subclasses
 1. `mean_values`: List - Normalization values, which will be subtracted from image channels for image-input layer during preprocessing
 1. `scale_values`: List - Normalization values, which will divide the image channels for image-input layer
