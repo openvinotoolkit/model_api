@@ -40,3 +40,4 @@ if __name__ == "__main__":
 
     prepare_data(args.data_dir)
     retrieve_otx_model(args.data_dir, "mlc_mobilenetv3_large_voc")
+    retrieve_otx_model(args.data_dir, "det_mobilenetv2_atss_bccd")

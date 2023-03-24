@@ -250,9 +250,7 @@ class Model:
                     str_val = str_val.astype(str)
                 value = param.from_str(str_val)
                 self.__setattr__(name, value)
-            except (
-                RuntimeError
-            ) as error:
+            except RuntimeError as error:
                 missing_rt_info = (
                     "Cannot get runtime attribute. Path to runtime attribute is incorrect."
                     in str(error)
