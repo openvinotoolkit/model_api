@@ -88,10 +88,16 @@ TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig)
 TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
 {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    std::vector<std::string> mock_labels;
+    size_t num_classes = 1000;
+    for (size_t i = 0; i < num_classes; i++) {
+        mock_labels.push_back(std::to_string(i));
+    }
     ov::AnyMap configuration = {
         {"layout", "data:HWC"},
         {"auto_resize", false},
-        {"resize_type", "fit_to_window"}
+        {"resize_type", "fit_to_window"},
+        {"labels", mock_labels}
     };
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
     
@@ -105,6 +111,11 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
 
     auto resize_type = ov_model->get_rt_info<std::string>("model_info", "resize_type");
     EXPECT_EQ(resize_type, configuration.at("resize_type").as<std::string>());
+
+    auto labels = split(ov_model->get_rt_info<std::string>("model_info", "labels"), ' ');
+    for (size_t i = 0; i < num_classes; i++) {
+        EXPECT_EQ(labels[i], mock_labels[i]);
+    }
     
     SUCCEED();
 }
