@@ -136,13 +136,16 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     const auto& input = model->input();
     inputNames.push_back(input.get_any_name());
 
-    const ov::Shape& inputShape = input.get_shape();
-    const ov::Layout& inputLayout = getInputLayout(input);
+    outputNames.push_back("indices");
+    outputNames.push_back("scores");
 
     // Skip next steps if pre/postprocessing was embedded previously
     if (embedded_processing) {
         return;
     }
+
+    const ov::Shape& inputShape = input.get_shape();
+    const ov::Layout& inputLayout = getInputLayout(input);
 
     if (inputShape.size() != 4 || inputShape[ov::layout::channels_idx(inputLayout)] != 3) {
         throw std::logic_error("3-channel 4-dimensional model's input is expected");
@@ -231,9 +234,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
 
     // manually set output tensors name for created topK node
     model->outputs()[0].set_names({"indices"});
-    outputNames.push_back("indices");
     model->outputs()[1].set_names({"scores"});
-    outputNames.push_back("scores");
 
     // set output precisions
     ppp = ov::preprocess::PrePostProcessor(model);

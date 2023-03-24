@@ -123,6 +123,30 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
 
+    auto model_restored = ClassificationModel::create_model(TMP_MODEL_FILE);
+    auto result_data = model_restored->infer(image);
+    auto result_restored = result_data->topLabels; 
+
+    EXPECT_EQ(result_restored[0].id, result[0].id);
+    EXPECT_EQ(result_restored[0].score, result[0].score);
+    
+    SUCCEED();
+}
+
+TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoadWithAdapter)
+{
+    cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
+    if (!image.data) {
+        throw std::runtime_error{"Failed to read the image"};
+    }
+
+    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+    auto result = model->infer(image)->topLabels;
+    
+    auto ov_model = model->getModel();
+    ov::serialize(ov_model, TMP_MODEL_FILE);
+
     std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     auto model_restored = ClassificationModel::create_model(adapter);
     auto result_data = model_restored->infer(image);
