@@ -25,7 +25,6 @@ using json = nlohmann::json;
 std::string PUBLIC_SCOPE_PATH = "../../tests/cpp/accuracy/public_scope.json";
 std::string DATA_DIR = "../data";
 std::string MODEL_PATH_TEMPLATE = "public/%s/FP16/%s.xml";
-std::string IMAGE_PATH = "coco128/images/train2017/";
 
 struct TestData {
     std::string image;
@@ -95,7 +94,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
 
         for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
             cv::Mat image = cv::imread(imagePath);
             if (!image.data) {
@@ -117,7 +116,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         auto model = ClassificationModel::create_model(DATA_DIR + "/" + modelPath);
 
         for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
             cv::Mat image = cv::imread(imagePath);
             if (!image.data) {
@@ -138,7 +137,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         auto model = SegmentationModel::create_model(DATA_DIR + "/" + modelPath);
 
         for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
             cv::Mat image = cv::imread(imagePath);
             if (!image.data) {

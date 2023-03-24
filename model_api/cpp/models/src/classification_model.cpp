@@ -126,7 +126,6 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     inputNames.push_back(input.get_any_name());
 
     ov::PartialShape partialInputShape = input.get_partial_shape();
-    // TODO check how python is implemented
     // ModelAPI works with batch 1 only. ModelBase::prepare() will reshape it
     partialInputShape[0] = 1;
     const ov::Shape& inputShape = partialInputShape.to_shape();

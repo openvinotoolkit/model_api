@@ -58,7 +58,11 @@ def test_image_models(data, dump, result, model_data):
         inference_results = []
 
     for test_data in model_data["test_data"]:
-        image_path = Path(data) / "coco128/images/train2017/" / test_data["image"]
+        print(test_data["image"])
+        if "BloodImage_00007.jpg" == test_data["image"]:
+            image_path = Path(data) / "BloodImage_00007.jpg"
+        else:
+            image_path = Path(data) / "coco128/images/train2017/" / test_data["image"]
         image = cv2.imread(str(image_path))
         if image is None:
             raise RuntimeError("Failed to read the image")

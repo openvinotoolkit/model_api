@@ -4,7 +4,7 @@
         "type": "SegmentationModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "[  1   2   6  11  12 126 127]"
                 ]
@@ -16,7 +16,7 @@
         "type": "DetectionModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(0, 13, 170, 338, 0.869, 2, bicycle)",
                     "(58, 275, 360, 384, 0.998, 12, dog)",
@@ -30,7 +30,7 @@
         "type": "DetectionModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(0, 12, 172, 331, 0.697, 2, bicycle)",
                     "(62, 276, 363, 383, 0.645, 18, horse)"
@@ -43,7 +43,7 @@
         "type": "DetectionModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(320, 95, 336, 143, 0.842, 1, bicycle)",
                     "(284, 95, 301, 143, 0.823, 1, bicycle)",
@@ -59,7 +59,7 @@
         "type": "ClassificationModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(222, kuvasz, 0.145)"
                 ]
@@ -71,7 +71,7 @@
         "type": "ClassificationModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(175, Labrador_retriever, 0.613)"
                 ]
@@ -83,7 +83,7 @@
         "type": "ClassificationModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(245, French_bulldog, 0.152)"
                 ]
@@ -95,7 +95,7 @@
         "type": "ClassificationModel",
         "test_data": [
             {
-                "image": "000000000081.jpg",
+                "image": "coco128/images/train2017/000000000081.jpg",
                 "reference": [
                     "(0, aeroplane, 0.858)"
                 ]
