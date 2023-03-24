@@ -79,7 +79,7 @@ def compare_model_outputs(references, objects):
 
 @pytest.mark.parametrize(
     ("model_name"), classification_models + detection_models + segmentation_models
-)
+)  # TODO: test otx
 def test_image_models(model_name):
     download_image(IMAFE_FILE)
 

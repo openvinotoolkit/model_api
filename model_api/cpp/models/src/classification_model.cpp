@@ -125,10 +125,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     const auto& input = model->input();
     inputNames.push_back(input.get_any_name());
 
-    ov::PartialShape partialInputShape = input.get_partial_shape();
-    // ModelAPI works with batch 1 only. ModelBase::prepare() will reshape it
-    partialInputShape[0] = 1;
-    const ov::Shape& inputShape = partialInputShape.to_shape();
+    const ov::Shape& inputShape = input.get_partial_shape().get_max_shape();
     const ov::Layout& inputLayout = getInputLayout(input);
 
     if (inputShape.size() != 4 || inputShape[ov::layout::channels_idx(inputLayout)] != 3) {
@@ -162,10 +159,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
         throw std::logic_error("Classification model wrapper supports topologies with only 1 output");
     }
 
-    ov::PartialShape partialOutputShape = model->output().get_partial_shape();
-    // ModelAPI works with batch 1 only. ModelBase::prepare() will reshape it
-    partialOutputShape[0] = 1;
-    const ov::Shape& outputShape = partialOutputShape.get_shape();
+    const ov::Shape& outputShape = model->output().get_partial_shape().get_max_shape();
     if (outputShape.size() != 2 && outputShape.size() != 4) {
         throw std::logic_error("Classification model wrapper supports topologies only with"
                                " 2-dimensional or 4-dimensional output");
