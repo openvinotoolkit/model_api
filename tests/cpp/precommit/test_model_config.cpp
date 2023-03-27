@@ -58,8 +58,7 @@ class ModelParameterizedTestSaveLoad : public testing::TestWithParam<ModelData> 
 };
 
 template<typename... Args>
-std::string string_format(const std::string &fmt, Args... args)
-{
+std::string string_format(const std::string &fmt, Args... args) {
     size_t size = snprintf(nullptr, 0, fmt.c_str(), args...);
     std::string buf;
     buf.reserve(size + 1);
@@ -69,8 +68,7 @@ std::string string_format(const std::string &fmt, Args... args)
 }
 
 // TODO: Add tests for create_model
-TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig)
-{
+TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig) {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
     
@@ -85,8 +83,7 @@ TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig)
     SUCCEED();
 }
 
-TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
-{
+TEST_P(ModelParameterizedTest, TestClassificationCustomConfig) {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     std::vector<std::string> mock_labels;
     size_t num_classes = 1000;
@@ -96,7 +93,7 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
     ov::AnyMap configuration = {
         {"layout", "data:HWC"},
         {"auto_resize", false},
-        {"resize_type", "fit_to_window"},
+        {"resize_type", "standard"}, //fit_to_window
         {"labels", mock_labels}
     };
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
@@ -120,8 +117,7 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
     SUCCEED();
 }
 
-TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoad)
-{
+TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoad) {
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
     if (!image.data) {
         throw std::runtime_error{"Failed to read the image"};
@@ -129,10 +125,11 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
-    auto result = model->infer(image)->topLabels;
-    
+
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
+    
+    auto result = model->infer(image)->topLabels;
 
     auto model_restored = ClassificationModel::create_model(TMP_MODEL_FILE);
     auto result_data = model_restored->infer(image);
@@ -144,8 +141,7 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
     SUCCEED();
 }
 
-TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoadWithAdapter)
-{
+TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoadWithAdapter) {
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
     if (!image.data) {
         throw std::runtime_error{"Failed to read the image"};
@@ -165,6 +161,57 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
 
     EXPECT_EQ(result_restored[0].id, result[0].id);
     EXPECT_EQ(result_restored[0].score, result[0].score);
+    
+    SUCCEED();
+}
+
+TEST_P(ModelParameterizedTest, TestClassificationResultConformanceWithAndWOAutoResize) {
+    cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
+    if (!image.data) {
+        throw std::runtime_error{"Failed to read the image"};
+    }
+
+    ov::AnyMap configuration = {
+        {"auto_resize", true},
+    };
+    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+    
+    auto result = model->infer(image)->topLabels;
+
+    auto model_autoresize = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
+    auto result_autoresize = model_autoresize->infer(image)->topLabels;
+
+    EXPECT_EQ(result_autoresize[0].id, result[0].id);
+    EXPECT_NEAR(result_autoresize[0].score, result[0].score, 0.01);
+    
+    SUCCEED();
+}
+
+TEST_P(ModelParameterizedTest, TestClassificationResultConformanceWithAndWOAutoResizeAfterSaveLoad) {
+    cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
+    if (!image.data) {
+        throw std::runtime_error{"Failed to read the image"};
+    }
+
+    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+    auto ov_model = model->getModel();
+    ov::serialize(ov_model, TMP_MODEL_FILE);
+    model = ClassificationModel::create_model(TMP_MODEL_FILE);
+    auto result = model->infer(image)->topLabels;
+
+    ov::AnyMap configuration = {
+        {"auto_resize", true},
+    };
+    auto model_autoresize = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
+    ov_model = model_autoresize->getModel();
+    ov::serialize(ov_model, TMP_MODEL_FILE);
+    model_autoresize = ClassificationModel::create_model(TMP_MODEL_FILE);
+    auto result_autoresize = model_autoresize->infer(image)->topLabels;
+
+    EXPECT_EQ(result_autoresize[0].id, result[0].id);
+    EXPECT_NEAR(result_autoresize[0].score, result[0].score, 0.01);
     
     SUCCEED();
 }

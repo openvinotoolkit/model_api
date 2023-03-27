@@ -137,6 +137,55 @@ void ImageModel::updateModelInfo() {
     model->set_rt_info(embedded_processing, "model_info", "embedded_processing");
 }
 
+std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model>& model,
+                                            const std::string& inputName,
+                                            const ov::Layout& layout,
+                                            const RESIZE_MODE resize_mode,
+                                            const cv::InterpolationFlags interpolationMode,
+                                            const ov::Shape& targetShape,
+                                            const std::type_info& dtype,
+                                            bool brg2rgb,
+                                            const std::vector<float>& mean,
+                                            const std::vector<float>& scale) {
+    
+    ov::preprocess::PrePostProcessor ppp(model);
+
+    // Change the input type to the 8-bit image
+    if (dtype == typeid(int)) {
+        ppp.input(inputName).tensor().set_element_type(ov::element::u8);
+    }
+
+    if (resize_mode != NO_RESIZE) {
+        ppp.input(inputName).tensor().set_spatial_dynamic_shape();
+        // Doing resize in u8 is more efficient than FP32 but can lead to slightly different results
+        ppp.input(inputName).preprocess().custom(
+            createResizeGraph(resize_mode, targetShape, interpolationMode));
+    }
+
+    // Handle layout
+    ppp.input(inputName).tensor().set_layout(ov::Layout("NHWC")).set_color_format(
+        ov::preprocess::ColorFormat::BGR
+    );
+    ppp.input(inputName).model().set_layout(ov::Layout(layout));
+
+    ppp.input(inputName).preprocess().convert_element_type(ov::element::f32);
+
+    // Handle color format
+    if (brg2rgb) {
+        ppp.input(inputName).preprocess().convert_color(ov::preprocess::ColorFormat::RGB);
+    }
+
+    if (!mean.empty()) {
+        ppp.input(inputName).preprocess().mean(mean);
+    }
+    if (!scale.empty()) {
+        ppp.input(inputName).preprocess().scale(scale);
+    }
+
+    ppp.output().tensor().set_element_type(ov::element::f32);
+    return ppp.build();
+}
+
 std::shared_ptr<InternalModelData> ImageModel::preprocess(const InputData& inputData, InferenceInput& input) {
     const auto& origImg = inputData.asRef<ImageInputData>().inputImage;
     auto img = inputTransform(origImg);

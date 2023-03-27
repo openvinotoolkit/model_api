@@ -17,11 +17,13 @@
 #pragma once
 
 #include <opencv2/opencv.hpp>
+#include <openvino/openvino.hpp>
 
 enum RESIZE_MODE {
     RESIZE_FILL,
     RESIZE_KEEP_ASPECT,
-    RESIZE_KEEP_ASPECT_LETTERBOX
+    RESIZE_KEEP_ASPECT_LETTERBOX,
+    NO_RESIZE,
 };
 
 inline std::string formatResizeMode(RESIZE_MODE mode) {
@@ -36,3 +38,8 @@ inline std::string formatResizeMode(RESIZE_MODE mode) {
 cv::Mat resizeImageExt(const cv::Mat& mat, int width, int height, RESIZE_MODE resizeMode = RESIZE_FILL,
                        cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR, cv::Rect* roi = nullptr,
                        cv::Scalar BorderConstant = cv::Scalar(0, 0, 0));
+
+ov::preprocess::PostProcessSteps::CustomPostprocessOp createResizeGraph(RESIZE_MODE resizeMode,
+                                                                        const ov::Shape& size, 
+                                                                        const cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR);
+
