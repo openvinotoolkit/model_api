@@ -25,9 +25,6 @@ def test_classifier_save(tmp_path):
         assert getattr(downloaded, attr) == getattr(deserialized, attr)
 
 
-# TODO test otx
-
-
 def test_segmentor_save(tmp_path):
     downloaded = Model.create_model(
         "hrnet-v2-c1-segmentation",

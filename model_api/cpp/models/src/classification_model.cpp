@@ -78,7 +78,7 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
         slog::warn << "Model type is not specified in the rt_info, use default model type: " << model_type << slog::endl;
     }
     
-    if (model_type != ClassificationModel::ModelType && model_type != "classification") {  // TODO reupload IRs
+    if (model_type != ClassificationModel::ModelType) {
         throw ov::Exception("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
     }
 
