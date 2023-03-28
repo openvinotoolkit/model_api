@@ -41,7 +41,7 @@ ImageModel::ImageModel(const std::string& modelFile,
 RESIZE_MODE ImageModel::selectResizeMode(const std::string& resize_type) {
     RESIZE_MODE resize = RESIZE_FILL;
     if ("crop" == resize_type) {
-        throw std::runtime_error("crop resize_type is not implemented");
+         resize = RESIZE_CROP;
     } else if ("standard" == resize_type) {
         resize = RESIZE_FILL;
     } else if ("fit_to_window" == resize_type) {

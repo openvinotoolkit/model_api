@@ -23,6 +23,7 @@ enum RESIZE_MODE {
     RESIZE_FILL,
     RESIZE_KEEP_ASPECT,
     RESIZE_KEEP_ASPECT_LETTERBOX,
+    RESIZE_CROP,
     NO_RESIZE,
 };
 
@@ -30,7 +31,8 @@ inline std::string formatResizeMode(RESIZE_MODE mode) {
     switch (mode) {
         case RESIZE_FILL:   return "standard";
         case RESIZE_KEEP_ASPECT:   return "fit_to_window";
-        case RESIZE_KEEP_ASPECT_LETTERBOX: return "fit_to_window_letterbox";    
+        case RESIZE_KEEP_ASPECT_LETTERBOX: return "fit_to_window_letterbox";
+        case RESIZE_CROP: return "crop";
         default:      return "unknown";
     }
 }
