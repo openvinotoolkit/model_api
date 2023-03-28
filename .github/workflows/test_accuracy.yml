@@ -8,6 +8,7 @@ on:
     paths:
     - 'tests/python/accuracy/test_accuracy.py'
     - '.github/workflows/test_accuracy.yml'
+    branches: [ master ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}

@@ -25,7 +25,6 @@ using json = nlohmann::json;
 std::string PUBLIC_SCOPE_PATH = "../../tests/cpp/accuracy/public_scope.json";
 std::string DATA_DIR = "../data";
 std::string MODEL_PATH_TEMPLATE = "public/%s/FP16/%s.xml";
-std::string IMAGE_PATH = "coco128/images/train2017/";
 
 struct TestData {
     std::string image;
@@ -83,13 +82,19 @@ void removeLastChar(std::stringstream& stringstream) {
 TEST_P(ModelParameterizedTest, AccuracyTest)
 {
     auto modelData = GetParam();
-    auto modelPath = string_format(MODEL_PATH_TEMPLATE, modelData.name.c_str(), modelData.name.c_str());
+    std::string modelPath;
+    const std::string& name = modelData.name;
+    if (name.substr(name.size() - 4) == ".xml") {
+        modelPath = name;
+    } else {
+        modelPath = string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
+    }
 
     if (modelData.type == "DetectionModel") {
         auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
 
         for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
             cv::Mat image = cv::imread(imagePath);
             if (!image.data) {
@@ -111,7 +116,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         auto model = ClassificationModel::create_model(DATA_DIR + "/" + modelPath);
 
         for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
             cv::Mat image = cv::imread(imagePath);
             if (!image.data) {
@@ -132,7 +137,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         auto model = SegmentationModel::create_model(DATA_DIR + "/" + modelPath);
 
         for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + IMAGE_PATH + "/" + modelData.testData[i].image;
+            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
             cv::Mat image = cv::imread(imagePath);
             if (!image.data) {

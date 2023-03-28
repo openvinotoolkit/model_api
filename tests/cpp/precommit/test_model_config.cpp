@@ -73,7 +73,7 @@ TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig)
 {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
-    
+
     auto ov_model = model->getModel();
 
     EXPECT_EQ(ov_model->get_rt_info<std::string>("model_info", "model_type"), ClassificationModel::ModelType);
@@ -81,7 +81,7 @@ TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig)
     //Check if processing is embedded in the model
     auto embedded_processing = ov_model->get_rt_info<bool>("model_info", "embedded_processing");
     EXPECT_TRUE(embedded_processing);
-    
+
     SUCCEED();
 }
 
@@ -100,7 +100,7 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
         {"labels", mock_labels}
     };
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
-    
+
     auto ov_model = model->getModel();
 
     auto layout = ov_model->get_rt_info<std::string>("model_info", "layout");
@@ -116,7 +116,7 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig)
     for (size_t i = 0; i < num_classes; i++) {
         EXPECT_EQ(labels[i], mock_labels[i]);
     }
-    
+
     SUCCEED();
 }
 
@@ -130,17 +130,17 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
     auto result = model->infer(image)->topLabels;
-    
+
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
 
     auto model_restored = ClassificationModel::create_model(TMP_MODEL_FILE);
     auto result_data = model_restored->infer(image);
-    auto result_restored = result_data->topLabels; 
+    auto result_restored = result_data->topLabels;
 
     EXPECT_EQ(result_restored[0].id, result[0].id);
     EXPECT_EQ(result_restored[0].score, result[0].score);
-    
+
     SUCCEED();
 }
 
@@ -154,18 +154,18 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
     auto result = model->infer(image)->topLabels;
-    
+
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
 
     std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     auto model_restored = ClassificationModel::create_model(adapter);
     auto result_data = model_restored->infer(image);
-    auto result_restored = result_data->topLabels; 
+    auto result_restored = result_data->topLabels;
 
     EXPECT_EQ(result_restored[0].id, result[0].id);
     EXPECT_EQ(result_restored[0].score, result[0].score);
-    
+
     SUCCEED();
 }
 
@@ -197,12 +197,12 @@ class InputParser{
         std::vector <std::string> tokens;
 };
 
-void print_help(const char* program_name) 
+void print_help(const char* program_name)
 {
     std::cout << "Usage: " << program_name << "-d <path_to_data>" << std::endl;
 }
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     InputParser input(argc, argv);
 

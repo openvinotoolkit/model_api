@@ -46,7 +46,10 @@ def result(pytestconfig):
     ("model_data"), read_config(Path(__file__).resolve().parent / "public_scope.json")
 )
 def test_image_models(data, dump, result, model_data):
-    model = eval(model_data["type"]).create_model(model_data["name"], download_dir=data)
+    name = model_data["name"]
+    if name.endswith(".xml"):
+        name = f"{data}/{name}"
+    model = eval(model_data["type"]).create_model(name, download_dir=data)
 
     test_result = []
 
@@ -55,7 +58,7 @@ def test_image_models(data, dump, result, model_data):
         inference_results = []
 
     for test_data in model_data["test_data"]:
-        image_path = Path(data) / "coco128/images/train2017/" / test_data["image"]
+        image_path = Path(data) / test_data["image"]
         image = cv2.imread(str(image_path))
         if image is None:
             raise RuntimeError("Failed to read the image")
