@@ -118,5 +118,41 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "otx_models/cls_mobilenetv3_large_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "(105, 194, 0.461)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_efficient_b0_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "(0, 1, 0.837)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_efficient_v2s_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "(0, 1, 0.844)"
+                ]
+            }
+        ]
     }
 ]
