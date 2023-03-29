@@ -83,7 +83,9 @@ class ClassificationModel(ImageModel):
                 "path_to_labels": StringValue(
                     description="Path to file with labels. Overrides the labels, if they sets via 'labels' parameter"
                 ),
-                "multilabel": BooleanValue(default_value=False),
+                "multilabel": BooleanValue(
+                    default_value=False, description="Predict a set of labels per image"
+                ),
             }
         )
         return parameters
