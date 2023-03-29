@@ -145,7 +145,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
         return;
     }
 
-    const ov::Shape& inputShape = input.get_shape();
+    const ov::Shape& inputShape = input.get_partial_shape().get_max_shape();
     const ov::Layout& inputLayout = getInputLayout(input);
 
     auto graphResizeMode = resizeMode;

@@ -4,7 +4,7 @@
         "type": "SegmentationModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "[  1   2   6  11  12 126 127]"
                 ]
@@ -16,7 +16,7 @@
         "type": "DetectionModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(0, 13, 170, 338, 0.869, 2, bicycle)",
                     "(58, 275, 360, 384, 0.998, 12, dog)",
@@ -30,7 +30,7 @@
         "type": "DetectionModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(0, 12, 172, 331, 0.697, 2, bicycle)",
                     "(62, 276, 363, 383, 0.645, 18, horse)"
@@ -43,7 +43,7 @@
         "type": "DetectionModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(320, 95, 336, 143, 0.842, 1, bicycle)",
                     "(284, 95, 301, 143, 0.823, 1, bicycle)",
@@ -52,14 +52,31 @@
                     "(50, 278, 364, 382, 0.913, 18, sheep)"
                 ]
             }
-        ]
+        ],
+        "TODO: there is a bug in openvino. Tickets 106890 and 106891": {
+            "name": "otx_models/det_mobilenetv2_atss_bccd.xml",
+            "type": "DetectionModel",
+            "test_data": [
+                {
+                    "image": "BloodImage_00007.jpg",
+                    "reference": [
+                        "(494, 159, 637, 308, 0.700, 2, WBC)",
+                        "(28, 139, 136, 228, 0.623, 1, RBC)",
+                        "(535, 374, 638, 479, 0.535, 1, RBC)",
+                        "(513, 8, 633, 151, 0.454, 1, RBC)",
+                        "(197, 86, 412, 286, 0.405, 1, RBC)",
+                        "(21, 291, 143, 399, 0.401, 1, RBC)"
+                    ]
+                }
+            ]
+        }
     },
     {
         "name": "resnet-18-pytorch",
         "type": "ClassificationModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(222, kuvasz, 0.145)"
                 ]
@@ -71,7 +88,7 @@
         "type": "ClassificationModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(175, Labrador_retriever, 0.613)"
                 ]
@@ -83,9 +100,57 @@
         "type": "ClassificationModel",
         "test_data": [
             {
-                "image": "000000000074.jpg",
+                "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(245, French_bulldog, 0.152)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/mlc_mobilenetv3_large_voc.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000081.jpg",
+                "reference": [
+                    "(0, aeroplane, 0.858)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_mobilenetv3_large_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "(105, 194, 0.461)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_efficient_b0_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "(0, 1, 0.837)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_efficient_v2s_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "(0, 1, 0.844)"
                 ]
             }
         ]
