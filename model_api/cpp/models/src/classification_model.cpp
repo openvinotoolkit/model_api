@@ -106,22 +106,73 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(std::shar
     return classifier;
 }
 
-std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& infResult) {
-    const ov::Tensor& indicesTensor = infResult.outputsData.find(outputNames[0])->second;
-    const int* indicesPtr = indicesTensor.data<int>();
-    const ov::Tensor& scoresTensor = infResult.outputsData.find(outputNames[1])->second;
-    const float* scoresPtr = scoresTensor.data<float>();
+static void softmax(std::vector<float>& input) {
+	size_t i;
+	float min_val, sum, shift;
+    size_t size = input.size();
 
+	min_val = -INFINITY;
+	for (i = 0; i < size; ++i) {
+		if (min_val < input[i]) {
+			min_val = input[i];
+		}
+	}
+
+	sum = 0.0;
+	for (i = 0; i < size; ++i) {
+		sum += exp(input[i] - min_val);
+	}
+    // Shift is required to prevent overflow
+	shift = min_val + log(sum);
+	for (i = 0; i < size; ++i) {
+		input[i] = exp(input[i] - shift);
+	}
+}
+
+std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& infResult) {
     ClassificationResult* result = new ClassificationResult(infResult.frameId, infResult.metaData);
     auto retVal = std::unique_ptr<ResultBase>(result);
+    std::vector<int> indices;
+    std::vector<float> scores;
+    
+    if (embedded_processing)
+    {
+        const ov::Tensor& indicesTensor = infResult.outputsData.find(outputNames[0])->second;
+        const int* indicesPtr = indicesTensor.data<int>();
+        std::copy(indicesPtr, indicesPtr + topk, std::back_inserter(indices));
 
-    result->topLabels.reserve(scoresTensor.get_size());
-    for (size_t i = 0; i < scoresTensor.get_size(); ++i) {
-        int ind = indicesPtr[i];
+        const ov::Tensor& scoresTensor = infResult.outputsData.find(outputNames[1])->second;
+        const float* scoresPtr = scoresTensor.data<float>();
+        std::copy(scoresPtr, scoresPtr + topk, std::back_inserter(scores));
+    } else {
+        const ov::Tensor& logitTensor = infResult.outputsData.find(outputNames[0])->second;
+        const float* logits = logitTensor.data<float>();
+        size_t num_classes = logitTensor.get_size();
+        std::vector<float> buffer;
+        std::copy(logits, logits + num_classes, std::back_inserter(buffer));
+
+        // apply softmax
+        softmax(buffer);
+        // sort in the reverse order
+        std::vector<size_t> idx(buffer.size());
+        std::iota(idx.begin(), idx.end(), 0);
+        std::stable_sort(idx.begin(), idx.end(), 
+                        [&buffer](size_t i1, size_t i2) {return buffer[i1] > buffer[i2];});
+        std::copy(std::begin(idx), std::begin(idx) + topk, std::back_inserter(indices));
+        scores.reserve(indices.size());
+        for (auto index : indices)
+        {
+            scores.push_back(buffer[index]);
+        }
+    }
+
+    result->topLabels.reserve(topk);
+    for (size_t i = 0; i < topk; ++i) {
+        int ind = indices[i];
         if (ind < 0 || ind >= static_cast<int>(labels.size())) {
             throw std::runtime_error("Invalid index for the class label is found during postprocessing");
         }
-        result->topLabels.emplace_back(ind, labels[ind], scoresPtr[i]);
+        result->topLabels.emplace_back(ind, labels[ind], scores[i]);
     }
 
     return retVal;
