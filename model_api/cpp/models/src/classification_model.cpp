@@ -184,11 +184,6 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     const auto& input = model->input();
     inputNames.push_back(input.get_any_name());
 
-    // Skip next steps if pre/postprocessing was embedded previously
-    if (embedded_processing) {
-        return;
-    }
-
     const ov::Shape& inputShape = input.get_partial_shape().get_max_shape();
     const ov::Layout& inputLayout = getInputLayout(input);
 
@@ -219,46 +214,48 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     ppp.input().model().set_layout(inputLayout);
 
     // --------------------------- Prepare output  -----------------------------------------------------
-    if (model->outputs().size() != 1) {
-        throw std::logic_error("Classification model wrapper supports topologies with only 1 output");
+    if (model->outputs().size() != 1 && model->outputs().size() != 2) {
+        throw std::logic_error("Classification model wrapper supports topologies with 1 or 2 outputs");
     }
 
-    const ov::Shape& outputShape = model->output().get_partial_shape().get_max_shape();
-    if (outputShape.size() != 2 && outputShape.size() != 4) {
-        throw std::logic_error("Classification model wrapper supports topologies only with"
-                               " 2-dimensional or 4-dimensional output");
-    }
+    if (model->outputs().size() == 1) {
+        const ov::Shape& outputShape = model->output().get_partial_shape().get_max_shape();
+        if (outputShape.size() != 2 && outputShape.size() != 4) {
+            throw std::logic_error("Classification model wrapper supports topologies only with"
+                                " 2-dimensional or 4-dimensional output");
+        }
 
-    const ov::Layout outputLayout("NCHW");
-    if (outputShape.size() == 4 && (outputShape[ov::layout::height_idx(outputLayout)] != 1 ||
-                                    outputShape[ov::layout::width_idx(outputLayout)] != 1)) {
-        throw std::logic_error("Classification model wrapper supports topologies only"
-                               " with 4-dimensional output which has last two dimensions of size 1");
-    }
+        const ov::Layout outputLayout("NCHW");
+        if (outputShape.size() == 4 && (outputShape[ov::layout::height_idx(outputLayout)] != 1 ||
+                                        outputShape[ov::layout::width_idx(outputLayout)] != 1)) {
+            throw std::logic_error("Classification model wrapper supports topologies only"
+                                " with 4-dimensional output which has last two dimensions of size 1");
+        }
 
-    size_t classesNum = outputShape[ov::layout::channels_idx(outputLayout)];
-    if (topk > classesNum) {
-        throw std::logic_error("The model provides " + std::to_string(classesNum) + " classes, but " +
-                               std::to_string(topk) + " labels are requested to be predicted");
-    }
-    if (classesNum == labels.size() + 1) {
-        labels.insert(labels.begin(), "other");
-        slog::warn << "Inserted 'other' label as first." << slog::endl;
-    } else if (classesNum != labels.size()) {
-        throw std::logic_error("Model's number of classes and parsed labels must match (" +
-                               std::to_string(outputShape[1]) + " and " + std::to_string(labels.size()) + ')');
-    }
+        size_t classesNum = outputShape[ov::layout::channels_idx(outputLayout)];
+        if (topk > classesNum) {
+            throw std::logic_error("The model provides " + std::to_string(classesNum) + " classes, but " +
+                                std::to_string(topk) + " labels are requested to be predicted");
+        }
+        if (classesNum == labels.size() + 1) {
+            labels.insert(labels.begin(), "other");
+            slog::warn << "Inserted 'other' label as first." << slog::endl;
+        } else if (classesNum != labels.size()) {
+            throw std::logic_error("Model's number of classes and parsed labels must match (" +
+                                std::to_string(outputShape[1]) + " and " + std::to_string(labels.size()) + ')');
+        }
 
-    ppp.output().tensor().set_element_type(ov::element::f32);
-    model = ppp.build();
+        ppp.output().tensor().set_element_type(ov::element::f32);
+        model = ppp.build();
+    }
     if (multilabel) {
         outputNames.push_back(model->output().get_any_name());
         return;
     }
-    addSoftmaxAndTopkOutputs();
+    addOrFindSoftmaxAndTopkOutputs();
 }
 
-void ClassificationModel::addSoftmaxAndTopkOutputs() {
+void ClassificationModel::addOrFindSoftmaxAndTopkOutputs() {
     outputNames.push_back("indices");
     outputNames.push_back("scores");
     auto nodes = model->get_ops();
