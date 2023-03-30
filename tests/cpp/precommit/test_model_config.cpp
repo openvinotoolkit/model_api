@@ -280,8 +280,8 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
 
 INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance, ClassificationModelParameterizedTest, ::testing::Values(ModelData("efficientnet-b0-pytorch")));
 INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance, ClassificationModelParameterizedTestSaveLoad, ::testing::Values(ModelData("efficientnet-b0-pytorch")));
-INSTANTIATE_TEST_SUITE_P(SSDTestInstance, SSDModelParameterizedTest, ::testing::Values(ModelData("ssdlite_mobilenet_v2")));
-INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssdlite_mobilenet_v2")));
+INSTANTIATE_TEST_SUITE_P(SSDTestInstance, SSDModelParameterizedTest, ::testing::Values(ModelData("ssdlite_mobilenet_v2"), ModelData("ssd_mobilenet_v1_fpn_coco")));
+INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssdlite_mobilenet_v2"), ModelData("ssd_mobilenet_v1_fpn_coco")));
 
 class InputParser{
     public:
