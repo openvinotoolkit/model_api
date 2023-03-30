@@ -41,7 +41,7 @@ float sigmoid(float x) {
     return 1.0f / (1.0f + exp(-x));
 }
 
-static void softmax(std::vector<float>& input) {
+void softmax(std::vector<float>& input) {
 	size_t i;
 	float min_val, sum, shift;
     size_t size = input.size();
