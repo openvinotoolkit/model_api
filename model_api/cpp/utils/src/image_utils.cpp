@@ -163,15 +163,32 @@ static Output<Node> fitToWindowLetterBoxGraph(const ov::Output<ov::Node>& input,
     auto scale = std::make_shared<opset10::Minimum>(w_ratio, h_ratio);
     auto nw = std::make_shared<opset10::Convert>(std::make_shared<opset10::Multiply>(iw, scale), element::i32);
     auto nh = std::make_shared<opset10::Convert>(std::make_shared<opset10::Multiply>(ih, scale), element::i32);
-    auto new_size = std::make_shared<opset10::Concat>(OutputVector{nh, nw}, 0);
+    auto new_size = std::make_shared<opset10::Concat>(OutputVector{std::make_shared<opset10::Unsqueeze>(nh, opset10::Constant::create(element::i32, Shape{1}, {0})), 
+                                                                   std::make_shared<opset10::Unsqueeze>(nw, opset10::Constant::create(element::i32, Shape{1}, {0}))}, -1);
 
     auto scales = opset10::Constant::create(element::f32, Shape{2}, {1.0f, 1.0f});
     auto axes = opset10::Constant::create(element::i64, Shape{2}, {h_axis, w_axis});
     opset10::Interpolate::InterpolateAttrs attrs;
     attrs.mode = mode;
     attrs.shape_calculation_mode = opset10::Interpolate::ShapeCalcMode::SIZES;
-
-    return std::make_shared<opset10::Interpolate>(input, new_size, scales, axes, attrs);
+    auto image = std::make_shared<opset10::Interpolate>(input, new_size, scales, axes, attrs);
+    
+    // pad
+    auto dx = std::make_shared<opset10::Divide>(std::make_shared<opset10::Subtract>(opset10::Constant::create(element::i32, Shape{1}, {w}), nw),
+                                                opset10::Constant::create(element::i32, Shape{1}, {2}));
+    auto dy = std::make_shared<opset10::Divide>(std::make_shared<opset10::Subtract>(opset10::Constant::create(element::i32, Shape{1}, {h}), nh),
+                                                opset10::Constant::create(element::i32, Shape{1}, {2}));
+    auto dx_border = std::make_shared<opset10::Subtract>(std::make_shared<opset10::Subtract>(opset10::Constant::create(element::i32, Shape{1}, {w}), nw), dx);
+    auto dy_border = std::make_shared<opset10::Subtract>(std::make_shared<opset10::Subtract>(opset10::Constant::create(element::i32, Shape{1}, {h}), nh), dy);
+    auto pads_begin = std::make_shared<opset10::Concat>(OutputVector{opset10::Constant::create(element::i32, Shape{1}, {0}), 
+                                                                     dy,
+                                                                     dx,
+                                                                     opset10::Constant::create(element::i32, Shape{1}, {0})}, 0);
+    auto pads_end = std::make_shared<opset10::Concat>(OutputVector{opset10::Constant::create(element::i32, Shape{1}, {0}), 
+                                                                   dy_border,
+                                                                   dx_border,
+                                                                   opset10::Constant::create(element::i32, Shape{1}, {0})}, 0);
+    return std::make_shared<opset10::Pad>(image, pads_begin, pads_end, op::PadMode::CONSTANT);
 }
 
 static Output<Node> cropResizeGraph(const ov::Output<ov::Node>& input,

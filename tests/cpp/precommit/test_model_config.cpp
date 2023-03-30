@@ -74,7 +74,6 @@ std::string string_format(const std::string &fmt, Args... args) {
     return buf;
 }
 
-// TODO: Add tests for create_model
 TEST_P(ClassificationModelParameterizedTest, TestClassificationDefaultConfig) {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
@@ -252,10 +251,8 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
-
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
-    
     auto result = model->infer(image)->objects;
 
     image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
