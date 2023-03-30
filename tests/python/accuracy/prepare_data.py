@@ -45,6 +45,8 @@ if __name__ == "__main__":
 
     prepare_data(args.data_dir)
     retrieve_otx_model(args.data_dir, "mlc_mobilenetv3_large_voc")
+    retrieve_otx_model(args.data_dir, "mlc_efficient_b0_voc")
+    retrieve_otx_model(args.data_dir, "mlc_efficient_v2s_voc")
     retrieve_otx_model(args.data_dir, "det_mobilenetv2_atss_bccd")
     retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars")
     retrieve_otx_model(args.data_dir, "cls_efficient_b0_cars")

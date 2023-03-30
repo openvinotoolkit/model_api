@@ -15,6 +15,7 @@ The list features only model wrappers which intoduce new configuration values in
 1. `topk`: int - number of most likely labels
 1. `labels`: List - list of class labels
 1. `path_to_labels`: str - path to file with labels. Overrides the labels, if they sets via 'labels' parameter
+1. `multilabel`: bool - predict a set of labels per image
 #### `DetectionModel` and its subclasses
 1. `confidence_threshold`: float - probability threshold value for bounding box filtering
 1. `labels`: List - List of class labels

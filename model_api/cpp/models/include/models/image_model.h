@@ -46,7 +46,7 @@ public:
 
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
     static std::vector<std::string> loadLabels(const std::string& labelFilename);
-    static std::shared_ptr<ov::Model> embedProcessing(std::shared_ptr<ov::Model>& model,
+    std::shared_ptr<ov::Model> embedProcessing(std::shared_ptr<ov::Model>& model,
                                                     const std::string& inputName,
                                                     const ov::Layout& = ov::Layout("NCHW"),
                                                     RESIZE_MODE resize_mode = NO_RESIZE,
@@ -64,7 +64,7 @@ protected:
 protected:
     std::vector<std::string> labels = {};
     bool useAutoResize = false;
-    bool embedded_processing = false;
+    bool embedded_processing = false; // flag in model_info that pre/postprocessing embedded
 
     size_t netInputHeight = 0;
     size_t netInputWidth = 0;

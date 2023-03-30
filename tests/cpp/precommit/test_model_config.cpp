@@ -17,6 +17,7 @@
 
 #include <models/classification_model.h>
 #include <models/detection_model.h>
+#include <models/detection_model_ssd.h>
 #include <models/input_data.h>
 #include <models/results.h>
 #include <adapters/openvino_adapter.h>
@@ -45,16 +46,22 @@ class MockAdapter : public OpenVINOInferenceAdapter {
         }
 };
 
-class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
+class ClassificationModelParameterizedTest : public testing::TestWithParam<ModelData> {
 };
 
-class ModelParameterizedTestSaveLoad : public testing::TestWithParam<ModelData> {
+class SSDModelParameterizedTest : public testing::TestWithParam<ModelData> {
+};
+
+class ClassificationModelParameterizedTestSaveLoad : public testing::TestWithParam<ModelData> {
     protected:
         void TearDown() override {
             auto fileName = TMP_MODEL_FILE;
             std::remove(fileName.c_str());
             std::remove(fileName.replace(fileName.end() - 4, fileName.end(), ".bin").c_str());
         }
+};
+
+class DetectionModelParameterizedTestSaveLoad : public ClassificationModelParameterizedTestSaveLoad {
 };
 
 template<typename... Args>
@@ -68,7 +75,7 @@ std::string string_format(const std::string &fmt, Args... args) {
 }
 
 // TODO: Add tests for create_model
-TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig) {
+TEST_P(ClassificationModelParameterizedTest, TestClassificationDefaultConfig) {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
 
@@ -76,14 +83,13 @@ TEST_P(ModelParameterizedTest, TestClassificationDefaultConfig) {
 
     EXPECT_EQ(ov_model->get_rt_info<std::string>("model_info", "model_type"), ClassificationModel::ModelType);
 
-    //Check if processing is embedded in the model
     auto embedded_processing = ov_model->get_rt_info<bool>("model_info", "embedded_processing");
     EXPECT_TRUE(embedded_processing);
 
     SUCCEED();
 }
 
-TEST_P(ModelParameterizedTest, TestClassificationCustomConfig) {
+TEST_P(ClassificationModelParameterizedTest, TestClassificationCustomConfig) {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     std::vector<std::string> mock_labels;
     size_t num_classes = 1000;
@@ -92,7 +98,6 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig) {
     }
     ov::AnyMap configuration = {
         {"layout", "data:HWC"},
-        {"auto_resize", false},
         {"resize_type", "standard"}, //fit_to_window
         {"labels", mock_labels}
     };
@@ -102,9 +107,6 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig) {
 
     auto layout = ov_model->get_rt_info<std::string>("model_info", "layout");
     EXPECT_EQ(layout, configuration.at("layout").as<std::string>());
-
-    auto auto_resize = ov_model->get_rt_info<bool>("model_info", "auto_resize");
-    EXPECT_EQ(auto_resize, configuration.at("auto_resize").as<bool>());
 
     auto resize_type = ov_model->get_rt_info<std::string>("model_info", "resize_type");
     EXPECT_EQ(resize_type, configuration.at("resize_type").as<std::string>());
@@ -117,7 +119,7 @@ TEST_P(ModelParameterizedTest, TestClassificationCustomConfig) {
     SUCCEED();
 }
 
-TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoad) {
+TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoad) {
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
     if (!image.data) {
         throw std::runtime_error{"Failed to read the image"};
@@ -141,7 +143,7 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
     SUCCEED();
 }
 
-TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoadWithAdapter) {
+TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoadWithAdapter) {
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
     if (!image.data) {
         throw std::runtime_error{"Failed to read the image"};
@@ -149,10 +151,9 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
-    auto result = model->infer(image)->topLabels;
-
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
+    auto result = model->infer(image)->topLabels;
 
     std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     auto model_restored = ClassificationModel::create_model(adapter);
@@ -165,59 +166,125 @@ TEST_P(ModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoa
     SUCCEED();
 }
 
-TEST_P(ModelParameterizedTest, TestClassificationResultConformanceWithAndWOAutoResize) {
-    cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
-    if (!image.data) {
-        throw std::runtime_error{"Failed to read the image"};
-    }
-
-    ov::AnyMap configuration = {
-        {"auto_resize", true},
-    };
+TEST_P(SSDModelParameterizedTest, TestDetectionDefaultConfig) {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
-    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
-    
-    auto result = model->infer(image)->topLabels;
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
 
-    auto model_autoresize = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
-    auto result_autoresize = model_autoresize->infer(image)->topLabels;
+    auto ov_model = model->getModel();
 
-    EXPECT_EQ(result_autoresize[0].id, result[0].id);
-    EXPECT_NEAR(result_autoresize[0].score, result[0].score, 0.01);
+    EXPECT_EQ(ov_model->get_rt_info<std::string>("model_info", "model_type"), ModelSSD::ModelType);
     
+    auto embedded_processing = ov_model->get_rt_info<bool>("model_info", "embedded_processing");
+    EXPECT_TRUE(embedded_processing);
+
     SUCCEED();
 }
 
-TEST_P(ModelParameterizedTest, TestClassificationResultConformanceWithAndWOAutoResizeAfterSaveLoad) {
+TEST_P(SSDModelParameterizedTest, TestDetectionCustomConfig) {
+    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    std::vector<std::string> mock_labels;
+    size_t num_classes = 80;
+    for (size_t i = 0; i < num_classes; i++) {
+        mock_labels.push_back(std::to_string(i));
+    }
+    ov::AnyMap configuration = {
+        {"layout", "data:HWC"},
+        {"resize_type", "standard"}, //fit_to_window
+        {"labels", mock_labels}
+    };
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path, configuration);
+
+    auto ov_model = model->getModel();
+
+    auto layout = ov_model->get_rt_info<std::string>("model_info", "layout");
+    EXPECT_EQ(layout, configuration.at("layout").as<std::string>());
+
+    auto resize_type = ov_model->get_rt_info<std::string>("model_info", "resize_type");
+    EXPECT_EQ(resize_type, configuration.at("resize_type").as<std::string>());
+
+    auto labels = split(ov_model->get_rt_info<std::string>("model_info", "labels"), ' ');
+    for (size_t i = 0; i < num_classes; i++) {
+        EXPECT_EQ(labels[i], mock_labels[i]);
+    }
+
+    SUCCEED();
+}
+
+TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSaveLoad) {
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
     if (!image.data) {
         throw std::runtime_error{"Failed to read the image"};
     }
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
-    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
+
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
-    model = ClassificationModel::create_model(TMP_MODEL_FILE);
-    auto result = model->infer(image)->topLabels;
-
-    ov::AnyMap configuration = {
-        {"auto_resize", true},
-    };
-    auto model_autoresize = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
-    ov_model = model_autoresize->getModel();
-    ov::serialize(ov_model, TMP_MODEL_FILE);
-    model_autoresize = ClassificationModel::create_model(TMP_MODEL_FILE);
-    auto result_autoresize = model_autoresize->infer(image)->topLabels;
-
-    EXPECT_EQ(result_autoresize[0].id, result[0].id);
-    EXPECT_NEAR(result_autoresize[0].score, result[0].score, 0.01);
     
+    auto result = model->infer(image)->objects;
+
+    image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
+    if (!image.data) {
+        throw std::runtime_error{"Failed to read the image"};
+    }
+    auto model_restored = DetectionModel::create_model(TMP_MODEL_FILE);
+    auto result_data = model_restored->infer(image);
+    auto result_restored = result_data->objects;
+
+    ASSERT_EQ(result.size(), result_restored.size());
+
+    for (size_t i = 0; i < result.size(); i++) {
+        ASSERT_EQ(result[i].x, result_restored[i].x);
+        ASSERT_EQ(result[i].y, result_restored[i].y);
+        ASSERT_EQ(result[i].width, result_restored[i].width);
+        ASSERT_EQ(result[i].height, result_restored[i].height);
+    }
+
     SUCCEED();
 }
 
-INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance, ModelParameterizedTest, ::testing::Values(ModelData("efficientnet-b0-pytorch")));
-INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance, ModelParameterizedTestSaveLoad, ::testing::Values(ModelData("efficientnet-b0-pytorch")));
+TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSaveLoadWithAdapter) {
+    cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
+    if (!image.data) {
+        throw std::runtime_error{"Failed to read the image"};
+    }
+
+    auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
+
+    auto ov_model = model->getModel();
+    ov::serialize(ov_model, TMP_MODEL_FILE);
+    
+    auto result = model->infer(image)->objects;
+
+    image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
+    if (!image.data) {
+        throw std::runtime_error{"Failed to read the image"};
+    }
+
+    std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
+    auto model_restored = DetectionModel::create_model(adapter);
+    auto result_data = model_restored->infer(image);
+    auto result_restored = result_data->objects;
+
+    ASSERT_EQ(result.size(), result_restored.size());
+
+    for (size_t i = 0; i < result.size(); i++) {
+        ASSERT_EQ(result[i].x, result_restored[i].x);
+        ASSERT_EQ(result[i].y, result_restored[i].y);
+        ASSERT_EQ(result[i].width, result_restored[i].width);
+        ASSERT_EQ(result[i].height, result_restored[i].height);
+    }
+
+    SUCCEED();
+}
+
+
+INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance, ClassificationModelParameterizedTest, ::testing::Values(ModelData("efficientnet-b0-pytorch")));
+INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance, ClassificationModelParameterizedTestSaveLoad, ::testing::Values(ModelData("efficientnet-b0-pytorch")));
+INSTANTIATE_TEST_SUITE_P(SSDTestInstance, SSDModelParameterizedTest, ::testing::Values(ModelData("ssdlite_mobilenet_v2")));
+INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssdlite_mobilenet_v2")));
 
 class InputParser{
     public:

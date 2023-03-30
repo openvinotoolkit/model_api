@@ -45,14 +45,8 @@ RESIZE_MODE ImageModel::selectResizeMode(const std::string& resize_type) {
     } else if ("standard" == resize_type) {
         resize = RESIZE_FILL;
     } else if ("fit_to_window" == resize_type) {
-        if (useAutoResize) {
-            throw std::runtime_error("useAutoResize supports only standard resize_type");
-        }
         resize = RESIZE_KEEP_ASPECT;
     } else if ("fit_to_window_letterbox" == resize_type) {
-        if (useAutoResize) {
-            throw std::runtime_error("useAutoResize supports only standard resize_type");
-        }
         resize = RESIZE_KEEP_ASPECT_LETTERBOX;
     } else {
         throw std::runtime_error("Unknown value for resize_type arg");
@@ -96,6 +90,13 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
     if (model->has_rt_info("model_info", "embedded_processing")) {
         embedded_processing = model->get_rt_info<bool>("model_info", "embedded_processing");
     }
+
+    if (model->has_rt_info("model_info", "orig_width")) {
+        netInputWidth = model->get_rt_info<size_t>("model_info", "orig_width");
+    }
+    if (model->has_rt_info("model_info", "orig_height")) {
+        netInputHeight = model->get_rt_info<size_t>("model_info", "orig_height");
+    }
 }
 
 ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
@@ -122,6 +123,15 @@ ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
     if (embedded_processing_iter != configuration.end()) {
         embedded_processing = embedded_processing_iter->second.as<bool>();
     }
+
+    auto netInputWidth_iter = configuration.find("orig_width");
+    if (netInputWidth_iter != configuration.end()) {
+        netInputWidth = netInputWidth_iter->second.as<size_t>();
+    }
+    auto netInputHeight_iter = configuration.find("orig_height");
+    if (netInputHeight_iter != configuration.end()) {
+        netInputHeight = netInputHeight_iter->second.as<size_t>();
+    }
 }
 
 void ImageModel::updateModelInfo() {
@@ -135,6 +145,8 @@ void ImageModel::updateModelInfo() {
     }
 
     model->set_rt_info(embedded_processing, "model_info", "embedded_processing");
+    model->set_rt_info(netInputWidth, "model_info", "orig_width");
+    model->set_rt_info(netInputHeight, "model_info", "orig_height");
 }
 
 std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model>& model,
@@ -150,10 +162,9 @@ std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model
     
     ov::preprocess::PrePostProcessor ppp(model);
 
-    // Change the input type to the 8-bit image
-    if (dtype == typeid(int)) {
-        ppp.input(inputName).tensor().set_element_type(ov::element::u8);
-    }
+    inputTransform.setPrecision(ppp, inputName);
+    // Set input settings to work with OpenCV
+    ppp.input(inputName).tensor().set_layout(ov::Layout("NHWC"));
 
     if (resize_mode != NO_RESIZE) {
         ppp.input(inputName).tensor().set_spatial_dynamic_shape();
@@ -162,16 +173,15 @@ std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model
             createResizeGraph(resize_mode, targetShape, interpolationMode));
     }
 
-    // Handle layout
-    ppp.input(inputName).tensor().set_layout(ov::Layout("NHWC")).set_color_format(
-        ov::preprocess::ColorFormat::BGR
-    );
     ppp.input(inputName).model().set_layout(ov::Layout(layout));
 
     ppp.input(inputName).preprocess().convert_element_type(ov::element::f32);
 
     // Handle color format
     if (brg2rgb) {
+        ppp.input(inputName).tensor().set_color_format(
+            ov::preprocess::ColorFormat::BGR
+        );
         ppp.input(inputName).preprocess().convert_color(ov::preprocess::ColorFormat::RGB);
     }
 
@@ -182,7 +192,6 @@ std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model
         ppp.input(inputName).preprocess().scale(scale);
     }
 
-    ppp.output().tensor().set_element_type(ov::element::f32);
     return ppp.build();
 }
 
