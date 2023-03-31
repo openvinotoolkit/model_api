@@ -31,7 +31,7 @@ struct ModelData {
     std::string type;
 };
 
-class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
+class ClassificationModelParameterizedTest : public testing::TestWithParam<ModelData> {
 };
 
 template<typename... Args>
@@ -59,7 +59,7 @@ std::vector<ModelData> GetTestData(const std::string& path)
     return j;
 }
  
-TEST_P(ModelParameterizedTest, SynchronousInference)
+TEST_P(ClassificationModelParameterizedTest, SynchronousInference)
 {
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
     if (!image.data) {
@@ -86,7 +86,7 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
+INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ClassificationModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
 
 class InputParser{
     public:
