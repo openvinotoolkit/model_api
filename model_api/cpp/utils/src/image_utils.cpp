@@ -22,55 +22,8 @@
 
 using namespace ov;
 
-cv::Mat resizeImageExt(const cv::Mat& mat, int width, int height, RESIZE_MODE resizeMode,
-                       cv::InterpolationFlags interpolationMode, cv::Rect* roi, cv::Scalar BorderConstant) {
-    if (width == mat.cols && height == mat.rows) {
-        return mat;
-    }
-
-    cv::Mat dst;
-
-    switch (resizeMode) {
-    case RESIZE_FILL:
-    case RESIZE_CROP: // TODO: hadle crop if not embedded
-    {
-        cv::resize(mat, dst, cv::Size(width, height), interpolationMode);
-        if (roi) {
-            *roi = cv::Rect(0, 0, width, height);
-        }
-        break;
-    }
-    case RESIZE_KEEP_ASPECT:
-    case RESIZE_KEEP_ASPECT_LETTERBOX:
-    {
-        double scale = std::min(static_cast<double>(width) / mat.cols, static_cast<double>(height) / mat.rows);
-        cv::Mat resizedImage;
-        cv::resize(mat, resizedImage, {int(mat.cols * scale), int(mat.rows * scale)}, 0, 0, interpolationMode);
-
-        int dx = resizeMode == RESIZE_KEEP_ASPECT ? 0 : (width - resizedImage.cols) / 2;
-        int dy = resizeMode == RESIZE_KEEP_ASPECT ? 0 : (height - resizedImage.rows) / 2;
-
-        cv::copyMakeBorder(resizedImage, dst, dy, height - resizedImage.rows - dy,
-            dx, width - resizedImage.cols - dx, cv::BORDER_CONSTANT, BorderConstant);
-        if (roi) {
-            *roi = cv::Rect(dx, dy, resizedImage.cols, resizedImage.rows);
-        }
-        break;
-    }
-    case NO_RESIZE:
-    {
-        dst = mat;
-        if (roi) {
-            *roi = cv::Rect(0, 0, mat.cols, mat.rows);
-        }
-        break;
-    }
-    }
-    return dst;
-}
-
-//ov::preprocess::PostProcessSteps::CustomPostprocessOp
-static opset10::Interpolate::InterpolateMode ov2ovInterpolationMode(cv::InterpolationFlags interpolationMode) {
+namespace {
+opset10::Interpolate::InterpolateMode ov2ovInterpolationMode(cv::InterpolationFlags interpolationMode) {
     switch (interpolationMode)
     {
         case cv::INTER_NEAREST:
@@ -87,7 +40,7 @@ static opset10::Interpolate::InterpolateMode ov2ovInterpolationMode(cv::Interpol
     return opset10::Interpolate::InterpolateMode::LINEAR;
 }
 
-static Output<Node> resizeImageGraph(const ov::Output<ov::Node>& input,
+Output<Node> resizeImageGraph(const ov::Output<ov::Node>& input,
                 const ov::Shape& size, 
                 bool keep_aspect_ratio = false,
                 const cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR) {
@@ -136,7 +89,7 @@ static Output<Node> resizeImageGraph(const ov::Output<ov::Node>& input,
     return std::make_shared<opset10::Interpolate>(input, sizes, scales, axes, attrs);
 }
 
-static Output<Node> fitToWindowLetterBoxGraph(const ov::Output<ov::Node>& input,
+Output<Node> fitToWindowLetterBoxGraph(const ov::Output<ov::Node>& input,
                 const ov::Shape& size,
                 const cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR) {
     const auto h_axis = 1;
@@ -191,7 +144,7 @@ static Output<Node> fitToWindowLetterBoxGraph(const ov::Output<ov::Node>& input,
     return std::make_shared<opset10::Pad>(image, pads_begin, pads_end, op::PadMode::CONSTANT);
 }
 
-static Output<Node> cropResizeGraph(const ov::Output<ov::Node>& input,
+Output<Node> cropResizeGraph(const ov::Output<ov::Node>& input,
                 const ov::Shape& size,
                 const cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR) {
     const auto h_axis = 1;
@@ -288,6 +241,54 @@ static Output<Node> cropResizeGraph(const ov::Output<ov::Node>& input,
     attrs.shape_calculation_mode = opset10::Interpolate::ShapeCalcMode::SIZES;
 
     return std::make_shared<opset10::Interpolate>(cropped_frame, target_size, scales, axes, attrs);
+}
+}
+
+cv::Mat resizeImageExt(const cv::Mat& mat, int width, int height, RESIZE_MODE resizeMode,
+                       cv::InterpolationFlags interpolationMode, cv::Rect* roi, cv::Scalar BorderConstant) {
+    if (width == mat.cols && height == mat.rows) {
+        return mat;
+    }
+
+    cv::Mat dst;
+
+    switch (resizeMode) {
+    case RESIZE_FILL:
+    case RESIZE_CROP: // TODO: hadle crop if not embedded
+    {
+        cv::resize(mat, dst, cv::Size(width, height), interpolationMode);
+        if (roi) {
+            *roi = cv::Rect(0, 0, width, height);
+        }
+        break;
+    }
+    case RESIZE_KEEP_ASPECT:
+    case RESIZE_KEEP_ASPECT_LETTERBOX:
+    {
+        double scale = std::min(static_cast<double>(width) / mat.cols, static_cast<double>(height) / mat.rows);
+        cv::Mat resizedImage;
+        cv::resize(mat, resizedImage, {int(mat.cols * scale), int(mat.rows * scale)}, 0, 0, interpolationMode);
+
+        int dx = resizeMode == RESIZE_KEEP_ASPECT ? 0 : (width - resizedImage.cols) / 2;
+        int dy = resizeMode == RESIZE_KEEP_ASPECT ? 0 : (height - resizedImage.rows) / 2;
+
+        cv::copyMakeBorder(resizedImage, dst, dy, height - resizedImage.rows - dy,
+            dx, width - resizedImage.cols - dx, cv::BORDER_CONSTANT, BorderConstant);
+        if (roi) {
+            *roi = cv::Rect(dx, dy, resizedImage.cols, resizedImage.rows);
+        }
+        break;
+    }
+    case NO_RESIZE:
+    {
+        dst = mat;
+        if (roi) {
+            *roi = cv::Rect(0, 0, mat.cols, mat.rows);
+        }
+        break;
+    }
+    }
+    return dst;
 }
 
 preprocess::PostProcessSteps::CustomPostprocessOp createResizeGraph(RESIZE_MODE resizeMode,
