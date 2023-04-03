@@ -1,14 +1,12 @@
 [
     {
-        "name": "ssd300",
-        "type": "DetectionModel",
+        "name": "hrnet-v2-c1-segmentation",
+        "type": "SegmentationModel",
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(0, 13, 169, 338, 0.870, 2, bicycle)",
-                    "(58, 275, 360, 384, 0.998, 12, dog)",
-                    "(324, 98, 344, 148, 0.652, 15, person)"
+                    "[  1   2   6  11  12 126 127]"
                 ]
             }
         ]
