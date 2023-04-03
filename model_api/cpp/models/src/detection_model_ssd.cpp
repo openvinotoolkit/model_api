@@ -35,6 +35,26 @@ struct InputData;
 
 std::string ModelSSD::ModelType = "ssd";
 
+ModelSSD::ModelSSD(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : DetectionModel(model, configuration) {
+    auto object_size_iter = configuration.find("object_size");
+    if (object_size_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "object_size")) {
+            objectSize = stoull(model->get_rt_info<std::string>("model_info", "object_size"));
+        }
+    } else {
+        objectSize = object_size_iter->second.as<size_t>();
+    }
+    auto detections_num_id_iter = configuration.find("detections_num_id");
+    if (detections_num_id_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "detections_num_id")) {
+            detectionsNumId = stoull(model->get_rt_info<std::string>("model_info", "detections_num_id"));
+        }
+    } else {
+        detectionsNumId = detections_num_id_iter->second.as<size_t>();
+    }
+}
+
 ModelSSD::ModelSSD(std::shared_ptr<InferenceAdapter>& adapter)
     : DetectionModel(adapter) {
     auto configuration = adapter->getModelConfig();
