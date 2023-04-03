@@ -147,7 +147,7 @@ def resize_image_letterbox_graph(input: Output, size, interpolation="linear"):
         ],
         axis=0,
     )
-    return opset.pad(image, pads_begin, pads_end, 0, "constant")
+    return opset.pad(image, pads_begin, pads_end, "constant")
 
 
 def crop_resize_graph(input: Output, size):

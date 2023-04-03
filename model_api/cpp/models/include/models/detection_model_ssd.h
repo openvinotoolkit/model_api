@@ -34,8 +34,8 @@ struct ResultBase;
 
 class ModelSSD : public DetectionModel {
 public:
-    ModelSSD(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
     ModelSSD(std::shared_ptr<InferenceAdapter>& adapter);
+    using DetectionModel::DetectionModel;
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
     static std::string ModelType;

@@ -6,11 +6,11 @@ The list features only model wrappers which intoduce new configuration values in
 1. `layout`: str - layout of input data in the format: "input0:NCHW,input1:NC"
 
 ### `ImageModel` and its subclasses
-1. `mean_values`: List - Normalization values, which will be subtracted from image channels for image-input layer during preprocessing
-1. `scale_values`: List - Normalization values, which will divide the image channels for image-input layer
-1. `reverse_input_channels`: bool - Reverse the input channel order
+1. `mean_values`: List - normalization values, which will be subtracted from image channels for image-input layer during preprocessing
+1. `scale_values`: List - normalization values, which will divide the image channels for image-input layer
+1. `reverse_input_channels`: bool - reverse the input channel order
 1. `resize_type`: str - crop, standard, fit_to_window or fit_to_window_letterbox
-1. `embed_preprocessing`: bool - Whether to embed preprocessing into the model
+1. `embedded_preprocessing`: bool - flag that pre/postprocessing embedded
 #### `ClassificationModel`
 1. `topk`: int - number of most likely labels
 1. `labels`: List - list of class labels
@@ -20,9 +20,6 @@ The list features only model wrappers which intoduce new configuration values in
 1. `confidence_threshold`: float - probability threshold value for bounding box filtering
 1. `labels`: List - List of class labels
 1. `path_to_labels`: str - path to file with labels. Overrides the labels, if they sets via `labels` parameter
-##### `SSD`
-1. `detections_num_id`: int - index of a dimnsion corresponding to detected object number
-1. `object_size`: int - number of floats describing each detected objects
 ##### `CTPN`
 1. `iou_threshold`: float - threshold for non-maximum suppression (NMS) intersection over union (IOU) filtering
 1. `input_size`: List - image resolution which is going to be processed. Reshapes network to match a given size

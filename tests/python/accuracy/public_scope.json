@@ -1,12 +1,14 @@
 [
     {
-        "name": "hrnet-v2-c1-segmentation",
-        "type": "SegmentationModel",
+        "name": "ssd300",
+        "type": "DetectionModel",
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "[  1   2   6  11  12 126 127]"
+                    "(0, 13, 169, 338, 0.870, 2, bicycle)",
+                    "(58, 275, 360, 384, 0.998, 12, dog)",
+                    "(324, 98, 344, 148, 0.652, 15, person)"
                 ]
             }
         ]
@@ -18,9 +20,9 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(0, 13, 170, 338, 0.869, 2, bicycle)",
+                    "(0, 13, 169, 338, 0.870, 2, bicycle)",
                     "(58, 275, 360, 384, 0.998, 12, dog)",
-                    "(324, 98, 344, 148, 0.653, 15, person)"
+                    "(324, 98, 344, 148, 0.652, 15, person)"
                 ]
             }
         ]
@@ -45,10 +47,10 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(320, 95, 336, 143, 0.842, 1, bicycle)",
+                    "(320, 95, 336, 143, 0.839, 1, bicycle)",
                     "(284, 95, 301, 143, 0.823, 1, bicycle)",
-                    "(352, 95, 372, 144, 0.669, 1, bicycle)",
-                    "(2, 0, 158, 313, 0.889, 2, car)",
+                    "(352, 95, 372, 144, 0.667, 1, bicycle)",
+                    "(2, 0, 158, 312, 0.890, 2, car)",
                     "(50, 278, 364, 382, 0.913, 18, sheep)"
                 ]
             }
@@ -78,7 +80,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(222, kuvasz, 0.145)"
+                    "(222, kuvasz, 0.140)"
                 ]
             }
         ]
@@ -90,7 +92,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(175, Labrador_retriever, 0.613)"
+                    "(175, Labrador_retriever, 0.616)"
                 ]
             }
         ]
@@ -102,7 +104,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(245, French_bulldog, 0.152)"
+                    "(245, French_bulldog, 0.156)"
                 ]
             }
         ]
@@ -127,8 +129,8 @@
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
                     "(1, bicycle, 0.768)",
-                    "(11, dog, 0.877)",
-                    "(14, person, 0.921)"
+                    "(11, dog, 0.876)",
+                    "(14, person, 0.922)"
                 ]
             }
         ]
@@ -140,9 +142,9 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(1, bicycle, 0.820)",
-                    "(11, dog, 0.877)",
-                    "(14, person, 0.821)"
+                    "(1, bicycle, 0.825)",
+                    "(11, dog, 0.873)",
+                    "(14, person, 0.824)"
                 ]
             }
         ]
@@ -154,7 +156,7 @@
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
                 "reference": [
-                    "(105, 194, 0.461)"
+                    "(105, 194, 0.456)"
                 ]
             }
         ]
@@ -166,7 +168,7 @@
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
                 "reference": [
-                    "(0, 1, 0.837)"
+                    "(0, 1, 0.838)"
                 ]
             }
         ]
@@ -178,7 +180,7 @@
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
                 "reference": [
-                    "(0, 1, 0.844)"
+                    "(0, 1, 0.849)"
                 ]
             }
         ]
