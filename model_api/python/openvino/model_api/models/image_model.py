@@ -17,7 +17,7 @@
 import numpy as np
 
 from .model import Model
-from .types import BooleanValue, NumericalValue, ListValue, StringValue
+from .types import BooleanValue, ListValue, NumericalValue, StringValue
 from .utils import RESIZE_TYPES, InputTransform
 
 
@@ -173,7 +173,10 @@ class ImageModel(Model):
                 }
             - the input metadata, which might be used in `postprocess` method
         """
-        return {self.image_blob_name: inputs[None]}, {"original_shape": inputs.shape, "resized_shape": (self.w, self.h, self.c)}
+        return {self.image_blob_name: inputs[None]}, {
+            "original_shape": inputs.shape,
+            "resized_shape": (self.w, self.h, self.c),
+        }
 
     def _change_layout(self, image):
         """Changes the input image layout to fit the layout of the model input layer.
