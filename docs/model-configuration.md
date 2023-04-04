@@ -10,7 +10,7 @@ The list features only model wrappers which intoduce new configuration values in
 1. `scale_values`: List - normalization values, which will divide the image channels for image-input layer
 1. `reverse_input_channels`: bool - reverse the input channel order
 1. `resize_type`: str - crop, standard, fit_to_window or fit_to_window_letterbox
-1. `embedded_preprocessing`: bool - flag that pre/postprocessing embedded
+1. `embedded_processing`: bool - flag that pre/postprocessing embedded
 #### `ClassificationModel`
 1. `topk`: int - number of most likely labels
 1. `labels`: List - list of class labels
