@@ -89,87 +89,89 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     } else {
         modelPath = string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
     }
+    const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
+    for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
+        if (modelData.type == "DetectionModel") {
+            auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
 
-    if (modelData.type == "DetectionModel") {
-        auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
+            for (size_t i = 0; i < modelData.testData.size(); i++) {
+                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
-        for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
+                cv::Mat image = cv::imread(imagePath);
+                if (!image.data) {
+                    throw std::runtime_error{"Failed to read the image"};
+                }
 
-            cv::Mat image = cv::imread(imagePath);
-            if (!image.data) {
-                throw std::runtime_error{"Failed to read the image"};
-            }
+                auto result = model->infer(image);
+                auto objects = result->objects;
+                ASSERT_EQ(objects.size(), modelData.testData[i].reference.size());
 
-            auto result = model->infer(image);
-            auto objects = result->objects;
-            ASSERT_EQ(objects.size(), modelData.testData[i].reference.size());
-
-            for (size_t j = 0; j < objects.size(); j++) {
-                std::stringstream prediction_buffer;
-                prediction_buffer << objects[j];
-                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
-            }
-        }
-    }
-    else if (modelData.type == "ClassificationModel") {
-        auto model = ClassificationModel::create_model(DATA_DIR + "/" + modelPath);
-
-        for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
-
-            cv::Mat image = cv::imread(imagePath);
-            if (!image.data) {
-                throw std::runtime_error{"Failed to read the image"};
-            }
-
-            auto result = model->infer(image);
-            auto topLabels = result->topLabels;
-
-            ASSERT_GT(topLabels.size(), 0);
-            
-            std::stringstream prediction_buffer;
-            prediction_buffer << topLabels[0];
-            ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
-        }
-    }
-    else if (modelData.type == "SegmentationModel") {
-        auto model = SegmentationModel::create_model(DATA_DIR + "/" + modelPath);
-
-        for (size_t i = 0; i < modelData.testData.size(); i++) {
-            auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
-
-            cv::Mat image = cv::imread(imagePath);
-            if (!image.data) {
-                throw std::runtime_error{"Failed to read the image"};
-            }
-            cv::Mat predicted_mask[] = {model->infer(image)->resultImage};
-            int nimages = 1;
-            int *channels = nullptr;
-            cv::Mat mask;
-            cv::Mat outHist;
-            int dims = 1;
-            int histSize[] = {256};
-            float range[] = {0, 256};
-            const float *ranges[] = {range};
-            cv::calcHist(&predicted_mask[0], nimages, channels, mask, outHist, dims, histSize, ranges);
-
-            std::stringstream prediction_buffer;
-            prediction_buffer << '[';
-            for (int i = 0; i < range[1]; ++i) {
-                const int count = static_cast<int>(outHist.at<float>(i));
-                if (count > 0) {
-                    prediction_buffer << std::setw(3) << i << ' ';
+                for (size_t j = 0; j < objects.size(); j++) {
+                    std::stringstream prediction_buffer;
+                    prediction_buffer << objects[j];
+                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
                 }
             }
-            removeLastChar(prediction_buffer);
-            prediction_buffer << std::setw(1) << ']';
-
-            ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
         }
-    }
-    else {
-        throw std::runtime_error("Unknown model type: " + modelData.type);
+        else if (modelData.type == "ClassificationModel") {
+            auto model = ClassificationModel::create_model(DATA_DIR + "/" + modelPath);
+
+            for (size_t i = 0; i < modelData.testData.size(); i++) {
+                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
+
+                cv::Mat image = cv::imread(imagePath);
+                if (!image.data) {
+                    throw std::runtime_error{"Failed to read the image"};
+                }
+
+                auto result = model->infer(image);
+                auto topLabels = result->topLabels;
+
+                ASSERT_GT(topLabels.size(), 0);
+
+                std::stringstream prediction_buffer;
+                prediction_buffer << topLabels[0];
+                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
+            }
+        }
+        else if (modelData.type == "SegmentationModel") {
+            auto model = SegmentationModel::create_model(DATA_DIR + "/" + modelPath);
+
+            for (size_t i = 0; i < modelData.testData.size(); i++) {
+                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
+
+                cv::Mat image = cv::imread(imagePath);
+                if (!image.data) {
+                    throw std::runtime_error{"Failed to read the image"};
+                }
+                cv::Mat predicted_mask[] = {model->infer(image)->resultImage};
+                int nimages = 1;
+                int *channels = nullptr;
+                cv::Mat mask;
+                cv::Mat outHist;
+                int dims = 1;
+                int histSize[] = {256};
+                float range[] = {0, 256};
+                const float *ranges[] = {range};
+                cv::calcHist(&predicted_mask[0], nimages, channels, mask, outHist, dims, histSize, ranges);
+
+                std::stringstream prediction_buffer;
+                prediction_buffer << '[';
+                for (int i = 0; i < range[1]; ++i) {
+                    const int count = static_cast<int>(outHist.at<float>(i));
+                    if (count > 0) {
+                        prediction_buffer << std::setw(3) << i << ' ';
+                    }
+                }
+                removeLastChar(prediction_buffer);
+                prediction_buffer << std::setw(1) << ']';
+
+                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+            }
+        }
+        else {
+            throw std::runtime_error("Unknown model type: " + modelData.type);
+        }
     }
 }
  

@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 import cv2
@@ -83,6 +84,11 @@ def test_image_models(data, dump, result, model_data):
             inference_results.append(
                 {"image": test_data["image"], "reference": image_result}
             )
+    if name.endswith(".xml"):
+        save_name = os.path.basename(name)
+    else:
+        save_name = name + ".xml"
+    model.save(data + "/serialized/" + save_name)
     if dump:
         result[-1]["test_data"] = inference_results
 
