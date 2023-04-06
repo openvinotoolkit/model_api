@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  CPP-Precommit:
+  test_accuracy:
     strategy:
       fail-fast: false
       matrix:
