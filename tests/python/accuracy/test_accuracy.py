@@ -18,7 +18,12 @@ def process_output(output, model_type):
     elif model_type == ClassificationModel.__name__:
         return f"({output[0]}, {output[1]}, {output[2]:.3f})"
     elif model_type == SegmentationModel.__name__:
-        return str(np.unique(output))
+        if isinstance(output, tuple):
+            output = output[0]
+        prediction_buffer = ""
+        for id in np.unique(output):
+            prediction_buffer += f"{id} "
+        return prediction_buffer
     else:
         raise ValueError("Unknown model type to precess ouput")
 

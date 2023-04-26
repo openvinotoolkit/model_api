@@ -6,7 +6,55 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "[  1   2   6  11  12 126 127]"
+                    "1 2 6 11 12 126 127 "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/Lite-hrnet-18.xml",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "0 1 "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/Lite-hrnet-18_mod2.xml",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "0 1 "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/Lite-hrnet-s_mod2.xml",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "0 1 "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/Lite-hrnet-x-mod3.xml",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "0 1 "
                 ]
             }
         ]

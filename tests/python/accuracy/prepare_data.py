@@ -51,3 +51,7 @@ if __name__ == "__main__":
     retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars")
     retrieve_otx_model(args.data_dir, "cls_efficient_b0_cars")
     retrieve_otx_model(args.data_dir, "cls_efficient_v2s_cars")
+    retrieve_otx_model(args.data_dir, "Lite-hrnet-18")
+    retrieve_otx_model(args.data_dir, "Lite-hrnet-18_mod2")
+    retrieve_otx_model(args.data_dir, "Lite-hrnet-s_mod2")
+    retrieve_otx_model(args.data_dir, "Lite-hrnet-x-mod3")
