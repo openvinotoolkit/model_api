@@ -79,12 +79,12 @@ SegmentationModel::SegmentationModel(std::shared_ptr<ov::Model>& model, const ov
     auto return_soft_prediction_iter = configuration.find("return_soft_prediction");
     if (return_soft_prediction_iter == configuration.end()) {
         if (model->has_rt_info("model_info", "return_soft_prediction")) {
-            std::string val = model->get_rt_info<std::string>("model_info", "return_soft_prediction")
+            std::string val = model->get_rt_info<std::string>("model_info", "return_soft_prediction");
             return_soft_prediction = val == "True" || val == "YES";
         }
     } else {
         std::string val = return_soft_prediction_iter->second.as<std::string>();
-        return_soft_prediction = al == "True" || val == "YES";
+        return_soft_prediction = val == "True" || val == "YES";
     }
 }
 
@@ -102,7 +102,7 @@ SegmentationModel::SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter)
     auto return_soft_prediction_iter = configuration.find("return_soft_prediction");
     if (return_soft_prediction_iter != configuration.end()) {
         std::string val = return_soft_prediction_iter->second.as<std::string>();
-        return_soft_prediction = al == "True" || val == "YES";
+        return_soft_prediction = val == "True" || val == "YES";
     }
 }
 
