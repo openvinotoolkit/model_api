@@ -86,12 +86,12 @@ class SegmentationModel(ImageModel):
                 ),
                 "blur_strength": NumericalValue(
                     value_type=int,
-                    description="Blurring kernel size. -1 signals not to apply bluring and soft_threshold",
+                    description="Blurring kernel size. -1 value means no blurring and no soft_threshold",
                     default_value=-1,
                 ),
                 "soft_threshold": NumericalValue(
                     value_type=float,
-                    description="Probability threshold value for bounding box filtering. inf signals not to apply bluring and soft_threshold",
+                    description="Probability threshold value for bounding box filtering. inf value means no blurring and no soft_threshold",
                     default_value=float("inf"),
                 ),
                 "return_soft_prediction": BooleanValue(

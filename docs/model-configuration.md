@@ -57,9 +57,9 @@ The list features only model wrappers which intoduce new configuration values in
 #### `SegmentationModel` and its subclasses
 1. `labels`: List - list of class labels
 1. `path_to_labels`: str - path to file with labels. Overrides the labels, if they sets via 'labels' parameter
-1. `blur_strength`: int - blurring kernel size. -1 signals not to apply bluring and soft_threshold
-1. `soft_threshold`: float - probability threshold value for bounding box filtering. inf signals not to apply bluring and soft_threshold
-1. `return_soft_prediction`: bool - retern raw resized model prediction in addition to processed one
+1. `blur_strength`: int - blurring kernel size. -1 value means no blurring and no soft_threshold
+1. `soft_threshold`: float - probability threshold value for bounding box filtering. inf value means no blurring and no soft_threshold
+1. `return_soft_prediction`: bool - return raw resized model prediction in addition to processed one
 ### `Bert` and its subclasses
 1. `vocab`: Dict - mapping from string token to int
 1. `input_names`: str - comma-separated names of input layers
