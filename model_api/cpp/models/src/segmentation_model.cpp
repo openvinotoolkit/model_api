@@ -44,7 +44,7 @@ cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_predicti
             uint8_t max_id = 0;
             for (int c = 0; c < soft_prediction_blurred.channels(); ++c) {
                 float prob = ((float*)soft_prediction_blurred.ptr(i, j))[c];
-                if (prob > max_prob) {
+                if (prob >= soft_threshold && prob > max_prob) {
                     max_prob = prob;
                     max_id = c;
                 }
