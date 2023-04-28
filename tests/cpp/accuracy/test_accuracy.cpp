@@ -73,10 +73,6 @@ std::vector<ModelData> GetTestData(const std::string& path)
     input >> j;
     return j;
 }
-
-void removeLastChar(std::stringstream& stringstream) {
-    stringstream.seekp(-1, std::ios_base::end);
-}
 }
  
 TEST_P(ModelParameterizedTest, AccuracyTest)
@@ -153,18 +149,15 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 int histSize[] = {256};
                 float range[] = {0, 256};
                 const float *ranges[] = {range};
-                cv::calcHist(&predicted_mask[0], nimages, channels, mask, outHist, dims, histSize, ranges);
+                cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
 
                 std::stringstream prediction_buffer;
-                prediction_buffer << '[';
                 for (int i = 0; i < range[1]; ++i) {
                     const int count = static_cast<int>(outHist.at<float>(i));
                     if (count > 0) {
-                        prediction_buffer << std::setw(3) << i << ' ';
+                        prediction_buffer << i << ' ';
                     }
                 }
-                removeLastChar(prediction_buffer);
-                prediction_buffer << std::setw(1) << ']';
 
                 ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
             }
