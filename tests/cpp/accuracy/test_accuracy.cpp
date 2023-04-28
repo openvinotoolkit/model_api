@@ -155,7 +155,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 for (int i = 0; i < range[1]; ++i) {
                     const int count = static_cast<int>(outHist.at<float>(i));
                     if (count > 0) {
-                        prediction_buffer << i << ' ';
+                        prediction_buffer << i << ": " << count << ", ";
                     }
                 }
 
