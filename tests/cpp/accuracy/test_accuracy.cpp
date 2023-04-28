@@ -81,14 +81,14 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     std::string modelPath;
     const std::string& name = modelData.name;
     if (name.substr(name.size() - 4) == ".xml") {
-        modelPath = name;
+        modelPath = DATA_DIR + '/' + name;
     } else {
-        modelPath = string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
+        modelPath = DATA_DIR + '/' + string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
     }
     const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
     for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
         if (modelData.type == "DetectionModel") {
-            auto model = DetectionModel::create_model(DATA_DIR + "/" + modelPath);
+            auto model = DetectionModel::create_model(modelXml);
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -110,7 +110,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "ClassificationModel") {
-            auto model = ClassificationModel::create_model(DATA_DIR + "/" + modelPath);
+            auto model = ClassificationModel::create_model(modelXml);
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -131,7 +131,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "SegmentationModel") {
-            auto model = SegmentationModel::create_model(DATA_DIR + "/" + modelPath);
+            auto model = SegmentationModel::create_model(modelXml);
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
