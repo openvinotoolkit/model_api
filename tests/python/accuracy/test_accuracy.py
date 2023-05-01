@@ -20,9 +20,17 @@ def process_output(output, model_type):
     elif model_type == SegmentationModel.__name__:
         if isinstance(output, tuple):
             output = output[0]
+        outHist = cv2.calcHist(
+            [output.astype(np.uint8)],
+            channels=None,
+            mask=None,
+            histSize=[256],
+            ranges=[0, 255],
+        )
         prediction_buffer = ""
-        for id in np.unique(output):
-            prediction_buffer += f"{id} "
+        for i, count in enumerate(outHist):
+            if count > 0:
+                prediction_buffer += f"{i}: {int(count[0])}, "
         return prediction_buffer
     else:
         raise ValueError("Unknown model type to precess ouput")
