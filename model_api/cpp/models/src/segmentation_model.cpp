@@ -184,7 +184,7 @@ void SegmentationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) 
         ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
         ppp.output().tensor().set_element_type(ov::element::f32);
         model = ppp.build();
-        useAutoResize = true; // temporal solution for classification
+        useAutoResize = true; // temporal solution
         embedded_processing = true;
     }
 
