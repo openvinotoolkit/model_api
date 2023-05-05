@@ -17,6 +17,7 @@
 #include <models/classification_model.h>
 #include <models/detection_model.h>
 #include <models/input_data.h>
+#include <models/instance_segmentation.h>
 #include <models/results.h>
 #include <models/segmentation_model.h>
 
@@ -160,6 +161,27 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
 
                 ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+            }
+        }
+        else if (modelData.type == "MaskRCNNModel") {
+            auto model = MaskRCNNModel::create_model(modelXml);
+            for (size_t i = 0; i < modelData.testData.size(); i++) {
+                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
+
+                cv::Mat image = cv::imread(imagePath);
+                if (!image.data) {
+                    throw std::runtime_error{"Failed to read the image"};
+                }
+                const std::vector<SegmentedObject> objects = model->infer(image)->segmentedObjects;
+                ASSERT_EQ(objects.size(), modelData.testData[i].reference.size());
+
+                for (size_t j = 0; j < objects.size(); j++) {
+                    std::stringstream prediction_buffer;
+                    prediction_buffer << objects[j];
+                    std::cout << prediction_buffer.str() << '\n';
+                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                }
+
             }
         }
         else {

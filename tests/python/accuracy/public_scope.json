@@ -230,5 +230,36 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "otx_models/is_efficientnetb2b_maskrcnn_coco_reduced.xml",
+        "type": "MaskRCNNModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "(458, 106, 495, 150, 0.818, 1, bicycle, 852)",
+                    "(0, 30, 178, 323, 0.753, 2, car, 26728)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/is_resnet50_maskrcnn_coco_reduced.xml",
+        "type": "MaskRCNNModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "(59, 277, 360, 380, 0.999, 16, horse, 19053)",
+                    "(2, 9, 162, 318, 0.999, 2, car, 31153)",
+                    "(294, 94, 316, 153, 0.985, 1, bicycle, 840)",
+                    "(326, 97, 341, 136, 0.974, 1, bicycle, 397)",
+                    "(461, 105, 493, 150, 0.918, 1, bicycle, 846)",
+                    "(350, 92, 386, 149, 0.807, 1, bicycle, 1458)",
+                    "(279, 110, 291, 146, 0.788, 1, bicycle, 312)"
+                ]
+            }
+        ]
     }
 ]
