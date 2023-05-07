@@ -34,17 +34,31 @@
 
 namespace {
 cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_prediction, float soft_threshold, int blur_strength) {
-    cv::Mat soft_prediction_blurred;
-    cv::blur(soft_prediction, soft_prediction_blurred, cv::Size{blur_strength, blur_strength});
+    cv::Mat soft_prediction_blurred = soft_prediction.clone();
+    if (soft_prediction.channels() == 1) {
+        return soft_prediction_blurred;
+    }
+    cv::Mat current_label_soft_prediction;
+
+    if (blur_strength > -1) {
+        cv::blur(soft_prediction_blurred, soft_prediction_blurred, cv::Size{blur_strength, blur_strength});
+    }
+
+    bool applySoftThreshold = (soft_threshold < std::numeric_limits<float>::infinity());
+
     assert(soft_prediction_blurred.channels() > 1);
     cv::Mat hard_prediction{cv::Size{soft_prediction_blurred.cols, soft_prediction_blurred.rows}, CV_8UC1};
     for (int i = 0; i < soft_prediction_blurred.rows; ++i) {
         for (int j = 0; j < soft_prediction_blurred.cols; ++j) {
             float max_prob = -std::numeric_limits<float>::infinity();
+            if (applySoftThreshold) {
+                max_prob = soft_threshold;
+            }
+
             uint8_t max_id = 0;
             for (int c = 0; c < soft_prediction_blurred.channels(); ++c) {
                 float prob = ((float*)soft_prediction_blurred.ptr(i, j))[c];
-                if (prob >= soft_threshold && prob > max_prob) {
+                if (prob > max_prob) {
                     max_prob = prob;
                     max_id = c;
                 }
@@ -245,41 +259,43 @@ void SegmentationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) 
 }
 
 std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infResult) {
-    if (blur_strength == -1 && soft_threshold == std::numeric_limits<float>::infinity()) {
-        ImageResult* result = new ImageResult(infResult.frameId, infResult.metaData);
-        const auto& inputImgSize = infResult.internalModelData->asRef<InternalImageModelData>();
-        const auto& outTensor = infResult.getFirstOutputTensor();
+    const auto& inputImgSize = infResult.internalModelData->asRef<InternalImageModelData>();
+    const auto& outTensor = infResult.getFirstOutputTensor();
 
-        result->resultImage = cv::Mat(outHeight, outWidth, CV_8UC1);
 
-        if (outChannels == 1 && outTensor.get_element_type() == ov::element::i32) {
-            cv::Mat predictions(outHeight, outWidth, CV_32SC1, outTensor.data<int32_t>());
-            predictions.convertTo(result->resultImage, CV_8UC1);
-        } else if (outChannels == 1 && outTensor.get_element_type() == ov::element::i64) {
-            cv::Mat predictions(outHeight, outWidth, CV_32SC1);
-            const auto data = outTensor.data<int64_t>();
-            for (size_t i = 0; i < predictions.total(); ++i) {
-                reinterpret_cast<int32_t*>(predictions.data)[i] = int32_t(data[i]);
-            }
-            predictions.convertTo(result->resultImage, CV_8UC1);
-        } else if (outTensor.get_element_type() == ov::element::f32) {
-            const float* data = outTensor.data<float>();
-            for (int rowId = 0; rowId < outHeight; ++rowId) {
-                for (int colId = 0; colId < outWidth; ++colId) {
-                    int classId = 0;
-                    float maxProb = -1.0f;
-                    for (int chId = 0; chId < outChannels; ++chId) {
-                        float prob = data[chId * outHeight * outWidth + rowId * outWidth + colId];
-                        if (prob > maxProb) {
-                            classId = chId;
-                            maxProb = prob;
-                        }
-                    }  // nChannels
-
-                    result->resultImage.at<uint8_t>(rowId, colId) = classId;
-                }  // width
-            }  // height
+    cv::Mat soft_prediction;
+    if (outChannels == 1 && outTensor.get_element_type() == ov::element::i32) {
+        cv::Mat predictions(outHeight, outWidth, CV_32SC1, outTensor.data<int32_t>());
+        predictions.convertTo(soft_prediction, CV_8UC1);
+    } else if (outChannels == 1 && outTensor.get_element_type() == ov::element::i64) {
+        cv::Mat predictions(outHeight, outWidth, CV_32SC1);
+        const auto data = outTensor.data<int64_t>();
+        for (size_t i = 0; i < predictions.total(); ++i) {
+            reinterpret_cast<int32_t*>(predictions.data)[i] = int32_t(data[i]);
         }
+        predictions.convertTo(soft_prediction, CV_8UC1);
+    } else if (outTensor.get_element_type() == ov::element::f32) {
+        float* data = outTensor.data<float>();
+        std::vector<cv::Mat> channels;
+        for (size_t c = 0; c < outTensor.get_shape()[1]; ++c) {
+            channels.emplace_back(cv::Size{outHeight, outWidth}, CV_32F, data + c * outHeight * outWidth);
+        }
+        cv::merge(channels, soft_prediction);
+        cv::resize(soft_prediction, soft_prediction, {inputImgSize.inputImgWidth, inputImgSize.inputImgHeight}, 0.0, 0.0, cv::INTER_NEAREST);
+    }
+    cv::Mat hard_prediction = create_hard_prediction_from_soft_prediction(soft_prediction, soft_threshold, blur_strength);
+    auto annotations = create_annotation_from_segmentation_map(hard_prediction, soft_prediction, labels);
+
+    if (return_soft_prediction) {
+        ImageResultWithSoftPrediction* result = new ImageResultWithSoftPrediction(infResult.frameId, infResult.metaData);
+        result->annotations = annotations;
+        result->resultImage = hard_prediction;
+        result->soft_prediction = soft_prediction;
+        return std::unique_ptr<ResultBase>(result);
+    } else {
+        ImageResult* result = new ImageResult(infResult.frameId, infResult.metaData);
+        result->annotations = annotations;
+        result->resultImage = cv::Mat(outHeight, outWidth, CV_8UC1);
 
         cv::resize(result->resultImage,
                 result->resultImage,
@@ -290,29 +306,6 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
 
         return std::unique_ptr<ResultBase>(result);
     }
-    const auto& inputImgSize = infResult.internalModelData->asRef<InternalImageModelData>();
-    const auto& outTensor = infResult.getFirstOutputTensor();
-    float* data = outTensor.data<float>();
-    std::vector<cv::Mat> channels;
-    for (size_t c = 0; c < outTensor.get_shape()[1]; ++c) {
-        channels.emplace_back(cv::Size{outHeight, outWidth}, CV_32F, data + c * outHeight * outWidth);
-    }
-    cv::Mat soft_prediction;
-    cv::merge(channels, soft_prediction);
-    cv::resize(soft_prediction, soft_prediction, {inputImgSize.inputImgWidth, inputImgSize.inputImgHeight}, 0.0, 0.0, cv::INTER_NEAREST);
-    cv::Mat hard_prediction = create_hard_prediction_from_soft_prediction(soft_prediction, soft_threshold, blur_strength);
-    auto annotations = create_annotation_from_segmentation_map(hard_prediction, soft_prediction, labels);
-    if (return_soft_prediction) {
-        ImageResultWithSoftPrediction* result = new ImageResultWithSoftPrediction(infResult.frameId, infResult.metaData);
-        result->annotations = annotations;
-        result->resultImage = hard_prediction;
-        result->soft_prediction = soft_prediction;
-        return std::unique_ptr<ResultBase>(result);
-    }
-    ImageResult* result = new ImageResult(infResult.frameId, infResult.metaData);
-    result->annotations = annotations;
-    result->resultImage = hard_prediction;
-    return std::unique_ptr<ResultBase>(result);
 }
 
 std::unique_ptr<ImageResult> SegmentationModel::infer(const ImageInputData& inputData) {
