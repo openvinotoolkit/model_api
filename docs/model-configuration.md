@@ -54,7 +54,7 @@ The list features only model wrappers which intoduce new configuration values in
 1. `confidence_threshold`: float - probability threshold value for bounding box filtering
 1. `labels`: List - list of class labels
 1. `path_to_labels`: str - path to file with labels. Overrides the labels, if they sets via `labels` parameter
-1. `postproc_masks`: bool - resize and apply 0.5 threshold to instance segmentation masks
+1. `postprocess_semantic_masks`: bool - resize and apply 0.5 threshold to instance segmentation masks
 #### `SegmentationModel` and its subclasses
 1. `labels`: List - list of class labels
 1. `path_to_labels`: str - path to file with labels. Overrides the labels, if they sets via 'labels' parameter

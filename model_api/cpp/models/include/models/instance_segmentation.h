@@ -50,5 +50,5 @@ protected:
     }
 
     float confidence_threshold = 0.5f;
-    bool postproc_masks = true;
+    bool postprocess_semantic_masks = true;
 };

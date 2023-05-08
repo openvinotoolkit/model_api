@@ -46,7 +46,7 @@ class MaskRCNNModel(ImageModel):
                 "path_to_labels": StringValue(
                     description="Path to file with labels. Overrides the labels, if they sets via `labels` parameter"
                 ),
-                "postproc_masks": BooleanValue(
+                "postprocess_semantic_masks": BooleanValue(
                     description="Resize and apply 0.5 threshold to instance segmentation masks",
                     default_value=True,
                 ),
@@ -188,7 +188,7 @@ class MaskRCNNModel(ImageModel):
         resized_masks = []
         for box, cls, raw_mask in zip(boxes, labels, masks):
             raw_cls_mask = raw_mask[cls, ...] if self.is_segmentoly else raw_mask
-            if self.postproc_masks:
+            if self.postprocess_semantic_masks:
                 resized_masks.append(
                     _segm_postprocess(box, raw_cls_mask, *meta["original_shape"][:-1])
                 )
