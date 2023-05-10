@@ -65,7 +65,7 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
         test.testData.push_back(data);
     }
 }
- 
+
 namespace {
 std::vector<ModelData> GetTestData(const std::string& path)
 {
@@ -75,7 +75,7 @@ std::vector<ModelData> GetTestData(const std::string& path)
     return j;
 }
 }
- 
+
 TEST_P(ModelParameterizedTest, AccuracyTest)
 {
     auto modelData = GetParam();
@@ -189,7 +189,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         }
     }
 }
- 
+
 INSTANTIATE_TEST_SUITE_P(TestAccuracyPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
 
 class InputParser{
@@ -217,12 +217,12 @@ class InputParser{
         std::vector <std::string> tokens;
 };
 
-void print_help(const char* program_name) 
+void print_help(const char* program_name)
 {
     std::cout << "Usage: " << program_name << " -p <path_to_public_scope.json> -d <path_to_data>" << std::endl;
 }
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     InputParser input(argc, argv);
 

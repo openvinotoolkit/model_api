@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-          
+
       - name: cppcheck
         uses: chmorgan/cppcheck-action@main
         with:
@@ -164,3 +164,14 @@ jobs:
       run: |
         set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64\runtime\3rdparty\tbb\bin;%PATH%
         .\build\Release\test_sanity.exe -d data -p tests\cpp\precommit\public_scope.json && .\build\Release\test_model_config -d data
+  Prohibit-whitespace-errors-and-non-ASCII-chars:
+    name: Prohibit whitespace errors and non ASCII chars
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: git --no-pager diff --check $(git hash-object -t tree /dev/null)
+        run: git --no-pager diff --check $(git hash-object -t tree /dev/null)
+      - name: Prohibit non ASCII chars in file names
+        run: test $(git diff --name-only --diff-filter=A -z $(git hash-object -t tree /dev/null) | LC_ALL=C tr -d '[ -~]\0' | wc -c) == 0
+      - name: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
+        run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
