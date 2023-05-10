@@ -8,6 +8,7 @@ import pytest
 from openvino.model_api.models import (
     ClassificationModel,
     DetectionModel,
+    MaskRCNNModel,
     SegmentationModel,
 )
 
@@ -32,6 +33,8 @@ def process_output(output, model_type):
             if count > 0:
                 prediction_buffer += f"{i}: {int(count[0])}, "
         return prediction_buffer
+    elif model_type == MaskRCNNModel.__name__:
+        return str(output)
     else:
         raise ValueError("Unknown model type to precess ouput")
 
