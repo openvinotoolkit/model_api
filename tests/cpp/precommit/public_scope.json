@@ -18,5 +18,9 @@
     {
         "name": "otx_models/mlc_mobilenetv3_large_voc.xml",
         "type": "ClassificationModel"
+    },
+    {
+        "name": "hrnet-v2-c1-segmentation",
+        "type": "SegmentationModel"
     }
 ]
