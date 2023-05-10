@@ -1,6 +1,6 @@
 # Serving API example
 This example demonstrates how to use a Python API of OpenVINO Model API for a remote inference of models hosted with [OpenVINO Model Server](https://docs.openvino.ai/latest/ovms_what_is_openvino_model_server.html). This tutorial assumes that you are familiar with Docker subsystem and includes the following steps:
-- Run Docker image with 
+- Run Docker image with
 - Instantiate a model
 - Run inference
 - Process results

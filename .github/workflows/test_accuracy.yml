@@ -54,4 +54,3 @@ jobs:
     - name: Run CPP Test
       run: |
         build/test_accuracy -d data -p tests/python/accuracy/public_scope.json
-
