@@ -1,5 +1,5 @@
 # Model configuration
-Model's static method `create_model()` configures a created model with values taken from `configuration` dict function argument and from model's intermediate representation (IR) stored in `.xml` in `model_info` section of `rt_info`. Values provided in `configuration` have priority over values in IR `rt_info`. If no value is specified in `configuration` nor in `rt_info` the default value for a model wrapper is used. For Python configuration values are accessible as model wrapper member fields.
+Model's static method `create_model()` has two overloads. One constructs the model from a string (a path or a model name) and the other takes an already constructed `InferenceAdapter`. The first overload configures a created model with values taken from `configuration` dict function argument and from model's intermediate representation (IR) stored in `.xml` in `model_info` section of `rt_info`. Values provided in `configuration` have priority over values in IR `rt_info`. If no value is specified in `configuration` nor in `rt_info` the default value for a model wrapper is used. For Python configuration values are accessible as model wrapper member fields.
 ## List of values
 The list features only model wrappers which intoduce new configuration values in their hirachy.
 1. `model_type`: str - name of a model wrapper to be created
