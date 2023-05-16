@@ -1,5 +1,5 @@
 # Model configuration
-Model's static method `create_model()` configures a created model with values taken from `configuration` dict function argument and from model's intermediate representation (IR) stored in `.xml` in `model_info` section of `rt_info`. Values provided in `configuration` have priority over values in IR `rt_info`. If no value is specified in `configuration` nor in `rt_info` the default value for a model wrapper is used. For Python configuration values are accessible as model wrapper member fields.
+Model's static method `create_model()` has two overloads. One constructs the model from a string (a path or a model name) and the other takes an already constructed `InferenceAdapter`. The first overload configures a created model with values taken from `configuration` dict function argument and from model's intermediate representation (IR) stored in `.xml` in `model_info` section of `rt_info`. Values provided in `configuration` have priority over values in IR `rt_info`. If no value is specified in `configuration` nor in `rt_info` the default value for a model wrapper is used. For Python configuration values are accessible as model wrapper member fields.
 ## List of values
 The list features only model wrappers which intoduce new configuration values in their hirachy.
 1. `model_type`: str - name of a model wrapper to be created
@@ -71,3 +71,25 @@ The list features only model wrappers which intoduce new configuration values in
 1. `squad_ver`: str - SQuAD dataset version used for training. Affects postprocessing
 
 > **NOTE**: OTX `AnomalyBase` model wrapper adds `image_threshold`, `pixel_threshold`, `min`, `max`, `threshold`.
+
+# Create a model from `InferenceAdapter`
+`create_model()` can construct a model from an already constructed `InferenceAdapter`. That approach assumes that the model in `InferenceAdapter` was already configured by `create_model()` called with a string (a path or a model name). It is possible to configure the model using C++ or Python:
+C++
+```Cpp
+auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
+const std::shared_ptr<ov::Model>& ov_model = model->getModel();
+ov::serialize(ov_model, "serialized.xml");
+```
+Python
+```python
+model = DetectionModel.create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml")
+model.save("serialized.xml")
+```
+After that the model can be constructed from `InferenceAdapter`:
+```cpp
+ov::Core core;
+std::shared_ptr<ov::Model> ov_model = core.read_model("serialized.xml");
+std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>();
+adapter->loadModel(ov_model, core);
+auto model = DetectionModel::create_model(adapter);
+```

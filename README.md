@@ -110,3 +110,5 @@ For more details please refer to the [examples](https://github.com/openvinotoolk
     - RetinaFace: "retinaface-resnet50-pytorch"
 - Semantic Segmentation:
   - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#semantic-segmentation-models)
+
+[Model configuration](docs/model-configuration.md) discusses different options of model creation and possible configurations.
