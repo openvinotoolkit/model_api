@@ -71,25 +71,3 @@ The list features only model wrappers which intoduce new configuration values in
 1. `squad_ver`: str - SQuAD dataset version used for training. Affects postprocessing
 
 > **NOTE**: OTX `AnomalyBase` model wrapper adds `image_threshold`, `pixel_threshold`, `min`, `max`, `threshold`.
-
-# Create a model from `InferenceAdapter`
-`create_model()` can construct a model from an already constructed `InferenceAdapter`. That approach assumes that the model in `InferenceAdapter` was already configured by `create_model()` called with a string (a path or a model name). It is possible to configure the model using C++ or Python:
-C++
-```Cpp
-auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
-const std::shared_ptr<ov::Model>& ov_model = model->getModel();
-ov::serialize(ov_model, "serialized.xml");
-```
-Python
-```python
-model = DetectionModel.create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml")
-model.save("serialized.xml")
-```
-After that the model can be constructed from `InferenceAdapter`:
-```cpp
-ov::Core core;
-std::shared_ptr<ov::Model> ov_model = core.read_model("serialized.xml");
-std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>();
-adapter->loadModel(ov_model, core);
-auto model = DetectionModel::create_model(adapter);
-```

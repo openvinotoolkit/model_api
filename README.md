@@ -75,6 +75,30 @@ for (auto& obj : result->objects) {
 }
 ```
 
+Model's static method `create_model()` has two overloads. One constructs the model from a string (a path or a model name) (shown above) and the other takes an already constructed `InferenceAdapter`.
+
+# Prepare a model for `InferenceAdapter`
+There are usecases when it is not possible to modify an internal `ov::Model` and it is hidden behind `InferenceAdapter`. For example the model can be served using [OVMS](https://github.com/openvinotoolkit/model_server). `create_model()` can construct a model from a given `InferenceAdapter`. That approach assumes that the model in `InferenceAdapter` was already configured by `create_model()` called with a string (a path or a model name). It is possible to prepare such model using C++ or Python:
+C++
+```Cpp
+auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
+const std::shared_ptr<ov::Model>& ov_model = model->getModel();
+ov::serialize(ov_model, "serialized.xml");
+```
+Python
+```python
+model = DetectionModel.create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml")
+model.save("serialized.xml")
+```
+After that the model can be constructed from `InferenceAdapter`:
+```cpp
+ov::Core core;
+std::shared_ptr<ov::Model> ov_model = core.read_model("serialized.xml");
+std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>();
+adapter->loadModel(ov_model, core);
+auto model = DetectionModel::create_model(adapter);
+```
+
 For more details please refer to the [examples](https://github.com/openvinotoolkit/model_api/tree/master/examples) of this project.
 
 ## Supported models
@@ -111,4 +135,4 @@ For more details please refer to the [examples](https://github.com/openvinotoolk
 - Semantic Segmentation:
   - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#semantic-segmentation-models)
 
-[Model configuration](docs/model-configuration.md) discusses different options of model creation and possible configurations.
+[Model configuration](docs/model-configuration.md) discusses possible configurations.
