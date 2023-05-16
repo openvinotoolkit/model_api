@@ -20,6 +20,7 @@
 #include <models/instance_segmentation.h>
 #include <models/results.h>
 #include <models/segmentation_model.h>
+#include <adapters/openvino_adapter.h>
 
 using json = nlohmann::json;
 
@@ -173,12 +174,13 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     throw std::runtime_error{"Failed to read the image"};
                 }
                 const std::vector<SegmentedObject> objects = model->infer(image)->segmentedObjects;
+                const std::vector<SegmentedObjectWithRects> withRects = add_rotated_rects(objects);
                 // TODO: it seems older openvino had a bug. Uncomment after update to openvino 2023.0
-                // ASSERT_EQ(objects.size(), modelData.testData[i].reference.size());
+                // ASSERT_EQ(withRects.size(), modelData.testData[i].reference.size());
 
-                for (size_t j = 0; j < objects.size(); j++) {
+                for (size_t j = 0; j < withRects.size(); j++) {
                     std::stringstream prediction_buffer;
-                    prediction_buffer << objects[j];
+                    prediction_buffer << withRects[j];
                     // ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
                 }
 
