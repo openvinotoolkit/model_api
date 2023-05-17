@@ -21,6 +21,7 @@
 #include <vector>
 
 #include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 #include <openvino/openvino.hpp>
 
 #include "internal_model_data.h"
@@ -153,12 +154,37 @@ struct ImageResult : public ResultBase {
         : ResultBase(frameId, metaData) {}
     cv::Mat resultImage;
     std::vector<Contour> contours;
+
 };
 
 struct ImageResultWithSoftPrediction : public ImageResult {
     ImageResultWithSoftPrediction(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ImageResult(frameId, metaData) {}
     cv::Mat soft_prediction;
+
+    std::vector<Contour> getContours() {
+        std::vector<Contour> combined_contours = {};
+        cv::Mat label_index_map;
+        cv::Mat current_label_soft_prediction;
+        for (int index = 1; index < soft_prediction.channels(); index++) {
+            cv::extractChannel(soft_prediction, current_label_soft_prediction, index);
+            cv::inRange(resultImage, cv::Scalar(index, index, index), cv::Scalar(index, index, index), label_index_map);
+            std::vector<std::vector<cv::Point>> contours;
+            cv::findContours(label_index_map, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+
+            std::string label = "test...";
+
+            for (unsigned int i = 0; i < contours.size(); i++) {
+                cv::Mat mask = cv::Mat::zeros(resultImage.rows, resultImage.cols, resultImage.type());
+                cv::drawContours(mask, contours, i, 255, -1);
+                float probability = (float)cv::mean(current_label_soft_prediction, mask)[0];
+                combined_contours.push_back({label, probability, contours[i]});
+            }
+
+        }
+
+        return combined_contours;
+    }
 };
 
 struct HumanPose {

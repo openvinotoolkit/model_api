@@ -41,10 +41,45 @@ def create_hard_prediction_from_soft_prediction(
     Returns:
         Numpy array of the hard prediction
     """
-    soft_prediction_blurred = cv2.blur(soft_prediction, (blur_strength, blur_strength))
-    assert len(soft_prediction.shape) == 3
-    soft_prediction_blurred[soft_prediction_blurred < soft_threshold] = 0
-    return np.argmax(soft_prediction_blurred, axis=2)
+    if blur_strength == -1 and soft_threshold == float("inf"):
+        return np.argmax(soft_prediction, axis=2)
+    else:
+        soft_prediction_blurred = cv2.blur(soft_prediction, (blur_strength, blur_strength))
+        assert len(soft_prediction.shape) == 3
+        soft_prediction_blurred[soft_prediction_blurred < soft_threshold] = 0
+        return np.argmax(soft_prediction_blurred, axis=2)
+
+def create_annotation_from_soft_prediction(hard_prediction: np.ndarray, soft_prediction: np.ndarray, label_map: list) -> list:
+    height, width = hard_prediction.shape[:2]
+    img_class = hard_prediction.swapaxes(0, 1)
+
+    # pylint: disable=too-many-nested-blocks
+    annotations: List[Annotation] = []
+    for label_index, label in enumerate(label_map):
+        # Skip background
+        if label_index == 0:
+            continue
+
+        # obtain current label soft prediction
+        if len(soft_prediction.shape) == 3:
+            current_label_soft_prediction = soft_prediction[:, :, label_index]
+        else:
+            current_label_soft_prediction = soft_prediction
+
+        obj_group = img_class == label_index
+        label_index_map = (obj_group.T.astype(int) * 255).astype(np.uint8)
+
+        # Contour retrieval mode CCOMP (Connected components) creates a two-level
+        # hierarchy of contours
+        contours, _hierarchy = cv2.findContours(label_index_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+        for contour in contours:
+            annotations.append({
+                "label": label,
+                "contour": contour
+            })
+
+    return annotations
 
 
 class SegmentationModel(ImageModel):
@@ -104,49 +139,36 @@ class SegmentationModel(ImageModel):
         return parameters
 
     def postprocess(self, outputs, meta):
-        if self.blur_strength == -1 and self.soft_threshold == float("inf"):
-            predictions = outputs[self.output_blob_name].squeeze()
-            input_image_height = meta["original_shape"][0]
-            input_image_width = meta["original_shape"][1]
-
-            if self.out_channels < 2:  # assume the output is already ArgMax'ed
-                result = predictions.astype(np.uint8)
-            else:
-                result = np.argmax(predictions, axis=0).astype(np.uint8)
-
-            result = cv2.resize(
-                result,
-                (input_image_width, input_image_height),
-                0,
-                0,
-                interpolation=cv2.INTER_NEAREST,
-            )
-            return result
+        input_image_height = meta["original_shape"][0]
+        input_image_width = meta["original_shape"][1]
         predictions = outputs[self.output_blob_name].squeeze()
-        soft_prediction = np.transpose(predictions, axes=(1, 2, 0))
+
+        print(self.labels)
+
+        if self.out_channels < 2:  # assume the output is already ArgMax'ed
+            soft_prediction = predictions.astype(np.uint8)
+        else:
+            soft_prediction = np.transpose(predictions, axes=(1, 2, 0))
+
+        soft_prediction = cv2.resize(
+            soft_prediction,
+            (input_image_width, input_image_height),
+            0,
+            0,
+            interpolation=cv2.INTER_NEAREST,
+        )
 
         hard_prediction = create_hard_prediction_from_soft_prediction(
             soft_prediction=soft_prediction,
             soft_threshold=self.soft_threshold,
             blur_strength=self.blur_strength,
         )
-        hard_prediction = cv2.resize(
-            hard_prediction,
-            meta["original_shape"][1::-1],
-            0,
-            0,
-            interpolation=cv2.INTER_NEAREST,
-        )
+
+        annotations = create_annotation_from_soft_prediction(hard_prediction, soft_prediction, self.labels)
+
         if self.return_soft_prediction:
-            soft_prediction = cv2.resize(
-                soft_prediction,
-                meta["original_shape"][1::-1],
-                0,
-                0,
-                interpolation=cv2.INTER_NEAREST,
-            )
-            return hard_prediction, soft_prediction
-        return hard_prediction
+            return hard_prediction, annotations, soft_prediction
+        return hard_prediction, annotations
 
 
 class SalientObjectDetectionModel(SegmentationModel):
