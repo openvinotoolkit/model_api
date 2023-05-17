@@ -39,20 +39,17 @@ cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_predicti
     if (soft_prediction.channels() == 1) {
         return soft_prediction_blurred;
     }
-    cv::Mat current_label_soft_prediction;
 
-    if (blur_strength > -1) {
+    bool applyBlurAndSoftThreshold = (blur_strength > -1 && soft_threshold < std::numeric_limits<float>::infinity());
+    if (applyBlurAndSoftThreshold) {
         cv::blur(soft_prediction_blurred, soft_prediction_blurred, cv::Size{blur_strength, blur_strength});
     }
 
-    bool applySoftThreshold = (soft_threshold < std::numeric_limits<float>::infinity());
-
-    assert(soft_prediction_blurred.channels() > 1);
     cv::Mat hard_prediction{cv::Size{soft_prediction_blurred.cols, soft_prediction_blurred.rows}, CV_8UC1};
     for (int i = 0; i < soft_prediction_blurred.rows; ++i) {
         for (int j = 0; j < soft_prediction_blurred.cols; ++j) {
             float max_prob = -std::numeric_limits<float>::infinity();
-            if (applySoftThreshold) {
+            if (applyBlurAndSoftThreshold) {
                 max_prob = soft_threshold;
             }
 
