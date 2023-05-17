@@ -88,9 +88,9 @@ void SuperResolutionModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& mode
 
     ov::preprocess::PrePostProcessor ppp(model);
     for (const auto& input : inputs) {
-        ppp.input(input.get_any_name()).tensor().set_element_type(ov::element::u8).set_layout("NHWC");
-
-        ppp.input(input.get_any_name()).model().set_layout(inputLayout);
+        inputTransform.setPrecision(ppp, input.get_any_name());
+        ppp.input().tensor().set_layout("NHWC");
+        ppp.input().model().set_layout(inputLayout);
     }
 
     // --------------------------- Prepare output -----------------------------------------------------
@@ -146,9 +146,9 @@ void SuperResolutionModel::changeInputSize(std::shared_ptr<ov::Model>& model, in
 std::shared_ptr<InternalModelData> SuperResolutionModel::preprocess(const InputData& inputData,
                                                                     InferenceInput& input) {
     auto imgData = inputData.asRef<ImageInputData>();
-    auto& img = imgData.inputImage;
+    auto img = inputTransform(imgData.inputImage);
 
-    auto lrShape = inferenceAdapter->getInputShape(inputNames[0]);
+    auto lrShape = inferenceAdapter->getInputShape(inputNames[0]).get_max_shape();
     const ov::Layout layout("NHWC");
 
     if (img.channels() != static_cast<int>(lrShape[ov::layout::channels_idx(layout)])) {
@@ -164,7 +164,7 @@ std::shared_ptr<InternalModelData> SuperResolutionModel::preprocess(const InputD
     input.emplace(inputNames[0], wrapMat2Tensor(img));
 
     if (inputNames.size() == 2) {
-        auto bicShape = inferenceAdapter->getInputShape(inputNames[1]);
+        auto bicShape = inferenceAdapter->getInputShape(inputNames[1]).get_max_shape();
         const int h = static_cast<int>(bicShape[ov::layout::height_idx(layout)]);
         const int w = static_cast<int>(bicShape[ov::layout::width_idx(layout)]);
         cv::Mat resized;

@@ -129,7 +129,7 @@ TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectne
 
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
-    
+
     auto result = model->infer(image)->topLabels;
 
     auto model_restored = ClassificationModel::create_model(TMP_MODEL_FILE);
@@ -172,7 +172,7 @@ TEST_P(SSDModelParameterizedTest, TestDetectionDefaultConfig) {
     auto ov_model = model->getModel();
 
     EXPECT_EQ(ov_model->get_rt_info<std::string>("model_info", "model_type"), ModelSSD::ModelType);
-    
+
     auto embedded_processing = ov_model->get_rt_info<bool>("model_info", "embedded_processing");
     EXPECT_TRUE(embedded_processing);
 
@@ -220,7 +220,7 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
 
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
-    
+
     auto result = model->infer(image)->objects;
 
     image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);

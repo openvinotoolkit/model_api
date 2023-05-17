@@ -37,7 +37,7 @@
 
 std::string ModelYoloX::ModelType = "yolox";
 
-void ModelYoloX::initDefaultParameters(const ov::AnyMap& configuration) {
+void ModelYoloX::initDefaultParameters(const ov::AnyMap&) {
     resizeMode = RESIZE_KEEP_ASPECT; // Ignore configuration for now
     useAutoResize = false;
 }
@@ -126,8 +126,8 @@ void ModelYoloX::setStridesGrids() {
 std::shared_ptr<InternalModelData> ModelYoloX::preprocess(const InputData& inputData,
                                                           InferenceInput& input) {
     const auto& origImg = inputData.asRef<ImageInputData>().inputImage;
-    double scale = std::min(static_cast<double>(netInputWidth) / origImg.cols,
-                            static_cast<double>(netInputHeight) / origImg.rows);
+    float scale = std::min(static_cast<float>(netInputWidth) / origImg.cols,
+                           static_cast<float>(netInputHeight) / origImg.rows);
 
     cv::Mat resizedImage = resizeImageExt(origImg, netInputWidth, netInputHeight, resizeMode,
                                           interpolationMode, nullptr, cv::Scalar(114, 114, 114));

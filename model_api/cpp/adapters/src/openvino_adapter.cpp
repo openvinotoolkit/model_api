@@ -14,18 +14,10 @@
 // limitations under the License.
 */
 
-#include <stdexcept>
-#include <vector>
-
 #include "adapters/openvino_adapter.h"
-
-#include <opencv2/core.hpp>
 #include <openvino/openvino.hpp>
-
-#include <utils/common.hpp>
-#include <utils/config_factory.h>
-#include <utils/ocv_common.hpp>
 #include <utils/slog.hpp>
+#include <vector>
 
 void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
                                                             const std::string& device, const ov::AnyMap& compilationConfig) {
@@ -59,8 +51,8 @@ InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {
     return output;
 }
 
-ov::Shape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {
-    return compiledModel.input(inputName).get_shape();
+ov::PartialShape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {
+    return compiledModel.input(inputName).get_partial_shape();
 }
 
 void OpenVINOInferenceAdapter::initInputsOutputs() {
@@ -84,5 +76,3 @@ std::vector<std::string> OpenVINOInferenceAdapter::getOutputNames() const {
 const ov::AnyMap& OpenVINOInferenceAdapter::getModelConfig() const {
     return modelConfig;
 }
-
-

@@ -31,8 +31,6 @@
 #include "models/internal_model_data.h"
 #include "models/results.h"
 
-struct InputData;
-
 std::string ModelSSD::ModelType = "ssd";
 
 ModelSSD::ModelSSD(std::shared_ptr<InferenceAdapter>& adapter)
@@ -150,8 +148,8 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessMultipleOutputs(InferenceResult
 
     // In models with scores stored in separate output coordinates are normalized to [0,1]
     // In other multiple-outputs models coordinates are normalized to [0,netInputWidth] and [0,netInputHeight]
-    float widthScale = scores ? netInputWidth : 1;
-    float heightScale = scores ? netInputHeight : 1;
+    float widthScale = scores ? netInputWidth : 1.0f;
+    float heightScale = scores ? netInputHeight : 1.0f;
 
     for (size_t i = 0; i < detectionsNum; i++) {
         float confidence = scores ? scores[i] : boxes[i * objectSize + 4];
@@ -206,7 +204,7 @@ void ModelSSD::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
                                         inputLayout,
                                         resizeMode,
                                         interpolationMode,
-                                        ov::Shape{shape[ov::layout::width_idx(inputLayout)], 
+                                        ov::Shape{shape[ov::layout::width_idx(inputLayout)],
                                                   shape[ov::layout::height_idx(inputLayout)]});
 
                 netInputWidth = shape[ov::layout::width_idx(inputLayout)];

@@ -51,7 +51,7 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
     test.name = j.at("name").get<std::string>();
     test.type = j.at("type").get<std::string>();
 }
- 
+
 std::vector<ModelData> GetTestData(const std::string& path)
 {
     std::ifstream input(path);
@@ -59,7 +59,6 @@ std::vector<ModelData> GetTestData(const std::string& path)
     input >> j;
     return j;
 }
- 
 TEST_P(ModelParameterizedTest, SynchronousInference)
 {
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
@@ -118,12 +117,12 @@ class InputParser{
         std::vector <std::string> tokens;
 };
 
-void print_help(const char* program_name) 
+void print_help(const char* program_name)
 {
     std::cout << "Usage: " << program_name << " -p <path_to_public_scope.json> -d <path_to_data>" << std::endl;
 }
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     InputParser input(argc, argv);
 

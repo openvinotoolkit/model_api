@@ -31,6 +31,7 @@
 #include "models/input_data.h"
 #include "models/internal_model_data.h"
 #include "models/results.h"
+#include "utils/slog.hpp"
 
 namespace {
 cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_prediction, float soft_threshold, int blur_strength) {
@@ -152,12 +153,12 @@ SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& 
         if (model->has_rt_info("model_info", "model_type")) {
             model_type = model->get_rt_info<std::string>("model_info", "model_type");
         }
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         slog::warn << "Model type is not specified in the rt_info, use default model type: " << model_type << slog::endl;
     }
 
     if (model_type != SegmentationModel::ModelType) {
-        throw ov::Exception("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
+        throw std::runtime_error("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
     }
 
     std::unique_ptr<SegmentationModel> segmentor{new SegmentationModel(model, configuration)};
@@ -178,7 +179,7 @@ SegmentationModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
     }
 
     if (model_type != SegmentationModel::ModelType) {
-        throw ov::Exception("Incorrect or unsupported model_type is provided: " + model_type);
+        throw std::runtime_error("Incorrect or unsupported model_type is provided: " + model_type);
     }
 
     std::unique_ptr<SegmentationModel> segmentor{new SegmentationModel(adapter)};
@@ -210,52 +211,32 @@ void SegmentationModel::prepareInputsOutputs(
         inputShape[ov::layout::channels_idx(inputLayout)] != 3) {
         throw std::logic_error("3-channel 4-dimensional model's input is expected");
     }
+    if (model->outputs().size() != 1) {
+        throw std::logic_error("Segmentation model wrapper supports topologies with only 1 output");
+    }
 
     if (!embedded_processing) {
         model = ImageModel::embedProcessing(model, inputNames[0], inputLayout, resizeMode, interpolationMode, ov::Shape{inputShape[ov::layout::width_idx(inputLayout)], inputShape[ov::layout::height_idx(inputLayout)]});
 
         ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
-        ppp.output().tensor().set_element_type(ov::element::f32);
+        ppp.output().model().set_layout(getLayoutFromShape(model->output().get_partial_shape()));
+        ppp.output().tensor().set_element_type(ov::element::f32).set_layout("NCHW");
         model = ppp.build();
         useAutoResize = true; // temporal solution
         embedded_processing = true;
     }
 
-    // --------------------------- Prepare output
-    // -----------------------------------------------------
-    if (model->outputs().size() != 1) {
-        throw std::logic_error(
-            "Segmentation model wrapper supports topologies with only 1 output");
-    }
-
-    const auto& output = model->output();
-    outputNames.push_back(output.get_any_name());
-
-    const ov::Shape& outputShape = output.get_partial_shape().get_max_shape();
-    ov::Layout outputLayout("");
-    switch (outputShape.size()) {
-    case 3:
-        outputLayout = "CHW";
-        outChannels = 1;
-        outHeight = static_cast<int>(outputShape[ov::layout::height_idx(outputLayout)]);
-        outWidth = static_cast<int>(outputShape[ov::layout::width_idx(outputLayout)]);
-        break;
-    case 4:
-        outputLayout = "NCHW";
-        outChannels = static_cast<int>(outputShape[ov::layout::channels_idx(outputLayout)]);
-        outHeight = static_cast<int>(outputShape[ov::layout::height_idx(outputLayout)]);
-        outWidth = static_cast<int>(outputShape[ov::layout::width_idx(outputLayout)]);
-        break;
-    default:
-        throw std::logic_error("Unexpected output tensor shape. Only 4D and 3D "
-                               "outputs are supported.");
-    }
+    outputNames.push_back(model->output().get_any_name());
 }
 
 std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infResult) {
     const auto& inputImgSize = infResult.internalModelData->asRef<InternalImageModelData>();
     const auto& outTensor = infResult.getFirstOutputTensor();
-
+    const ov::Shape& outputShape = outTensor.get_shape();
+    const ov::Layout& outputLayout = getLayoutFromShape(outputShape);
+    int outChannels = static_cast<int>(outputShape[ov::layout::channels_idx(outputLayout)]);
+    int outHeight = static_cast<int>(outputShape[ov::layout::height_idx(outputLayout)]);
+    int outWidth = static_cast<int>(outputShape[ov::layout::width_idx(outputLayout)]);
     cv::Mat soft_prediction;
     if (outChannels == 1 && outTensor.get_element_type() == ov::element::i32) {
         cv::Mat predictions(outHeight, outWidth, CV_32SC1, outTensor.data<int32_t>());

@@ -37,8 +37,8 @@
 std::string ClassificationModel::ModelType = "Classification";
 
 namespace {
-float sigmoid(float x) {
-    return 1.0f / (1.0f + exp(-x));
+float sigmoid(float x) noexcept {
+    return 1.0f / (1.0f + std::exp(-x));
 }
 
 void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t topk) {
@@ -128,19 +128,19 @@ void ClassificationModel::updateModelInfo() {
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
-    
+
     // Check model_type in the rt_info, ignore configuration
     std::string model_type = ClassificationModel::ModelType;
     try {
         if (model->has_rt_info("model_info", "model_type")) {
             model_type = model->get_rt_info<std::string>("model_info", "model_type");
         }
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         slog::warn << "Model type is not specified in the rt_info, use default model type: " << model_type << slog::endl;
     }
-    
+
     if (model_type != ClassificationModel::ModelType) {
-        throw ov::Exception("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
+        throw std::runtime_error("Incorrect or unsupported model_type is provided in the model_info section: " + model_type);
     }
 
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(model, configuration)};
@@ -160,7 +160,7 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(std::shar
     }
 
     if (model_type != ClassificationModel::ModelType) {
-        throw ov::Exception("Incorrect or unsupported model_type is provided: " + model_type);
+        throw std::runtime_error("Incorrect or unsupported model_type is provided: " + model_type);
     }
 
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(adapter)};

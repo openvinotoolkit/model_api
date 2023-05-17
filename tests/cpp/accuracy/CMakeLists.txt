@@ -30,7 +30,7 @@ if(MSVC)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "^GNU|(Apple)?Clang$")
-    add_compile_options(-Wall)
+    add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64.*|aarch64.*|AARCH64.*)")
@@ -42,7 +42,7 @@ if(ARM AND NOT CMAKE_CROSSCOMPILING)
     add_compile_options(-march=armv7-a+fp)
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # Something: OpenCV or OpenVINO links gflags with /MT instead of default flag.

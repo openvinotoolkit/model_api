@@ -49,9 +49,8 @@ jobs:
     - name: Build CPP Test
       run: |
         mkdir build && cd build
-        cmake ../tests/cpp/accuracy/
+        cmake ../tests/cpp/accuracy/ -DCMAKE_CXX_FLAGS=-Werror
         make -j
     - name: Run CPP Test
       run: |
         build/test_accuracy -d data -p tests/python/accuracy/public_scope.json
-
