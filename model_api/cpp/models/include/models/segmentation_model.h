@@ -28,6 +28,7 @@ struct InferenceResult;
 struct ResultBase;
 struct ImageResult;
 struct ImageInputData;
+struct Contour;
 
 class SegmentationModel : public ImageModel {
 public:
@@ -41,8 +42,10 @@ public:
 
     virtual std::unique_ptr<ImageResult> infer(const ImageInputData& inputData);
     static std::string ModelType;
+    std::vector<Contour> getContours(const cv::Mat& hard_prediction, const cv::Mat& soft_prediction);
 
 protected:
+
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void updateModelInfo() override;
 

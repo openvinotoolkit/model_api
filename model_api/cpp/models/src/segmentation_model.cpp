@@ -70,28 +70,6 @@ cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_predicti
     return hard_prediction;
 }
 
-std::vector<Contour> create_annotation_from_segmentation_map(const cv::Mat& hard_prediction, const cv::Mat& soft_prediction, const std::vector<std::string> label_map) {
-    std::vector<Contour> combined_contours = {};
-    cv::Mat label_index_map;
-    cv::Mat current_label_soft_prediction;
-    for (int index = 1; index < soft_prediction.channels(); index++) {
-        cv::extractChannel(soft_prediction, current_label_soft_prediction, index);
-        cv::inRange(hard_prediction, cv::Scalar(index, index, index), cv::Scalar(index, index, index), label_index_map);
-        std::vector<std::vector<cv::Point>> contours;
-        cv::findContours(label_index_map, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
-
-        std::string label = (soft_prediction.channels() == 2 ? label_map[0] : label_map[index]);
-
-        for (unsigned int i = 0; i < contours.size(); i++) {
-            cv::Mat mask = cv::Mat::zeros(hard_prediction.rows, hard_prediction.cols, hard_prediction.type());
-            cv::drawContours(mask, contours, i, 255, -1);
-            float probability = cv::mean(current_label_soft_prediction, mask)[0];
-            combined_contours.push_back({label, probability, contours[i]});
-        }
-    }
-
-    return combined_contours;
-}
 } // namespace
 
 std::string SegmentationModel::ModelType = "Segmentation";
@@ -259,8 +237,7 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
     }
     cv::Mat hard_prediction = create_hard_prediction_from_soft_prediction(
         soft_prediction, soft_threshold, blur_strength);
-    auto contours = create_annotation_from_segmentation_map(
-        hard_prediction, soft_prediction, labels);
+    auto contours = getContours(hard_prediction, soft_prediction);
 
     if (return_soft_prediction) {
         ImageResultWithSoftPrediction* result = new ImageResultWithSoftPrediction(infResult.frameId, infResult.metaData);
@@ -278,6 +255,30 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
 
         return std::unique_ptr<ResultBase>(result);
     }
+}
+
+std::vector<Contour> SegmentationModel::getContours(const cv::Mat& hard_prediction, const cv::Mat& soft_prediction) {
+    std::vector<Contour> combined_contours = {};
+    cv::Mat label_index_map;
+    cv::Mat current_label_soft_prediction;
+    for (int index = 1; index < soft_prediction.channels(); index++) {
+        cv::extractChannel(soft_prediction, current_label_soft_prediction, index);
+        cv::inRange(hard_prediction, cv::Scalar(index, index, index), cv::Scalar(index, index, index), label_index_map);
+        std::vector<std::vector<cv::Point>> contours;
+        cv::findContours(label_index_map, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+
+        std::string label = getLabelName(index - 1); // Background is not defined as label
+
+        for (unsigned int i = 0; i < contours.size(); i++) {
+            cv::Mat mask = cv::Mat::zeros(hard_prediction.rows, hard_prediction.cols, hard_prediction.type());
+            cv::drawContours(mask, contours, i, 255, -1);
+            float probability = cv::mean(current_label_soft_prediction, mask)[0];
+            combined_contours.push_back({label, probability, contours[i]});
+        }
+
+    }
+
+    return combined_contours;
 }
 
 std::unique_ptr<ImageResult>

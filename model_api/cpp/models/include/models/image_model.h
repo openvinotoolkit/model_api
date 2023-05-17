@@ -61,6 +61,10 @@ protected:
     RESIZE_MODE selectResizeMode(const std::string& resize_type);
     void updateModelInfo() override;
 
+    std::string getLabelName(size_t labelID) {
+        return labelID < labels.size() ? labels[labelID] : std::string("Label #") + std::to_string(labelID);
+    }
+
 protected:
     std::vector<std::string> labels = {};
     bool useAutoResize = false;
