@@ -86,7 +86,7 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
     } else if ("SegmentationModel" == GetParam().type) {
         auto model = SegmentationModel::create_model(DATA_DIR + "/" + model_path);
         std::unique_ptr<ImageResult> result = model->infer(image);
-        ASSERT_GT(result->annotations.size(), 0);
+        ASSERT_GT(result->contours.size(), 0);
     }
 }
 

@@ -264,12 +264,12 @@ std::vector<Contour> SegmentationModel::getContours(const cv::Mat& hard_predicti
         std::vector<std::vector<cv::Point>> contours;
         cv::findContours(label_index_map, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 
-        std::string label = getLabelName(index - 1); // Background is not defined as label
+        std::string label = getLabelName(index);
 
         for (unsigned int i = 0; i < contours.size(); i++) {
             cv::Mat mask = cv::Mat::zeros(hard_prediction.rows, hard_prediction.cols, hard_prediction.type());
             cv::drawContours(mask, contours, i, 255, -1);
-            float probability = cv::mean(current_label_soft_prediction, mask)[0];
+            float probability = (float)cv::mean(current_label_soft_prediction, mask)[0];
             combined_contours.push_back({label, probability, contours[i]});
         }
 
