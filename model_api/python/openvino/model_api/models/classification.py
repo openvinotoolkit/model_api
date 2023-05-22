@@ -105,7 +105,6 @@ class ClassificationModel(ImageModel):
         return parameters
 
     def postprocess(self, outputs, meta):
-        print(self.multilabel)
         if self.multilabel:
             return self.get_multilabel_predictions(
                 outputs[self.out_layer_names[0]].squeeze()
