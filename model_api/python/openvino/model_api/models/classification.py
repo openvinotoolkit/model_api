@@ -15,6 +15,7 @@
 """
 
 import json
+
 import numpy as np
 from openvino.preprocess import PrePostProcessor
 from openvino.runtime import Model, Type
