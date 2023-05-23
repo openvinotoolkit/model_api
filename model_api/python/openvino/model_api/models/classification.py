@@ -14,6 +14,7 @@
  limitations under the License.
 """
 
+import json
 import numpy as np
 from openvino.preprocess import PrePostProcessor
 from openvino.runtime import Model, Type
@@ -32,6 +33,14 @@ class ClassificationModel(ImageModel):
         if self.path_to_labels:
             self.labels = self._load_labels(self.path_to_labels)
         self.out_layer_names = [self._get_output()]
+
+        if self.hierarchical:
+            self.embedded_processing = True
+            self.hierarchical_info = json.loads(self.hierarchical_config)
+            if preload:
+                self.load()
+            return
+
         if self.multilabel:
             self.embedded_processing = True
             if preload:
@@ -100,6 +109,15 @@ class ClassificationModel(ImageModel):
                 "multilabel": BooleanValue(
                     default_value=False, description="Predict a set of labels per image"
                 ),
+                "hierarchical": BooleanValue(
+                    default_value=False, description="Predict a hierarchy if labels per image"
+                ),
+                "hierarchical_config": StringValue(
+                    default_value="", description="Extra config for decoding hierarchical predicitons"
+                ),
+                "confidence_threshold": NumericalValue(
+                    default_value=0.5, description="Predict a set of labels per image"
+                )
             }
         )
         return parameters
@@ -109,14 +127,47 @@ class ClassificationModel(ImageModel):
             return self.get_multilabel_predictions(
                 outputs[self.out_layer_names[0]].squeeze()
             )
+        elif self.hierarchical:
+            return self.get_hierarchical_predictions(
+                outputs[self.out_layer_names[0]].squeeze()
+            )
         return self.get_multiclass_predictions(outputs)
+
+    def get_hierarchical_predictions(self, logits: np.ndarray):
+        predicted_labels = []
+        predicted_indices = []
+        predicted_scores = []
+        cls_heads_info = self.hierarchical_info["cls_heads_info"]
+        for i in range(cls_heads_info["num_multiclass_heads"]):
+            logits_begin, logits_end = cls_heads_info["head_idx_to_logits_range"][str(i)]
+            head_logits = logits[logits_begin:logits_end]
+            head_logits = softmax_numpy(head_logits)
+            j = np.argmax(head_logits)
+            label_str = cls_heads_info["all_groups"][i][j]
+            predicted_labels.append(label_str)
+            predicted_indices.append(cls_heads_info["label_to_idx"][label_str])
+            predicted_scores.append(head_logits[j])
+
+        if cls_heads_info["num_multilabel_classes"]:
+            logits_begin = cls_heads_info["num_single_label_classes"]
+            head_logits = logits[logits_begin:]
+            head_logits = sigmoid_numpy(head_logits)
+
+            for i in range(head_logits.shape[0]):
+                if head_logits[i] > self.confidence_threshold:
+                    label_str = cls_heads_info["all_groups"][cls_heads_info["num_multiclass_heads"] + i][0]
+                    predicted_labels.append(label_str)
+                    predicted_indices.append(cls_heads_info["label_to_idx"][label_str])
+                    predicted_scores.append(head_logits[i])
+
+        return list(zip(predicted_indices, predicted_labels, predicted_scores))
 
     def get_multilabel_predictions(self, logits: np.ndarray):
         logits = sigmoid_numpy(logits)
         scores = []
         indices = []
         for i in range(logits.shape[0]):
-            if logits[i] > 0.5:
+            if logits[i] > self.confidence_threshold:
                 indices.append(i)
                 scores.append(logits[i])
         labels = [self.labels[i] if self.labels else "" for i in indices]
@@ -166,3 +217,8 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk):
 
 def sigmoid_numpy(x: np.ndarray):
     return 1.0 / (1.0 + np.exp(-x))
+
+
+def softmax_numpy(x: np.ndarray, eps: float = 1e-9):
+    x = np.exp(x - np.max(x))
+    return x / (np.sum(x) + eps)
