@@ -48,7 +48,7 @@ public:
 
     virtual std::unique_ptr<ImageResult> infer(const ImageInputData& inputData);
     static std::string ModelType;
-    std::vector<Contour> getContours(const ImageResultWithSoftPrediction &imageResult);
+    std::vector<Contour> getContours(std::shared_ptr<ImageResultWithSoftPrediction> &imageResult);
 
 protected:
 

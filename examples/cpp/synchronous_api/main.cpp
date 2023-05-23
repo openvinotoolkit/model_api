@@ -46,16 +46,23 @@ int main(int argc, char* argv[]) {
             throw std::runtime_error{"Failed to read the image"};
         }
 
-        ov::AnyMap config = {
-            { "return_soft_prediction", true},
-        };
-
         // Instantiate Object Detection model
-        auto model = SegmentationModel::create_model(argv[1], config); // works with SSD models. Download it using Python Model API
-
+        auto model = SegmentationModel::create_model(argv[1]);
         // Run the inference
-        auto result = model->infer(image);
-        std::unique_ptr<ImageResultWithSoftPrediction>(static_cast<ImageResultWithSoftPrediction*>(result.release()));
+        auto result = std::shared_ptr<ImageResultWithSoftPrediction>(static_cast<ImageResultWithSoftPrediction*>(model->infer(image).release()));
+
+        auto contours = model->getContours(result);
+
+        auto output_image = image.clone();
+
+        std::vector<std::vector<cv::Point>> cv_contours = {};
+        for (auto &contour: contours) {
+            cv_contours.push_back(contour.shape);
+        }
+
+        cv::drawContours(output_image, cv_contours, -1, 255, 1);
+        cv::imwrite("/data/output.png", output_image);
+        std::cout << contours.size() << std::endl;
 
 
     } catch (const std::exception& error) {
