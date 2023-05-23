@@ -38,6 +38,7 @@ class ClassificationModel(ImageModel):
         if self.hierarchical:
             self.embedded_processing = True
             self.hierarchical_info = json.loads(self.hierarchical_config)
+            self.labels_resolver = GreedyLabelsResolver(self.hierarchical_info)
             if preload:
                 self.load()
             return
@@ -167,7 +168,8 @@ class ClassificationModel(ImageModel):
                     predicted_indices.append(cls_heads_info["label_to_idx"][label_str])
                     predicted_scores.append(head_logits[i])
 
-        return list(zip(predicted_indices, predicted_labels, predicted_scores))
+        predictions = list(zip(predicted_indices, predicted_labels, predicted_scores))
+        return self.labels_resolver.resolve_labels(predictions)
 
     def get_multilabel_predictions(self, logits: np.ndarray):
         logits = sigmoid_numpy(logits)
@@ -229,3 +231,77 @@ def sigmoid_numpy(x: np.ndarray):
 def softmax_numpy(x: np.ndarray, eps: float = 1e-9):
     x = np.exp(x - np.max(x))
     return x / (np.sum(x) + eps)
+
+
+class GreedyLabelsResolver:
+    def __init__(self, hierarchical_config) -> None:
+        self.all_labels = list(
+            hierarchical_config["cls_heads_info"]["label_to_idx"].keys()
+        )
+        self.label_relations = hierarchical_config["label_tree_edges"]
+        self.label_groups = hierarchical_config["cls_heads_info"]["all_groups"]
+
+    def _get_parent(self, label):
+        normalized_label = label.replace(" ", "_")
+        for child, parent in self.label_relations:
+            if normalized_label == child:
+                return parent
+
+        return None
+
+    def resolve_labels(self, predictions):
+        """Resolves hierarchical labels and exclusivity based on a list of ScoredLabels (labels with probability).
+        The following two steps are taken:
+        - select the most likely label from each label group
+        - add it and it's predecessors if they are also most likely labels (greedy approach).
+        """
+
+        def get_predecessors(lbl, candidates):
+            """Returns all the predecessors of the input label or an empty list if one of the predecessors is not a candidate."""
+            predecessors = []
+            last_parent = self._get_parent(lbl)
+            if last_parent is None:
+                return [lbl]
+
+            while last_parent is not None:
+                if last_parent not in candidates:
+                    return []
+                predecessors.append(last_parent)
+                last_parent = self._get_parent(last_parent)
+
+            if predecessors:
+                predecessors.append(lbl)
+            return predecessors
+
+        label_to_prob = {lbl: 0.0 for lbl in self.all_labels}
+        for _, lbl, score in predictions:
+            label_to_prob[lbl] = score
+
+        candidates = []
+        for g in self.label_groups:
+            if len(g) == 1:
+                candidates.append(g[0])
+            else:
+                max_prob = 0.0
+                max_label = None
+                for lbl in g:
+                    if label_to_prob[lbl] > max_prob:
+                        max_prob = label_to_prob[lbl]
+                        max_label = lbl
+                if max_label is not None:
+                    candidates.append(max_label)
+
+        output_labels = []
+        for lbl in candidates:
+            if lbl in output_labels:
+                continue
+            labels_to_add = get_predecessors(lbl, candidates)
+            for new_lbl in labels_to_add:
+                if new_lbl not in output_labels:
+                    output_labels.append(new_lbl)
+
+        output_predictions = [
+            (self.all_labels.index(lbl), lbl, label_to_prob[lbl])
+            for lbl in output_labels
+        ]
+        return output_predictions
