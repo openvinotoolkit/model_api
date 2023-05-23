@@ -241,9 +241,8 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
         result->soft_prediction = soft_prediction;
         return std::unique_ptr<ResultBase>(result);
     } else {
-        ImageResult* result =
-            new ImageResult(infResult.frameId, infResult.metaData);
-        result->resultImage = cv::Mat(outHeight, outWidth, CV_8UC1);
+        ImageResult* result = new ImageResult(infResult.frameId, infResult.metaData);
+        result->resultImage = hard_prediction;
 
         cv::resize(result->resultImage, result->resultImage, cv::Size(inputImgSize.inputImgWidth, inputImgSize.inputImgHeight), 0, 0, cv::INTER_NEAREST);
 
