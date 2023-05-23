@@ -28,9 +28,10 @@
 #include <opencv2/imgproc.hpp>
 #include <openvino/openvino.hpp>
 
-#include <models/segmentation_model.h>
+#include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
+#include <utils/color_palette.hpp>
 
 
 int main(int argc, char* argv[]) {
@@ -47,23 +48,18 @@ int main(int argc, char* argv[]) {
         }
 
         // Instantiate Object Detection model
-        auto model = SegmentationModel::create_model(argv[1]);
+        auto model = DetectionModel::create_model(argv[1]); // works with SSD models. Download it using Python Model API
+
         // Run the inference
-        auto result = std::shared_ptr<ImageResultWithSoftPrediction>(static_cast<ImageResultWithSoftPrediction*>(model->infer(image).release()));
+        auto result = model->infer(image);
 
-        auto contours = model->getContours(result);
-
-        auto output_image = image.clone();
-
-        std::vector<std::vector<cv::Point>> cv_contours = {};
-        for (auto &contour: contours) {
-            cv_contours.push_back(contour.shape);
+        // Process detections
+        for (auto& obj : result->objects) {
+        std::cout << " " << std::left << std::setw(9) << obj.label << " | " << std::setw(10) << obj.confidence
+                    << " | " << std::setw(4) << int(obj.x) << " | " << std::setw(4) << int(obj.y) << " | "
+                    << std::setw(4) << int(obj.x + obj.width) << " | " << std::setw(4) << int(obj.y + obj.height)
+                    << std::endl;
         }
-
-        cv::drawContours(output_image, cv_contours, -1, 255, 1);
-        cv::imwrite("/data/output.png", output_image);
-        std::cout << contours.size() << std::endl;
-
 
     } catch (const std::exception& error) {
         std::cerr << error.what() << std::endl;
