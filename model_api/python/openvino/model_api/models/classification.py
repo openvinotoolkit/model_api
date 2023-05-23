@@ -110,14 +110,16 @@ class ClassificationModel(ImageModel):
                     default_value=False, description="Predict a set of labels per image"
                 ),
                 "hierarchical": BooleanValue(
-                    default_value=False, description="Predict a hierarchy if labels per image"
+                    default_value=False,
+                    description="Predict a hierarchy if labels per image",
                 ),
                 "hierarchical_config": StringValue(
-                    default_value="", description="Extra config for decoding hierarchical predicitons"
+                    default_value="",
+                    description="Extra config for decoding hierarchical predicitons",
                 ),
                 "confidence_threshold": NumericalValue(
                     default_value=0.5, description="Predict a set of labels per image"
-                )
+                ),
             }
         )
         return parameters
@@ -139,7 +141,9 @@ class ClassificationModel(ImageModel):
         predicted_scores = []
         cls_heads_info = self.hierarchical_info["cls_heads_info"]
         for i in range(cls_heads_info["num_multiclass_heads"]):
-            logits_begin, logits_end = cls_heads_info["head_idx_to_logits_range"][str(i)]
+            logits_begin, logits_end = cls_heads_info["head_idx_to_logits_range"][
+                str(i)
+            ]
             head_logits = logits[logits_begin:logits_end]
             head_logits = softmax_numpy(head_logits)
             j = np.argmax(head_logits)
@@ -155,7 +159,9 @@ class ClassificationModel(ImageModel):
 
             for i in range(head_logits.shape[0]):
                 if head_logits[i] > self.confidence_threshold:
-                    label_str = cls_heads_info["all_groups"][cls_heads_info["num_multiclass_heads"] + i][0]
+                    label_str = cls_heads_info["all_groups"][
+                        cls_heads_info["num_multiclass_heads"] + i
+                    ][0]
                     predicted_labels.append(label_str)
                     predicted_indices.append(cls_heads_info["label_to_idx"][label_str])
                     predicted_scores.append(head_logits[i])
