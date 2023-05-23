@@ -28,10 +28,9 @@
 #include <opencv2/imgproc.hpp>
 #include <openvino/openvino.hpp>
 
-#include <models/detection_model.h>
+#include <models/segmentation_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
-#include <utils/color_palette.hpp>
 
 
 int main(int argc, char* argv[]) {
@@ -47,19 +46,17 @@ int main(int argc, char* argv[]) {
             throw std::runtime_error{"Failed to read the image"};
         }
 
+        ov::AnyMap config = {
+            { "return_soft_prediction", true},
+        };
+
         // Instantiate Object Detection model
-        auto model = DetectionModel::create_model(argv[1]); // works with SSD models. Download it using Python Model API
+        auto model = SegmentationModel::create_model(argv[1], config); // works with SSD models. Download it using Python Model API
 
         // Run the inference
         auto result = model->infer(image);
+        std::unique_ptr<ImageResultWithSoftPrediction>(static_cast<ImageResultWithSoftPrediction*>(result.release()));
 
-        // Process detections
-        for (auto& obj : result->objects) {
-        std::cout << " " << std::left << std::setw(9) << obj.label << " | " << std::setw(10) << obj.confidence
-                    << " | " << std::setw(4) << int(obj.x) << " | " << std::setw(4) << int(obj.y) << " | "
-                    << std::setw(4) << int(obj.x + obj.width) << " | " << std::setw(4) << int(obj.y + obj.height)
-                    << std::endl;
-        }
 
     } catch (const std::exception& error) {
         std::cerr << error.what() << std::endl;

@@ -27,8 +27,14 @@ class Model;
 struct InferenceResult;
 struct ResultBase;
 struct ImageResult;
+struct ImageResultWithSoftPrediction;
 struct ImageInputData;
-struct Contour;
+struct Contour {
+    std::string label;
+    float probability;
+    std::vector<cv::Point> shape;
+};
+
 
 class SegmentationModel : public ImageModel {
 public:
@@ -42,7 +48,7 @@ public:
 
     virtual std::unique_ptr<ImageResult> infer(const ImageInputData& inputData);
     static std::string ModelType;
-    std::vector<Contour> getContours(const cv::Mat& hard_prediction, const cv::Mat& soft_prediction);
+    std::vector<Contour> getContours(const ImageResultWithSoftPrediction &imageResult);
 
 protected:
 
