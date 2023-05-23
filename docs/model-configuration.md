@@ -17,6 +17,9 @@ The list features only model wrappers which intoduce new configuration values in
 1. `labels`: List - list of class labels
 1. `path_to_labels`: str - path to file with labels. Overrides the labels, if they sets via 'labels' parameter
 1. `multilabel`: bool - predict a set of labels per image
+1. `hierarchical`: bool - predict a hierarchy of labels per image hierarchical_config
+1. `confidence_threshold`: float - probability threshold value for multilabel or hierarchical predictions filtering
+1. `hierarchical_config`: str - a serialized configuration for decoding hierarchical predictions
 #### `DetectionModel` and its subclasses
 1. `confidence_threshold`: float - probability threshold value for bounding box filtering
 1. `labels`: List - List of class labels
