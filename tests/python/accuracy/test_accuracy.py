@@ -10,6 +10,7 @@ from openvino.model_api.models import (
     DetectionModel,
     MaskRCNNModel,
     SegmentationModel,
+    add_rotated_rects,
 )
 
 
@@ -82,6 +83,8 @@ def test_image_models(data, dump, result, model_data):
         outputs = model(image)
         if not isinstance(outputs, list):
             outputs = [outputs]
+        if model_data["type"] == MaskRCNNModel.__name__:
+            outputs = add_rotated_rects(outputs)
 
         image_result = []
 
