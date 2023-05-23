@@ -49,37 +49,6 @@ def create_hard_prediction_from_soft_prediction(
         soft_prediction_blurred[soft_prediction_blurred < soft_threshold] = 0
         return np.argmax(soft_prediction_blurred, axis=2)
 
-def create_annotation_from_soft_prediction(hard_prediction: np.ndarray, soft_prediction: np.ndarray, label_map: list) -> list:
-    height, width = hard_prediction.shape[:2]
-    img_class = hard_prediction.swapaxes(0, 1)
-
-    # pylint: disable=too-many-nested-blocks
-    annotations: List[Annotation] = []
-    for label_index, label in enumerate(label_map):
-        # Skip background
-        if label_index == 0:
-            continue
-
-        # obtain current label soft prediction
-        if len(soft_prediction.shape) == 3:
-            current_label_soft_prediction = soft_prediction[:, :, label_index]
-        else:
-            current_label_soft_prediction = soft_prediction
-
-        obj_group = img_class == label_index
-        label_index_map = (obj_group.T.astype(int) * 255).astype(np.uint8)
-
-        # Contour retrieval mode CCOMP (Connected components) creates a two-level
-        # hierarchy of contours
-        contours, _hierarchy = cv2.findContours(label_index_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-        for contour in contours:
-            annotations.append({
-                "label": label,
-                "contour": contour
-            })
-
-    return annotations
 
 
 class SegmentationModel(ImageModel):
@@ -143,8 +112,6 @@ class SegmentationModel(ImageModel):
         input_image_width = meta["original_shape"][1]
         predictions = outputs[self.output_blob_name].squeeze()
 
-        print(self.labels)
-
         if self.out_channels < 2:  # assume the output is already ArgMax'ed
             soft_prediction = predictions.astype(np.uint8)
         else:
@@ -164,11 +131,41 @@ class SegmentationModel(ImageModel):
             blur_strength=self.blur_strength,
         )
 
-        annotations = create_annotation_from_soft_prediction(hard_prediction, soft_prediction, self.labels)
-
         if self.return_soft_prediction:
-            return hard_prediction, annotations, soft_prediction
-        return hard_prediction, annotations
+            return hard_prediction, soft_prediction
+        return hard_prediction
+
+    def get_contours(self, hard_prediction: np.ndarray, soft_prediction: np.ndarray) -> list:
+        height, width = hard_prediction.shape[:2]
+        img_class = hard_prediction.swapaxes(0, 1)
+
+        # pylint: disable=too-many-nested-blocks
+        combined_contours = []
+        for label_index, label in enumerate(self.labels):
+            # Skip background
+            if label_index == 0:
+                continue
+
+            # obtain current label soft prediction
+            if len(soft_prediction.shape) == 3:
+                current_label_soft_prediction = soft_prediction[:, :, label_index]
+            else:
+                current_label_soft_prediction = soft_prediction
+
+            obj_group = img_class == label_index
+            label_index_map = (obj_group.T.astype(int) * 255).astype(np.uint8)
+
+            # Contour retrieval mode CCOMP (Connected components) creates a two-level
+            # hierarchy of contours
+            contours, _hierarchy = cv2.findContours(label_index_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+            for contour in contours:
+                combined_contours.append({
+                    "label": label,
+                    "contour": contour
+                })
+
+        return combined_contours
 
 
 class SalientObjectDetectionModel(SegmentationModel):
