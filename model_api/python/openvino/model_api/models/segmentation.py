@@ -44,11 +44,12 @@ def create_hard_prediction_from_soft_prediction(
     if blur_strength == -1 and soft_threshold == float("inf"):
         return np.argmax(soft_prediction, axis=2)
     else:
-        soft_prediction_blurred = cv2.blur(soft_prediction, (blur_strength, blur_strength))
+        soft_prediction_blurred = cv2.blur(
+            soft_prediction, (blur_strength, blur_strength)
+        )
         assert len(soft_prediction.shape) == 3
         soft_prediction_blurred[soft_prediction_blurred < soft_threshold] = 0
         return np.argmax(soft_prediction_blurred, axis=2)
-
 
 
 class SegmentationModel(ImageModel):
@@ -135,7 +136,9 @@ class SegmentationModel(ImageModel):
             return hard_prediction, soft_prediction
         return hard_prediction
 
-    def get_contours(self, hard_prediction: np.ndarray, soft_prediction: np.ndarray) -> list:
+    def get_contours(
+        self, hard_prediction: np.ndarray, soft_prediction: np.ndarray
+    ) -> list:
         height, width = hard_prediction.shape[:2]
         img_class = hard_prediction.swapaxes(0, 1)
 
@@ -157,13 +160,12 @@ class SegmentationModel(ImageModel):
 
             # Contour retrieval mode CCOMP (Connected components) creates a two-level
             # hierarchy of contours
-            contours, _hierarchy = cv2.findContours(label_index_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+            contours, _hierarchy = cv2.findContours(
+                label_index_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+            )
 
             for contour in contours:
-                combined_contours.append({
-                    "label": label,
-                    "contour": contour
-                })
+                combined_contours.append({"label": label, "contour": contour})
 
         return combined_contours
 

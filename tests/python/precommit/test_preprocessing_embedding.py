@@ -55,7 +55,10 @@ def compare_output_objects(ref, obj):
 def compare_model_outputs(references, objects):
     references_to_compare = references
     objects_to_compare = objects
-    if not isinstance(references, list):
+    if isinstance(references, tuple):
+        references_to_compare = list(references)
+        objects_to_compare = list(objects)
+    elif not isinstance(references, list):
         references_to_compare = [references]
         objects_to_compare = [objects]
 
