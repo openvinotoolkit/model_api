@@ -261,5 +261,20 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "otx_models/mobilenet_v3_large_hc_cf.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000081.jpg",
+                "reference": [
+                    "(5, 'triangle', 0.9929638)",
+                    "(3, 'equilateral', 0.5964169)",
+                    "(1, 'multi a', 0.9223526)",
+                    "(2, 'multi b', 0.6959907)"
+                ]
+            }
+        ]
     }
 ]
