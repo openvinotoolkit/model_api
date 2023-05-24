@@ -139,10 +139,13 @@ class SegmentationModel(ImageModel):
     def get_contours(
         self, hard_prediction: np.ndarray, soft_prediction: np.ndarray
     ) -> list:
+
+        if self.labels is None:
+            return []
+
         height, width = hard_prediction.shape[:2]
         img_class = hard_prediction.swapaxes(0, 1)
 
-        # pylint: disable=too-many-nested-blocks
         combined_contours = []
         for label_index, label in enumerate(self.labels):
             # Skip background
