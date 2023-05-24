@@ -231,22 +231,22 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
             channels.emplace_back(cv::Size{outWidth, outHeight}, CV_32FC1, data + c * outHeight * outWidth);
         }
         cv::merge(channels, soft_prediction);
-        cv::resize(soft_prediction, soft_prediction, {inputImgSize.inputImgWidth, inputImgSize.inputImgHeight}, 0.0, 0.0, cv::INTER_NEAREST);
     }
+
     cv::Mat hard_prediction = create_hard_prediction_from_soft_prediction(
         soft_prediction, soft_threshold, blur_strength);
+
+    cv::resize(hard_prediction, hard_prediction, {inputImgSize.inputImgWidth, inputImgSize.inputImgHeight}, 0.0, 0.0, cv::INTER_NEAREST);
 
     if (return_soft_prediction) {
         ImageResultWithSoftPrediction* result = new ImageResultWithSoftPrediction(infResult.frameId, infResult.metaData);
         result->resultImage = hard_prediction;
+        cv::resize(soft_prediction, soft_prediction, {inputImgSize.inputImgWidth, inputImgSize.inputImgHeight}, 0.0, 0.0, cv::INTER_NEAREST);
         result->soft_prediction = soft_prediction;
         return std::unique_ptr<ResultBase>(result);
     } else {
         ImageResult* result = new ImageResult(infResult.frameId, infResult.metaData);
         result->resultImage = hard_prediction;
-
-        cv::resize(result->resultImage, result->resultImage, cv::Size(inputImgSize.inputImgWidth, inputImgSize.inputImgHeight), 0, 0, cv::INTER_NEAREST);
-
         return std::unique_ptr<ResultBase>(result);
     }
 }
