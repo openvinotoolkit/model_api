@@ -85,7 +85,7 @@ TEST_P(ModelParameterizedTest, SynchronousInference)
         ASSERT_GT(result->topLabels.front().score, 0);
     } else if ("SegmentationModel" == GetParam().type) {
         auto model = SegmentationModel::create_model(DATA_DIR + "/" + model_path);
-        std::shared_ptr<ImageResultWithSoftPrediction> result(static_cast<ImageResultWithSoftPrediction*>(model->infer(image).release()));
+        auto result = *static_cast<ImageResultWithSoftPrediction*>(model->infer(image).release());
         ASSERT_GT(model->getContours(result).size(), 0);
     }
 }
