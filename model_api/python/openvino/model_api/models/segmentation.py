@@ -41,7 +41,7 @@ def create_hard_prediction_from_soft_prediction(
     Returns:
         Numpy array of the hard prediction
     """
-    if blur_strength == -1 and soft_threshold == float("inf"):
+    if blur_strength == -1 or soft_threshold == float("inf"):
         return np.argmax(soft_prediction, axis=2)
     else:
         soft_prediction_blurred = cv2.blur(
@@ -97,7 +97,7 @@ class SegmentationModel(ImageModel):
                 "soft_threshold": NumericalValue(
                     value_type=float,
                     description="Probability threshold value for bounding box filtering. inf value means no blurring and no soft_threshold",
-                    default_value=float("inf"),
+                    default_value=float("-inf"),
                 ),
                 "return_soft_prediction": BooleanValue(
                     description="Return raw resized model prediction in addition to processed one",
@@ -124,6 +124,9 @@ class SegmentationModel(ImageModel):
             0,
             interpolation=cv2.INTER_NEAREST,
         )
+
+        print("soft threshold:")
+        print(self.soft_threshold)
 
         hard_prediction = create_hard_prediction_from_soft_prediction(
             soft_prediction=soft_prediction,
