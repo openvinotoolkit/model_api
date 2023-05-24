@@ -97,15 +97,14 @@ class SegmentationModel(ImageModel):
                 "soft_threshold": NumericalValue(
                     value_type=float,
                     description="Probability threshold value for bounding box filtering. inf value means no blurring and no soft_threshold",
-                    default_value=float("-inf"),
+                    default_value=float("inf"),
                 ),
                 "return_soft_prediction": BooleanValue(
-                    description="Retern raw resized model prediction in addition to processed one",
+                    description="Return raw resized model prediction in addition to processed one",
                     default_value=True,
                 ),
             }
         )
-
         return parameters
 
     def postprocess(self, outputs, meta):

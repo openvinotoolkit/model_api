@@ -56,6 +56,6 @@ protected:
     void updateModelInfo() override;
 
     int blur_strength = -1;
-    float soft_threshold = -std::numeric_limits<float>::infinity();
+    float soft_threshold = std::numeric_limits<float>::infinity();
     bool return_soft_prediction = true;
 };
