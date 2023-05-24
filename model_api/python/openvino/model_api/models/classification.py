@@ -139,7 +139,6 @@ class ClassificationModel(ImageModel):
 
     def get_hierarchical_predictions(self, logits: np.ndarray):
         predicted_labels = []
-        predicted_indices = []
         predicted_scores = []
         cls_heads_info = self.hierarchical_info["cls_heads_info"]
         for i in range(cls_heads_info["num_multiclass_heads"]):
@@ -151,7 +150,6 @@ class ClassificationModel(ImageModel):
             j = np.argmax(head_logits)
             label_str = cls_heads_info["all_groups"][i][j]
             predicted_labels.append(label_str)
-            predicted_indices.append(cls_heads_info["label_to_idx"][label_str])
             predicted_scores.append(head_logits[j])
 
         if cls_heads_info["num_multilabel_classes"]:
@@ -165,7 +163,6 @@ class ClassificationModel(ImageModel):
                         cls_heads_info["num_multiclass_heads"] + i
                     ][0]
                     predicted_labels.append(label_str)
-                    predicted_indices.append(cls_heads_info["label_to_idx"][label_str])
                     predicted_scores.append(head_logits[i])
 
         predictions = zip(predicted_labels, predicted_scores)
@@ -298,7 +295,6 @@ class GreedyLabelsResolver:
                     output_labels.append(new_lbl)
 
         output_predictions = [
-            (self.label_to_idx[lbl], lbl, label_to_prob[lbl])
-            for lbl in output_labels
+            (self.label_to_idx[lbl], lbl, label_to_prob[lbl]) for lbl in output_labels
         ]
         return output_predictions
