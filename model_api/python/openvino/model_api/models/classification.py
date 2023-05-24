@@ -242,9 +242,8 @@ class GreedyLabelsResolver:
         self.label_groups = hierarchical_config["cls_heads_info"]["all_groups"]
 
     def _get_parent(self, label):
-        normalized_label = label.replace(" ", "_")
         for child, parent in self.label_relations:
-            if normalized_label == child:
+            if label == child:
                 return parent
 
         return None
