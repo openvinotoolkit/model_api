@@ -138,7 +138,6 @@ class SegmentationModel(ImageModel):
     def get_contours(
         self, hard_prediction: np.ndarray, soft_prediction: np.ndarray
     ) -> list:
-
         if self.labels is None:
             return []
 
