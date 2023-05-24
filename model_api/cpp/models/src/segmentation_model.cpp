@@ -36,7 +36,7 @@
 namespace {
 cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_prediction, float soft_threshold, int blur_strength) {
     if (soft_prediction.channels() == 1) {
-        return soft_prediction.clone();
+        return soft_prediction;
     }
 
     cv::Mat soft_prediction_blurred = soft_prediction.clone();
