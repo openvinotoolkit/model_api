@@ -142,7 +142,6 @@ class SegmentationModel(ImageModel):
             return []
 
         height, width = hard_prediction.shape[:2]
-        img_class = hard_prediction.swapaxes(0, 1)
 
         combined_contours = []
         for label_index, label in enumerate(self.labels):
@@ -156,8 +155,8 @@ class SegmentationModel(ImageModel):
             else:
                 current_label_soft_prediction = soft_prediction
 
-            obj_group = img_class == label_index
-            label_index_map = obj_group.T.astype(np.uint8) * 255
+            obj_group = hard_prediction == label_index
+            label_index_map = obj_group.astype(np.uint8) * 255
 
             contours, _hierarchy = cv2.findContours(
                 label_index_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
