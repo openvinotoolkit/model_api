@@ -158,10 +158,8 @@ class SegmentationModel(ImageModel):
                 current_label_soft_prediction = soft_prediction
 
             obj_group = img_class == label_index
-            label_index_map = (obj_group.T.astype(int) * 255).astype(np.uint8)
+            label_index_map = obj_group.T.astype(np.uint8) * 255
 
-            # Contour retrieval mode CCOMP (Connected components) creates a two-level
-            # hierarchy of contours
             contours, _hierarchy = cv2.findContours(
                 label_index_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
             )
