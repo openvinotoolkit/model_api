@@ -168,7 +168,7 @@ class ClassificationModel(ImageModel):
                     predicted_indices.append(cls_heads_info["label_to_idx"][label_str])
                     predicted_scores.append(head_logits[i])
 
-        predictions = list(zip(predicted_indices, predicted_labels, predicted_scores))
+        predictions = zip(predicted_labels, predicted_scores)
         return self.labels_resolver.resolve_labels(predictions)
 
     def get_multilabel_predictions(self, logits: np.ndarray):
@@ -235,9 +235,7 @@ def softmax_numpy(x: np.ndarray, eps: float = 1e-9):
 
 class GreedyLabelsResolver:
     def __init__(self, hierarchical_config) -> None:
-        self.all_labels = list(
-            hierarchical_config["cls_heads_info"]["label_to_idx"].keys()
-        )
+        self.label_to_idx = hierarchical_config["cls_heads_info"]["label_to_idx"]
         self.label_relations = hierarchical_config["label_tree_edges"]
         self.label_groups = hierarchical_config["cls_heads_info"]["all_groups"]
 
@@ -272,8 +270,8 @@ class GreedyLabelsResolver:
                 predecessors.append(lbl)
             return predecessors
 
-        label_to_prob = {lbl: 0.0 for lbl in self.all_labels}
-        for _, lbl, score in predictions:
+        label_to_prob = {lbl: 0.0 for lbl in self.label_to_idx.keys()}
+        for lbl, score in predictions:
             label_to_prob[lbl] = score
 
         candidates = []
@@ -300,7 +298,7 @@ class GreedyLabelsResolver:
                     output_labels.append(new_lbl)
 
         output_predictions = [
-            (self.all_labels.index(lbl), lbl, label_to_prob[lbl])
+            (self.label_to_idx[lbl], lbl, label_to_prob[lbl])
             for lbl in output_labels
         ]
         return output_predictions
