@@ -31,7 +31,6 @@
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
-#include <utils/color_palette.hpp>
 
 
 int main(int argc, char* argv[]) {
