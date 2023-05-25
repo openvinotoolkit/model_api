@@ -32,9 +32,7 @@ def main():
     # Create Object Detection model using mode name and download from Open Model Zoo
     # Replace numpy preprocessing and embed it directly into a model graph to speed up inference
     # download_dir is used to store downloaded model
-    model = DetectionModel.create_model(
-        "yolo-v4-tf", configuration={"embed_preprocessing": True}
-    )
+    model = DetectionModel.create_model("yolo-v4-tf")
 
     ITERATIONS = 10
     results = {}  # container for results
