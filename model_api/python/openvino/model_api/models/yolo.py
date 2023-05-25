@@ -111,6 +111,28 @@ def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
 
+def xywh2xyxy(xywh):
+    """
+    Convert bounding box coordinates from (x, y, width, height) format to (x1, y1, x2, y2) format where (x1, y1) is the
+    top-left corner and (x2, y2) is the bottom-right corner.
+
+    Args:
+        xywh (np.ndarray): The input bounding box coordinates in (x, y, width, height) format.
+    Returns:
+        (np.ndarray): The bounding box coordinates in (x1, y1, x2, y2) format.
+    """
+    return np.stack(
+        (
+            xywh[:, 0] - xywh[:, 2] / 2.0,
+            xywh[:, 1] - xywh[:, 3] / 2.0,
+            xywh[:, 0] + xywh[:, 2] / 2.0,
+            xywh[:, 1] + xywh[:, 3] / 2.0,
+        ),
+        1,
+        xywh,
+    )
+
+
 class YOLO(DetectionModel):
     __model__ = "YOLO"
 
@@ -513,7 +535,7 @@ class YOLOX(DetectionModel):
         valid_predictions = output[output[..., 4] > self.confidence_threshold]
         valid_predictions[:, 5:] *= valid_predictions[:, 4:5]
 
-        boxes = self.xywh2xyxy(valid_predictions[:, :4]) / meta["scale"]
+        boxes = xywh2xyxy(valid_predictions[:, :4]) / meta["scale"]
         i, j = (valid_predictions[:, 5:] > self.confidence_threshold).nonzero()
         x_mins, y_mins, x_maxs, y_maxs = boxes[i].T
         scores = valid_predictions[i, j + 5]
@@ -560,15 +582,6 @@ class YOLOX(DetectionModel):
         self.grids = np.concatenate(grids, 1)
         self.expanded_strides = np.concatenate(expanded_strides, 1)
 
-    @staticmethod
-    def xywh2xyxy(x):
-        y = np.copy(x)
-        y[:, 0] = x[:, 0] - x[:, 2] / 2
-        y[:, 1] = x[:, 1] - x[:, 3] / 2
-        y[:, 2] = x[:, 0] + x[:, 2] / 2
-        y[:, 3] = x[:, 1] + x[:, 3] / 2
-        return y
-
 
 class YoloV3ONNX(DetectionModel):
     __model__ = "YOLOv3-ONNX"
@@ -612,7 +625,7 @@ class YoloV3ONNX(DetectionModel):
                 self.raise_error(
                     "Expected shapes [:,:,4], [:,{},:] and [:,3] for outputs, but got {}, {} and {}".format(
                         self.classes,
-                        *[output.shape for output in self.outputs.values()]
+                        *[output.shape for output in self.outputs.values()],
                     )
                 )
         if (
@@ -707,3 +720,160 @@ class YoloV3ONNX(DetectionModel):
         ]
 
         return detections
+
+
+def non_max_suppression(
+    prediction,
+    conf_thres=0.25,
+    iou_thres=0.7,
+    classes=None,
+    agnostic=False,
+    multi_label=False,
+    nc=0,  # number of classes (optional)
+    max_nms=30000,
+    max_wh=7680,
+):
+    """
+    Perform non-maximum suppression (NMS) on a set of boxes, with support for masks and multiple labels per box.
+
+    Arguments:
+        prediction (torch.Tensor): A tensor of shape (batch_size, num_classes + 4 + num_masks, num_boxes)
+            containing the predicted boxes, classes, and masks. The tensor should be in the format
+            output by a model, such as YOLO.
+        conf_thres (float): The confidence threshold below which boxes will be filtered out.
+            Valid values are between 0.0 and 1.0.
+        iou_thres (float): The IoU threshold below which boxes will be filtered out during NMS.
+            Valid values are between 0.0 and 1.0.
+        classes (List[int]): A list of class indices to consider. If None, all classes will be considered.
+        agnostic (bool): If True, the model is agnostic to the number of classes, and all
+            classes will be considered as one.
+        multi_label (bool): If True, each box may have multiple labels.
+        nc (int): (optional) The number of classes output by the model. Any indices after this will be considered masks.
+        max_nms (int): The maximum number of boxes into torchvision.ops.nms().
+        max_wh (int): The maximum box width and height in pixels
+
+    Returns:
+        (List[torch.Tensor]): A list of length batch_size, where each element is a tensor of
+            shape (num_boxes, 6 + num_masks) containing the kept boxes, with columns
+            (x1, y1, x2, y2, confidence, class, mask1, mask2, ...).
+    """
+    assert 3 == prediction.ndim
+    assert 1 == prediction.shape[0]
+    nc = nc or (prediction.shape[1] - 4)  # number of classes
+    mi = 4 + nc  # mask start index
+    xc = np.amax(prediction[:, 4:mi], 1) > conf_thres  # candidates
+
+    # Settings
+    multi_label &= nc > 1  # multiple labels per box (adds 0.5ms/img)
+
+    x = prediction[0]
+    x = x.transpose(1, 0)[xc[0]]  # confidence
+
+    # Detections matrix nx6 (xyxy, conf, cls)
+    box, cls, mask = x[:, :4], x[:, 4 : nc + 4], x[:, nc + 4 :]
+    box = xywh2xyxy(box)  # center_x, center_y, width, height) to (x1, y1, x2, y2)
+    if multi_label:
+        i, j = (cls > conf_thres).nonzero(as_tuple=False).T
+        x = torch.cat((box[i], x[i, 4 + j, None], j[:, None].float(), mask[i]), 1)
+    else:  # best class only
+        j = cls.argmax(1, keepdims=True)
+        conf = np.take_along_axis(cls, j, 1)
+        x = np.concatenate((box, conf, j.astype(np.float32), mask), 1)[
+            conf.flatten() > conf_thres
+        ]
+
+    # Filter by class
+    if classes is not None:
+        x = x[(x[:, 5:6] == torch.tensor(classes, device=x.device)).any(1)]
+
+    # Batched NMS
+    c = x[:, 5:6] * (0 if agnostic else max_wh)  # classes
+    boxes, scores = x[:, :4] + c, x[:, 4]  # boxes (offset by class), scores
+    return x[
+        nms(
+            boxes[:, 0],
+            boxes[:, 1],
+            boxes[:, 2],
+            boxes[:, 3],
+            scores,
+            iou_thres,
+            keep_top_k=max_nms,
+        )
+    ]
+
+
+class YoloV8(DetectionModel):
+    __model__ = "YOLOV8"
+
+    def __init__(self, inference_adapter, configuration, preload=False):
+        super().__init__(inference_adapter, configuration, preload)
+        self._check_io_number(1, 1)
+        # TODO: shape checks
+
+    @classmethod
+    def parameters(cls):
+        parameters = super().parameters()
+        parameters.update(
+            {
+                "iou_threshold": NumericalValue(
+                    default_value=0.5,
+                    description="Threshold for non-maximum suppression (NMS) intersection over union (IOU) filtering",
+                ),
+                "stride": NumericalValue(int, min=1, default_value=32)
+                # "agnostic_nms", "max_det", "stride"
+            }
+        )
+        parameters["resize_type"].update_default_value("fit_to_window_letterbox")
+        parameters["confidence_threshold"].update_default_value(0.5)
+        parameters["reverse_input_channels"].update_default_value(True)
+        parameters["pad_value"].update_default_value(114)
+        parameters["scale_values"].update_default_value((255, 255, 255))
+        return parameters
+
+    def postprocess(self, outputs, meta):
+        assert 1 == len(outputs)
+        boxes = non_max_suppression(next(iter(outputs.values())))
+
+        inputImgWidth, inputImgHeight = (
+            meta["original_shape"][1],
+            meta["original_shape"][0],
+        )
+        invertedScaleX, invertedScaleY = (
+            inputImgWidth / self.orig_width,
+            inputImgHeight / self.orig_height,
+        )
+        padLeft, padTop = 0, 0
+        if (
+            "fit_to_window" == self.resize_type
+            or "fit_to_window_letterbox" == self.resize_type
+        ):
+            invertedScaleX = invertedScaleY = max(invertedScaleX, invertedScaleY)
+            if "fit_to_window_letterbox" == self.resize_type:
+                padLeft = (self.orig_width - round(inputImgWidth / invertedScaleX)) // 2
+                padTop = (
+                    self.orig_height - round(inputImgHeight / invertedScaleY)
+                ) // 2
+
+        boxes[:, :4] -= (padLeft, padTop, padLeft, padTop)
+        boxes[:, :4] *= (invertedScaleX, invertedScaleY, invertedScaleX, invertedScaleY)
+
+        intboxes = np.rint(boxes[:, :4])
+        np.clip(
+            intboxes,
+            0,
+            [inputImgWidth, inputImgHeight, inputImgWidth, inputImgHeight],
+            intboxes,
+        )
+        return [
+            Detection(
+                *intboxes[i], boxes[i, 4], boxes[i, 5], self.get_label_name(boxes[i, 5])
+            )
+            for i in range(len(boxes))
+        ]
+
+    def get_label_name(self, label_id):
+        if self.labels is None:
+            return f"#{label_id}"
+        if label_id >= len(self.labels):
+            return f"#{label_id}"
+        return self.labels[label_id]
