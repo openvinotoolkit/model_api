@@ -46,7 +46,7 @@ from .utils import (
     InputTransform,
     OutputTransform,
 )
-from .yolo import YOLO, YOLOF, YOLOX, YoloV3ONNX, YoloV4, YoloV8
+from .yolo import YOLO, YOLOF, YOLOX, YoloV3ONNX, YoloV4
 
 classification_models = [
     "resnet-18-pytorch",
@@ -105,7 +105,7 @@ __all__ = [
     "YoloV4",
     "YOLOF",
     "YOLOX",
-    "YoloV8" "Detection",
+    "Detection",
     "DetectionWithLandmarks",
     "classification_models" "detection_models",
     "segmentation_models",
