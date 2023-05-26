@@ -39,27 +39,26 @@ DetectionModel::DetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyM
     auto confidence_threshold_iter = configuration.find("confidence_threshold");
     if (confidence_threshold_iter == configuration.end()) {
         if (model->has_rt_info("model_info", "confidence_threshold")) {
-            confidenceThreshold = stof(model->get_rt_info<std::string>("model_info", "confidence_threshold"));
+            confidence_threshold = stof(model->get_rt_info<std::string>("model_info", "confidence_threshold"));
         }
     } else {
-        confidenceThreshold = confidence_threshold_iter->second.as<float>();
+        confidence_threshold = confidence_threshold_iter->second.as<float>();
     }
 }
 
 DetectionModel::DetectionModel(std::shared_ptr<InferenceAdapter>& adapter)
    : ImageModel(adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto confidence_threshold_iter = configuration.find("confidence_threshold");
     if (confidence_threshold_iter != configuration.end()) {
-        confidenceThreshold = confidence_threshold_iter->second.as<float>();
+        confidence_threshold = confidence_threshold_iter->second.as<float>();
     }
-
 }
 
 void DetectionModel::updateModelInfo() {
     ImageModel::updateModelInfo();
 
-    model->set_rt_info(confidenceThreshold, "model_info", "confidence_threshold");
+    model->set_rt_info(confidence_threshold, "model_info", "confidence_threshold");
 }
 
 std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile,
@@ -103,7 +102,7 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
 }
 
 std::unique_ptr<DetectionModel> DetectionModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto model_type_iter = configuration.find("model_type");
     std::string model_type;
     if (model_type_iter != configuration.end()) {

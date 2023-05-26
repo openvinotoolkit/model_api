@@ -87,7 +87,7 @@ MaskRCNNModel::MaskRCNNModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap
 
 MaskRCNNModel::MaskRCNNModel(std::shared_ptr<InferenceAdapter>& adapter)
         : ImageModel(adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto confidence_threshold_iter = configuration.find("confidence_threshold");
     if (confidence_threshold_iter != configuration.end()) {
         confidence_threshold = confidence_threshold_iter->second.as<float>();
@@ -126,7 +126,7 @@ std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(const std::string& mo
 }
 
 std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto model_type_iter = configuration.find("model_type");
     std::string model_type = MaskRCNNModel::ModelType;
     if (model_type_iter != configuration.end()) {
@@ -172,7 +172,10 @@ void MaskRCNNModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
                                         interpolationMode,
                                         ov::Shape{inputShape[ov::layout::width_idx(inputLayout)],
                                                   inputShape[ov::layout::height_idx(inputLayout)]},
-                                        pad_value);
+                                        pad_value,
+                                        reverse_input_channels,
+                                        {},
+                                        scale_values);
 
         netInputWidth = inputShape[ov::layout::width_idx(inputLayout)];
         netInputHeight = inputShape[ov::layout::height_idx(inputLayout)];

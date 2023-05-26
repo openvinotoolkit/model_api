@@ -91,7 +91,7 @@ SegmentationModel::SegmentationModel(std::shared_ptr<ov::Model>& model, const ov
 
 SegmentationModel::SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter)
         : ImageModel(adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto blur_strength_iter = configuration.find("blur_strength");
     if (blur_strength_iter != configuration.end()) {
         blur_strength = blur_strength_iter->second.as<int>();
@@ -134,7 +134,7 @@ std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::st
 }
 
 std::unique_ptr<SegmentationModel> SegmentationModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto model_type_iter = configuration.find("model_type");
     std::string model_type = SegmentationModel::ModelType;
     if (model_type_iter != configuration.end()) {
@@ -184,7 +184,10 @@ void SegmentationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) 
                                         interpolationMode,
                                         ov::Shape{inputShape[ov::layout::width_idx(inputLayout)],
                                                   inputShape[ov::layout::height_idx(inputLayout)]},
-                                        pad_value);
+                                        pad_value,
+                                        reverse_input_channels,
+                                        {},
+                                        scale_values);
 
         ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
         ppp.output().model().set_layout(getLayoutFromShape(model->output().get_partial_shape()));

@@ -106,11 +106,29 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
     } else {
         pad_value = pad_value_iter->second.as<uint8_t>();
     }
+
+    auto reverse_input_channels_iter = configuration.find("reverse_input_channels");
+    if (reverse_input_channels_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "reverse_input_channels")) {
+            reverse_input_channels = model->get_rt_info<bool>("model_info", "reverse_input_channels");
+        }
+    } else {
+        reverse_input_channels = reverse_input_channels_iter->second.as<bool>();
+    }
+
+    auto scale_values_iter = configuration.find("scale_values");
+    if (scale_values_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "scale_values")) {
+            scale_values = model->get_rt_info<std::vector<float>>("model_info", "scale_values");
+        }
+    } else {
+        scale_values = labels_iter->second.as<std::vector<float>>();
+    }
 }
 
 ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
     : ModelBase(adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto auto_resize_iter = configuration.find("auto_resize");
     if (auto_resize_iter != configuration.end()) {
         useAutoResize = auto_resize_iter->second.as<bool>();
@@ -146,6 +164,16 @@ ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
     if (pad_value_iter != configuration.end()) {
         pad_value = pad_value_iter->second.as<uint8_t>();
     }
+
+    auto reverse_input_channels_iter = configuration.find("reverse_input_channels");
+    if (reverse_input_channels_iter != configuration.end()) {
+        reverse_input_channels = reverse_input_channels_iter->second.as<bool>();
+    }
+
+    auto scale_values_iter = configuration.find("scale_values");
+    if (scale_values_iter != configuration.end()) {
+        scale_values = labels_iter->second.as<std::vector<float>>();
+    }
 }
 
 void ImageModel::updateModelInfo() {
@@ -170,10 +198,10 @@ std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model
                                             const cv::InterpolationFlags interpolationMode,
                                             const ov::Shape& targetShape,
                                             uint8_t pad_value,
-                                            const std::type_info&,
                                             bool brg2rgb,
                                             const std::vector<float>& mean,
-                                            const std::vector<float>& scale) {
+                                            const std::vector<float>& scale,
+                                            const std::type_info&) {
 
     ov::preprocess::PrePostProcessor ppp(model);
 
