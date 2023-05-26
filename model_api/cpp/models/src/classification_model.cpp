@@ -125,7 +125,7 @@ void ClassificationModel::updateModelInfo() {
     }
 }
 
-std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
+std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload, const std::string& device) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
 
@@ -146,7 +146,7 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std
     std::unique_ptr<ClassificationModel> classifier{new ClassificationModel(model, configuration)};
     classifier->prepare();
     if (preload) {
-        classifier->load(core);
+        classifier->load(core, device);
     }
     return classifier;
 }

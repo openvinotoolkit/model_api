@@ -64,7 +64,8 @@ void DetectionModel::updateModelInfo() {
 std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& modelFile,
                                                              const ov::AnyMap& configuration,
                                                              std::string model_type,
-                                                             bool preload) {
+                                                             bool preload,
+                                                             const std::string& device) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
     if (model_type.empty()) {
@@ -96,7 +97,7 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(const std::string& 
 
     detectionModel->prepare();
     if (preload) {
-        detectionModel->load(core);
+        detectionModel->load(core, device);
     }
     return detectionModel;
 }

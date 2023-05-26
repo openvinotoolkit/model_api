@@ -99,7 +99,7 @@ MaskRCNNModel::MaskRCNNModel(std::shared_ptr<InferenceAdapter>& adapter)
     }
 }
 
-std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
+std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload, const std::string& device) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
 
@@ -120,7 +120,7 @@ std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(const std::string& mo
     std::unique_ptr<MaskRCNNModel> segmentor{new MaskRCNNModel(model, configuration)};
     segmentor->prepare();
     if (preload) {
-        segmentor->load(core);
+        segmentor->load(core, device);
     }
     return segmentor;
 }

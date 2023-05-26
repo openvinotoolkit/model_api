@@ -24,7 +24,6 @@
 #include <openvino/openvino.hpp>
 
 #include <utils/common.hpp>
-#include <utils/config_factory.h>
 #include <utils/ocv_common.hpp>
 #include <utils/slog.hpp>
 
@@ -75,7 +74,7 @@ void ModelBase::updateModelInfo() {
     }
 }
 
-void ModelBase::load(ov::Core& core) {
+void ModelBase::load(ov::Core& core, const std::string& device) {
     if (!inferenceAdapter) {
         inferenceAdapter = std::make_shared<OpenVINOInferenceAdapter>();
     }
@@ -83,7 +82,7 @@ void ModelBase::load(ov::Core& core) {
     // Update model_info erased by pre/postprocessing
     updateModelInfo();
 
-    inferenceAdapter->loadModel(model, core, config.deviceName, config.compilationConfig);
+    inferenceAdapter->loadModel(model, core, device);
 }
 
 std::shared_ptr<ov::Model> ModelBase::prepare() {

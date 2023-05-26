@@ -107,7 +107,7 @@ SegmentationModel::SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter)
     }
 }
 
-std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
+std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload, const std::string& device) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
 
@@ -128,7 +128,7 @@ std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::st
     std::unique_ptr<SegmentationModel> segmentor{new SegmentationModel(model, configuration)};
     segmentor->prepare();
     if (preload) {
-        segmentor->load(core);
+        segmentor->load(core, device);
     }
     return segmentor;
 }
