@@ -101,8 +101,12 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
     auto pad_value_iter = configuration.find("pad_value");
     if (pad_value_iter == configuration.end()) {
         if (model->has_rt_info("model_info", "pad_value")) {
-            // get_rt_info() incorrectly casts it to uint8_t. Cast through string
-            pad_value = std::stoi(model->get_rt_info<std::string>("model_info", "pad_value"));
+            // get_rt_info() incorrectly casts to uint8_t. Cast through int
+            int decoded = model->get_rt_info<int>("model_info", "pad_value");
+            if (0 > decoded || 255 < decoded) {
+                throw std::runtime_error("pad_value must be in range [0, 255]");
+            }
+            pad_value = decoded;
         }
     } else {
         pad_value = pad_value_iter->second.as<uint8_t>();
