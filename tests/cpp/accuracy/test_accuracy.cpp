@@ -226,7 +226,6 @@ void print_help(const char* program_name)
 
 int main(int argc, char **argv)
 {
-    testing::InitGoogleTest(&argc, argv);
     InputParser input(argc, argv);
 
     if(input.cmdOptionExists("-h")){
@@ -249,6 +248,8 @@ int main(int argc, char **argv)
         print_help(argv[0]);
         return 1;
     }
+
+    testing::InitGoogleTest(&argc, argv);
 
     return RUN_ALL_TESTS();
 }
