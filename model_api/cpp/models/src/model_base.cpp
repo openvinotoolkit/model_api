@@ -37,7 +37,7 @@ ModelBase::ModelBase(const std::string& modelFile, const std::string& layout)
 
 ModelBase::ModelBase(std::shared_ptr<InferenceAdapter>& adapter)
         : inferenceAdapter(adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto layout_iter = configuration.find("layout");
     std::string layout = "";
     if (layout_iter != configuration.end()) {
