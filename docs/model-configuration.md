@@ -11,6 +11,7 @@ The list features only model wrappers which intoduce new configuration values in
 1. `reverse_input_channels`: bool - reverse the input channel order
 1. `resize_type`: str - crop, standard, fit_to_window or fit_to_window_letterbox
 1. `embedded_processing`: bool - flag that pre/postprocessing embedded
+1. `pad_value`: int - pad value for resize_image_letterbox embedded into a model
 #### `ClassificationModel`
 1. `topk`: int - number of most likely labels
 1. `labels`: List - list of class labels
