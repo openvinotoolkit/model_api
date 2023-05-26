@@ -83,3 +83,13 @@ protected:
     std::vector<int64_t> presetMasks;
     ov::Layout yoloRegionLayout = "NCHW";
 };
+
+class YoloV8 : public DetectionModelExt {
+    void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
+    void initDefaultParameters(const ov::AnyMap& configuration);
+public:
+    YoloV8(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    YoloV8(std::shared_ptr<InferenceAdapter>& adapter);
+    std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
+    static std::string ModelType;
+};

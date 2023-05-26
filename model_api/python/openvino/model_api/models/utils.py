@@ -273,10 +273,11 @@ def nms(x1, y1, x2, y2, scores, thresh, include_boundaries=False, keep_top_k=Non
         intersection = w * h
 
         union = areas[i] + areas[order[1:]] - intersection
+        overlap = np.zeros_like(intersection, dtype=float)
         overlap = np.divide(
             intersection,
             union,
-            out=np.zeros_like(intersection, dtype=float),
+            out=overlap,
             where=union != 0,
         )
 

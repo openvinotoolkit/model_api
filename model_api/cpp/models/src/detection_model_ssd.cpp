@@ -110,12 +110,13 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
                 0.f,
                 floatInputImgHeight);
             desc.width = clamp(
-                round((detections[i * objectSize + 5] * netInputWidth - padLeft) * invertedScaleX - desc.x),
+                round((detections[i * objectSize + 5] * netInputWidth - padLeft) * invertedScaleX),
                 0.f,
-                floatInputImgWidth);
+                floatInputImgWidth) - desc.x;
             desc.height = clamp(
-                round((detections[i * objectSize + 6] * netInputHeight - padTop) * invertedScaleY - desc.y),
-                0.f, floatInputImgHeight);
+                round((detections[i * objectSize + 6] * netInputHeight - padTop) * invertedScaleY),
+                0.f,
+                floatInputImgHeight) - desc.y;
             result->objects.push_back(desc);
         }
     }
@@ -170,12 +171,13 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessMultipleOutputs(InferenceResult
                 0.f,
                 floatInputImgHeight);
             desc.width = clamp(
-                round((boxes[i * objectSize + 2] * widthScale - padLeft) * invertedScaleX - desc.x),
+                round((boxes[i * objectSize + 2] * widthScale - padLeft) * invertedScaleX),
                 0.f,
-                floatInputImgWidth);
+                floatInputImgWidth) - desc.x;
             desc.height = clamp(
-                round((boxes[i * objectSize + 3] * heightScale - padTop) * invertedScaleY - desc.y),
-                0.f, floatInputImgHeight);
+                round((boxes[i * objectSize + 3] * heightScale - padTop) * invertedScaleY),
+                0.f,
+                floatInputImgHeight) - desc.y;
             result->objects.push_back(desc);
         }
     }

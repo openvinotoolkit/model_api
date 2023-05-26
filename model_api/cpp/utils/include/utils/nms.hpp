@@ -41,8 +41,8 @@ struct Anchor {
 };
 
 template <typename Anchor>
-std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>& scores,
-                     const float thresh, bool includeBoundaries=false) {
+std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<float>& scores,
+                     const float thresh, bool includeBoundaries=false, size_t keep_top_k=std::numeric_limits<size_t>::max()) {
     std::vector<float> areas(boxes.size());
     for (size_t i = 0; i < boxes.size(); ++i) {
         areas[i] = (boxes[i].right - boxes[i].left + includeBoundaries) * (boxes[i].bottom - boxes[i].top + includeBoundaries);
@@ -52,12 +52,12 @@ std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>&
     std::sort(order.begin(), order.end(), [&scores](int o1, int o2) { return scores[o1] > scores[o2]; });
 
     size_t ordersNum = 0;
-    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0; ordersNum++);
+    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0 && ordersNum < keep_top_k; ordersNum++);
 
-    std::vector<int> keep;
+    std::vector<size_t> keep;
     bool shouldContinue = true;
     for (size_t i = 0; shouldContinue && i < ordersNum; ++i) {
-        auto idx1 = order[i];
+        int idx1 = order[i];
         if (idx1 >= 0) {
             keep.push_back(idx1);
             shouldContinue = false;
@@ -68,9 +68,9 @@ std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>&
                     auto overlappingWidth = std::fminf(boxes[idx1].right, boxes[idx2].right) - std::fmaxf(boxes[idx1].left, boxes[idx2].left);
                     auto overlappingHeight = std::fminf(boxes[idx1].bottom, boxes[idx2].bottom) - std::fmaxf(boxes[idx1].top, boxes[idx2].top);
                     auto intersection = overlappingWidth > 0 && overlappingHeight > 0 ? overlappingWidth * overlappingHeight : 0;
-                    auto overlap = intersection / (areas[idx1] + areas[idx2] - intersection);
+                    auto overlap = intersection / (areas[idx1] + areas[idx2] - intersection);  // TODO: 0.0 / 0.0 and non_zero / 0.0 same for python
 
-                    if (overlap >= thresh) {
+                    if (overlap > thresh) {
                         order[j] = -1;
                     }
                 }
