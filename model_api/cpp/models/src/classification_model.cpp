@@ -56,7 +56,11 @@ size_t fargmax(const float* x_start, const float* x_end) noexcept {
     return argmax;
 }
 
-void softmax(float* x_start, float* x_end, float eps = 1e-9) noexcept {
+void softmax(float* x_start, float* x_end, float eps = 1e-9) {
+    if (x_start == x_end) {
+        return;
+    }
+
     float x_max = *std::max_element(x_start, x_end);
     float x_sum = 0.f;
     for (auto it = x_start; it < x_end; ++it) {
