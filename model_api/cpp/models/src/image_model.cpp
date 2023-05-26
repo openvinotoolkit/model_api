@@ -101,7 +101,8 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
     auto pad_value_iter = configuration.find("pad_value");
     if (pad_value_iter == configuration.end()) {
         if (model->has_rt_info("model_info", "pad_value")) {
-            pad_value = model->get_rt_info<uint8_t>("model_info", "pad_value");
+            // get_rt_info() incorrectly casts it to uint8_t. Cast through string
+            pad_value = std::stoi(model->get_rt_info<std::string>("model_info", "pad_value"));
         }
     } else {
         pad_value = pad_value_iter->second.as<uint8_t>();
@@ -208,13 +209,17 @@ std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model
                                             bool brg2rgb,
                                             const std::vector<float>& mean,
                                             const std::vector<float>& scale,
-                                            const std::type_info&) {
-
+                                            const std::type_info& dtype) {
     ov::preprocess::PrePostProcessor ppp(model);
 
-    inputTransform.setPrecision(ppp, inputName);
-    // Set input settings to work with OpenCV
-    ppp.input(inputName).tensor().set_layout(ov::Layout("NHWC"));
+    // Change the input type to the 8-bit image
+    if (dtype == typeid(int)) {
+        ppp.input(inputName).tensor().set_element_type(ov::element::u8);
+    }
+
+    ppp.input(inputName).tensor().set_layout(ov::Layout("NHWC")).set_color_format(
+        ov::preprocess::ColorFormat::BGR
+    );
 
     if (resize_mode != NO_RESIZE) {
         ppp.input(inputName).tensor().set_spatial_dynamic_shape();
@@ -225,15 +230,12 @@ std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model
 
     ppp.input(inputName).model().set_layout(ov::Layout(layout));
 
-    ppp.input(inputName).preprocess().convert_element_type(ov::element::f32);
-
     // Handle color format
     if (brg2rgb) {
-        ppp.input(inputName).tensor().set_color_format(
-            ov::preprocess::ColorFormat::BGR
-        );
         ppp.input(inputName).preprocess().convert_color(ov::preprocess::ColorFormat::RGB);
     }
+
+    ppp.input(inputName).preprocess().convert_element_type(ov::element::f32);
 
     if (!mean.empty()) {
         ppp.input(inputName).preprocess().mean(mean);
