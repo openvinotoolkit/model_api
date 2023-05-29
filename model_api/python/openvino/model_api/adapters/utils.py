@@ -123,6 +123,16 @@ def resize_image_letterbox_graph(input: Output, size, interpolation, pad_value):
         mode=interpolation,
         shape_calculation_mode="sizes",
     )
+    # image = input
+    # image_shape = opset.shape_of(input, name="shape")
+    # nw = opset.convert(
+    #     opset.gather(image_shape, opset.constant(w_axis), axis=0),
+    #     destination_type="i32",
+    # )
+    # nh = opset.convert(
+    #     opset.gather(image_shape, opset.constant(h_axis), axis=0),
+    #     destination_type="i32",
+    # )
     dx = opset.divide(
         opset.subtract(opset.constant(w, dtype=np.int32), nw),
         opset.constant(2, dtype=np.int32),

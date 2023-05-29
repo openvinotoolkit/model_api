@@ -805,15 +805,15 @@ class YoloV8(DetectionModel):
         self._check_io_number(1, 1)
         output = next(iter(self.outputs.values()))
         if "f32" != output.precision:
-            self.raise_error("YoloV8 wrapper requires the output to be of precision f32")
+            self.raise_error("the output must be of precision f32")
         out_shape = output.shape
         if 3 != len(out_shape):
             self.raise_error(
-                "YoloV8 wrapper requires the output to be of rank 3"
+                "the output must be of rank 3"
             )
         if self.labels and len(self.labels) + 4 != out_shape[1]:
             self.raise_error(
-                "YoloV8 wrapper number of labes must be smaller than out_shape[1] by 4"
+                "number of labes must be smaller than out_shape[1] by 4"
             )
 
     @classmethod
