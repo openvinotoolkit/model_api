@@ -27,7 +27,7 @@ from openvino.model_api.adapters.ovms_adapter import OVMSAdapter
 
 
 class WrapperError(RuntimeError):
-    """Special class for errors occurred in Model API wrappers"""
+    """Class for errors occurred in Model API wrappers"""
 
     def __init__(self, wrapper_name, message):
         super().__init__(f"{wrapper_name}: {message}")
@@ -126,7 +126,7 @@ class Model:
         core=None,
         weights_path="",
         adaptor_parameters={},
-        device="AUTO",
+        device="CPU",
         nstreams="1",
         nthreads=None,
         max_num_requests=0,
