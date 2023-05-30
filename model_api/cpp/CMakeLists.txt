@@ -27,7 +27,14 @@ set(model_api_VERSION 0.0.0)
 
 find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
-find_package(nlohmann_json REQUIRED)
+
+if(WIN32)
+    include(FetchContent)
+    FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+    FetchContent_MakeAvailable(json)
+else()
+    find_package(nlohmann_json REQUIRED)
+endif()
 
 file(GLOB MODELS_SOURCES ./models/src/*.cpp)
 file(GLOB MODELS_HEADERS ./models/include/models/*.h)
