@@ -1,12 +1,26 @@
 [
-    {
+     {
         "name": "hrnet-v2-c1-segmentation",
         "type": "SegmentationModel",
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "1: 88986, 2: 3206, 6: 88362, 11: 47834, 12: 6580, 126: 12606, 127: 25066, "
+                    "1: 88986, 2: 3206, 6: 88362, 11: 47834, 12: 6580, 126: 12606, 127: 25066, ",
+                    "(0.970, building;edifice)",
+                    "(0.801, sky)",
+                    "(0.936, road;route)",
+                    "(0.345, sidewalk;pavement)",
+                    "(0.913, sidewalk;pavement)",
+                    "(0.702, sidewalk;pavement)",
+                    "(0.910, sidewalk;pavement)",
+                    "(0.204, person;individual;someone;somebody;mortal;soul)",
+                    "(0.188, person;individual;someone;somebody;mortal;soul)",
+                    "(0.555, person;individual;someone;somebody;mortal;soul)",
+                    "(0.572, person;individual;someone;somebody;mortal;soul)",
+                    "(0.625, person;individual;someone;somebody;mortal;soul)",
+                    "(0.777, animal;animate;being;beast;brute;creature;fauna)",
+                    "(0.939, bicycle;bike;wheel;cycle)"
                 ]
             }
         ]
