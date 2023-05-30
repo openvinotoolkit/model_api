@@ -27,6 +27,7 @@ set(model_api_VERSION 0.0.0)
 
 find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
+find_package(nlohmann_json REQUIRED)
 
 file(GLOB MODELS_SOURCES ./models/src/*.cpp)
 file(GLOB MODELS_HEADERS ./models/include/models/*.h)
@@ -46,7 +47,7 @@ source_group("adapters/include" FILES ${ADAPTERS_HEADERS})
 
 add_library(model_api STATIC ${MODELS_SOURCES} ${UTILS_SOURCES} ${ADAPTERS_SOURCES})
 target_include_directories(model_api PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/models/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/utils/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/adapters/include>" "$<INSTALL_INTERFACE:include>")
-target_link_libraries(model_api PUBLIC openvino::runtime opencv_core opencv_imgproc)
+target_link_libraries(model_api PUBLIC openvino::runtime opencv_core opencv_imgproc nlohmann_json::nlohmann_json)
 set_target_properties(model_api PROPERTIES CXX_STANDARD 17)
 set_target_properties(model_api PROPERTIES CMAKE_CXX_STANDARD_REQUIRED ON)
 if(MSVC)
