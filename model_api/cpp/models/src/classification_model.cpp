@@ -75,14 +75,17 @@ void softmax(float* x_start, float* x_end, float eps = 1e-9) {
 
 bool get_bool_config_value(std::string field_name, std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration) {
     auto value_iter = configuration.find(field_name);
-    if (value_iter == configuration.end())
+    if (value_iter == configuration.end()) {
         if (model->has_rt_info("model_info", field_name)) {
             std::string val = model->get_rt_info<std::string>("model_info", field_name);
             return val == "True" || val == "YES";
         }
-
-    std::string val = value_iter->second.as<std::string>();
-    return val == "True" || val == "YES";
+    }
+    else {
+        std::string val = value_iter->second.as<std::string>();
+        return val == "True" || val == "YES";
+    }
+    return false;
 }
 
 void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t topk) {
