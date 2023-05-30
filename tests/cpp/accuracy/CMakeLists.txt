@@ -54,11 +54,12 @@ endif()
 include(CMakeParseArguments)
 include(FetchContent)
 
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
 FetchContent_Declare(googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG 471087fbfcbc3c66071189a67c313eb1d525ee51  # latest main
 )
-FetchContent_MakeAvailable(googletest)
+FetchContent_MakeAvailable(json googletest)
 
 include(../cmake/common.cmake)
 

@@ -42,5 +42,6 @@ macro(add_test)
     endif()
 
     target_link_libraries(${TEST_NAME} PRIVATE gtest gtest_main)
+    target_link_libraries(${TEST_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 endmacro()
