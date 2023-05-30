@@ -155,7 +155,9 @@ ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, cons
     } else {
         hierarchical_json_config = thresh_iter->second.as<std::string>();
     }
-    hierarchical_config = HierarchicalConfig(hierarchical_json_config);
+    if (hierarchical_json_config.size())  {
+        hierarchical_config = HierarchicalConfig(hierarchical_json_config);
+    }
     resolver = GreedyLabelsResolver(hierarchical_config);
 }
 
