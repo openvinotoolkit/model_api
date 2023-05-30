@@ -339,10 +339,11 @@ class OpenvinoAdapter(InferenceAdapter):
 
     def embed_preprocessing(
         self,
-        layout="NCHW",
-        resize_mode: str = "",
-        interpolation_mode="LINEAR",
-        target_shape: Tuple[int] = None,
+        layout,
+        resize_mode: str,
+        interpolation_mode,
+        target_shape: Tuple[int],
+        pad_value,
         dtype=type(int),
         brg2rgb=False,
         mean=None,
@@ -350,6 +351,14 @@ class OpenvinoAdapter(InferenceAdapter):
         input_idx=0,
     ):
         ppp = PrePostProcessor(self.model)
+
+        # Change the input type to the 8-bit image
+        if dtype == type(int):
+            ppp.input(input_idx).tensor().set_element_type(Type.u8)
+
+        ppp.input(input_idx).tensor().set_layout(ov.Layout("NHWC")).set_color_format(
+            ColorFormat.BGR
+        )
 
         INTERPOLATION_MODE_MAP = {
             "LINEAR": "linear",
@@ -373,7 +382,9 @@ class OpenvinoAdapter(InferenceAdapter):
                 ppp.input(input_idx).tensor().set_shape(input_shape)
                 ppp.input(input_idx).preprocess().custom(
                     RESIZE_MODE_MAP[resize_mode](
-                        target_shape, INTERPOLATION_MODE_MAP[interpolation_mode]
+                        target_shape,
+                        INTERPOLATION_MODE_MAP[interpolation_mode],
+                        pad_value,
                     )
                 )
 
@@ -381,14 +392,6 @@ class OpenvinoAdapter(InferenceAdapter):
                 raise ValueError(
                     f"Upsupported resize type in model preprocessing: {resize_mode}"
                 )
-
-        # Change the input type to the 8-bit image
-        if dtype == type(int):
-            ppp.input(input_idx).tensor().set_element_type(Type.u8)
-
-        ppp.input(input_idx).tensor().set_layout(ov.Layout("NHWC")).set_color_format(
-            ColorFormat.BGR
-        )
 
         # Handle layout
         ppp.input(input_idx).model().set_layout(ov.Layout(layout))

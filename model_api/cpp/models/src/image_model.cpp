@@ -97,11 +97,50 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
     if (model->has_rt_info("model_info", "orig_height")) {
         netInputHeight = model->get_rt_info<size_t>("model_info", "orig_height");
     }
+
+    auto pad_value_iter = configuration.find("pad_value");
+    if (pad_value_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "pad_value")) {
+            // get_rt_info() incorrectly casts to uint8_t. Cast through int
+            int decoded = model->get_rt_info<int>("model_info", "pad_value");
+            if (0 > decoded || 255 < decoded) {
+                throw std::runtime_error("pad_value must be in range [0, 255]");
+            }
+            pad_value = decoded;
+        }
+    } else {
+        pad_value = pad_value_iter->second.as<uint8_t>();
+    }
+
+    auto reverse_input_channels_iter = configuration.find("reverse_input_channels");
+    if (reverse_input_channels_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "reverse_input_channels")) {
+            reverse_input_channels = model->get_rt_info<bool>("model_info", "reverse_input_channels");
+        }
+    } else {
+        reverse_input_channels = reverse_input_channels_iter->second.as<bool>();
+    }
+
+    auto scale_values_iter = configuration.find("scale_values");
+    if (scale_values_iter == configuration.end()) {
+        if (model->has_rt_info("model_info", "scale_values")) {
+            const std::string& str = model->get_rt_info<std::string>("model_info", "scale_values");
+            if (str.empty()) {
+                // Older OpenVINO can't decode empty string.
+                // TODO: remove after upgrade to 2023.0
+                scale_values = {};
+            } else {
+                scale_values = model->get_rt_info<std::vector<float>>("model_info", "scale_values");
+            }
+        }
+    } else {
+        scale_values = labels_iter->second.as<std::vector<float>>();
+    }
 }
 
 ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
     : ModelBase(adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto auto_resize_iter = configuration.find("auto_resize");
     if (auto_resize_iter != configuration.end()) {
         useAutoResize = auto_resize_iter->second.as<bool>();
@@ -132,6 +171,21 @@ ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
     if (netInputHeight_iter != configuration.end()) {
         netInputHeight = netInputHeight_iter->second.as<size_t>();
     }
+
+    auto pad_value_iter = configuration.find("pad_value");
+    if (pad_value_iter != configuration.end()) {
+        pad_value = pad_value_iter->second.as<uint8_t>();
+    }
+
+    auto reverse_input_channels_iter = configuration.find("reverse_input_channels");
+    if (reverse_input_channels_iter != configuration.end()) {
+        reverse_input_channels = reverse_input_channels_iter->second.as<bool>();
+    }
+
+    auto scale_values_iter = configuration.find("scale_values");
+    if (scale_values_iter != configuration.end()) {
+        scale_values = labels_iter->second.as<std::vector<float>>();
+    }
 }
 
 void ImageModel::updateModelInfo() {
@@ -155,35 +209,37 @@ std::shared_ptr<ov::Model> ImageModel::embedProcessing(std::shared_ptr<ov::Model
                                             const RESIZE_MODE resize_mode,
                                             const cv::InterpolationFlags interpolationMode,
                                             const ov::Shape& targetShape,
-                                            const std::type_info&,
+                                            uint8_t pad_value,
                                             bool brg2rgb,
                                             const std::vector<float>& mean,
-                                            const std::vector<float>& scale) {
-
+                                            const std::vector<float>& scale,
+                                            const std::type_info& dtype) {
     ov::preprocess::PrePostProcessor ppp(model);
 
-    inputTransform.setPrecision(ppp, inputName);
-    // Set input settings to work with OpenCV
-    ppp.input(inputName).tensor().set_layout(ov::Layout("NHWC"));
+    // Change the input type to the 8-bit image
+    if (dtype == typeid(int)) {
+        ppp.input(inputName).tensor().set_element_type(ov::element::u8);
+    }
+
+    ppp.input(inputName).tensor().set_layout(ov::Layout("NHWC")).set_color_format(
+        ov::preprocess::ColorFormat::BGR
+    );
 
     if (resize_mode != NO_RESIZE) {
         ppp.input(inputName).tensor().set_spatial_dynamic_shape();
         // Doing resize in u8 is more efficient than FP32 but can lead to slightly different results
         ppp.input(inputName).preprocess().custom(
-            createResizeGraph(resize_mode, targetShape, interpolationMode));
+            createResizeGraph(resize_mode, targetShape, interpolationMode, pad_value));
     }
 
     ppp.input(inputName).model().set_layout(ov::Layout(layout));
 
-    ppp.input(inputName).preprocess().convert_element_type(ov::element::f32);
-
     // Handle color format
     if (brg2rgb) {
-        ppp.input(inputName).tensor().set_color_format(
-            ov::preprocess::ColorFormat::BGR
-        );
         ppp.input(inputName).preprocess().convert_color(ov::preprocess::ColorFormat::RGB);
     }
+
+    ppp.input(inputName).preprocess().convert_element_type(ov::element::f32);
 
     if (!mean.empty()) {
         ppp.input(inputName).preprocess().mean(mean);

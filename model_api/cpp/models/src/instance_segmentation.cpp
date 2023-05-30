@@ -87,7 +87,7 @@ MaskRCNNModel::MaskRCNNModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap
 
 MaskRCNNModel::MaskRCNNModel(std::shared_ptr<InferenceAdapter>& adapter)
         : ImageModel(adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto confidence_threshold_iter = configuration.find("confidence_threshold");
     if (confidence_threshold_iter != configuration.end()) {
         confidence_threshold = confidence_threshold_iter->second.as<float>();
@@ -99,7 +99,7 @@ MaskRCNNModel::MaskRCNNModel(std::shared_ptr<InferenceAdapter>& adapter)
     }
 }
 
-std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
+std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload, const std::string& device) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
 
@@ -120,13 +120,13 @@ std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(const std::string& mo
     std::unique_ptr<MaskRCNNModel> segmentor{new MaskRCNNModel(model, configuration)};
     segmentor->prepare();
     if (preload) {
-        segmentor->load(core);
+        segmentor->load(core, device);
     }
     return segmentor;
 }
 
 std::unique_ptr<MaskRCNNModel> MaskRCNNModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
-    auto configuration = adapter->getModelConfig();
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto model_type_iter = configuration.find("model_type");
     std::string model_type = MaskRCNNModel::ModelType;
     if (model_type_iter != configuration.end()) {
@@ -171,7 +171,11 @@ void MaskRCNNModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
                                         resizeMode,
                                         interpolationMode,
                                         ov::Shape{inputShape[ov::layout::width_idx(inputLayout)],
-                                                  inputShape[ov::layout::height_idx(inputLayout)]});
+                                                  inputShape[ov::layout::height_idx(inputLayout)]},
+                                        pad_value,
+                                        reverse_input_channels,
+                                        {},
+                                        scale_values);
 
         netInputWidth = inputShape[ov::layout::width_idx(inputLayout)];
         netInputHeight = inputShape[ov::layout::height_idx(inputLayout)];
@@ -211,8 +215,8 @@ std::unique_ptr<ResultBase> MaskRCNNModel::postprocess(InferenceResult& infResul
     if (RESIZE_KEEP_ASPECT == resizeMode || RESIZE_KEEP_ASPECT_LETTERBOX == resizeMode) {
         invertedScaleX = invertedScaleY = std::max(invertedScaleX, invertedScaleY);
         if (RESIZE_KEEP_ASPECT_LETTERBOX == resizeMode) {
-            padLeft = (netInputWidth - int(floatInputImgWidth / invertedScaleX)) / 2;
-            padTop = (netInputHeight - int(floatInputImgHeight / invertedScaleY)) / 2;
+            padLeft = (netInputWidth - int(std::round(floatInputImgWidth / invertedScaleX))) / 2;
+            padTop = (netInputHeight - int(std::round(floatInputImgHeight / invertedScaleY))) / 2;
         }
     }
     const int64_t* const labels = infResult.outputsData[outputNames[0]].data<int64_t>();

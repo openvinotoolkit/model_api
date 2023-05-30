@@ -101,8 +101,9 @@ SegmentationModel::SegmentationModel(std::shared_ptr<ov::Model>& model, const ov
     }
 }
 
-SegmentationModel::SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter) : ImageModel(adapter) {
-    auto configuration = adapter->getModelConfig();
+SegmentationModel::SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter)
+        : ImageModel(adapter) {
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto blur_strength_iter = configuration.find("blur_strength");
     if (blur_strength_iter != configuration.end()) {
         blur_strength = blur_strength_iter->second.as<int>();
@@ -118,8 +119,7 @@ SegmentationModel::SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter)
     }
 }
 
-std::unique_ptr<SegmentationModel>
-SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload) {
+std::unique_ptr<SegmentationModel> SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload, const std::string& device) {
     auto core = ov::Core();
     std::shared_ptr<ov::Model> model = core.read_model(modelFile);
 
@@ -140,14 +140,13 @@ SegmentationModel::create_model(const std::string& modelFile, const ov::AnyMap& 
     std::unique_ptr<SegmentationModel> segmentor{new SegmentationModel(model, configuration)};
     segmentor->prepare();
     if (preload) {
-        segmentor->load(core);
+        segmentor->load(core, device);
     }
     return segmentor;
 }
 
-std::unique_ptr<SegmentationModel>
-SegmentationModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
-    auto configuration = adapter->getModelConfig();
+std::unique_ptr<SegmentationModel> SegmentationModel::create_model(std::shared_ptr<InferenceAdapter>& adapter) {
+    const ov::AnyMap& configuration = adapter->getModelConfig();
     auto model_type_iter = configuration.find("model_type");
     std::string model_type = SegmentationModel::ModelType;
     if (model_type_iter != configuration.end()) {
@@ -192,7 +191,17 @@ void SegmentationModel::prepareInputsOutputs(
     }
 
     if (!embedded_processing) {
-        model = ImageModel::embedProcessing(model, inputNames[0], inputLayout, resizeMode, interpolationMode, ov::Shape{inputShape[ov::layout::width_idx(inputLayout)], inputShape[ov::layout::height_idx(inputLayout)]});
+        model = ImageModel::embedProcessing(model,
+                                        inputNames[0],
+                                        inputLayout,
+                                        resizeMode,
+                                        interpolationMode,
+                                        ov::Shape{inputShape[ov::layout::width_idx(inputLayout)],
+                                                  inputShape[ov::layout::height_idx(inputLayout)]},
+                                        pad_value,
+                                        reverse_input_channels,
+                                        {},
+                                        scale_values);
 
         ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
         ppp.output().model().set_layout(getLayoutFromShape(model->output().get_partial_shape()));

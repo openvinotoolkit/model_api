@@ -48,14 +48,15 @@ public:
     static std::vector<std::string> loadLabels(const std::string& labelFilename);
     std::shared_ptr<ov::Model> embedProcessing(std::shared_ptr<ov::Model>& model,
                                                     const std::string& inputName,
-                                                    const ov::Layout& = ov::Layout("NCHW"),
-                                                    RESIZE_MODE resize_mode = NO_RESIZE,
-                                                    const cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR,
-                                                    const ov::Shape& targetShape = ov::Shape(),
-                                                    const std::type_info& dtype = typeid(int),
-                                                    bool brg2rgb = false,
-                                                    const std::vector<float>& mean = {},
-                                                    const std::vector<float>& scale = {});
+                                                    const ov::Layout&,
+                                                    RESIZE_MODE resize_mode,
+                                                    const cv::InterpolationFlags interpolationMode,
+                                                    const ov::Shape& targetShape,
+                                                    uint8_t pad_value,
+                                                    bool brg2rgb,
+                                                    const std::vector<float>& mean,
+                                                    const std::vector<float>& scale,
+                                                    const std::type_info& dtype = typeid(int));
 
 protected:
     RESIZE_MODE selectResizeMode(const std::string& resize_type);
@@ -65,7 +66,6 @@ protected:
         return labelID < labels.size() ? labels[labelID] : std::string("Label #") + std::to_string(labelID);
     }
 
-protected:
     std::vector<std::string> labels = {};
     bool useAutoResize = false;
     bool embedded_processing = false; // flag in model_info that pre/postprocessing embedded
@@ -74,4 +74,7 @@ protected:
     size_t netInputWidth = 0;
     cv::InterpolationFlags interpolationMode = cv::INTER_LINEAR;
     RESIZE_MODE resizeMode = RESIZE_FILL;
+    uint8_t pad_value = 0;
+    bool reverse_input_channels = false;
+    std::vector<float> scale_values;
 };

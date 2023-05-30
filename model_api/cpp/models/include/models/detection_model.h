@@ -34,12 +34,14 @@ public:
     static std::unique_ptr<DetectionModel> create_model(const std::string& modelFile,
                                                         const ov::AnyMap& configuration = {},
                                                         std::string model_type = "",
-                                                        bool preload = true);
+                                                        bool preload = true,
+                                                        const std::string& device = "AUTO");
     static std::unique_ptr<DetectionModel> create_model(std::shared_ptr<InferenceAdapter>& adapter);
 
     virtual std::unique_ptr<DetectionResult> infer(const ImageInputData& inputData);
 
 protected:
-    float confidenceThreshold = 0.5f;
+    float confidence_threshold = 0.5f;
+
     void updateModelInfo() override;
 };
