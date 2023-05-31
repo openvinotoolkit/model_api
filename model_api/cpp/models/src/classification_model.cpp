@@ -431,10 +431,6 @@ HierarchicalConfig::HierarchicalConfig(const std::string& json_repr)  {
     }
 }
 
-HierarchicalConfig::HierarchicalConfig()  {}
-
-GreedyLabelsResolver::GreedyLabelsResolver() {}
-
 GreedyLabelsResolver::GreedyLabelsResolver(const HierarchicalConfig& config) :
     label_to_idx(config.label_to_idx),
     label_relations(config.label_tree_edges),

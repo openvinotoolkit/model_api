@@ -41,13 +41,13 @@ struct HierarchicalConfig {
     size_t num_multilabel_heads;
     size_t num_single_label_classes;
 
-    HierarchicalConfig();
+    HierarchicalConfig() = default;
     HierarchicalConfig(const std::string&);
 };
 
 class GreedyLabelsResolver {
     public:
-        GreedyLabelsResolver();
+        GreedyLabelsResolver() = default;
         GreedyLabelsResolver(const HierarchicalConfig&);
 
         std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
