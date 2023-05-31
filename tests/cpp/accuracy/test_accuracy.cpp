@@ -156,37 +156,26 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 const float *ranges[] = {range};
                 cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
 
-                {
+
+                std::stringstream prediction_buffer;
+                for (int i = 0; i < range[1]; ++i) {
+                    const int count = static_cast<int>(outHist.at<float>(i));
+                    if (count > 0) {
+                        prediction_buffer << i << ": " << count << ", ";
+                    }
+                }
+
+                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+
+                auto contours = model->getContours(inference_result);
+                int j = 1; //First reference is histogram of mask
+                for (auto &contour: contours) {
                     std::stringstream prediction_buffer;
-                    for (int i = 0; i < range[1]; ++i) {
-                        const int count = static_cast<int>(outHist.at<float>(i));
-                        if (count > 0) {
-                            prediction_buffer << i << ": " << count << ", ";
-                        }
-                    }
+                    prediction_buffer << contour;
+                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                    j++;
 
-                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
                 }
-                {
-                    auto contours = model->getContours(inference_result);
-                    std::cout << modelData.testData[i].reference.size() << std::endl;
-                    int j = 1;
-                    for (auto &contour: contours) {
-                        std::stringstream prediction_buffer;
-                        prediction_buffer << contour;
-                        if (modelData.testData[i].reference.size() <= j) {
-                            std::cout << "\"" << contour <<  "\""  << std::endl;
-                        } else {
-                            ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
-                        }
-                        j++;
-
-                    }
-                }
-
-
-
-
             }
         }
         else if (modelData.type == "MaskRCNNModel") {

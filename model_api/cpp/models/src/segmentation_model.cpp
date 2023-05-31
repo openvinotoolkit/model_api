@@ -270,7 +270,7 @@ std::vector<Contour> SegmentationModel::getContours(const ImageResultWithSoftPre
         std::vector<std::vector<cv::Point>> contours;
         cv::findContours(label_index_map, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 
-        std::string label = getLabelName(index);
+        std::string label = getLabelName(index - 1);
 
         for (unsigned int i = 0; i < contours.size(); i++) {
             cv::Mat mask = cv::Mat::zeros(imageResult.resultImage.rows, imageResult.resultImage.cols, imageResult.resultImage.type());
