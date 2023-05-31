@@ -45,9 +45,8 @@ float sigmoid(float x) noexcept {
 
 size_t fargmax(const float* x_start, const float* x_end) noexcept {
     size_t argmax = 0;
-    auto iter = x_start;
 
-    while(++iter < x_end) {
+    for (const float* iter = x_start; iter < x_end; ++iter) {
         if (x_start[argmax] < *iter) {
             argmax = iter - x_start;
         }
