@@ -37,6 +37,8 @@ class ClassificationModel(ImageModel):
 
         if self.hierarchical:
             self.embedded_processing = True
+            if not self.hierarchical_config:
+                self.raise_error("Hierarchical classification config is empty.")
             self.hierarchical_info = json.loads(self.hierarchical_config)
             self.labels_resolver = GreedyLabelsResolver(self.hierarchical_info)
             if preload:
