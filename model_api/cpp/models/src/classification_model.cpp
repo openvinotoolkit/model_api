@@ -155,10 +155,13 @@ ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, cons
     } else {
         hierarchical_json_config = thresh_iter->second.as<std::string>();
     }
-    if (hierarchical_json_config.size())  {
+    if (hierarchical)  {
+        if (hierarchical_json_config.empty()) {
+            throw std::runtime_error("Error: empty hierarchical classification config");
+        }
         hierarchical_config = HierarchicalConfig(hierarchical_json_config);
+        resolver = GreedyLabelsResolver(hierarchical_config);
     }
-    resolver = GreedyLabelsResolver(hierarchical_config);
 }
 
 ClassificationModel::ClassificationModel(std::shared_ptr<InferenceAdapter>& adapter)
@@ -265,17 +268,16 @@ std::unique_ptr<ResultBase> ClassificationModel::get_multilabel_predictions(Infe
 
 std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(InferenceResult& infResult) {
     const ov::Tensor& logitsTensor = infResult.outputsData.find(outputNames[0])->second;
-    const float* logitsPtr = logitsTensor.data<float>();
+    float* logitsPtr = logitsTensor.data<float>();
 
-    std::vector<std::string> predicted_labels;
+    std::vector<std::reference_wrapper<std::string>> predicted_labels;
     std::vector<float> predicted_scores;
-    std::vector<float> activated_logits(hierarchical_config.num_single_label_classes);
-    std::copy(logitsPtr, logitsPtr + hierarchical_config.num_single_label_classes, activated_logits.data());
+    std::vector<float> activated_logits(logitsPtr, logitsPtr + hierarchical_config.num_single_label_classes);
 
     predicted_labels.reserve(hierarchical_config.num_multiclass_heads + hierarchical_config.num_multilabel_heads);
     predicted_scores.reserve(hierarchical_config.num_multiclass_heads + hierarchical_config.num_multilabel_heads);
 
-    for (int i = 0; i < hierarchical_config.num_multiclass_heads; ++i) {
+    for (size_t i = 0; i < hierarchical_config.num_multiclass_heads; ++i) {
         const auto& logits_range = hierarchical_config.head_idx_to_logits_range[i];
         softmax(activated_logits.data() + logits_range.first, activated_logits.data() + logits_range.second);
         size_t j = fargmax(activated_logits.data() + logits_range.first, activated_logits.data() + logits_range.second);
@@ -286,7 +288,7 @@ std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(In
     if (hierarchical_config.num_multilabel_heads) {
         const float* mlc_logitsPtr = logitsPtr + hierarchical_config.num_single_label_classes;
 
-        for (int i = 0; i < hierarchical_config.num_multilabel_heads; ++i) {
+        for (size_t i = 0; i < hierarchical_config.num_multilabel_heads; ++i) {
             float score = sigmoid(mlc_logitsPtr[i]);
             if (score > confidence_threshold) {
                 predicted_scores.push_back(score);
@@ -438,7 +440,8 @@ GreedyLabelsResolver::GreedyLabelsResolver(const HierarchicalConfig& config) :
     label_relations(config.label_tree_edges),
     label_groups(config.all_groups) {}
 
-std::pair<std::vector<std::string>, std::vector<float>> GreedyLabelsResolver::resolve_labels(const std::vector<std::string>& labels, const std::vector<float>& scores) {
+std::pair<std::vector<std::string>, std::vector<float>> GreedyLabelsResolver::resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
+                                                                                             const std::vector<float>& scores) {
     std::map<std::string, float> label_to_prob;
     for (const auto& label_idx : label_to_idx) {
         label_to_prob[label_idx.first] = 0.f;

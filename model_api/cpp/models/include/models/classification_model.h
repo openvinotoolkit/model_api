@@ -32,14 +32,14 @@ struct ClassificationResult;
 struct ResultBase;
 struct ImageInputData;
 
-struct HierarchicalConfig  {
+struct HierarchicalConfig {
     std::map<std::string, int> label_to_idx;
     std::vector<std::pair<std::string, std::string>> label_tree_edges;
     std::vector<std::vector<std::string>> all_groups;
-    std::map<int, std::pair<int,int>> head_idx_to_logits_range;
-    int num_multiclass_heads;
-    int num_multilabel_heads;
-    int num_single_label_classes;
+    std::map<size_t, std::pair<size_t,size_t>> head_idx_to_logits_range;
+    size_t num_multiclass_heads;
+    size_t num_multilabel_heads;
+    size_t num_single_label_classes;
 
     HierarchicalConfig();
     HierarchicalConfig(const std::string&);
@@ -50,7 +50,8 @@ class GreedyLabelsResolver {
         GreedyLabelsResolver();
         GreedyLabelsResolver(const HierarchicalConfig&);
 
-        std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::string>& labels, const std::vector<float>& scores);
+        std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
+                                                                               const std::vector<float>& scores);
     protected:
         std::map<std::string, int> label_to_idx;
         std::vector<std::pair<std::string, std::string>> label_relations;
