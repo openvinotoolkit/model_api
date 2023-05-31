@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.26)
 
 # Multi config generators such as Visual Studio ignore CMAKE_BUILD_TYPE. Multi config generators are configured with
 # CMAKE_CONFIGURATION_TYPES, but limiting options in it completely removes such build options
@@ -28,13 +28,9 @@ set(model_api_VERSION 0.0.0)
 find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 
-if(WIN32)
-    include(FetchContent)
-    FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
-    FetchContent_MakeAvailable(json)
-else()
-    find_package(nlohmann_json REQUIRED)
-endif()
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 file(GLOB MODELS_SOURCES ./models/src/*.cpp)
 file(GLOB MODELS_HEADERS ./models/include/models/*.h)
