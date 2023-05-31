@@ -797,8 +797,8 @@ def non_max_suppression(
     ]
 
 
-class YoloV8(DetectionModel):
-    __model__ = "YoloV8"
+class YOLOv5(DetectionModel):
+    __model__ = "YOLOv5"
 
     def __init__(self, inference_adapter, configuration, preload=False):
         super().__init__(inference_adapter, configuration, preload)
@@ -880,3 +880,8 @@ class YoloV8(DetectionModel):
             )
             for i in range(len(boxes))
         ]
+
+
+class YOLOv8(YOLOv5):
+    """YOLOv5 and YOLOv8 are identical in terms of inference"""
+    __model__ = "YOLOv8"

@@ -506,7 +506,7 @@ ModelYolo::Region::Region(size_t classes,
     }
 }
 
-std::string YoloV8::ModelType = "YoloV8";
+std::string YoloV8::ModelType = "YOLOv8";
 
 void YoloV8::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     const ov::Output<ov::Node>& input = model->input();
@@ -619,7 +619,7 @@ std::unique_ptr<ResultBase> YoloV8::postprocess(InferenceResult& infResult) {
     }
     bool agnostic = false;
     float max_wh = 7680;
-    std::vector<Anchor> boxes_with_class{boxes};
+    std::vector<Anchor> boxes_with_class{boxes};  // TODO: update
     for (int i = 0; i < boxes_with_class.size(); ++i) {
         boxes_with_class[i].left += max_wh * labelIDs[i];
         boxes_with_class[i].top += max_wh * labelIDs[i];

@@ -6,7 +6,7 @@ import openvino.runtime as ov
 import pytest
 import torch
 import torchvision.transforms as T
-from openvino.model_api.models import YoloV8
+from openvino.model_api.models import YOLOv5
 from openvino.model_api.models.utils import resize_image_letterbox
 from ultralytics import YOLO
 from ultralytics.yolo.engine.results import Results
@@ -151,15 +151,15 @@ def data(pytestconfig):
 @functools.lru_cache(maxsize=1)
 def cached_models(folder, pt):
     pt = Path(pt)
-    yolo_folder = folder / "YoloV8"
+    yolo_folder = folder / "YOLOv8"
     yolo_folder.mkdir(exist_ok=True)  # TODO: maybe remove
     export_dir = patch_export(YOLO(yolo_folder / pt))  # If there is no file it is downloaded
-    copy_path = folder / "YoloV8/detector" / pt.stem
+    copy_path = folder / "YOLOv8/detector" / pt.stem
     copy_tree(str(export_dir), str(copy_path))  # C++ tests expect a model here
     xml = (copy_path / (pt.stem + ".xml"))
     ref_dir = copy_path / "ref"
     ref_dir.mkdir(exist_ok=True)
-    impl_wrapper = YoloV8.create_model(xml, device="CPU")
+    impl_wrapper = YOLOv5.create_model(xml, device="CPU")
     ref_wrapper = YOLO(export_dir)
     ref_wrapper.overrides["imgsz"] = (impl_wrapper.w, impl_wrapper.h)
     compiled_model = ov.Core().compile_model(xml, "CPU")
@@ -289,9 +289,9 @@ def test_detector(imname, data, pt):
 
 
 def test_classifier(data):
-    # export_path = YOLO("https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n-cls.pt").export(format="openvino")
+    # export_path = YOLO("https://github.com/ultralytics/assets/releases/download/v0.0.0/YOLOv8n-cls.pt").export(format="openvino")
     export_path = YOLO(
-        "/home/wov/r/ultralytics/examples/YOLOv8-CPP-Inference/build/yolov8n-cls.pt"
+        "/home/wov/r/ultralytics/examples/YOLOv8-CPP-Inference/build/YOLOv8n-cls.pt"
     ).export(format="openvino")
     xmls = [file for file in os.listdir(export_path) if file.endswith(".xml")]
     if 1 != len(xmls):
@@ -334,167 +334,167 @@ def test_classifier(data):
         assert (result.orig_img == ref_predictions.orig_img).all()
         assert (result.probs == ref_predictions.probs).all()
 
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname6] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname7] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname10] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname12] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname17] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname21] - ValueError: operands could not be broadcast together with shapes (22,4) (20,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname33] - ValueError: operands could not be broadcast together with shapes (18,4) (19,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname34] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname37] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname39] - ValueError: operands could not be broadcast together with shapes (2,4) (3,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname43] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname47] - ValueError: operands could not be broadcast together with shapes (17,4) (16,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname52] - ValueError: operands could not be broadcast together with shapes (22,4) (21,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname53] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname58] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname59] - ValueError: operands could not be broadcast together with shapes (3,4) (2,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname70] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname79] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname80] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname82] - ValueError: operands could not be broadcast together with shapes (6,4) (7,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname87] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname96] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname98] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname101] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname104] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname105] - ValueError: operands could not be broadcast together with shapes (21,4) (20,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname110] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname115] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5n6u.pt-imname119] - ValueError: operands could not be broadcast together with shapes (5,4) (4,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname8] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname20] - ValueError: operands could not be broadcast together with shapes (12,4) (11,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname21] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname22] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname26] - ValueError: operands could not be broadcast together with shapes (10,4) (9,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname33] - ValueError: operands could not be broadcast together with shapes (29,4) (30,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname34] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname37] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname43] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname44] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname47] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname52] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname67] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname70] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname73] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname79] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname97] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname99] - ValueError: operands could not be broadcast together with shapes (7,4) (8,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname103] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname105] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5s6u.pt-imname117] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname8] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname16] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname21] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname33] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname37] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname40] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname44] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname45] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname47] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname50] - ValueError: operands could not be broadcast together with shapes (5,4) (4,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname52] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname56] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname60] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname62] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname72] - ValueError: operands could not be broadcast together with shapes (4,4) (3,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname79] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname81] - ValueError: operands could not be broadcast together with shapes (5,4) (6,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname101] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname104] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname105] - ValueError: operands could not be broadcast together with shapes (30,4) (29,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname110] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname125] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5m6u.pt-imname127] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname12] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname13] - ValueError: operands could not be broadcast together with shapes (8,4) (7,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname17] - ValueError: operands could not be broadcast together with shapes (12,4) (11,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname21] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname22] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname26] - ValueError: operands could not be broadcast together with shapes (9,4) (10,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname30] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname31] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname33] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname37] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname39] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname40] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname43] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname45] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname46] - ValueError: operands could not be broadcast together with shapes (5,4) (6,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname47] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname52] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname56] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname59] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname60] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname68] - ValueError: operands could not be broadcast together with shapes (13,4) (14,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname80] - ValueError: operands could not be broadcast together with shapes (7,4) (8,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname95] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname97] - ValueError: operands could not be broadcast together with shapes (12,4) (13,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname104] - ValueError: operands could not be broadcast together with shapes (6,4) (5,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname109] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname110] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5l6u.pt-imname119] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname8] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname13] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname17] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname20] - ValueError: operands could not be broadcast together with shapes (8,4) (7,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname21] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname22] - ValueError: operands could not be broadcast together with shapes (19,4) (20,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname23] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname30] - ValueError: operands could not be broadcast together with shapes (12,4) (13,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname33] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname34] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname40] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname47] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname52] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname59] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname60] - ValueError: operands could not be broadcast together with shapes (11,4) (12,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname63] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname70] - ValueError: operands could not be broadcast together with shapes (16,4) (15,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname79] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname80] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname87] - ValueError: operands could not be broadcast together with shapes (4,4) (5,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname88] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname95] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname99] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname102] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname104] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname105] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname117] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5x6u.pt-imname118] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8n.pt-imname6] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8n.pt-imname25] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8n.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8s.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8s.pt-imname44] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8s.pt-imname90] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8s.pt-imname99] - ValueError: operands could not be broadcast together with shapes (10,4) (9,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8s.pt-imname119] - ValueError: operands could not be broadcast together with shapes (2,4) (3,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8m.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8m.pt-imname50] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8m.pt-imname126] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8l.pt-imname90] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8l.pt-imname99] - ValueError: operands could not be broadcast together with shapes (12,4) (13,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8x.pt-imname13] - ValueError: operands could not be broadcast together with shapes (7,4) (6,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8x.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8x.pt-imname44] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov8x.pt-imname61] - ValueError: operands could not be broadcast together with shapes (3,4) (4,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5nu.pt-imname25] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5nu.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5nu.pt-imname119] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5nu.pt-imname126] - ValueError: operands could not be broadcast together with shapes (5,4) (6,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5su.pt-imname6] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5su.pt-imname13] - ValueError: operands could not be broadcast together with shapes (6,4) (7,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5su.pt-imname25] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5su.pt-imname44] - ValueError: operands could not be broadcast together with shapes (8,4) (9,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5mu.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5mu.pt-imname90] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5mu.pt-imname109] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5lu.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5lu.pt-imname103] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5xu.pt-imname28] - assert False
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5xu.pt-imname44] - ValueError: operands could not be broadcast together with shapes (7,4) (8,4)
-# FAILED tests\python\accuracy\test_YoloV8.py::test_detector[yolov5xu.pt-imname119] - ValueError: operands could not be broadcast together with shapes (2,4) (3,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname6] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname7] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname10] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname12] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname17] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname21] - ValueError: operands could not be broadcast together with shapes (22,4) (20,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname33] - ValueError: operands could not be broadcast together with shapes (18,4) (19,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname34] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname37] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname39] - ValueError: operands could not be broadcast together with shapes (2,4) (3,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname43] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname47] - ValueError: operands could not be broadcast together with shapes (17,4) (16,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname52] - ValueError: operands could not be broadcast together with shapes (22,4) (21,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname53] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname58] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname59] - ValueError: operands could not be broadcast together with shapes (3,4) (2,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname70] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname79] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname80] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname82] - ValueError: operands could not be broadcast together with shapes (6,4) (7,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname87] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname96] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname98] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname101] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname104] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname105] - ValueError: operands could not be broadcast together with shapes (21,4) (20,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname110] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname115] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5n6u.pt-imname119] - ValueError: operands could not be broadcast together with shapes (5,4) (4,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname8] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname20] - ValueError: operands could not be broadcast together with shapes (12,4) (11,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname21] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname22] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname26] - ValueError: operands could not be broadcast together with shapes (10,4) (9,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname33] - ValueError: operands could not be broadcast together with shapes (29,4) (30,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname34] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname37] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname43] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname44] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname47] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname52] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname67] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname70] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname73] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname79] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname97] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname99] - ValueError: operands could not be broadcast together with shapes (7,4) (8,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname103] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname105] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5s6u.pt-imname117] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname8] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname16] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname21] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname33] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname37] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname40] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname44] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname45] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname47] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname50] - ValueError: operands could not be broadcast together with shapes (5,4) (4,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname52] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname56] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname60] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname62] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname72] - ValueError: operands could not be broadcast together with shapes (4,4) (3,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname79] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname81] - ValueError: operands could not be broadcast together with shapes (5,4) (6,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname101] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname104] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname105] - ValueError: operands could not be broadcast together with shapes (30,4) (29,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname110] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname125] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5m6u.pt-imname127] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname12] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname13] - ValueError: operands could not be broadcast together with shapes (8,4) (7,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname17] - ValueError: operands could not be broadcast together with shapes (12,4) (11,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname21] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname22] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname26] - ValueError: operands could not be broadcast together with shapes (9,4) (10,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname30] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname31] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname33] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname37] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname39] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname40] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname43] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname45] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname46] - ValueError: operands could not be broadcast together with shapes (5,4) (6,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname47] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname52] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname56] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname59] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname60] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname68] - ValueError: operands could not be broadcast together with shapes (13,4) (14,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname80] - ValueError: operands could not be broadcast together with shapes (7,4) (8,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname95] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname97] - ValueError: operands could not be broadcast together with shapes (12,4) (13,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname104] - ValueError: operands could not be broadcast together with shapes (6,4) (5,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname109] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname110] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5l6u.pt-imname119] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname8] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname13] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname17] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname20] - ValueError: operands could not be broadcast together with shapes (8,4) (7,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname21] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname22] - ValueError: operands could not be broadcast together with shapes (19,4) (20,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname23] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname30] - ValueError: operands could not be broadcast together with shapes (12,4) (13,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname33] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname34] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname40] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname47] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname52] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname59] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname60] - ValueError: operands could not be broadcast together with shapes (11,4) (12,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname63] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname70] - ValueError: operands could not be broadcast together with shapes (16,4) (15,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname79] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname80] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname87] - ValueError: operands could not be broadcast together with shapes (4,4) (5,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname88] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname95] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname99] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname102] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname104] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname105] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname117] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5x6u.pt-imname118] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8n.pt-imname6] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8n.pt-imname25] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8n.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8s.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8s.pt-imname44] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8s.pt-imname90] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8s.pt-imname99] - ValueError: operands could not be broadcast together with shapes (10,4) (9,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8s.pt-imname119] - ValueError: operands could not be broadcast together with shapes (2,4) (3,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8m.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8m.pt-imname50] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8m.pt-imname126] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8l.pt-imname90] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8l.pt-imname99] - ValueError: operands could not be broadcast together with shapes (12,4) (13,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8x.pt-imname13] - ValueError: operands could not be broadcast together with shapes (7,4) (6,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8x.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8x.pt-imname44] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[YOLOv8x.pt-imname61] - ValueError: operands could not be broadcast together with shapes (3,4) (4,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5nu.pt-imname25] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5nu.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5nu.pt-imname119] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5nu.pt-imname126] - ValueError: operands could not be broadcast together with shapes (5,4) (6,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5su.pt-imname6] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5su.pt-imname13] - ValueError: operands could not be broadcast together with shapes (6,4) (7,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5su.pt-imname25] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5su.pt-imname44] - ValueError: operands could not be broadcast together with shapes (8,4) (9,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5mu.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5mu.pt-imname90] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5mu.pt-imname109] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5lu.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5lu.pt-imname103] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5xu.pt-imname28] - assert False
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5xu.pt-imname44] - ValueError: operands could not be broadcast together with shapes (7,4) (8,4)
+# FAILED tests\python\accuracy\test_YOLOv8.py::test_detector[yolov5xu.pt-imname119] - ValueError: operands could not be broadcast together with shapes (2,4) (3,4)
