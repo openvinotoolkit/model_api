@@ -126,7 +126,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "254, pug, 0.153)"
+                    "(254, pug, 0.153)"
                 ]
             }
         ]
