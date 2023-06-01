@@ -90,7 +90,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
     for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
         if (modelData.type == "DetectionModel") {
-            auto model = DetectionModel::create_model(modelXml);
+            bool preload = true;
+            auto model = DetectionModel::create_model(modelXml, {}, "", preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -112,7 +113,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "ClassificationModel") {
-            auto model = ClassificationModel::create_model(modelXml);
+            bool preload = true;
+            auto model = ClassificationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -133,7 +135,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "SegmentationModel") {
-            auto model = SegmentationModel::create_model(modelXml);
+            bool preload = true;
+            auto model = SegmentationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -154,10 +157,11 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
 
                 std::stringstream prediction_buffer;
+                prediction_buffer << std::fixed << std::setprecision(3);
                 for (int i = 0; i < range[1]; ++i) {
-                    const int count = static_cast<int>(outHist.at<float>(i));
+                    const float count = outHist.at<float>(i);
                     if (count > 0) {
-                        prediction_buffer << i << ": " << count << ", ";
+                        prediction_buffer << i << ": " << count / predicted_mask[0].total() << ", ";
                     }
                 }
 
@@ -165,7 +169,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "MaskRCNNModel") {
-            auto model = MaskRCNNModel::create_model(modelXml);
+            bool preload = true;
+            auto model = MaskRCNNModel::create_model(modelXml, {}, preload, "CPU");
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
