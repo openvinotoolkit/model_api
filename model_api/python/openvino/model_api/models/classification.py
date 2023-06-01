@@ -127,7 +127,6 @@ class ClassificationModel(ImageModel):
     def get_multiclass_predictions(self, outputs):
         indicesTensor = outputs[self.out_layer_names[0]][0]
         scoresTensor = outputs[self.out_layer_names[1]][0]
-        print(indicesTensor, scoresTensor)
         labels = [self.labels[i] if self.labels else "" for i in indicesTensor]
         return list(zip(indicesTensor, labels, scoresTensor))
 
