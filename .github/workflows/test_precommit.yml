@@ -148,7 +148,7 @@ jobs:
         source venv/Scripts/activate
         python -m pip install --upgrade pip
         pip install model_api/python/[tests]
-        curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2022.3/windows/w_openvino_toolkit_windows_2022.3.0.9052.9752fafe8eb_x86_64.zip --output w_openvino_toolkit_windows.zip
+        curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/windows/w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64.zip --output w_openvino_toolkit_windows.zip
         unzip w_openvino_toolkit_windows.zip
         rm w_openvino_toolkit_windows.zip
         curl -L https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe --output opencv-4.7.0-windows.exe
