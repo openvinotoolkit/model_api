@@ -57,3 +57,4 @@ if __name__ == "__main__":
     retrieve_otx_model(args.data_dir, "Lite-hrnet-x-mod3")
     retrieve_otx_model(args.data_dir, "is_efficientnetb2b_maskrcnn_coco_reduced")
     retrieve_otx_model(args.data_dir, "is_resnet50_maskrcnn_coco_reduced")
+    retrieve_otx_model(args.data_dir, "mobilenet_v3_large_hc_cf")
