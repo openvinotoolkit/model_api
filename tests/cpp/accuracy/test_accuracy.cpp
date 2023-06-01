@@ -90,7 +90,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
     for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
         if (modelData.type == "DetectionModel") {
-            auto model = DetectionModel::create_model(modelXml);
+            bool preload = true;
+            auto model = DetectionModel::create_model(modelXml, {}, "", preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -134,7 +135,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "SegmentationModel") {
-            auto model = SegmentationModel::create_model(modelXml);
+            bool preload = true;
+            auto model = SegmentationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -167,7 +169,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "MaskRCNNModel") {
-            auto model = MaskRCNNModel::create_model(modelXml);
+            bool preload = true;
+            auto model = MaskRCNNModel::create_model(modelXml, {}, preload, "CPU");
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
