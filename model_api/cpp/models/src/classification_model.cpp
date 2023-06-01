@@ -271,17 +271,16 @@ std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(In
 
     std::vector<std::reference_wrapper<std::string>> predicted_labels;
     std::vector<float> predicted_scores;
-    std::vector<float> activated_logits(logitsPtr, logitsPtr + hierarchical_config.num_single_label_classes);
 
     predicted_labels.reserve(hierarchical_config.num_multiclass_heads + hierarchical_config.num_multilabel_heads);
     predicted_scores.reserve(hierarchical_config.num_multiclass_heads + hierarchical_config.num_multilabel_heads);
 
     for (size_t i = 0; i < hierarchical_config.num_multiclass_heads; ++i) {
         const auto& logits_range = hierarchical_config.head_idx_to_logits_range[i];
-        softmax(activated_logits.data() + logits_range.first, activated_logits.data() + logits_range.second);
-        size_t j = fargmax(activated_logits.data() + logits_range.first, activated_logits.data() + logits_range.second);
+        softmax(logitsPtr + logits_range.first, logitsPtr + logits_range.second);
+        size_t j = fargmax(logitsPtr + logits_range.first, logitsPtr + logits_range.second);
         predicted_labels.push_back(hierarchical_config.all_groups[i][j]);
-        predicted_scores.push_back(activated_logits[logits_range.first + j]);
+        predicted_scores.push_back(logitsPtr[logits_range.first + j]);
     }
 
     if (hierarchical_config.num_multilabel_heads) {
