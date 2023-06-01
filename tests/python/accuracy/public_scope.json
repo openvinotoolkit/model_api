@@ -126,7 +126,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(222, kuvasz, 0.140)"
+                    "(254, pug, 0.153)"
                 ]
             }
         ]

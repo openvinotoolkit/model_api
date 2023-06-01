@@ -112,7 +112,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "ClassificationModel") {
-            auto model = ClassificationModel::create_model(modelXml);
+            bool preload = true;
+            auto model = ClassificationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
