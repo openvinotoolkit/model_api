@@ -67,7 +67,7 @@ def test_image_models(data, dump, result, model_data):
     name = model_data["name"]
     if name.endswith(".xml"):
         name = f"{data}/{name}"
-    model = eval(model_data["type"]).create_model(name, download_dir=data)
+    model = eval(model_data["type"]).create_model(name, device="CPU", download_dir=data)
 
     test_result = []
 
