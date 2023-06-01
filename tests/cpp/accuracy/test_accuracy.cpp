@@ -154,10 +154,11 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
 
                 std::stringstream prediction_buffer;
+                prediction_buffer << std::fixed << std::setprecision(3);
                 for (int i = 0; i < range[1]; ++i) {
-                    const int count = static_cast<int>(outHist.at<float>(i));
+                    const float count = outHist.at<float>(i);
                     if (count > 0) {
-                        prediction_buffer << i << ": " << count << ", ";
+                        prediction_buffer << i << ": " << count / predicted_mask[0].total() << ", ";
                     }
                 }
 

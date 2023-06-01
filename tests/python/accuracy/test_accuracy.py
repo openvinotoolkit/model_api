@@ -32,7 +32,7 @@ def process_output(output, model_type):
         prediction_buffer = ""
         for i, count in enumerate(outHist):
             if count > 0:
-                prediction_buffer += f"{i}: {int(count[0])}, "
+                prediction_buffer += f"{i}: {count[0] / output.size:.3f}, "
         return prediction_buffer
     elif model_type == MaskRCNNModel.__name__:
         return str(output)
