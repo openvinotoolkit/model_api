@@ -84,8 +84,6 @@ TEST_P(ClassificationModelParameterizedTest, TestClassificationDefaultConfig) {
 
     auto embedded_processing = ov_model->get_rt_info<bool>("model_info", "embedded_processing");
     EXPECT_TRUE(embedded_processing);
-
-    SUCCEED();
 }
 
 TEST_P(ClassificationModelParameterizedTest, TestClassificationCustomConfig) {
@@ -114,8 +112,6 @@ TEST_P(ClassificationModelParameterizedTest, TestClassificationCustomConfig) {
     for (size_t i = 0; i < num_classes; i++) {
         EXPECT_EQ(labels[i], mock_labels[i]);
     }
-
-    SUCCEED();
 }
 
 TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoad) {
@@ -175,8 +171,6 @@ TEST_P(SSDModelParameterizedTest, TestDetectionDefaultConfig) {
 
     auto embedded_processing = ov_model->get_rt_info<bool>("model_info", "embedded_processing");
     EXPECT_TRUE(embedded_processing);
-
-    SUCCEED();
 }
 
 TEST_P(SSDModelParameterizedTest, TestDetectionCustomConfig) {
@@ -205,8 +199,6 @@ TEST_P(SSDModelParameterizedTest, TestDetectionCustomConfig) {
     for (size_t i = 0; i < num_classes; i++) {
         EXPECT_EQ(labels[i], mock_labels[i]);
     }
-
-    SUCCEED();
 }
 
 TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSaveLoad) {

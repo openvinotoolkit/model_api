@@ -108,7 +108,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 for (size_t j = 0; j < objects.size(); j++) {
                     std::stringstream prediction_buffer;
                     prediction_buffer << objects[j];
-                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
                 }
             }
         }
@@ -131,7 +131,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
 
                 std::stringstream prediction_buffer;
                 prediction_buffer << topLabels[0];
-                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
+                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
             }
         }
         else if (modelData.type == "SegmentationModel") {
@@ -165,7 +165,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     }
                 }
 
-                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "MaskRCNNModel") {
@@ -180,13 +180,12 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
                 const std::vector<SegmentedObject> objects = model->infer(image)->segmentedObjects;
                 const std::vector<SegmentedObjectWithRects> withRects = add_rotated_rects(objects);
-                // TODO: it seems older openvino had a bug. Uncomment after update to openvino 2023.0
-                // ASSERT_EQ(withRects.size(), modelData.testData[i].reference.size());
+                ASSERT_EQ(withRects.size(), modelData.testData[i].reference.size());
 
                 for (size_t j = 0; j < withRects.size(); j++) {
                     std::stringstream prediction_buffer;
                     prediction_buffer << withRects[j];
-                    // ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
                 }
 
             }
