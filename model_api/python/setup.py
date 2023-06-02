@@ -27,31 +27,6 @@ from setuptools import find_packages, setup
 
 SETUP_DIR = Path(__file__).resolve().parent
 
-with open(SETUP_DIR / "requirements.txt") as f:
-    INSTALL_REQUIRES = f.read().splitlines()
-
-with open(SETUP_DIR / "requirements_ovms.txt") as f:
-    OVMS_REQUIRES = f.read().splitlines()
-
-packages = find_packages(str(SETUP_DIR))
-package_dir = {"openvino": str(SETUP_DIR / "openvino")}
-
-TESTS_REQUIRE = [
-    "pytest",
-    "parameterized",
-    "google-api-python-client",
-    "onnx",
-    "tensorflow",
-    "torch",
-    "torchvision",
-    "protobuf~=3.20",
-]
-
-EXTRAS_REQUIRE = {
-    "ovms": OVMS_REQUIRES,
-    "tests": TESTS_REQUIRE,
-}
-
 setup(
     name="openvino_model_api",
     version="0.1.0",
@@ -64,9 +39,12 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3",
     ],
-    packages=packages,
-    package_dir=package_dir,
-    install_requires=INSTALL_REQUIRES,
-    extras_require=EXTRAS_REQUIRE,
+    packages=find_packages(SETUP_DIR),
+    package_dir={"openvino": str(SETUP_DIR / "openvino")},
+    install_requires=(SETUP_DIR / "requirements.txt").read_text(),
+    extras_require={
+        "ovms": (SETUP_DIR / "requirements_ovms.txt").read_text(),
+        "tests": "pytest",
+    },
     dependency_links=["https://download.pytorch.org/whl/cpu"],
 )
