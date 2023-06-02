@@ -28,16 +28,16 @@ setup(
     author="Intel(R) Corporation",
     url="https://github.com/openvinotoolkit/model_api",
     packages=find_packages(SETUP_DIR),
+    package_dir={"openvino": str(SETUP_DIR / "openvino")},
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3",
     ],
     license="OSI Approved :: Apache Software License",
-    package_dir={"openvino": str(SETUP_DIR / "openvino")},
     python_requires=">=3.7",
     install_requires=(SETUP_DIR / "requirements.txt").read_text(),
     extras_require={
         "ovms": (SETUP_DIR / "requirements_ovms.txt").read_text(),
-        "tests": ["pytest", "openvino-dev[caffe,onnx,pytorch]"],
+        "tests": ["pytest", "openvino-dev[caffe,onnx,pytorch,tensorflow2]"],
     },
 )
