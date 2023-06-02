@@ -24,20 +24,20 @@ SETUP_DIR = Path(__file__).resolve().parent
 setup(
     name="openvino_model_api",
     version="0.1.0",
-    author="Intel Corporation",
-    license="OSI Approved :: Apache Software License",
-    url="https://github.com/openvinotoolkit/model_api",
     description="Model API: model wrappers and pipelines for inference with OpenVINO",
-    python_requires=">=3.7",
+    author="Intel(R) Corporation",
+    url="https://github.com/openvinotoolkit/model_api",
+    packages=find_packages(SETUP_DIR),
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 3",
     ],
-    packages=find_packages(SETUP_DIR),
+    license="OSI Approved :: Apache Software License",
     package_dir={"openvino": str(SETUP_DIR / "openvino")},
+    python_requires=">=3.7",
     install_requires=(SETUP_DIR / "requirements.txt").read_text(),
     extras_require={
         "ovms": (SETUP_DIR / "requirements_ovms.txt").read_text(),
-        "tests": ["pytest", "openvino-dev[caffe,onnx]"],
+        "tests": ["pytest", "openvino-dev[caffe,onnx,pytorch]"],
     },
 )
