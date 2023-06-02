@@ -15,12 +15,6 @@
  limitations under the License.
 """
 
-"""
-Use this script to create a wheel for Open Model Zoo
-model API. The installation of wheel is described in
-`<omz_dir>/demos/README.md`
-"""
-
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -44,7 +38,6 @@ setup(
     install_requires=(SETUP_DIR / "requirements.txt").read_text(),
     extras_require={
         "ovms": (SETUP_DIR / "requirements_ovms.txt").read_text(),
-        "tests": "pytest",
+        "tests": ["pytest", "openvino-dev[caffe]"],
     },
-    dependency_links=["https://download.pytorch.org/whl/cpu"],
 )
