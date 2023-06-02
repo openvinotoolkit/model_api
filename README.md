@@ -135,4 +135,4 @@ For more details please refer to the [examples](https://github.com/openvinotoolk
 - Semantic Segmentation:
   - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#semantic-segmentation-models)
 
-[Model configuration](docs/model-configuration.md) discusses possible configurations.
+[Model configuration](https://github.com/openvinotoolkit/model_api/blob/master/docs/model-configuration.md) discusses possible configurations.
