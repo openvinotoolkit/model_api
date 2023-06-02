@@ -77,12 +77,12 @@ TEST_P(ClassificationModelParameterizedTest, SynchronousInference)
     if ("DetectionModel" == GetParam().type) {
         auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
         auto result = model->infer(image);
-        ASSERT_GT(result->objects.size(), 0);
+        EXPECT_GT(result->objects.size(), 0);
     } else if ("ClassificationModel" == GetParam().type) {
         auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
         std::unique_ptr<ClassificationResult> result = model->infer(image);
         ASSERT_GT(result->topLabels.size(), 0);
-        ASSERT_GT(result->topLabels.front().score, 0);
+        EXPECT_GT(result->topLabels.front().score, 0.0f);
     }
 }
 

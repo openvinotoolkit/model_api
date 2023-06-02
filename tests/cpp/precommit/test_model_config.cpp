@@ -134,8 +134,6 @@ TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectne
 
     EXPECT_EQ(result_restored[0].id, result[0].id);
     EXPECT_EQ(result_restored[0].score, result[0].score);
-
-    SUCCEED();
 }
 
 TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectnessAfterSaveLoadWithAdapter) {
@@ -157,8 +155,6 @@ TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectne
 
     EXPECT_EQ(result_restored[0].id, result[0].id);
     EXPECT_EQ(result_restored[0].score, result[0].score);
-
-    SUCCEED();
 }
 
 TEST_P(SSDModelParameterizedTest, TestDetectionDefaultConfig) {
@@ -182,7 +178,7 @@ TEST_P(SSDModelParameterizedTest, TestDetectionCustomConfig) {
     }
     ov::AnyMap configuration = {
         {"layout", "data:HWC"},
-        {"resize_type", "standard"}, //fit_to_window
+        {"resize_type", "fit_to_window"},
         {"labels", mock_labels}
     };
     auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path, configuration);
