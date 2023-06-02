@@ -109,16 +109,19 @@ void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t to
 
     auto indices = std::make_shared<ov::op::v0::Result>(topkNode->output(0));
     auto scores = std::make_shared<ov::op::v0::Result>(topkNode->output(1));
+    auto raw_scores = std::make_shared<ov::op::v0::Result>(softmaxNode->output(0));
     model = std::make_shared<ov::Model>(ov::ResultVector{scores, indices}, model->get_parameters(), "classification");
 
     // manually set output tensors name for created topK node
     model->outputs()[0].set_names({"indices"});
     model->outputs()[1].set_names({"scores"});
+    model->outputs()[2].set_names({"raw_scores"});
 
     // set output precisions
     ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
     ppp.output("indices").tensor().set_element_type(ov::element::i32);
     ppp.output("scores").tensor().set_element_type(ov::element::f32);
+    ppp.output("raw_scores").tensor().set_element_type(ov::element::f32);
     model = ppp.build();
 }
 }
@@ -401,7 +404,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     addOrFindSoftmaxAndTopkOutputs(model, topk);
     embedded_processing = true;
 
-    outputNames = {"indices", "scores"};
+    outputNames = {"indices", "scores", "raw_scores"};
 }
 
 std::unique_ptr<ClassificationResult> ClassificationModel::infer(const ImageInputData& inputData) {

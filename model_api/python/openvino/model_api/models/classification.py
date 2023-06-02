@@ -54,7 +54,7 @@ class ClassificationModel(ImageModel):
         addOrFindSoftmaxAndTopkOutputs(self.inference_adapter, self.topk)
         self.embedded_processing = True
 
-        self.out_layer_names = ["indices", "scores"]
+        self.out_layer_names = ["indices", "scores", "raw_scores"]
         if preload:
             self.load()
 
@@ -208,18 +208,21 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk):
 
     indices = topkNode.output(0)
     scores = topkNode.output(1)
+    raw_scores = softmaxNode.output(0)
     inference_adapter.model = Model(
-        [indices, scores], inference_adapter.model.get_parameters(), "classification"
+        [indices, scores, raw_scores], inference_adapter.model.get_parameters(), "classification"
     )
 
     # manually set output tensors name for created topK node
     inference_adapter.model.outputs[0].tensor.set_names({"scores"})
     inference_adapter.model.outputs[1].tensor.set_names({"indices"})
+    inference_adapter.model.outputs[2].tensor.set_names({"raw_scores"})
 
     # set output precisions
     ppp = PrePostProcessor(inference_adapter.model)
     ppp.output("indices").tensor().set_element_type(Type.i32)
     ppp.output("scores").tensor().set_element_type(Type.f32)
+    ppp.output("raw_scores").tensor().set_element_type(Type.f32)
     inference_adapter.model = ppp.build()
 
 
