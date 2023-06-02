@@ -38,6 +38,6 @@ setup(
     install_requires=(SETUP_DIR / "requirements.txt").read_text(),
     extras_require={
         "ovms": (SETUP_DIR / "requirements_ovms.txt").read_text(),
-        "tests": ["pytest", "openvino-dev[caffe]"],
+        "tests": ["pytest", "openvino-dev[caffe,onnx]"],
     },
 )
