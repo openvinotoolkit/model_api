@@ -210,7 +210,9 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk):
     scores = topkNode.output(1)
     raw_scores = softmaxNode.output(0)
     inference_adapter.model = Model(
-        [indices, scores, raw_scores], inference_adapter.model.get_parameters(), "classification"
+        [indices, scores, raw_scores],
+        inference_adapter.model.get_parameters(),
+        "classification",
     )
 
     # manually set output tensors name for created topK node
