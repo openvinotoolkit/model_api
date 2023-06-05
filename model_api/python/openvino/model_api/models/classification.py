@@ -54,7 +54,9 @@ class ClassificationModel(ImageModel):
         addOrFindSoftmaxAndTopkOutputs(self.inference_adapter, self.topk, self.output_raw_scores)
         self.embedded_processing = True
 
-        self.out_layer_names = ["indices", "scores", "raw_scores"]
+        self.out_layer_names = ["indices", "scores"]
+        if self.output_raw_scores:
+            self.out_layer_names.append("raw_scores")
         if preload:
             self.load()
 
