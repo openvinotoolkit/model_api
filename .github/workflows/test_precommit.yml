@@ -71,7 +71,7 @@ jobs:
       run: |
         source venv/bin/activate
         python -m pip install --upgrade pip
-        pip install model_api/python/[tests]
+        pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
     - name: Run test
       run: |
         source venv/bin/activate
@@ -109,7 +109,7 @@ jobs:
       run: |
         source venv/bin/activate
         python -m pip install --upgrade pip
-        pip install model_api/python/[tests]
+        pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
 
         sudo bash model_api/cpp/install_dependencies.sh
     - name: Prepare test data
@@ -147,7 +147,7 @@ jobs:
       run: |
         source venv/Scripts/activate
         python -m pip install --upgrade pip
-        pip install model_api/python/[tests]
+        pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
         curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/windows/w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64.zip --output w_openvino_toolkit_windows.zip
         unzip w_openvino_toolkit_windows.zip
         rm w_openvino_toolkit_windows.zip
