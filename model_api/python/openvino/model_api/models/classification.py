@@ -125,7 +125,8 @@ class ClassificationModel(ImageModel):
                     default_value=0.5, description="Predict a set of labels per image"
                 ),
                 "output_raw_scores": BooleanValue(
-                    default_value=False, description="Output all scores for multiclass classificaiton"
+                    default_value=False,
+                    description="Output all scores for multiclass classificaiton",
                 ),
             }
         )
