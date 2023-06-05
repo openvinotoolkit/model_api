@@ -124,6 +124,9 @@ class ClassificationModel(ImageModel):
                 "confidence_threshold": NumericalValue(
                     default_value=0.5, description="Predict a set of labels per image"
                 ),
+                "output_raw_scores": BooleanValue(
+                    default_value=False, description="Output all scores for multiclass classificaiton"
+                ),
             }
         )
         return parameters
@@ -189,7 +192,7 @@ class ClassificationModel(ImageModel):
         return list(zip(indicesTensor, labels, scoresTensor))
 
 
-def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk):
+def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
     nodes = inference_adapter.model.get_ops()
     softmaxNode = None
     for op in nodes:
@@ -208,9 +211,12 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk):
 
     indices = topkNode.output(0)
     scores = topkNode.output(1)
-    raw_scores = softmaxNode.output(0)
+    results_descr = [indices, scores]
+    if output_raw_scores:
+        raw_scores = softmaxNode.output(0)
+        results_descr.append(raw_scores)
     inference_adapter.model = Model(
-        [indices, scores, raw_scores],
+        results_descr,
         inference_adapter.model.get_parameters(),
         "classification",
     )
@@ -218,13 +224,15 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk):
     # manually set output tensors name for created topK node
     inference_adapter.model.outputs[0].tensor.set_names({"scores"})
     inference_adapter.model.outputs[1].tensor.set_names({"indices"})
-    inference_adapter.model.outputs[2].tensor.set_names({"raw_scores"})
+    if output_raw_scores:
+        inference_adapter.model.outputs[2].tensor.set_names({"raw_scores"})
 
     # set output precisions
     ppp = PrePostProcessor(inference_adapter.model)
     ppp.output("indices").tensor().set_element_type(Type.i32)
     ppp.output("scores").tensor().set_element_type(Type.f32)
-    ppp.output("raw_scores").tensor().set_element_type(Type.f32)
+    if output_raw_scores:
+        ppp.output("raw_scores").tensor().set_element_type(Type.f32)
     inference_adapter.model = ppp.build()
 
 
