@@ -154,7 +154,7 @@ def _parse_model_arg(target_model: str):
         raise TypeError("target_model must be str")
     # Expected format: <address>:<port>/models/<model_name>[:<model_version>]
     if not re.fullmatch(
-        r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9_-]+(\:\d+)*", target_model
+        r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*", target_model
     ):
         raise ValueError("invalid --model option format")
     service_url, _, model = target_model.split("/")
