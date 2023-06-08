@@ -35,7 +35,7 @@ class OVMSAdapter(InferenceAdapter):
             target_model
         )
         self.client = ovmsclient.make_grpc_client(url=service_url)
-        self._check_model_available()
+        _verify_model_available(self.client, self.model_name, self.model_version)
 
         self.metadata = self.client.get_model_metadata(
             model_name=self.model_name, model_version=self.model_version
@@ -44,7 +44,7 @@ class OVMSAdapter(InferenceAdapter):
     def get_input_layers(self):
         return {
             name: Metadata(
-                set(name),  # TODO
+                {name},
                 meta["shape"],
                 Layout.from_shape(meta["shape"]),
                 _tf2ov_precision.get(meta["dtype"], meta["dtype"]),
@@ -55,7 +55,7 @@ class OVMSAdapter(InferenceAdapter):
     def get_output_layers(self):
         return {
             name: Metadata(
-                names=set(name),  # TODO
+                {name},
                 shape=meta["shape"],
                 precision=_tf2ov_precision.get(meta["dtype"], meta["dtype"]),
             )
@@ -122,23 +122,6 @@ class OVMSAdapter(InferenceAdapter):
     ):
         pass
 
-    def _check_model_available(self):
-        version_str = "latest" if self.model_version == 0 else self.model_version
-        try:
-            model_status = self.client.get_model_status(
-                self.model_name, self.model_version
-            )
-        except ovmsclient.ModelNotFoundError as e:
-            raise RuntimeError(
-                f"Requested model: {self.model_name}, version: {version_str} has not been found"
-            ) from e
-        target_version = max(model_status.keys())
-        version_status = model_status[target_version]
-        if version_status["state"] != "AVAILABLE" or version_status["error_code"] != 0:
-            raise RuntimeError(
-                f"Requested model: {self.model_name}, version: {version_str} is not in available state"
-            )
-
     def _prepare_inputs(self, dict_data):
         inputs = {}
         for input_name, input_data in dict_data.items():
@@ -199,3 +182,19 @@ def _parse_model_arg(target_model: str):
     if len(model_spec) == 2:
         return service_url, model_spec[0], int(model_spec[1])
     raise ValueError("invalid target_model format")
+
+
+def _verify_model_available(client, model_name, model_version):
+    version = "latest" if model_version == 0 else model_version
+    try:
+        model_status = client.get_model_status(model_name, model_version)
+    except ovmsclient.ModelNotFoundError as e:
+        raise RuntimeError(
+            f"Requested model: {model_name}, version: {version} has not been found"
+        ) from e
+    target_version = max(model_status.keys())
+    version_status = model_status[target_version]
+    if version_status["state"] != "AVAILABLE" or version_status["error_code"] != 0:
+        raise RuntimeError(
+            f"Requested model: {model_name}, version: {version} is not in available state"
+        )
