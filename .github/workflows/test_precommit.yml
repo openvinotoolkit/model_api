@@ -170,3 +170,22 @@ jobs:
       run: |
         set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\3rdparty\tbb\bin;%PATH%
         .\build\Release\test_sanity.exe -d data -p tests\cpp\precommit\public_scope.json && .\build\Release\test_model_config -d data
+  serving_api:
+      strategy:
+        fail-fast: false
+        matrix:
+          python-version: [3.8]
+          os: [ubuntu-latest]
+
+      runs-on: ${{ matrix.os }}
+      steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: serving_api
+        run: |
+          docker --version
+          python -m pip install --upgrade pip
+          python -m pip install model_api/python/[ovms] openvino_dev[tensorflow2]
