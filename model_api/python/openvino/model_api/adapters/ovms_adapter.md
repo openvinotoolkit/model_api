@@ -14,8 +14,7 @@ Model Server is distributed as a docker image and it's available in DockerHub, s
 
 ## Model configuration
 
-When using OpenVINO Model Server model cannot be directly accessed from the client application (like OMZ demos). Therefore any configuration must be done on model server side.
-<!-- TODO: require preprocessing model with ModelAPI -->
+When using OpenVINO Model Server model cannot be directly accessed from the client application (like OMZ demos). Therefore any configuration must be done on model server side or before starting the server: see [Prepare a model for `InferenceAdapter`](../../../../../README.md#prepare-a-model-for-inferenceadapter)
 
 ### Input reshaping
 

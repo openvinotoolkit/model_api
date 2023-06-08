@@ -12,18 +12,11 @@ This example demonstrates how to use a Python API of OpenVINO Model API for a re
     ```bash
     pip install ovmsclient
     ```
-- Download a model by running a Python code with Model API, see Python [exaple](../../python/synchronous_api/README.md):
+- Download a model by running a Python code with Model API, see Python [exaple](../../python/synchronous_api/README.md) and resave a configured model at OVMS friendly folder layout:
     ```python
     from openvino.model_api.models import DetectionModel
 
-    model = DetectionModel.create_model("ssd_mobilenet_v1_fpn_coco",
-                                    download_dir="tmp")
-    ```
-- Create an OVMS-friendly model layout:
-    ```bash
-    mkdir -p /home/user/models/ssd_mobilenet_v1_fpn_coco/1
-    cp tmp/public/ssd_mobilenet_v1_fpn_coco/FP16/ssd_mobilenet_v1_fpn_coco.xml /home/user/models/ssd_mobilenet_v1_fpn_coco/1
-    cp tmp/public/ssd_mobilenet_v1_fpn_coco/FP16/ssd_mobilenet_v1_fpn_coco.bin /home/user/models/ssd_mobilenet_v1_fpn_coco/1
+    DetectionModel.create_model("ssd_mobilenet_v1_fpn_coco").save("/home/user/models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml")
     ```
 - Run docker with OVMS server:
     ```bash
