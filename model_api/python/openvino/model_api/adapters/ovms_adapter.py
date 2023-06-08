@@ -63,7 +63,7 @@ class OVMSAdapter(InferenceAdapter):
         }
 
     def infer_sync(self, dict_data):
-        inputs = self._prepare_inputs(dict_data)
+        inputs = _prepare_inputs(dict_data, self.metadata["inputs"])
         raw_result = self.client.predict(
             inputs, model_name=self.model_name, model_version=self.model_version
         )
@@ -75,7 +75,7 @@ class OVMSAdapter(InferenceAdapter):
         return raw_result
 
     def infer_async(self, dict_data, callback_data):
-        inputs = self._prepare_inputs(dict_data)
+        inputs = _prepare_inputs(dict_data, self.metadata["inputs"])
         raw_result = self.client.predict(
             inputs, model_name=self.model_name, model_version=self.model_version
         )
@@ -95,17 +95,11 @@ class OVMSAdapter(InferenceAdapter):
     def load_model(self):
         pass
 
-    def reshape_model(self, new_shape):
-        pass
-
     def await_all(self):
         pass
 
     def await_any(self):
         pass
-
-    def get_rt_info(self, path):
-        raise NotImplementedError("OVMSAdapter does not support RT info getting")
 
     def embed_preprocessing(
         self,
@@ -122,22 +116,11 @@ class OVMSAdapter(InferenceAdapter):
     ):
         pass
 
-    def _prepare_inputs(self, dict_data):
-        inputs = {}
-        for input_name, input_data in dict_data.items():
-            if input_name not in self.metadata["inputs"].keys():
-                raise ValueError("Input data does not match model inputs")
-            input_info = self.metadata["inputs"][input_name]
-            model_precision = _tf2np_precision[input_info["dtype"]]
-            if (
-                isinstance(input_data, np.ndarray)
-                and input_data.dtype != model_precision
-            ):
-                input_data = input_data.astype(model_precision)
-            elif isinstance(input_data, list):
-                input_data = np.array(input_data, dtype=model_precision)
-            inputs[input_name] = input_data
-        return inputs
+    def reshape_model(self, new_shape):
+        raise NotImplementedError
+
+    def get_rt_info(self, path):
+        raise NotImplementedError("OVMSAdapter does not support RT info getting")
 
 
 _tf2ov_precision = {
@@ -198,3 +181,18 @@ def _verify_model_available(client, model_name, model_version):
         raise RuntimeError(
             f"Requested model: {model_name}, version: {version} is not in available state"
         )
+
+
+def _prepare_inputs(dict_data, inputs_meta):
+    inputs = {}
+    for input_name, input_data in dict_data.items():
+        if input_name not in inputs_meta.keys():
+            raise ValueError("Input data does not match model inputs")
+        input_info = inputs_meta[input_name]
+        model_precision = _tf2np_precision[input_info["dtype"]]
+        if isinstance(input_data, np.ndarray) and input_data.dtype != model_precision:
+            input_data = input_data.astype(model_precision)
+        elif isinstance(input_data, list):
+            input_data = np.array(input_data, dtype=model_precision)
+        inputs[input_name] = input_data
+    return inputs
