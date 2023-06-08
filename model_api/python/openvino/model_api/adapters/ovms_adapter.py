@@ -169,6 +169,7 @@ def _parse_model_arg(target_model: str):
 
 def _verify_model_available(client, model_name, model_version):
     import ovmsclient
+
     version = "latest" if model_version == 0 else model_version
     try:
         model_status = client.get_model_status(model_name, model_version)

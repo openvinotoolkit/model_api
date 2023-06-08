@@ -10,7 +10,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   Python-Code-Quality:
@@ -174,7 +174,7 @@ jobs:
       strategy:
         fail-fast: false
         matrix:
-          python-version: [3.7, 3.8, 3.9, 3.10, 3.11]
+          python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
           os: [ubuntu-20.04, ubuntu-latest, macos-11, macos-12, macos-13]
 
       runs-on: ${{ matrix.os }}
