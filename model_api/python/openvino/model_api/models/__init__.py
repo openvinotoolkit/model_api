@@ -49,7 +49,7 @@ from .utils import (
     SegmentedObjectWithRects,
     add_rotated_rects,
 )
-from .yolo import YOLO, YOLOF, YOLOX, YoloV3ONNX, YoloV4, YoloV8
+from .yolo import YOLO, YOLOF, YOLOX, YoloV3ONNX, YoloV4, YOLOv5, YOLOv8
 
 classification_models = [
     "resnet-18-pytorch",
@@ -106,7 +106,8 @@ __all__ = [
     "YOLO",
     "YoloV3ONNX",
     "YoloV4",
-    "YoloV8",
+    "YOLOv5"
+    "YOLOv8",
     "YOLOF",
     "YOLOX",
     "Detection",

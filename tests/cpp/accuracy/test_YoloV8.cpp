@@ -11,7 +11,7 @@ namespace {
 std::string DATA;
 
 // TODO: test save-load
-TEST(DetectorTest, YoloV8Test) {
+TEST(YOLOv5or8, Detector) {
     const std::string& exported_path = DATA + "YoloV8/exported/";
     std::filesystem::path xml;
     for (auto const& dir_entry : std::filesystem::directory_iterator{exported_path}) {
@@ -25,7 +25,7 @@ TEST(DetectorTest, YoloV8Test) {
     }
     bool preload = true;
     std::unique_ptr<DetectionModel> yoloV8 = DetectionModel::create_model(xml, {}, "YoloV8", preload, "CPU");
-    std::vector<std::filesystem::path> refpaths;
+    std::vector<std::filesystem::path> refpaths;  // TODO: prohibit empty ref folder
     for (auto const& dir_entry : std::filesystem::directory_iterator{DATA + "/YoloV8/exported/detector/ref/"}) {
         refpaths.push_back(dir_entry.path());
     }
