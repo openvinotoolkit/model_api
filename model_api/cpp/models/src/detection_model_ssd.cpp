@@ -52,8 +52,7 @@ std::shared_ptr<InternalModelData> ModelSSD::preprocess(const InputData& inputDa
         info.at<int>(0, 0) = netInputHeight;
         info.at<int>(0, 1) = netInputWidth;
         info.at<int>(0, 2) = 1;
-        auto allocator = std::make_shared<SharedTensorAllocator>(info);
-        ov::Tensor infoInput = ov::Tensor(ov::element::i32, ov::Shape({1, 3}),  ov::Allocator(allocator));
+        ov::Tensor infoInput = ov::Tensor(ov::element::i32, ov::Shape({1, 3}), SharedMatAllocator(info));
 
         input.emplace(inputNames[1], infoInput);
     }
@@ -127,7 +126,7 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
 std::unique_ptr<ResultBase> ModelSSD::postprocessMultipleOutputs(InferenceResult& infResult) {
     const float* boxes = infResult.outputsData[outputNames[0]].data<float>();
     size_t detectionsNum = infResult.outputsData[outputNames[0]].get_shape()[detectionsNumId];
-    const float* labels = infResult.outputsData[outputNames[1]].data<float>();
+    const int64_t* labels = infResult.outputsData[outputNames[1]].data<int64_t>();
     const float* scores = outputNames.size() > 2 ? infResult.outputsData[outputNames[2]].data<float>() : nullptr;
 
     DetectionResult* result = new DetectionResult(infResult.frameId, infResult.metaData);
@@ -160,7 +159,7 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessMultipleOutputs(InferenceResult
             DetectedObject desc;
 
             desc.confidence = confidence;
-            desc.labelID = static_cast<int>(labels[i]);
+            desc.labelID = labels[i];
             desc.label = getLabelName(desc.labelID);
             desc.x = clamp(
                 round((boxes[i * objectSize] * widthScale - padLeft) * invertedScaleX),

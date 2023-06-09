@@ -90,7 +90,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
     for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
         if (modelData.type == "DetectionModel") {
-            auto model = DetectionModel::create_model(modelXml);
+            bool preload = true;
+            auto model = DetectionModel::create_model(modelXml, {}, "", preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -107,12 +108,13 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 for (size_t j = 0; j < objects.size(); j++) {
                     std::stringstream prediction_buffer;
                     prediction_buffer << objects[j];
-                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
                 }
             }
         }
         else if (modelData.type == "ClassificationModel") {
-            auto model = ClassificationModel::create_model(modelXml);
+            bool preload = true;
+            auto model = ClassificationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -129,11 +131,12 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
 
                 std::stringstream prediction_buffer;
                 prediction_buffer << topLabels[0];
-                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
+                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
             }
         }
         else if (modelData.type == "SegmentationModel") {
-            auto model = SegmentationModel::create_model(modelXml);
+            bool preload = true;
+            auto model = SegmentationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -154,18 +157,20 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
 
                 std::stringstream prediction_buffer;
+                prediction_buffer << std::fixed << std::setprecision(3);
                 for (int i = 0; i < range[1]; ++i) {
-                    const int count = static_cast<int>(outHist.at<float>(i));
+                    const float count = outHist.at<float>(i);
                     if (count > 0) {
-                        prediction_buffer << i << ": " << count << ", ";
+                        prediction_buffer << i << ": " << count / predicted_mask[0].total() << ", ";
                     }
                 }
 
-                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "MaskRCNNModel") {
-            auto model = MaskRCNNModel::create_model(modelXml);
+            bool preload = true;
+            auto model = MaskRCNNModel::create_model(modelXml, {}, preload, "CPU");
             for (size_t i = 0; i < modelData.testData.size(); i++) {
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
@@ -175,13 +180,12 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
                 const std::vector<SegmentedObject> objects = model->infer(image)->segmentedObjects;
                 const std::vector<SegmentedObjectWithRects> withRects = add_rotated_rects(objects);
-                // TODO: it seems older openvino had a bug. Uncomment after update to openvino 2023.0
-                // ASSERT_EQ(withRects.size(), modelData.testData[i].reference.size());
+                ASSERT_EQ(withRects.size(), modelData.testData[i].reference.size());
 
                 for (size_t j = 0; j < withRects.size(); j++) {
                     std::stringstream prediction_buffer;
                     prediction_buffer << withRects[j];
-                    // ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
                 }
 
             }

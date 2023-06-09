@@ -32,7 +32,7 @@ def process_output(output, model_type):
         prediction_buffer = ""
         for i, count in enumerate(outHist):
             if count > 0:
-                prediction_buffer += f"{i}: {int(count[0])}, "
+                prediction_buffer += f"{i}: {count[0] / output.size:.3f}, "
         return prediction_buffer
     elif model_type == MaskRCNNModel.__name__:
         return str(output)
@@ -67,7 +67,7 @@ def test_image_models(data, dump, result, model_data):
     name = model_data["name"]
     if name.endswith(".xml"):
         name = f"{data}/{name}"
-    model = eval(model_data["type"]).create_model(name, download_dir=data)
+    model = eval(model_data["type"]).create_model(name, device="CPU", download_dir=data)
 
     test_result = []
 
