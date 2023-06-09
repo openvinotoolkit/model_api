@@ -160,7 +160,7 @@ def cached_models(folder, pt):
     xml = (copy_path / (pt.stem + ".xml"))
     ref_dir = copy_path / "ref"
     ref_dir.mkdir(exist_ok=True)
-    impl_wrapper = YOLOv8.create_model(xml, device="CPU")
+    impl_wrapper = YOLOv5.create_model(xml, device="CPU", model_type="YOLOv5")  # TODO: YOLOv5 vs v8
     ref_wrapper = YOLO(export_dir)
     ref_wrapper.overrides["imgsz"] = (impl_wrapper.w, impl_wrapper.h)
     compiled_model = ov.Core().compile_model(xml, "CPU")
@@ -280,7 +280,7 @@ def test_detector(impath, data, pt):
     ).all()  # TODO: maybe stronger
     assert (pred_boxes[:, 5] == ref_boxes[:, 5]).all()
     assert (result.boxes.data == ref_predictions.boxes.data).all()
-    assert (result.boxes.orig_shape == ref_predictions.boxes.orig_shape).all()
+    assert result.boxes.orig_shape == ref_predictions.boxes.orig_shape
     assert result.keypoints == ref_predictions.keypoints
     assert result.keys == ref_predictions.keys
     assert result.masks == ref_predictions.masks
