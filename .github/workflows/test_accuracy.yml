@@ -21,7 +21,7 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'pip'
+        cache: pip
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
