@@ -5,7 +5,9 @@ name: Precommit - Test
 on:
   pull_request:
 
-concurrency: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   Python-Code-Quality:
@@ -173,13 +175,14 @@ jobs:
       runs-on: ${{ matrix.os }}
       steps:
       - uses: actions/checkout@v3
+      - if: startsWith(matrix.os, 'macos-')
+        run: brew install docker
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
-      - if: startsWith(matrix.os, 'macos-')
-        run: brew install docker
-      - run: |
+      - name: serving_api
+        run: |
           python -m pip install --upgrade pip
           python -m pip install model_api/python/[ovms,tests]
           python -c "from openvino.model_api.models import DetectionModel; DetectionModel.create_model('ssd_mobilenet_v1_fpn_coco').save('ovms_models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml')"
