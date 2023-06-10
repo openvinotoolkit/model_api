@@ -3,14 +3,9 @@
 name: Precommit - Test
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+concurrency: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 
 jobs:
   Python-Code-Quality:
@@ -21,17 +16,17 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: git --no-pager diff --check $(git hash-object -t tree /dev/null)
       run: git --no-pager diff --check $(git hash-object -t tree /dev/null)
     - name: Prohibit non ASCII chars in file names
       run: test $(git diff --name-only --diff-filter=A -z $(git hash-object -t tree /dev/null) | LC_ALL=C tr -d '[ -~]\0' | wc -c) == 0
     - name: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
       run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
@@ -40,8 +35,7 @@ jobs:
       run: |
         source venv/bin/activate
         pip install --upgrade pip
-        pip install isort
-        pip install black
+        pip install isort black
     - name: Check style with black
       run: |
         source venv/bin/activate
@@ -58,11 +52,11 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
@@ -80,8 +74,7 @@ jobs:
     name: CPP-Code-Quality
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
       - name: cppcheck
         uses: chmorgan/cppcheck-action@main
         with:
@@ -96,11 +89,11 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
@@ -132,11 +125,11 @@ jobs:
 
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'
     - name: Create and start a virtual environment
       shell: bash
       run: |
@@ -175,17 +168,20 @@ jobs:
         fail-fast: false
         matrix:
           python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
-          os: [ubuntu-20.04, ubuntu-latest]
+          os: [ubuntu-20.04, ubuntu-latest, macos-11, macos-latest, macos-13]
 
       runs-on: ${{ matrix.os }}
       steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: serving_api
+          cache: 'pip'
+      - if: startsWith(matrix.os, 'macos-')
         run: |
+          brew install docker
+          colima start
+      - run: |
           python -m pip install --upgrade pip
           python -m pip install model_api/python/[ovms,tests]
           python -c "from openvino.model_api.models import DetectionModel; DetectionModel.create_model('ssd_mobilenet_v1_fpn_coco').save('ovms_models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml')"

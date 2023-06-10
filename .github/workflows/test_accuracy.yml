@@ -1,15 +1,9 @@
 name: Test - Accuracy
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron:  '11 1 * * *'  # run every day at 1:11
   pull_request:
-    branches: [ master ]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+concurrency: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
 
 jobs:
   test_accuracy:
@@ -21,11 +15,11 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
