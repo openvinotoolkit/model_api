@@ -186,8 +186,8 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-    - if: startsWith(matrix.os, 'macos-')
-      name: Set up docker for macOS
+    - name: Set up docker for macOS
+      if: startsWith(matrix.os, 'macos-')
       run: |
         brew install docker
         colima start
