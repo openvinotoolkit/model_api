@@ -19,7 +19,6 @@ import sys
 
 import cv2
 from openvino.model_api.models import DetectionModel
-from PIL import Image
 
 
 def main():

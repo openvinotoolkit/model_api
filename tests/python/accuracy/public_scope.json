@@ -6,7 +6,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "1: 88986, 2: 3206, 6: 88362, 11: 47834, 12: 6580, 126: 12606, 127: 25066, ",
+                    "1: 0.326, 2: 0.012, 6: 0.324, 11: 0.175, 12: 0.024, 126: 0.046, 127: 0.092, "
                     "(0.970, wall)",
                     "(0.801, building;edifice)",
                     "(0.936, ceiling)",
@@ -21,7 +21,6 @@
                     "(0.625, sidewalk;pavement)",
                     "(0.777, pot;flowerpot)",
                     "(0.939, animal;animate;being;beast;brute;creature;fauna)"
-
                 ]
             }
         ]
@@ -33,7 +32,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "0: 146316, 1: 126324, ",
+                    "0: 0.537, 1: 0.463, "
                     "(0.675, object)",
                     "(0.527, object)",
                     "(0.507, object)",
@@ -55,7 +54,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "0: 270595, 1: 2045, ",
+                    "0: 0.992, 1: 0.008, "
                     "(0.555, object)",
                     "(0.506, object)",
                     "(0.555, object)",
@@ -72,7 +71,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "0: 153429, 1: 119211, ",
+                    "0: 0.563, 1: 0.437, "
                     "(0.520, object)",
                     "(0.530, object)",
                     "(0.501, object)",
@@ -95,81 +94,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "0: 257276, 1: 15364, ",
-                    "(0.505, object)",
-                    "(0.518, object)",
-                    "(0.512, object)",
-                    "(0.506, object)",
-                    "(0.526, object)",
-                    "(0.529, object)",
-                    "(0.513, object)",
-                    "(0.536, object)",
-                    "(0.505, object)",
-                    "(0.512, object)",
-                    "(0.547, object)",
-                    "(0.511, object)",
-                    "(0.503, object)",
-                    "(0.539, object)",
-                    "(0.543, object)",
-                    "(0.529, object)",
-                    "(0.516, object)",
-                    "(0.565, object)",
-                    "(0.524, object)",
-                    "(0.528, object)",
-                    "(0.521, object)",
-                    "(0.503, object)",
-                    "(0.537, object)",
-                    "(0.513, object)",
-                    "(0.524, object)",
-                    "(0.513, object)",
-                    "(0.538, object)",
-                    "(0.501, object)",
-                    "(0.504, object)",
-                    "(0.507, object)",
-                    "(0.502, object)",
-                    "(0.518, object)",
-                    "(0.530, object)",
-                    "(0.502, object)",
-                    "(0.516, object)",
-                    "(0.506, object)",
-                    "(0.567, object)",
-                    "(0.502, object)",
-                    "(0.512, object)",
-                    "(0.538, object)",
-                    "(0.507, object)",
-                    "(0.534, object)",
-                    "(0.537, object)",
-                    "(0.519, object)",
-                    "(0.505, object)",
-                    "(0.517, object)",
-                    "(0.505, object)",
-                    "(0.506, object)",
-                    "(0.508, object)",
-                    "(0.519, object)",
-                    "(0.507, object)",
-                    "(0.506, object)",
-                    "(0.511, object)",
-                    "(0.556, object)",
-                    "(0.510, object)",
-                    "(0.500, object)",
-                    "(0.504, object)",
-                    "(0.501, object)",
-                    "(0.510, object)",
-                    "(0.549, object)",
-                    "(0.509, object)",
-                    "(0.510, object)",
-                    "(0.514, object)",
-                    "(0.529, object)",
-                    "(0.551, object)",
-                    "(0.504, object)",
-                    "(0.503, object)",
-                    "(0.518, object)",
-                    "(0.511, object)",
-                    "(0.502, object)",
-                    "(0.523, object)",
-                    "(0.533, object)",
-                    "(0.568, object)",
-                    "(0.582, object)"
+                    "0: 0.944, 1: 0.056, "
                 ]
             }
         ]
@@ -215,24 +140,24 @@
                     "(50, 279, 368, 385, 0.915, 18, sheep)"
                 ]
             }
-        ],
-        "TODO: there is a bug in openvino. Tickets 106890 and 106891": {
-            "name": "otx_models/det_mobilenetv2_atss_bccd.xml",
-            "type": "DetectionModel",
-            "test_data": [
-                {
-                    "image": "BloodImage_00007.jpg",
-                    "reference": [
-                        "(494, 159, 637, 308, 0.700, 2, WBC)",
-                        "(28, 139, 136, 228, 0.623, 1, RBC)",
-                        "(535, 374, 638, 479, 0.535, 1, RBC)",
-                        "(513, 8, 633, 151, 0.454, 1, RBC)",
-                        "(197, 86, 412, 286, 0.405, 1, RBC)",
-                        "(21, 291, 143, 399, 0.401, 1, RBC)"
-                    ]
-                }
-            ]
-        }
+        ]
+    },
+    {
+        "name": "otx_models/det_mobilenetv2_atss_bccd.xml",
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "BloodImage_00007.jpg",
+                "reference": [
+                    "(494, 159, 637, 308, 0.697, 2, WBC)",
+                    "(28, 139, 135, 228, 0.628, 1, RBC)",
+                    "(535, 375, 638, 479, 0.524, 1, RBC)",
+                    "(513, 8, 633, 152, 0.430, 1, RBC)",
+                    "(21, 291, 143, 399, 0.422, 1, RBC)",
+                    "(196, 86, 410, 286, 0.422, 1, RBC)"
+                ]
+            }
+        ]
     },
     {
         "name": "resnet-18-pytorch",
@@ -241,7 +166,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "(222, kuvasz, 0.140)"
+                    "(254, pug, 0.153)"
                 ]
             }
         ]
@@ -373,6 +298,21 @@
                     "(461, 105, 493, 150, 0.918, 1, bicycle, 846, RotatedRect: 476.052 126.972 27.619 47.834 16.928)",
                     "(350, 92, 386, 149, 0.807, 1, bicycle, 1458, RotatedRect: 369.319 119.891 54.848 34.230 82.405)",
                     "(279, 110, 291, 146, 0.788, 1, bicycle, 312, RotatedRect: 284.000 127.500 35.000 10.000 90.000)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/mobilenet_v3_large_hc_cf.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000081.jpg",
+                "reference": [
+                    "(5, triangle, 0.993)",
+                    "(3, equilateral, 0.596)",
+                    "(1, multi a, 0.922)",
+                    "(2, multi b, 0.696)"
                 ]
             }
         ]
