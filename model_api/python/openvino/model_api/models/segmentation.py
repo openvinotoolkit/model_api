@@ -145,14 +145,12 @@ class SegmentationModel(ImageModel):
 
         combined_contours = []
         for i, label in enumerate(self.labels):
-
-            label_index = i + 1 # background is not representerd in labels list
+            label_index = i + 1  # background is not representerd in labels list
             # obtain current label soft prediction
             if len(soft_prediction.shape) == 3:
                 current_label_soft_prediction = soft_prediction[:, :, label_index]
             else:
                 current_label_soft_prediction = soft_prediction
-
 
             obj_group = hard_prediction == label_index
             label_index_map = obj_group.astype(np.uint8) * 255
@@ -164,15 +162,16 @@ class SegmentationModel(ImageModel):
             for contour in contours:
                 mask = np.zeros(hard_prediction.shape, dtype=np.uint8)
                 cv2.drawContours(
-                            mask,
-                            np.asarray([contour]),
-                            contourIdx=-1,
-                            color=1,
-                            thickness=-1,
-                        )
+                    mask,
+                    np.asarray([contour]),
+                    contourIdx=-1,
+                    color=1,
+                    thickness=-1,
+                )
                 probability = cv2.mean(current_label_soft_prediction, mask)[0]
-                combined_contours.append({"label": label, "contour": contour, "probability": probability})
-
+                combined_contours.append(
+                    {"label": label, "contour": contour, "probability": probability}
+                )
 
         return combined_contours
 
