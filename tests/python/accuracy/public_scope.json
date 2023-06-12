@@ -6,20 +6,20 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "1: 0.326, 2: 0.012, 6: 0.324, 11: 0.175, 12: 0.024, 126: 0.046, 127: 0.092, "
+                    "1: 0.326, 2: 0.012, 6: 0.324, 11: 0.175, 12: 0.024, 126: 0.046, 127: 0.092, ",
                     "(0.970, wall)",
                     "(0.801, building;edifice)",
                     "(0.936, ceiling)",
                     "(0.345, cabinet)",
                     "(0.913, cabinet)",
-                    "(0.702, cabinet)",
-                    "(0.910, cabinet)",
+                    "(0.701, cabinet)",
+                    "(0.911, cabinet)",
                     "(0.204, sidewalk;pavement)",
                     "(0.188, sidewalk;pavement)",
                     "(0.555, sidewalk;pavement)",
-                    "(0.572, sidewalk;pavement)",
+                    "(0.571, sidewalk;pavement)",
                     "(0.625, sidewalk;pavement)",
-                    "(0.777, pot;flowerpot)",
+                    "(0.776, pot;flowerpot)",
                     "(0.939, animal;animate;being;beast;brute;creature;fauna)"
                 ]
             }
@@ -32,7 +32,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "0: 0.537, 1: 0.463, "
+                    "0: 0.537, 1: 0.463, ",
                     "(0.675, object)",
                     "(0.527, object)",
                     "(0.507, object)",
@@ -54,7 +54,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "0: 0.992, 1: 0.008, "
+                    "0: 0.992, 1: 0.008, ",
                     "(0.555, object)",
                     "(0.506, object)",
                     "(0.555, object)",
@@ -71,7 +71,7 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "0: 0.563, 1: 0.437, "
+                    "0: 0.563, 1: 0.437, ",
                     "(0.520, object)",
                     "(0.530, object)",
                     "(0.501, object)",
@@ -94,7 +94,81 @@
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "0: 0.944, 1: 0.056, "
+                    "0: 0.944, 1: 0.056, ",
+                    "(0.505, object)",
+                    "(0.518, object)",
+                    "(0.512, object)",
+                    "(0.506, object)",
+                    "(0.526, object)",
+                    "(0.529, object)",
+                    "(0.513, object)",
+                    "(0.536, object)",
+                    "(0.505, object)",
+                    "(0.512, object)",
+                    "(0.547, object)",
+                    "(0.511, object)",
+                    "(0.503, object)",
+                    "(0.539, object)",
+                    "(0.543, object)",
+                    "(0.529, object)",
+                    "(0.516, object)",
+                    "(0.565, object)",
+                    "(0.524, object)",
+                    "(0.528, object)",
+                    "(0.521, object)",
+                    "(0.503, object)",
+                    "(0.537, object)",
+                    "(0.513, object)",
+                    "(0.524, object)",
+                    "(0.513, object)",
+                    "(0.538, object)",
+                    "(0.501, object)",
+                    "(0.504, object)",
+                    "(0.507, object)",
+                    "(0.502, object)",
+                    "(0.518, object)",
+                    "(0.530, object)",
+                    "(0.502, object)",
+                    "(0.516, object)",
+                    "(0.506, object)",
+                    "(0.567, object)",
+                    "(0.502, object)",
+                    "(0.512, object)",
+                    "(0.538, object)",
+                    "(0.507, object)",
+                    "(0.534, object)",
+                    "(0.537, object)",
+                    "(0.519, object)",
+                    "(0.505, object)",
+                    "(0.517, object)",
+                    "(0.505, object)",
+                    "(0.506, object)",
+                    "(0.508, object)",
+                    "(0.519, object)",
+                    "(0.507, object)",
+                    "(0.506, object)",
+                    "(0.511, object)",
+                    "(0.556, object)",
+                    "(0.510, object)",
+                    "(0.500, object)",
+                    "(0.504, object)",
+                    "(0.501, object)",
+                    "(0.510, object)",
+                    "(0.549, object)",
+                    "(0.509, object)",
+                    "(0.510, object)",
+                    "(0.514, object)",
+                    "(0.529, object)",
+                    "(0.551, object)",
+                    "(0.504, object)",
+                    "(0.503, object)",
+                    "(0.518, object)",
+                    "(0.511, object)",
+                    "(0.502, object)",
+                    "(0.523, object)",
+                    "(0.533, object)",
+                    "(0.568, object)",
+                    "(0.582, object)"
                 ]
             }
         ]
