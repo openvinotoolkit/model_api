@@ -138,12 +138,11 @@ class SegmentationModel(ImageModel):
     def get_contours(
         self, hard_prediction: np.ndarray, soft_prediction: np.ndarray
     ) -> list:
-
         height, width = hard_prediction.shape[:2]
         n_layers = soft_prediction.shape[2]
 
         combined_contours = []
-        for layer_index in range(1, n_layers): # ignoring background
+        for layer_index in range(1, n_layers):  # ignoring background
             label = self.get_label_name(layer_index - 1)
             if len(soft_prediction.shape) == 3:
                 current_label_soft_prediction = soft_prediction[:, :, layer_index]
