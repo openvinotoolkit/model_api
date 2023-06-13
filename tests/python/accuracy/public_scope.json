@@ -1,5 +1,5 @@
 [
-     {
+    {
         "name": "hrnet-v2-c1-segmentation",
         "type": "SegmentationModel",
         "test_data": [
