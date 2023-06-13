@@ -117,21 +117,29 @@ class SegmentationModel(ImageModel):
         else:
             soft_prediction = np.transpose(predictions, axes=(1, 2, 0))
 
-        soft_prediction = cv2.resize(
-            soft_prediction,
-            (input_image_width, input_image_height),
-            0,
-            0,
-            interpolation=cv2.INTER_NEAREST,
-        )
-
         hard_prediction = create_hard_prediction_from_soft_prediction(
             soft_prediction=soft_prediction,
             soft_threshold=self.soft_threshold,
             blur_strength=self.blur_strength,
         )
 
+        hard_prediction = cv2.resize(
+            hard_prediction,
+            (input_image_width, input_image_height),
+            0,
+            0,
+            interpolation=cv2.INTER_NEAREST,
+        )
+
         if self.return_soft_prediction:
+            soft_prediction = cv2.resize(
+                soft_prediction,
+                (input_image_width, input_image_height),
+                0,
+                0,
+                interpolation=cv2.INTER_NEAREST,
+            )
+
             return hard_prediction, soft_prediction
         return hard_prediction
 
