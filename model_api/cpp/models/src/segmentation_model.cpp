@@ -67,8 +67,7 @@ cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_predicti
     }
     return hard_prediction;
 }
-
-} // namespace
+}
 
 std::string SegmentationModel::ModelType = "Segmentation";
 
