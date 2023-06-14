@@ -1,14 +1,131 @@
 [
     {
+        "name": "hrnet-v2-c1-segmentation",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "1: 0.326, 2: 0.012, 6: 0.324, 11: 0.175, 12: 0.024, 126: 0.046, 127: 0.092, "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/Lite-hrnet-18.xml",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "0: 0.537, 1: 0.463, "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/Lite-hrnet-18_mod2.xml",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "0: 0.992, 1: 0.008, "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/Lite-hrnet-s_mod2.xml",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "0: 0.563, 1: 0.437, "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/Lite-hrnet-x-mod3.xml",
+        "type": "SegmentationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "0: 0.944, 1: 0.056, "
+                ]
+            }
+        ]
+    },
+    {
+        "name": "ssd300",
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "(0, 13, 169, 338, 0.870, 2, bicycle)",
+                    "(58, 275, 360, 384, 0.998, 12, dog)",
+                    "(324, 98, 344, 148, 0.652, 15, person)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "ssd_mobilenet_v1_fpn_coco",
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "(0, 12, 172, 331, 0.697, 2, bicycle)",
+                    "(62, 276, 363, 383, 0.645, 18, horse)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "ssdlite_mobilenet_v2",
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "(320, 96, 336, 143, 0.818, 1, bicycle)",
+                    "(284, 95, 300, 143, 0.796, 1, bicycle)",
+                    "(353, 96, 372, 145, 0.631, 1, bicycle)",
+                    "(1, 3, 160, 318, 0.889, 2, car)",
+                    "(50, 279, 368, 385, 0.915, 18, sheep)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/det_mobilenetv2_atss_bccd.xml",
+        "type": "DetectionModel",
+        "test_data": [
+            {
+                "image": "BloodImage_00007.jpg",
+                "reference": [
+                    "(494, 159, 637, 308, 0.697, 2, WBC)",
+                    "(28, 139, 135, 228, 0.628, 1, RBC)",
+                    "(535, 375, 638, 479, 0.524, 1, RBC)",
+                    "(513, 8, 633, 152, 0.430, 1, RBC)",
+                    "(21, 291, 143, 399, 0.422, 1, RBC)",
+                    "(196, 86, 410, 286, 0.422, 1, RBC)"
+                ]
+            }
+        ]
+    },
+    {
         "name": "resnet-18-pytorch",
         "type": "ClassificationModel",
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "254, pug, 0.153"
-                ]
+                "reference": ["254 (pug): 0.153, [0], [0]"]
             }
         ]
     },
@@ -18,10 +135,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "175, Labrador_retriever, 0.616"
-                ]
+                "reference": ["175 (Labrador_retriever): 0.616, [0], [0]"]
             }
         ]
     },
@@ -31,10 +145,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "245, French_bulldog, 0.156"
-                ]
+                "reference": ["245 (French_bulldog): 0.156, [0], [0]"]
             }
         ]
     },
@@ -44,10 +155,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000081.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "0, aeroplane, 0.943"
-                ]
+                "reference": ["0 (aeroplane): 0.943, [0], [0]"]
             }
         ]
     },
@@ -57,12 +165,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "1, bicycle, 0.768",
-                    "11, dog, 0.876",
-                    "14, person, 0.922"
-                ]
+                "reference": ["1 (bicycle): 0.768, 11 (dog): 0.876, 14 (person): 0.922, [0], [0]"]
             }
         ]
     },
@@ -72,12 +175,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "1, bicycle, 0.825",
-                    "11, dog, 0.873",
-                    "14, person, 0.824"
-                ]
+                "reference": ["1 (bicycle): 0.825, 11 (dog): 0.873, 14 (person): 0.824, [0], [0]"]
             }
         ]
     },
@@ -87,10 +185,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "105, 194, 0.456"
-                ]
+                "reference": ["105 (194): 0.456, [0], [0]"]
             }
         ]
     },
@@ -100,10 +195,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "0, 1, 0.838"
-                ]
+                "reference": ["0 (1): 0.838, [0], [0]"]
             }
         ]
     },
@@ -113,10 +205,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "0, 1, 0.849"
-                ]
+                "reference": ["0 (1): 0.849, [0], [0]"]
             }
         ]
     },
@@ -157,13 +246,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000081.jpg",
-                "reference": [
-                    "[0], [0]",
-                    "5, triangle, 0.993",
-                    "3, equilateral, 0.596",
-                    "1, multi a, 0.922",
-                    "2, multi b, 0.696"
-                ]
+                "reference": ["5 (triangle): 0.993, 3 (equilateral): 0.596, 1 (multi a): 0.922, 2 (multi b): 0.696, [0], [0]"]
             }
         ]
     },
@@ -173,10 +256,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000081.jpg",
-                "reference": [
-                    "[1,4,7,7], [1,1280,1,1]",
-                    "0, horse, 0.543"
-                ]
+                "reference": ["0 (horse): 0.543, [1,4,7,7], [1,1280,1,1]"]
             }
         ]
     }

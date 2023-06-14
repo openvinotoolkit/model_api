@@ -76,19 +76,37 @@ struct ClassificationResult : public ResultBase {
     ClassificationResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
 
+    friend std::ostream& operator<< (std::ostream& os, const ClassificationResult& prediction) {
+        for (const ClassificationResult::Classification& classification : prediction.topLabels) {
+            os << classification << ", ";
+        }
+        try {
+            os << prediction.saliency_map.get_shape() << ", ";
+        } catch (ov::Exception&) {
+            os << "[0], ";
+        }
+        try {
+            os << prediction.feature_vector.get_shape();
+        } catch (ov::Exception&) {
+            os << "[0]";
+        }
+        return os;
+    }
+
+    explicit operator std::string() {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
+
     struct Classification {
         unsigned int id;
         std::string label;
         float score;
 
         Classification(unsigned int id, const std::string& label, float score) : id(id), label(label), score(score) {}
-
-        friend std::ostream& operator<< (std::ostream& stream, const Classification& prediction)
-        {
-            stream << prediction.id << ", " << prediction.label << ", ";
-            stream << std::fixed;
-            stream << std::setprecision(3) << prediction.score;
-            return stream;
+        friend std::ostream& operator<< (std::ostream& os, const ClassificationResult::Classification& prediction) {
+            return os << prediction.id << " (" << prediction.label << "): " << std::fixed << std::setprecision(3) << prediction.score;
         }
     };
 
@@ -116,7 +134,6 @@ struct DetectionResult : public ResultBase {
     DetectionResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     std::vector<DetectedObject> objects;
-    // ov::Tensor saliency_map, feature_vector;  // Contan "saliency_map" and "feature_vector" model outputs if such exist
 };
 
 struct RetinaFaceDetectionResult : public DetectionResult {

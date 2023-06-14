@@ -117,6 +117,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             auto model = ClassificationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
+                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                 cv::Mat image = cv::imread(imagePath);
@@ -125,25 +126,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
 
                 auto result = model->infer(image);
-                auto topLabels = result->topLabels;
-                ASSERT_EQ(topLabels.size() + 1, modelData.testData[i].reference.size());
-                std::stringstream prediction_buffer;
-                try {
-                    prediction_buffer << result->saliency_map.get_shape() << ", ";
-                } catch (ov::Exception&) {
-                    prediction_buffer << "[0], ";
-                }
-                try {
-                    prediction_buffer << result->feature_vector.get_shape();
-                } catch (ov::Exception&) {
-                    prediction_buffer << "[0]";
-                }
-                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
-                for (size_t j = 0; j < topLabels.size(); ++j) {
-                    prediction_buffer.str(std::string{});
-                    prediction_buffer << topLabels[j];
-                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j + 1]);
-                }
+                std::cout << *result << ";;;" << modelData.testData[i].reference[0] << '\n';
+                EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "SegmentationModel") {

@@ -81,20 +81,10 @@ def test_image_models(data, dump, result, model_data):
             raise RuntimeError("Failed to read the image")
         outputs = model(image)
         if isinstance(outputs, ClassificationResult):
-            assert len(outputs.top_labels) + 1 == len(test_data["reference"])
-            ref_iter = iter(test_data["reference"])
-            saliency_map_shape = ",".join(str(i) for i in outputs.saliency_map.shape)
-            feature_vector_shape = ",".join(
-                str(i) for i in outputs.feature_vector.shape
-            )
-            output_str = f"[{saliency_map_shape}], [{feature_vector_shape}]"
-            test_result.append(next(ref_iter) == output_str)
+            assert 1 == len(test_data["reference"])
+            output_str = str(outputs)
+            test_result.append(test_data["reference"][0] == output_str)
             image_result = [output_str]
-
-            for ref, pred in zip(ref_iter, outputs.top_labels):
-                output_str = f"{pred[0]}, {pred[1]}, {pred[2]:.3f}"
-                test_result.append(ref == output_str)
-                image_result.append(output_str)
         else:
             if not isinstance(outputs, list):
                 outputs = [outputs]
