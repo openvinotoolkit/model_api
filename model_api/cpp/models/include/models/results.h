@@ -105,7 +105,8 @@ struct ClassificationResult : public ResultBase {
         float score;
 
         Classification(unsigned int id, const std::string& label, float score) : id(id), label(label), score(score) {}
-        friend std::ostream& operator<< (std::ostream& os, const ClassificationResult::Classification& prediction) {
+
+        friend std::ostream& operator<< (std::ostream& os, const Classification& prediction) {
             return os << prediction.id << " (" << prediction.label << "): " << std::fixed << std::setprecision(3) << prediction.score;
         }
     };
