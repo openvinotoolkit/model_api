@@ -126,7 +126,6 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
 
                 auto result = model->infer(image);
-                std::cout << *result << ";;;" << modelData.testData[i].reference[0] << '\n';
                 EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
             }
         }
