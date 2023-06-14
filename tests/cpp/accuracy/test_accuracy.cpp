@@ -145,7 +145,10 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 if (!image.data) {
                     throw std::runtime_error{"Failed to read the image"};
                 }
-                cv::Mat predicted_mask[] = {model->infer(image)->resultImage};
+
+                auto inference_result = model->infer(image)->asRef<ImageResultWithSoftPrediction>();
+
+                cv::Mat predicted_mask[] = {inference_result.resultImage};
                 int nimages = 1;
                 int *channels = nullptr;
                 cv::Mat mask;
@@ -156,6 +159,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 const float *ranges[] = {range};
                 cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
 
+
                 std::stringstream prediction_buffer;
                 prediction_buffer << std::fixed << std::setprecision(3);
                 for (int i = 0; i < range[1]; ++i) {
@@ -165,7 +169,16 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     }
                 }
 
-                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+
+                auto contours = model->getContours(inference_result);
+                int j = 1; //First reference is histogram of mask
+                for (auto &contour: contours) {
+                    std::stringstream prediction_buffer;
+                    prediction_buffer << contour;
+                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                    j++;
+                }
             }
         }
         else if (modelData.type == "MaskRCNNModel") {

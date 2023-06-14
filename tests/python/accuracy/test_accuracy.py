@@ -20,20 +20,23 @@ def process_output(output, model_type):
     elif model_type == ClassificationModel.__name__:
         return f"({output[0]}, {output[1]}, {output[2]:.3f})"
     elif model_type == SegmentationModel.__name__:
-        if isinstance(output, tuple):
-            output = output[0]
-        outHist = cv2.calcHist(
-            [output.astype(np.uint8)],
-            channels=None,
-            mask=None,
-            histSize=[256],
-            ranges=[0, 255],
-        )
-        prediction_buffer = ""
-        for i, count in enumerate(outHist):
-            if count > 0:
-                prediction_buffer += f"{i}: {count[0] / output.size:.3f}, "
-        return prediction_buffer
+        if isinstance(output, dict):
+            return "({probability:.3f}, {label})".format(**output)
+        else:
+            if isinstance(output, tuple):
+                output = output[0]
+            outHist = cv2.calcHist(
+                [output.astype(np.uint8)],
+                channels=None,
+                mask=None,
+                histSize=[256],
+                ranges=[0, 255],
+            )
+            prediction_buffer = ""
+            for i, count in enumerate(outHist):
+                if count > 0:
+                    prediction_buffer += f"{i}: {count[0] / output.size:.3f}, "
+            return prediction_buffer
     elif model_type == MaskRCNNModel.__name__:
         return str(output)
     else:
@@ -85,13 +88,14 @@ def test_image_models(data, dump, result, model_data):
             outputs = [outputs]
         if model_data["type"] == MaskRCNNModel.__name__:
             outputs = add_rotated_rects(outputs)
+        if model_data["type"] == SegmentationModel.__name__:
+            outputs.extend(model.get_contours(*outputs[0]))
 
         image_result = []
 
         for i, output in enumerate(outputs):
             output_str = process_output(output, model_data["type"])
             if len(test_data["reference"]) > i:
-                print(f'{test_data["reference"][i]=}, {output_str=}')
                 test_result.append(test_data["reference"][i] == output_str)
             else:
                 test_result.append(False)
