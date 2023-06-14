@@ -88,7 +88,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         modelPath = DATA_DIR + '/' + string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
     }
     const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
-    for (const std::string& modelXml: {modelPath}) {  // , DATA_DIR + "/serialized/" + basename
+    for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
         if (modelData.type == "DetectionModel") {
             bool preload = true;
             auto model = DetectionModel::create_model(modelXml, {}, "", preload, "CPU");
@@ -126,12 +126,24 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
 
                 auto result = model->infer(image);
                 auto topLabels = result->topLabels;
-
-                ASSERT_GT(topLabels.size(), 0);
-
+                ASSERT_EQ(topLabels.size() + 1, modelData.testData[i].reference.size());
                 std::stringstream prediction_buffer;
-                prediction_buffer << topLabels[0];
-                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
+                try {
+                    prediction_buffer << result->saliency_map.get_shape() << ", ";
+                } catch (ov::Exception&) {
+                    prediction_buffer << "[0], ";
+                }
+                try {
+                    prediction_buffer << result->feature_vector.get_shape();
+                } catch (ov::Exception&) {
+                    prediction_buffer << "[0]";
+                }
+                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
+                for (size_t j = 0; j < topLabels.size(); ++j) {
+                    prediction_buffer.str(std::string{});
+                    prediction_buffer << topLabels[j];
+                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j + 1]);
+                }
             }
         }
         else if (modelData.type == "SegmentationModel") {

@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 from openvino.model_api.models import (
     ClassificationModel,
+    ClassificationResult,
     DetectionModel,
     MaskRCNNModel,
     SegmentationModel,
@@ -17,8 +18,6 @@ from openvino.model_api.models import (
 def process_output(output, model_type):
     if model_type == DetectionModel.__name__:
         return f"{output}"
-    elif model_type == ClassificationModel.__name__:
-        return f"({output[0][0][0]}, {output[0][0][1]}, {output[0][0][2]:.3f}; {output[1].shape}, {output[2].shape})"
     elif model_type == SegmentationModel.__name__:
         if isinstance(output, tuple):
             output = output[0]
@@ -81,22 +80,36 @@ def test_image_models(data, dump, result, model_data):
         if image is None:
             raise RuntimeError("Failed to read the image")
         outputs = model(image)
-        if not isinstance(outputs, list):
-            outputs = [outputs]
-        if model_data["type"] == MaskRCNNModel.__name__:
-            outputs = add_rotated_rects(outputs)
+        if isinstance(outputs, ClassificationResult):
+            assert len(outputs.top_labels) + 1 == len(test_data["reference"])
+            ref_iter = iter(test_data["reference"])
+            saliency_map_shape = ",".join(str(i) for i in outputs.saliency_map.shape)
+            feature_vector_shape = ",".join(
+                str(i) for i in outputs.feature_vector.shape
+            )
+            output_str = f"[{saliency_map_shape}], [{feature_vector_shape}]"
+            test_result.append(next(ref_iter) == output_str)
+            image_result = [output_str]
 
-        image_result = []
+            for ref, pred in zip(ref_iter, outputs.top_labels):
+                output_str = f"{pred[0]}, {pred[1]}, {pred[2]:.3f}"
+                test_result.append(ref == output_str)
+                image_result.append(output_str)
+        else:
+            if not isinstance(outputs, list):
+                outputs = [outputs]
+            if model_data["type"] == MaskRCNNModel.__name__:
+                outputs = add_rotated_rects(outputs)
 
-        for i, output in enumerate(outputs):
-            output_str = process_output(output, model_data["type"])
-            if len(test_data["reference"]) > i:
-                print(f'{test_data["reference"][i]=}, {output_str=}')
-                test_result.append(test_data["reference"][i] == output_str)
-            else:
-                test_result.append(False)
+            image_result = []
 
-            if dump:
+            for i, output in enumerate(outputs):
+                output_str = process_output(output, model_data["type"])
+                if len(test_data["reference"]) > i:
+                    print(f'{test_data["reference"][i]=}, {output_str=}')
+                    test_result.append(test_data["reference"][i] == output_str)
+                else:
+                    test_result.append(False)
                 image_result.append(output_str)
 
         if dump:

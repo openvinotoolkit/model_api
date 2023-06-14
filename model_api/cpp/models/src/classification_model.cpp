@@ -270,8 +270,9 @@ std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& in
     }
     else if (hierarchical) {
         result = get_hierarchical_predictions(infResult);
+    } else {
+        result = get_multiclass_predictions(infResult);
     }
-    result = get_multiclass_predictions(infResult);
 
     ClassificationResult* cls_res = static_cast<ClassificationResult*>(result.get());
     auto saliency_map_iter = infResult.outputsData.find(saliency_map_name);

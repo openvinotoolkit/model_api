@@ -23,6 +23,7 @@ from openvino.runtime import opset10 as opset
 
 from .image_model import ImageModel
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
+from .utils import ClassificationResult
 
 
 class ClassificationModel(ImageModel):
@@ -161,9 +162,14 @@ class ClassificationModel(ImageModel):
             result = self.get_hierarchical_predictions(
                 outputs[self.out_layer_names[0]].squeeze()
             )
-        result = self.get_multiclass_predictions(outputs)
+        else:
+            result = self.get_multiclass_predictions(outputs)
 
-        return result, outputs.get(_saliency_map_name, np.ndarray(0)), outputs.get(_feature_vector_name, np.ndarray(0))
+        return ClassificationResult(
+            result,
+            outputs.get(_saliency_map_name, np.ndarray(0)),
+            outputs.get(_feature_vector_name, np.ndarray(0)),
+        )
 
     def get_hierarchical_predictions(self, logits: np.ndarray):
         predicted_labels = []
@@ -239,7 +245,10 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
         raw_scores = softmaxNode.output(0)
         results_descr.append(raw_scores)
     for output in inference_adapter.model.outputs:
-        if _saliency_map_name in output.get_names() or _feature_vector_name in output.get_names():
+        if (
+            _saliency_map_name in output.get_names()
+            or _feature_vector_name in output.get_names()
+        ):
             results_descr.append(output)
     inference_adapter.model = Model(
         results_descr,
@@ -343,6 +352,7 @@ class GreedyLabelsResolver:
 
 _saliency_map_name = "saliency_map"
 _feature_vector_name = "feature_vector"
+
 
 def _append_xai_names(outputs, output_names):
     if _saliency_map_name in outputs:

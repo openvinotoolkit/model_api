@@ -1,12 +1,181 @@
 [
     {
-        "name": "otx_models/model_with_xai_head/model.xml",
+        "name": "resnet-18-pytorch",
         "type": "ClassificationModel",
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
                 "reference": [
-                    "1: 0.326, 2: 0.012, 6: 0.324, 11: 0.175, 12: 0.024, 126: 0.046, 127: 0.092, "
+                    "[0], [0]",
+                    "254, pug, 0.153"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "se-resnext-50",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "175, Labrador_retriever, 0.616"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "efficientnet-b0-pytorch",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "245, French_bulldog, 0.156"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/mlc_mobilenetv3_large_voc.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000081.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "0, aeroplane, 0.943"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/mlc_efficient_b0_voc.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "1, bicycle, 0.768",
+                    "11, dog, 0.876",
+                    "14, person, 0.922"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/mlc_efficient_v2s_voc.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "1, bicycle, 0.825",
+                    "11, dog, 0.873",
+                    "14, person, 0.824"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_mobilenetv3_large_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "105, 194, 0.456"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_efficient_b0_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "0, 1, 0.838"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_efficient_v2s_cars.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "0, 1, 0.849"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/is_efficientnetb2b_maskrcnn_coco_reduced.xml",
+        "type": "MaskRCNNModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "(458, 106, 495, 150, 0.818, 1, bicycle, 852, RotatedRect: 478.119 130.332 28.677 46.408 46.637)",
+                    "(0, 30, 178, 323, 0.753, 2, car, 26728, RotatedRect: 79.739 177.262 251.785 156.656 87.397)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/is_resnet50_maskrcnn_coco_reduced.xml",
+        "type": "MaskRCNNModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "(59, 277, 360, 380, 0.999, 16, horse, 19053, RotatedRect: 210.000 327.500 101.000 296.000 90.000)",
+                    "(2, 9, 162, 318, 0.999, 2, car, 31153, RotatedRect: 82.086 163.312 307.394 156.997 89.669)",
+                    "(294, 94, 316, 153, 0.985, 1, bicycle, 840, RotatedRect: 305.000 123.500 59.000 18.000 90.000)",
+                    "(326, 97, 341, 136, 0.974, 1, bicycle, 397, RotatedRect: 332.500 116.000 38.000 13.000 90.000)",
+                    "(461, 105, 493, 150, 0.918, 1, bicycle, 846, RotatedRect: 476.052 126.972 27.619 47.834 16.928)",
+                    "(350, 92, 386, 149, 0.807, 1, bicycle, 1458, RotatedRect: 369.319 119.891 54.848 34.230 82.405)",
+                    "(279, 110, 291, 146, 0.788, 1, bicycle, 312, RotatedRect: 284.000 127.500 35.000 10.000 90.000)"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/mobilenet_v3_large_hc_cf.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000081.jpg",
+                "reference": [
+                    "[0], [0]",
+                    "5, triangle, 0.993",
+                    "3, equilateral, 0.596",
+                    "1, multi a, 0.922",
+                    "2, multi b, 0.696"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/classification_model_with_xai_head.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000081.jpg",
+                "reference": [
+                    "[1,4,7,7], [1,1280,1,1]",
+                    "0, horse, 0.543"
                 ]
             }
         ]

@@ -85,9 +85,9 @@ struct ClassificationResult : public ResultBase {
 
         friend std::ostream& operator<< (std::ostream& stream, const Classification& prediction)
         {
-            stream << "(" << prediction.id << ", " << prediction.label << ", ";
+            stream << prediction.id << ", " << prediction.label << ", ";
             stream << std::fixed;
-            stream << std::setprecision(3) << prediction.score << ")";
+            stream << std::setprecision(3) << prediction.score;
             return stream;
         }
     };

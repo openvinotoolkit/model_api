@@ -15,9 +15,14 @@
 """
 
 import math
+from collections import namedtuple
 
 import cv2
 import numpy as np
+
+ClassificationResult = namedtuple(
+    "ClassificationResult", "top_labels saliency_map feature_vector"
+)
 
 
 class Detection:
