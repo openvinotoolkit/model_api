@@ -93,6 +93,7 @@ struct ClassificationResult : public ResultBase {
     };
 
     std::vector<Classification> topLabels;
+    ov::Tensor saliency_map, feature_vector;  // Contan "saliency_map" and "feature_vector" model outputs if such exist
 };
 
 struct DetectedObject : public cv::Rect2f {
@@ -115,6 +116,7 @@ struct DetectionResult : public ResultBase {
     DetectionResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     std::vector<DetectedObject> objects;
+    // ov::Tensor saliency_map, feature_vector;  // Contan "saliency_map" and "feature_vector" model outputs if such exist
 };
 
 struct RetinaFaceDetectionResult : public DetectionResult {

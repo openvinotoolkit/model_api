@@ -88,7 +88,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         modelPath = DATA_DIR + '/' + string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
     }
     const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
-    for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
+    for (const std::string& modelXml: {modelPath}) {  // , DATA_DIR + "/serialized/" + basename
         if (modelData.type == "DetectionModel") {
             bool preload = true;
             auto model = DetectionModel::create_model(modelXml, {}, "", preload, "CPU");

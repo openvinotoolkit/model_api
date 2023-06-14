@@ -30,12 +30,20 @@ class ClassificationModel(ImageModel):
 
     def __init__(self, inference_adapter, configuration=None, preload=False):
         super().__init__(inference_adapter, configuration, preload=False)
-        self._check_io_number(1, (1, 2))
+        self._check_io_number(1, (1, 2, 3, 4))
         if self.path_to_labels:
             self.labels = self._load_labels(self.path_to_labels)
-        self.out_layer_names = [self._get_output()]
+        if 1 == len(self.outputs):
+            self.out_layer_names = [self._get_output()]
 
         if self.hierarchical:
+            for output_name in self.outputs.keys():
+                if _saliency_map_name == output_name:
+                    continue
+                if _feature_vector_name == output_name:
+                    continue
+                self.out_layer_names.append(output_name)
+            _append_xai_names(self.outputs.keys(), self.out_layer_names)
             self.embedded_processing = True
             if not self.hierarchical_config:
                 self.raise_error("Hierarchical classification config is empty.")
@@ -47,6 +55,13 @@ class ClassificationModel(ImageModel):
 
         if self.multilabel:
             self.embedded_processing = True
+            for output_name in self.outputs.keys():
+                if _saliency_map_name == output_name:
+                    continue
+                if _feature_vector_name == output_name:
+                    continue
+                self.out_layer_names.append(output_name)
+            _append_xai_names(self.outputs.keys(), self.out_layer_names)
             if preload:
                 self.load()
             return
@@ -59,6 +74,7 @@ class ClassificationModel(ImageModel):
         self.out_layer_names = ["indices", "scores"]
         if self.output_raw_scores:
             self.out_layer_names.append("raw_scores")
+        _append_xai_names(self.outputs.keys(), self.out_layer_names)
         if preload:
             self.load()
 
@@ -138,14 +154,16 @@ class ClassificationModel(ImageModel):
 
     def postprocess(self, outputs, meta):
         if self.multilabel:
-            return self.get_multilabel_predictions(
+            result = self.get_multilabel_predictions(
                 outputs[self.out_layer_names[0]].squeeze()
             )
         elif self.hierarchical:
-            return self.get_hierarchical_predictions(
+            result = self.get_hierarchical_predictions(
                 outputs[self.out_layer_names[0]].squeeze()
             )
-        return self.get_multiclass_predictions(outputs)
+        result = self.get_multiclass_predictions(outputs)
+
+        return result, outputs.get(_saliency_map_name, np.ndarray(0)), outputs.get(_feature_vector_name, np.ndarray(0))
 
     def get_hierarchical_predictions(self, logits: np.ndarray):
         predicted_labels = []
@@ -220,6 +238,9 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
     if output_raw_scores:
         raw_scores = softmaxNode.output(0)
         results_descr.append(raw_scores)
+    for output in inference_adapter.model.outputs:
+        if _saliency_map_name in output.get_names() or _feature_vector_name in output.get_names():
+            results_descr.append(output)
     inference_adapter.model = Model(
         results_descr,
         inference_adapter.model.get_parameters(),
@@ -318,3 +339,13 @@ class GreedyLabelsResolver:
             (self.label_to_idx[lbl], lbl, label_to_prob[lbl]) for lbl in output_labels
         ]
         return output_predictions
+
+
+_saliency_map_name = "saliency_map"
+_feature_vector_name = "feature_vector"
+
+def _append_xai_names(outputs, output_names):
+    if _saliency_map_name in outputs:
+        output_names.append(_saliency_map_name)
+    if _feature_vector_name in outputs:
+        output_names.append(_feature_vector_name)

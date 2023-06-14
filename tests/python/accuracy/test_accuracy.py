@@ -18,7 +18,7 @@ def process_output(output, model_type):
     if model_type == DetectionModel.__name__:
         return f"{output}"
     elif model_type == ClassificationModel.__name__:
-        return f"({output[0]}, {output[1]}, {output[2]:.3f})"
+        return f"({output[0][0][0]}, {output[0][0][1]}, {output[0][0][2]:.3f}; {output[1].shape}, {output[2].shape})"
     elif model_type == SegmentationModel.__name__:
         if isinstance(output, tuple):
             output = output[0]
