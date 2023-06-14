@@ -256,6 +256,10 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
 }
 
 std::vector<Contour> SegmentationModel::getContours(const ImageResultWithSoftPrediction &imageResult) {
+    if (imageResult.soft_prediction.channels() == 1) {
+        throw std::runtime_error{"Cannot get contours from soft prediction with 1 layer"};
+    }
+
     std::vector<Contour> combined_contours = {};
     cv::Mat label_index_map;
     cv::Mat current_label_soft_prediction;

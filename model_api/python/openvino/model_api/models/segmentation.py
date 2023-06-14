@@ -149,6 +149,8 @@ class SegmentationModel(ImageModel):
         height, width = hard_prediction.shape[:2]
         n_layers = soft_prediction.shape[2]
 
+        if n_layers == 1:
+            raise RuntimeError("Cannot get contours from soft prediction with 1 layer")
         combined_contours = []
         for layer_index in range(1, n_layers):  # ignoring background
             label = self.get_label_name(layer_index - 1)
