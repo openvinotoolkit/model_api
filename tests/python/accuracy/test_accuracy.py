@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 from openvino.model_api.models import (
     ClassificationModel,
+    ClassificationResult,
     DetectionModel,
     MaskRCNNModel,
     SegmentationModel,
@@ -17,8 +18,6 @@ from openvino.model_api.models import (
 def process_output(output, model_type):
     if model_type == DetectionModel.__name__:
         return f"{output}"
-    elif model_type == ClassificationModel.__name__:
-        return f"({output[0]}, {output[1]}, {output[2]:.3f})"
     elif model_type == SegmentationModel.__name__:
         if isinstance(output, dict):
             return "({probability:.3f}, {label})".format(**output)
@@ -84,23 +83,27 @@ def test_image_models(data, dump, result, model_data):
         if image is None:
             raise RuntimeError("Failed to read the image")
         outputs = model(image)
-        if not isinstance(outputs, list):
-            outputs = [outputs]
-        if model_data["type"] == MaskRCNNModel.__name__:
-            outputs = add_rotated_rects(outputs)
-        if model_data["type"] == SegmentationModel.__name__:
-            outputs.extend(model.get_contours(*outputs[0]))
+        if isinstance(outputs, ClassificationResult):
+            assert 1 == len(test_data["reference"])
+            output_str = str(outputs)
+            test_result.append(test_data["reference"][0] == output_str)
+            image_result = [output_str]
+        else:
+            if not isinstance(outputs, list):
+                outputs = [outputs]
+            if model_data["type"] == MaskRCNNModel.__name__:
+                outputs = add_rotated_rects(outputs)
+            if model_data["type"] == SegmentationModel.__name__:
+                outputs.extend(model.get_contours(*outputs[0]))
 
-        image_result = []
+            image_result = []
 
-        for i, output in enumerate(outputs):
-            output_str = process_output(output, model_data["type"])
-            if len(test_data["reference"]) > i:
-                test_result.append(test_data["reference"][i] == output_str)
-            else:
-                test_result.append(False)
-
-            if dump:
+            for i, output in enumerate(outputs):
+                output_str = process_output(output, model_data["type"])
+                if len(test_data["reference"]) > i:
+                    test_result.append(test_data["reference"][i] == output_str)
+                else:
+                    test_result.append(False)
                 image_result.append(output_str)
 
         if dump:
