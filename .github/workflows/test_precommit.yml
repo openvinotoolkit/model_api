@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ignored: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19']
+        ignored: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35']
 
     runs-on: windows-latest
     steps:
@@ -48,4 +48,4 @@ jobs:
       # .\w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\setupvars.bat exits with 0 code without moving to a next command. Set PATH manually
       run: |
         set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\3rdparty\tbb\bin;%PATH%
-        .\asdf.bat
+        .\build\Release\test_model_config -d data --gtest_repeat=-1 --gtest_break_on_failure

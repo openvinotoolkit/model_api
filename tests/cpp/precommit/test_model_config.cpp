@@ -91,19 +91,33 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
         throw std::runtime_error{"Failed to read the image"};
     }
 
+    std::cout << "AAAAA\n";
     std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
+    std::cout << "BBBBBBBBBBBBBBBBBB\n";
     auto model_restored = DetectionModel::create_model(adapter);
+    std::cout << "CCCCCCCCCCCCCC\n";
     auto result_data = model_restored->infer(image);
+    std::cout << "DDDDDDDDDDDDDDDDDDDD\n";
     auto result_restored = result_data->objects;
+    std::cout << "EEEEEEEEEEEEEEEEEEE\n";
 
     ASSERT_EQ(result.size(), result_restored.size());
+    std::cout << "FFFFFFFFFFFFFFFF\n";
 
+    std::cout << "GGGGGGGGGGGGGG\n";
     for (size_t i = 0; i < result.size(); i++) {
+        std::cout << "HHHHHHHHHHHHHHH\n";
         ASSERT_EQ(result[i].x, result_restored[i].x);
+        std::cout << "IIIIIIIIII\n";
         ASSERT_EQ(result[i].y, result_restored[i].y);
+        std::cout << "JJJJJJJJJJJJJJ\n";
         ASSERT_EQ(result[i].width, result_restored[i].width);
+        std::cout << "KKKKKKKKKK\n";
         ASSERT_EQ(result[i].height, result_restored[i].height);
+        std::cout << "LLLLLLLLLLLLLLL\n";
     }
+    std::cout << "MMMMMMMMMMMMM\n";
+
 }
 
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssd_mobilenet_v1_fpn_coco")));
