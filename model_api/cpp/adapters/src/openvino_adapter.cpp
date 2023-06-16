@@ -23,7 +23,7 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
                                                             const std::string& device, const ov::AnyMap& compilationConfig) {
     slog::info << "Loading model to the plugin" << slog::endl;
 
-    compiledModel = core.compile_model(model, device, compilationConfig);
+    compiledModel = core.compile_model(model, device, {});
     std::cout << "NNNNNNNNNNNN\n";
     inferRequest = compiledModel.create_infer_request();
     std::cout << "OOOOOOOOOOO\n";
