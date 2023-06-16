@@ -24,13 +24,19 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
     slog::info << "Loading model to the plugin" << slog::endl;
 
     compiledModel = core.compile_model(model, device, compilationConfig);
+    std::cout << "NNNNNNNNNNNN\n";
     inferRequest = compiledModel.create_infer_request();
+    std::cout << "OOOOOOOOOOO\n";
 
     initInputsOutputs();
+    std::cout << "PPPPPPPPPPPPPPPPP\n";
 
     if (model->has_rt_info({"model_info"})) {
+        std::cout << "RRRRRRRRRRRRRR\n";
         modelConfig = model->get_rt_info<ov::AnyMap>("model_info");
+        std::cout << "SSSSSSSSSSSSSSSS\n";
     }
+    std::cout << "TTTTTTTTTTT\n";
 }
 
 InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {

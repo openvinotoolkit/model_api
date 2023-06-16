@@ -40,11 +40,8 @@ class MockAdapter : public OpenVINOInferenceAdapter {
     public:
         MockAdapter(const std::string& modelPath)
             : OpenVINOInferenceAdapter() {
-            std::cout << "NNNNNNNNNNNNNNN\n";
             ov::Core core;
-            std::cout << "OOOOOOOOOOOOOOOO\n";
             auto model = core.read_model(modelPath);
-            std::cout << "PPPPPPPPPPPPPPPP\n";
             loadModel(model, core, "CPU");
             std::cout << "QQQQQQQQQQQQQQQQQ\n";
         }
