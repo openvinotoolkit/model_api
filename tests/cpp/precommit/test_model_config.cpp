@@ -82,28 +82,23 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     }
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    std::cout << "CCCCCCCCCCCCCCC\n";
     auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
+    std::cout << "DDDDDDDDDDDDDDDDDDDDD\n";
     auto ov_model = model->getModel();
+    std::cout << "EEEEEEEEEEEEEEEEEee\n";
     ov::serialize(ov_model, TMP_MODEL_FILE);
+    std::cout << "FFFFFFFFFFFFFFF\n";
     auto result = model->infer(image)->objects;
-
-    image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
-    if (!image.data) {
-        throw std::runtime_error{"Failed to read the image"};
-    }
 
     std::cout << "AAAAA\n";
     std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     std::cout << "BBBBBBBBBBBBBBBBBB\n";
     auto model_restored = DetectionModel::create_model(adapter);
-    std::cout << "CCCCCCCCCCCCCC\n";
     auto result_data = model_restored->infer(image);
-    std::cout << "DDDDDDDDDDDDDDDDDDDD\n";
     auto result_restored = result_data->objects;
-    std::cout << "EEEEEEEEEEEEEEEEEEE\n";
 
     ASSERT_EQ(result.size(), result_restored.size());
-    std::cout << "FFFFFFFFFFFFFFFF\n";
 
     std::cout << "GGGGGGGGGGGGGG\n";
     for (size_t i = 0; i < result.size(); i++) {
