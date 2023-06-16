@@ -146,7 +146,6 @@ void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t to
 
 std::vector<std::string> get_non_xai_names(const std::vector<ov::Output<ov::Node>>& outputs) {
     std::vector<std::string> outputNames;
-    size_t asd = 1;
     outputNames.reserve(std::max(1, int(outputs.size()) - 2));
     for (const ov::Output<ov::Node>& output : outputs) {
         if (output.get_names().count(saliency_map_name) > 0) {
