@@ -13,15 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8]
+        ignored: ['0' '1' '2' '3' '4' '5' '6' '7' '8' '9' '10' '11' '12' '13' '14' '15' '16' '17' '18' '19']
 
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+    - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
         cache: pip
     - name: Create and start a virtual environment
       shell: bash
@@ -55,4 +54,4 @@ jobs:
       # .\w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\setupvars.bat exits with 0 code without moving to a next command. Set PATH manually
       run: |
         set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\3rdparty\tbb\bin;%PATH%
-        .\build\Release\test_model_config -d data --gtest_filter=SSDTestInstance/DetectionModelParameterizedTestSaveLoad.TestDetctionCorrectnessAfterSaveLoadWithAdapter/1 --gtest_repeat=-1 --gtest_break_on_failure
+        .\build\Release\test_model_config -d data
