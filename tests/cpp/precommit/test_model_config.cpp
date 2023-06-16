@@ -42,7 +42,7 @@ class MockAdapter : public OpenVINOInferenceAdapter {
             : OpenVINOInferenceAdapter() {
             auto core = ov::Core();
             auto model = core.read_model(modelPath);
-            loadModel(model, core, "AUTO");
+            loadModel(model, core, "CPU");
         }
 };
 
