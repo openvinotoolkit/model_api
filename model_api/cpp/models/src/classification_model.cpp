@@ -144,6 +144,21 @@ void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t to
     model = ppp.build();
 }
 
+std::vector<std::string> get_non_xai_names(const std::vector<ov::Output<ov::Node>>& outputs) {
+    std::vector<std::string> outputNames;
+    size_t asd = 1;
+    outputNames.reserve(std::max(1, int(outputs.size()) - 2));
+    for (const ov::Output<ov::Node>& output : outputs) {
+        if (output.get_names().count(saliency_map_name) > 0) {
+            continue;
+        } if (output.get_names().count(feature_vector_name) > 0) {
+            continue;
+        }
+        outputNames.push_back(output.get_any_name());
+    }
+    return outputNames;
+}
+
 void append_xai_names(const std::vector<ov::Output<ov::Node>>& outputs, std::vector<std::string>& outputNames) {
     for (const ov::Output<ov::Node>& output : outputs) {
         if (output.get_names().count(saliency_map_name) > 0) {
@@ -432,14 +447,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
 
     if (multilabel || hierarchical) {
         embedded_processing = true;
-        for (const ov::Output<ov::Node>& output : model->outputs()) {
-            if (output.get_names().count(saliency_map_name) > 0) {
-                continue;
-            } if (output.get_names().count(feature_vector_name) > 0) {
-                continue;
-            }
-            outputNames.push_back(output.get_any_name());
-        }
+        outputNames = get_non_xai_names(model->outputs());
         append_xai_names(model->outputs(), outputNames);
         return;
     }
