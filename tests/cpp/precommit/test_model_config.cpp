@@ -24,7 +24,8 @@
 
 using json = nlohmann::json;
 
-std::string DATA_DIR = "../data";
+namespace{
+std::string DATA_DIR;
 std::string MODEL_PATH_TEMPLATE = "public/%s/FP16/%s.xml";
 std::string IMAGE_PATH = "coco128/images/train2017/000000000074.jpg";
 
@@ -92,22 +93,28 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     auto result = model->infer(image)->objects;
 
     std::cout << "AAAAA\n";
-    ov::Core{}.compile_model(TMP_MODEL_FILE, "CPU");
+    ov::Core core;
+    auto ovmodel = core.read_model(TMP_MODEL_FILE);
+    std::cout << "BBBBBBB\n";
+    auto compiledModel = core.compile_model(ovmodel, "CPU", {});
+    std::cout << "GGGGGGGGG\n";
 }
 
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssd_mobilenet_v1_fpn_coco")));
 
-char* get_arg(int argc, char *argv[], char arg[]) {
-    for (int i = 1; i < argc; ++i) {
+char* parse_arg(int argc, char *argv[], char arg[]) {
+    for (int i = 1; i < argc - 1; ++i) {
         if (!strcmp(argv[i], arg)) {
             return argv[i + 1];
         }
     }
-    throw std::runtime_error(std::string{"Usage: "} + argv[0] + ' ' + arg + " <path_to_data>");
+    std::cerr << "Missing " << arg << ". Usage: " << argv[0] << " -d <path_to_data>\n";
+    exit(1);
+}
 }
 
 int main(int argc, char *argv[]) {
+    DATA_DIR = parse_arg(argc, argv, "-d");
     testing::InitGoogleTest(&argc, argv);
-    DATA_DIR = get_arg(argc, argv, "-d");
     return RUN_ALL_TESTS();
 }
