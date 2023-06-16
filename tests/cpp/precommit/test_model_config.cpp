@@ -104,8 +104,6 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
         ASSERT_EQ(result[i].width, result_restored[i].width);
         ASSERT_EQ(result[i].height, result_restored[i].height);
     }
-
-    SUCCEED();
 }
 
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssd_mobilenet_v1_fpn_coco")));
