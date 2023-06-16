@@ -41,7 +41,6 @@ from .ssd import SSD
 from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
 from .utils import (
     RESIZE_TYPES,
-    ClassificationResult,
     Detection,
     DetectionWithLandmarks,
     InputTransform,
@@ -109,7 +108,6 @@ __all__ = [
     "YoloV4",
     "YOLOF",
     "YOLOX",
-    "ClassificationResult",
     "Detection",
     "DetectionWithLandmarks",
     "classification_models" "detection_models",
