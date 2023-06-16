@@ -98,17 +98,19 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     std::cout << "BBBBBBB\n";
     auto compiledModel = core.compile_model(ovmodel, "CPU", {});
     std::cout << "GGGGGGGGG\n";
+    std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
+    std::cout << "HHHHHHHHHHHHHH\n";
 }
 
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssd_mobilenet_v1_fpn_coco")));
 
-char* parse_arg(int argc, char *argv[], char arg[]) {
+char* parse_arg(int argc, char * const argv[], const char arg[]) {
     for (int i = 1; i < argc - 1; ++i) {
         if (!strcmp(argv[i], arg)) {
             return argv[i + 1];
         }
     }
-    std::cerr << "Missing " << arg << ". Usage: " << argv[0] << " -d <path_to_data>\n";
+    std::cerr << "Missing " << arg << ". Usage: " << argv[0] << " -d <path_to_data_dir>\n";
     exit(1);
 }
 }
