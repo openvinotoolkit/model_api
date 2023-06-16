@@ -117,6 +117,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             auto model = ClassificationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
+                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                 cv::Mat image = cv::imread(imagePath);
@@ -125,13 +126,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
 
                 auto result = model->infer(image);
-                auto topLabels = result->topLabels;
-
-                ASSERT_GT(topLabels.size(), 0);
-
-                std::stringstream prediction_buffer;
-                prediction_buffer << topLabels[0];
-                EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]); // Check top-1 only
+                EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "SegmentationModel") {
