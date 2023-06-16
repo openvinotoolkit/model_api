@@ -31,7 +31,7 @@ class ClassificationModel(ImageModel):
 
     def __init__(self, inference_adapter, configuration=None, preload=False):
         super().__init__(inference_adapter, configuration, preload=False)
-        self._check_io_number(1, (1, 2, 3, 4))
+        self._check_io_number(1, (1, 2, 3, 4, 5))
         if self.path_to_labels:
             self.labels = self._load_labels(self.path_to_labels)
         if 1 == len(self.outputs):

@@ -398,7 +398,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     }
 
     // --------------------------- Prepare output  -----------------------------------------------------
-    if (model->outputs().size() > 4) {
+    if (model->outputs().size() > 5) {
         throw std::logic_error("Classification model wrapper supports topologies with up to 4 outputs");
     }
 
