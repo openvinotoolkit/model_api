@@ -93,11 +93,6 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     auto result = model->infer(image)->objects;
 
     std::cout << "AAAAA\n";
-    ov::Core core;
-    auto ovmodel = core.read_model(TMP_MODEL_FILE);
-    std::cout << "BBBBBBB\n";
-    auto compiledModel = core.compile_model(ovmodel, "CPU", {});
-    std::cout << "GGGGGGGGG\n";
     std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     std::cout << "BBBBBBBBBBBBBBBBBB\n";
     auto model_restored = DetectionModel::create_model(adapter);
