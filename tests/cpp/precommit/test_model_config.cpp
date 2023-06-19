@@ -77,10 +77,15 @@ std::string string_format(const std::string &fmt, Args... args) {
 }
 
 TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSaveLoadWithAdapter) {
+    std::cout << "begin\n";
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
+    std::cout << "cv::Mat image = cv::imread(DATA_DIR + \n";
     if (!image.data) {
+        std::cout << "if (!image.data) {\n";
         throw std::runtime_error{"Failed to read the image"};
+        std::cout << "throw std::runtime_error{\n";
     }
+    std::cout << "auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());\n";
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
     std::cout << "CCCCCCCCCCCCCCC\n";
