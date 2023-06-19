@@ -9,6 +9,7 @@ from openvino.model_api.models import (
     ClassificationModel,
     ClassificationResult,
     DetectionModel,
+    DetectionResult,
     MaskRCNNModel,
     SegmentationModel,
     add_rotated_rects,
@@ -16,9 +17,7 @@ from openvino.model_api.models import (
 
 
 def process_output(output, model_type):
-    if model_type == DetectionModel.__name__:
-        return f"{output}"
-    elif model_type == SegmentationModel.__name__:
+    if model_type == SegmentationModel.__name__:
         if isinstance(output, dict):
             return "({probability:.3f}, {label})".format(**output)
         else:
@@ -85,6 +84,13 @@ def test_image_models(data, dump, result, model_data):
         outputs = model(image)
         if isinstance(outputs, ClassificationResult):
             assert 1 == len(test_data["reference"])
+            output_str = str(outputs)
+            test_result.append(test_data["reference"][0] == output_str)
+            image_result = [output_str]
+        elif isinstance(outputs, DetectionResult):
+            assert 1 == len(
+                test_data["reference"]
+            )  # TODO: make "reference" to be a single element after SegmentationModel is updated
             output_str = str(outputs)
             test_result.append(test_data["reference"][0] == output_str)
             image_result = [output_str]

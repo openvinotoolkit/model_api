@@ -94,6 +94,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             auto model = DetectionModel::create_model(modelXml, {}, "", preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
+                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                 cv::Mat image = cv::imread(imagePath);
@@ -102,14 +103,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
 
                 auto result = model->infer(image);
-                auto objects = result->objects;
-                ASSERT_EQ(objects.size(), modelData.testData[i].reference.size());
-
-                for (size_t j = 0; j < objects.size(); j++) {
-                    std::stringstream prediction_buffer;
-                    prediction_buffer << objects[j];
-                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
-                }
+                EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "ClassificationModel") {
