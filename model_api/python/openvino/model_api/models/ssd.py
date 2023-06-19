@@ -41,7 +41,11 @@ class SSD(DetectionModel):
         detections = self._parse_outputs(outputs)
         detections = self._resize_detections(detections, meta)
         detections = self._add_label_names(detections)
-        return DetectionResult(detections, outputs.get(_saliency_map_name, np.ndarray(0)), outputs.get(_feature_vector_name, np.ndarray(0)))
+        return DetectionResult(
+            detections,
+            outputs.get(_saliency_map_name, np.ndarray(0)),
+            outputs.get(_feature_vector_name, np.ndarray(0)),
+        )
 
     def _get_output_parser(
         self, image_blob_name, bboxes="bboxes", labels="labels", scores="scores"
@@ -171,6 +175,7 @@ class BoxesLabelsParser:
             for label, score, bbox in zip(labels, scores, bboxes)
         ]
         return detections
+
 
 _saliency_map_name = "saliency_map"
 _feature_vector_name = "feature_vector"

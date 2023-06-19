@@ -88,7 +88,9 @@ def test_image_models(data, dump, result, model_data):
             test_result.append(test_data["reference"][0] == output_str)
             image_result = [output_str]
         elif isinstance(outputs, DetectionResult):
-            assert 1 == len(test_data["reference"])  # TODO: make "reference" to be a single element after SegmentationModel is updated
+            assert 1 == len(
+                test_data["reference"]
+            )  # TODO: make "reference" to be a single element after SegmentationModel is updated
             output_str = str(outputs)
             test_result.append(test_data["reference"][0] == output_str)
             image_result = [output_str]
