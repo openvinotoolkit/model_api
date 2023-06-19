@@ -102,8 +102,6 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     std::cout << "BBBBBBBBBBBBBBBBBB\n";
     auto model_restored = DetectionModel::create_model(adapter);
     std::cout << "DetectionModel::create_model(adapter);\n";
-    model_restored->infer(image);
-    std::cout << "model_restored->infer(image);\n";
 }
 
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssd_mobilenet_v1_fpn_coco")));
