@@ -98,7 +98,7 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     auto result = model->infer(image)->objects;
 
     std::cout << "AAAAA\n";
-    std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
+    std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(DATA_DIR + "/" + model_path);
     std::cout << "BBBBBBBBBBBBBBBBBB\n";
     auto model_restored = DetectionModel::create_model(adapter);
     std::cout << "DetectionModel::create_model(adapter);\n";
