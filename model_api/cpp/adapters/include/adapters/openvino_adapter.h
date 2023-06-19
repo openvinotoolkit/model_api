@@ -36,10 +36,8 @@ public:
     virtual std::vector<std::string> getOutputNames() const override;
     virtual const ov::AnyMap& getModelConfig() const override;
 
-protected:
     void initInputsOutputs();
 
-protected:
     //Depends on the implmentation details but we should share the model state in this class
     std::vector<std::string> inputNames;
     std::vector<std::string> outputNames;

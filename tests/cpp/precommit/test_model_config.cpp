@@ -98,15 +98,23 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     auto result = model->infer(image)->objects;
 
     std::cout << "AAAAA\n";
-    std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(DATA_DIR + "/" + model_path);
+    std::shared_ptr<MockAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     std::cout << "BBBBBBBBBBBBBBBBBB\n";
-    auto model_restored = DetectionModel::create_model(adapter);
+    auto kek = std::static_pointer_cast<InferenceAdapter>(adapter);
+    std::cout << "kek\n";
+    auto model_restored = DetectionModel::create_model(kek);
     std::cout << "DetectionModel::create_model(adapter);\n";
     InferenceInput inputs;
     std::cout << "InferenceInput inputs;\n";
     model_restored->preprocess(ImageInputData{image}, inputs);
     std::cout << "model_restored->preprocess(image, inputs);\n";
-    adapter->infer(inputs);
+    for (const auto& item : inputs) {
+        std::cout << "for (const auto& item : inputs) {\n";
+        adapter->inferRequest.set_tensor(item.first, item.second);
+        std::cout << "adapter->inferRequest.set_tensor(item.first, item.second);\n";
+    }
+    std::cout << "}\n";
+    adapter->inferRequest.infer();
     std::cout << "adapter->infer({});\n";
 }
 
