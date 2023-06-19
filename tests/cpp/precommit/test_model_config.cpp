@@ -102,6 +102,12 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     std::cout << "BBBBBBBBBBBBBBBBBB\n";
     auto model_restored = DetectionModel::create_model(adapter);
     std::cout << "DetectionModel::create_model(adapter);\n";
+    InferenceInput inputs;
+    std::cout << "InferenceInput inputs;\n";
+    model_restored->preprocess(ImageInputData{image}, inputs);
+    std::cout << "model_restored->preprocess(image, inputs);\n";
+    adapter->infer(inputs);
+    std::cout << "adapter->infer({});\n";
 }
 
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssd_mobilenet_v1_fpn_coco")));
