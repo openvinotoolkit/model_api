@@ -95,6 +95,8 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     std::cout << "AAAAA\n";
     std::shared_ptr<InferenceAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     std::cout << "BBBBBBBBBBBBBBBBBB\n";
+    DetectionModel::create_model(adapter);
+    std::cout << "DetectionModel::create_model(adapter);";
 }
 
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssd_mobilenet_v1_fpn_coco")));
