@@ -19,7 +19,7 @@ import numpy as np
 
 from .image_model import ImageModel
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
-from .utils import load_labels
+from .utils import Contour, ImageResultWithSoftPrediction, load_labels
 
 
 def create_hard_prediction_from_soft_prediction(
@@ -57,15 +57,18 @@ class SegmentationModel(ImageModel):
 
     def __init__(self, inference_adapter, configuration=None, preload=False):
         super().__init__(inference_adapter, configuration, preload)
-        self._check_io_number(1, 1)
+        self._check_io_number(1, (1, 2))
         if self.path_to_labels:
             self.labels = load_labels(self.path_to_labels)
 
         self.output_blob_name = self._get_outputs()
 
     def _get_outputs(self):
-        layer_name = next(iter(self.outputs))
-        layer_shape = self.outputs[layer_name].shape
+        outs = dict(filter(lambda pair: _feature_vector_name not in pair[1].names, self.outputs.items()))
+        if 1 != len(outs):
+            self.raise_error(f"only {_feature_vector_name} and 1 other output are allowed")
+        layer_name = next(iter(outs))
+        layer_shape = outs[layer_name].shape
 
         if len(layer_shape) == 3:
             self.out_channels = 0
@@ -140,7 +143,7 @@ class SegmentationModel(ImageModel):
                 interpolation=cv2.INTER_NEAREST,
             )
 
-            return hard_prediction, soft_prediction
+            return ImageResultWithSoftPrediction(hard_prediction, soft_prediction, outputs.get(_feature_vector_name, np.ndarray(0)))
         return hard_prediction
 
     def get_contours(
@@ -176,9 +179,7 @@ class SegmentationModel(ImageModel):
                     thickness=-1,
                 )
                 probability = cv2.mean(current_label_soft_prediction, mask)[0]
-                combined_contours.append(
-                    {"label": label, "contour": contour, "probability": probability}
-                )
+                combined_contours.append(Contour(label, probability, contour))
 
         return combined_contours
 
@@ -199,3 +200,5 @@ class SalientObjectDetectionModel(SegmentationModel):
             interpolation=cv2.INTER_NEAREST,
         )
         return result
+
+_feature_vector_name = "feature_vector"

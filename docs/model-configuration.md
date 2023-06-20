@@ -25,6 +25,9 @@ The list features only model wrappers which intoduce new configuration values in
 1. `confidence_threshold`: float - probability threshold value for bounding box filtering
 1. `labels`: List - List of class labels
 1. `path_to_labels`: str - path to file with labels. Overrides the labels, if they sets via `labels` parameter
+##### `SSD`
+1. `detections_num_id`: int - index of a dimnsion corresponding to detected object number
+1. `object_size`: int - number of floats describing each detected objects
 ##### `CTPN`
 1. `iou_threshold`: float - threshold for non-maximum suppression (NMS) intersection over union (IOU) filtering
 1. `input_size`: List - image resolution which is going to be processed. Reshapes network to match a given size

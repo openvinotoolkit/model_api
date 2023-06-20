@@ -10,6 +10,7 @@ from openvino.model_api.models import (
     ClassificationResult,
     DetectionModel,
     DetectionResult,
+    ImageResultWithSoftPrediction,
     MaskRCNNModel,
     SegmentationModel,
     add_rotated_rects,
@@ -17,25 +18,7 @@ from openvino.model_api.models import (
 
 
 def process_output(output, model_type):
-    if model_type == SegmentationModel.__name__:
-        if isinstance(output, dict):
-            return "({probability:.3f}, {label})".format(**output)
-        else:
-            if isinstance(output, tuple):
-                output = output[0]
-            outHist = cv2.calcHist(
-                [output.astype(np.uint8)],
-                channels=None,
-                mask=None,
-                histSize=[256],
-                ranges=[0, 255],
-            )
-            prediction_buffer = ""
-            for i, count in enumerate(outHist):
-                if count > 0:
-                    prediction_buffer += f"{i}: {count[0] / output.size:.3f}, "
-            return prediction_buffer
-    elif model_type == MaskRCNNModel.__name__:
+    if model_type == MaskRCNNModel.__name__:
         return str(output)
     else:
         raise ValueError("Unknown model type to precess ouput")
@@ -92,6 +75,18 @@ def test_image_models(data, dump, result, model_data):
                 test_data["reference"]
             )  # TODO: make "reference" to be a single element after SegmentationModel is updated
             output_str = str(outputs)
+            test_result.append(test_data["reference"][0] == output_str)
+            image_result = [output_str]
+        elif isinstance(outputs, ImageResultWithSoftPrediction):
+            assert 1 == len(
+                test_data["reference"]
+            )
+            contours = model.get_contours(outputs.resultImage, outputs.soft_prediction)
+            contour_str = ", "
+            for contour in contours:
+                contour_str += str(contour) + ", "
+            output_str = str(outputs) + contour_str
+            print(output_str)
             test_result.append(test_data["reference"][0] == output_str)
             image_result = [output_str]
         else:
