@@ -98,8 +98,6 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     auto result = model->infer(image)->objects;
 
     std::cout << "AAAAA\n";
-    ov::InferRequest inferRequest = ov::Core{}.compile_model(TMP_MODEL_FILE, "CPU").create_infer_request();
-    std::cout << "create_infer_request\n";
     std::shared_ptr<MockAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
     std::cout << "BBBBBBBBBBBBBBBBBB\n";
     auto kek = std::static_pointer_cast<InferenceAdapter>(adapter);
@@ -112,11 +110,11 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     std::cout << "model_restored->preprocess(image, inputs);\n";
     for (const auto& item : inputs) {
         std::cout << "for (const auto& item : inputs) {\n";
-        inferRequest.set_tensor(item.first, item.second);
+        adapter->inferRequest.set_tensor(item.first, item.second);
         std::cout << "adapter->inferRequest.set_tensor(item.first, item.second);\n";
     }
     std::cout << "}\n";
-    inferRequest.infer();
+    adapter->inferRequest.infer();
     std::cout << "adapter->infer({});\n";
 }
 
