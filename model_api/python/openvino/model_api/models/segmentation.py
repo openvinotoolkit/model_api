@@ -68,7 +68,9 @@ class SegmentationModel(ImageModel):
         for name, output in self.outputs.items():
             if _feature_vector_name not in output.names:
                 if out_name:
-                    self.raise_error(f"only {_feature_vector_name} and 1 other output are allowed")
+                    self.raise_error(
+                        f"only {_feature_vector_name} and 1 other output are allowed"
+                    )
                 else:
                     out_name = name
         if not out_name:
@@ -148,7 +150,11 @@ class SegmentationModel(ImageModel):
                 interpolation=cv2.INTER_NEAREST,
             )
 
-            return ImageResultWithSoftPrediction(hard_prediction, soft_prediction, outputs.get(_feature_vector_name, np.ndarray(0)))
+            return ImageResultWithSoftPrediction(
+                hard_prediction,
+                soft_prediction,
+                outputs.get(_feature_vector_name, np.ndarray(0)),
+            )
         return hard_prediction
 
     def get_contours(
@@ -205,5 +211,6 @@ class SalientObjectDetectionModel(SegmentationModel):
             interpolation=cv2.INTER_NEAREST,
         )
         return result
+
 
 _feature_vector_name = "feature_vector"

@@ -14,16 +14,18 @@
  limitations under the License.
 """
 
-from typing import List, Tuple, NamedTuple
 import math
 from collections import namedtuple
+from typing import List, NamedTuple, Tuple
 
 import cv2
 import numpy as np
 
 
 class ClassificationResult(
-    namedtuple("ClassificationResult", "top_labels saliency_map feature_vector")  # Contan "saliency_map" and "feature_vector" model outputs if such exist
+    namedtuple(
+        "ClassificationResult", "top_labels saliency_map feature_vector"
+    )  # Contan "saliency_map" and "feature_vector" model outputs if such exist
 ):
     def __str__(self):
         labels = ", ".join(
@@ -48,7 +50,9 @@ class Detection:
 
 
 class DetectionResult(
-    namedtuple("DetectionResult", "objects saliency_map feature_vector")  # Contan "saliency_map" and "feature_vector" model outputs if such exist
+    namedtuple(
+        "DetectionResult", "objects saliency_map feature_vector"
+    )  # Contan "saliency_map" and "feature_vector" model outputs if such exist
 ):
     def __str__(self):
         obj_str = "; ".join(str(obj) for obj in self.objects)
@@ -129,13 +133,16 @@ class Contour(NamedTuple):
     label: str
     probability: float
     shape: List[Tuple[int, int]]
+
     def __str__(self):
         return f"{self.label}: {self.probability:.3f}, {len(self.shape)}"
+
 
 class ImageResultWithSoftPrediction(NamedTuple):
     resultImage: np.ndarray
     soft_prediction: np.ndarray
     feature_vector: np.ndarray  # Contans "feature_vector" model output if such exists
+
     def __str__(self):
         outHist = cv2.calcHist(
             [self.resultImage.astype(np.uint8)],
