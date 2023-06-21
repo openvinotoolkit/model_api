@@ -82,7 +82,7 @@ def test_image_models(data, dump, result, model_data):
                 test_data["reference"]
             )
             contours = model.get_contours(outputs.resultImage, outputs.soft_prediction)
-            contour_str = ", "
+            contour_str = "; "
             for contour in contours:
                 contour_str += str(contour) + ", "
             output_str = str(outputs) + contour_str
@@ -94,8 +94,6 @@ def test_image_models(data, dump, result, model_data):
                 outputs = [outputs]
             if model_data["type"] == MaskRCNNModel.__name__:
                 outputs = add_rotated_rects(outputs)
-            if model_data["type"] == SegmentationModel.__name__:
-                outputs.extend(model.get_contours(*outputs[0]))
 
             image_result = []
 

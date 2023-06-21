@@ -64,11 +64,16 @@ class SegmentationModel(ImageModel):
         self.output_blob_name = self._get_outputs()
 
     def _get_outputs(self):
-        outs = dict(filter(lambda pair: _feature_vector_name not in pair[1].names, self.outputs.items()))
-        if 1 != len(outs):
-            self.raise_error(f"only {_feature_vector_name} and 1 other output are allowed")
-        layer_name = next(iter(outs))
-        layer_shape = outs[layer_name].shape
+        out_name = ""
+        for name, output in self.outputs.items():
+            if _feature_vector_name not in output.names:
+                if out_name:
+                    self.raise_error(f"only {_feature_vector_name} and 1 other output are allowed")
+                else:
+                    out_name = name
+        if not out_name:
+            self.raise_error("No output containing segmentatation found")
+        layer_shape = self.outputs[out_name].shape
 
         if len(layer_shape) == 3:
             self.out_channels = 0
@@ -81,7 +86,7 @@ class SegmentationModel(ImageModel):
                 )
             )
 
-        return layer_name
+        return out_name
 
     @classmethod
     def parameters(cls):
