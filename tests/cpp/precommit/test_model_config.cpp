@@ -100,15 +100,9 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     std::cout << "AAAAA\n";
     ov::InferRequest inferRequest = ov::Core{}.compile_model(TMP_MODEL_FILE, "CPU").create_infer_request();
     std::cout << "create_infer_request\n";
-    std::shared_ptr<MockAdapter> adapter = std::make_shared<MockAdapter>(TMP_MODEL_FILE);
-    std::cout << "BBBBBBBBBBBBBBBBBB\n";
-    auto kek = std::static_pointer_cast<InferenceAdapter>(adapter);
-    std::cout << "kek\n";
-    auto model_restored = DetectionModel::create_model(kek);
-    std::cout << "DetectionModel::create_model(adapter);\n";
     InferenceInput inputs;
     std::cout << "InferenceInput inputs;\n";
-    model_restored->preprocess(ImageInputData{image}, inputs);
+    model->preprocess(ImageInputData{image}, inputs);
     std::cout << "model_restored->preprocess(image, inputs);\n";
     for (const auto& item : inputs) {
         std::cout << "for (const auto& item : inputs) {\n";
