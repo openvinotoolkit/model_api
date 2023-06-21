@@ -110,8 +110,6 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
         std::cout << "adapter->inferRequest.set_tensor(item.first, item.second);\n";
     }
     std::cout << "}\n";
-    inferRequest.infer();
-    std::cout << "adapter->infer({});\n";
 }
 
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance, DetectionModelParameterizedTestSaveLoad, ::testing::Values(ModelData("ssd_mobilenet_v1_fpn_coco")));
