@@ -288,7 +288,8 @@ class OpenvinoAdapter(InferenceAdapter):
         self.model.reshape(new_shape)
 
     def get_raw_result(self, request):
-        return {key: request.get_tensor(key).data for key in self.get_output_layers()}
+        raw_result = {key.get_any_name(): data for key, data in result.items()}
+        return raw_result
 
     def copy_raw_result(self, request):
         return {
@@ -297,8 +298,8 @@ class OpenvinoAdapter(InferenceAdapter):
 
     def infer_sync(self, dict_data):
         self.infer_request = self.async_queue[self.async_queue.get_idle_request_id()]
-        self.infer_request.infer(dict_data)
-        return self.get_raw_result(self.infer_request)
+        result= self.infer_request.infer(dict_data)
+        return self.get_raw_result(result)
 
     def infer_async(self, dict_data, callback_data) -> None:
         self.async_queue.start_async(dict_data, callback_data)
