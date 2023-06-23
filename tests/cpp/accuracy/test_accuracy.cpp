@@ -128,6 +128,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             auto model = SegmentationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
+                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                 cv::Mat image = cv::imread(imagePath);
@@ -135,38 +136,18 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     throw std::runtime_error{"Failed to read the image"};
                 }
 
-                auto inference_result = model->infer(image)->asRef<ImageResultWithSoftPrediction>();
-
-                cv::Mat predicted_mask[] = {inference_result.resultImage};
-                int nimages = 1;
-                int *channels = nullptr;
-                cv::Mat mask;
-                cv::Mat outHist;
-                int dims = 1;
-                int histSize[] = {256};
-                float range[] = {0, 256};
-                const float *ranges[] = {range};
-                cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
-
-
-                std::stringstream prediction_buffer;
-                prediction_buffer << std::fixed << std::setprecision(3);
-                for (int i = 0; i < range[1]; ++i) {
-                    const float count = outHist.at<float>(i);
-                    if (count > 0) {
-                        prediction_buffer << i << ": " << count / predicted_mask[0].total() << ", ";
+                std::unique_ptr<ImageResult> pred = model->infer(image);
+                ImageResultWithSoftPrediction* soft = dynamic_cast<ImageResultWithSoftPrediction*>(pred.get());
+                if (soft) {
+                    const std::vector<Contour>& contours = model->getContours(*soft);
+                    std::stringstream ss;
+                    ss << *soft << "; ";
+                    for (const Contour& contour : contours) {
+                        ss << contour << ", ";
                     }
-                }
-
-                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
-
-                auto contours = model->getContours(inference_result);
-                int j = 1; //First reference is histogram of mask
-                for (auto &contour: contours) {
-                    std::stringstream prediction_buffer;
-                    prediction_buffer << contour;
-                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
-                    j++;
+                    ASSERT_EQ(ss.str(), modelData.testData[i].reference[0]);
+                } else {
+                    ASSERT_EQ(std::string{*pred}, modelData.testData[i].reference[0]);
                 }
             }
         }
