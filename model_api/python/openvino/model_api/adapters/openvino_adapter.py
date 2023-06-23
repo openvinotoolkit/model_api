@@ -287,7 +287,7 @@ class OpenvinoAdapter(InferenceAdapter):
         }
         self.model.reshape(new_shape)
 
-    def get_raw_result(self, request):
+    def get_raw_result(self, result):
         raw_result = {key.get_any_name(): data for key, data in result.items()}
         return raw_result
 
