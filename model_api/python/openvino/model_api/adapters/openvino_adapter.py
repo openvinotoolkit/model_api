@@ -298,7 +298,7 @@ class OpenvinoAdapter(InferenceAdapter):
 
     def infer_sync(self, dict_data):
         self.infer_request = self.async_queue[self.async_queue.get_idle_request_id()]
-        result= self.infer_request.infer(dict_data)
+        result = self.infer_request.infer(dict_data)
         return self.get_raw_result(result)
 
     def infer_async(self, dict_data, callback_data) -> None:
