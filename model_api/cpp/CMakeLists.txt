@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.10)
 
 # Multi config generators such as Visual Studio ignore CMAKE_BUILD_TYPE. Multi config generators are configured with
 # CMAKE_CONFIGURATION_TYPES, but limiting options in it completely removes such build options
@@ -51,7 +51,6 @@ source_group("adapters/include" FILES ${ADAPTERS_HEADERS})
 add_library(model_api STATIC ${MODELS_SOURCES} ${UTILS_SOURCES} ${ADAPTERS_SOURCES})
 target_include_directories(model_api PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/models/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/utils/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/adapters/include>" "$<INSTALL_INTERFACE:include>")
 target_link_libraries(model_api PUBLIC openvino::runtime opencv_core opencv_imgproc)
-target_link_libraries(model_api PRIVATE $<BUILD_LOCAL_INTERFACE:nlohmann_json::nlohmann_json>)
 set_target_properties(model_api PROPERTIES CXX_STANDARD 17)
 set_target_properties(model_api PROPERTIES CMAKE_CXX_STANDARD_REQUIRED ON)
 if(MSVC)
