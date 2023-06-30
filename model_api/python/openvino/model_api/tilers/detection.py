@@ -153,7 +153,9 @@ class DetectionTiler(Tiler):
         if len(image_saliency_map.shape) == 1:
             return image_saliency_map
 
+        recover_shape = False
         if len(image_saliency_map.shape) == 4:
+            recover_shape = True
             image_saliency_map = image_saliency_map.squeeze(0)
 
         num_classes = image_saliency_map.shape[0]
@@ -200,6 +202,9 @@ class DetectionTiler(Tiler):
 
             merged_map[class_idx] += 0.5 * image_map_cls
             merged_map[class_idx] = _non_linear_normalization(merged_map[class_idx])
+
+        if recover_shape:
+            merged_map = np.expand_dims(merged_map, 0)
 
         return merged_map.astype(np.uint8)
 
