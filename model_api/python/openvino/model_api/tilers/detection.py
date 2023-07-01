@@ -188,11 +188,9 @@ class DetectionTiler(Tiler):
 
                 for hi, wi in [(h_, w_) for h_ in range(map_h) for w_ in range(map_w)]:
                     map_pixel = cls_map[hi, wi]
-
-                    if merged_map[class_idx][y_1 + hi, x_1 + wi] != 0:
-                        merged_map[class_idx][y_1 + hi, x_1 + wi] = 0.5 * (
-                            map_pixel + merged_map[class_idx][y_1 + hi, x_1 + wi]
-                        )
+                    merged_pixel = merged_map[class_idx][y_1 + hi, x_1 + wi]
+                    if merged_pixel != 0:
+                        merged_map[class_idx][y_1 + hi, x_1 + wi] = 0.5 * (map_pixel + merged_pixel)
                     else:
                         merged_map[class_idx][y_1 + hi, x_1 + wi] = map_pixel
 
@@ -209,7 +207,7 @@ class DetectionTiler(Tiler):
         return merged_map.astype(np.uint8)
 
 
-def _non_linear_normalization(saliency_map: np.ndarray) -> np.ndarray:
+def _non_linear_normalization(saliency_map):
     """Use non-linear normalization y=x**1.5 for 2D saliency maps."""
 
     min_soft_score = np.min(saliency_map)
