@@ -228,6 +228,9 @@ struct InstanceSegmentationResult : ResultBase {
     InstanceSegmentationResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     std::vector<SegmentedObject> segmentedObjects;
+    // Contan "saliency_map" and "feature_vector" model outputs if feature_vector exists
+    std::vector<cv::Mat_<std::uint8_t>> saliency_map;
+    ov::Tensor feature_vector;
 };
 
 struct ImageResult : public ResultBase {

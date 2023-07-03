@@ -11,6 +11,7 @@ from openvino.model_api.models import (
     DetectionModel,
     DetectionResult,
     ImageResultWithSoftPrediction,
+    InstanceSegmentationResult,
     MaskRCNNModel,
     SegmentationModel,
     add_rotated_rects,
@@ -86,7 +87,13 @@ def test_image_models(data, dump, result, model_data):
             output_str = str(outputs) + contour_str
             test_result.append(test_data["reference"][0] == output_str)
             image_result = [output_str]
-        else:
+        elif isinstance(outputs, InstanceSegmentationResult):
+            assert 1 == len(test_data["reference"])
+            output_str = str(InstanceSegmentationResult(add_rotated_rects(outputs.segmentedObjects), outputs.saliency_map, outputs.feature_vector))
+            print(output_str)
+            test_result.append(test_data["reference"][0] == output_str)
+            image_result = [output_str]
+        else:  # TODO: remove?
             if not isinstance(outputs, list):
                 outputs = [outputs]
             if model_data["type"] == MaskRCNNModel.__name__:
