@@ -170,9 +170,9 @@ class Tiler(metaclass=abc.ABCMeta):
         return self._predict_async(inputs, tile_coords)
 
     def _tile(self, image):
-        """Tiles an input image to either overlapping, non-overlapping or random patches.
+        """Tiles an input image to overlapping or non-overlapping patches.
 
-        By default, this method also adds the full image as the first tile to process.
+        This method implementation also adds the full image as the first tile to process.
 
         Args:
             image: Input image to tile.
