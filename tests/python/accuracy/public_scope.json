@@ -240,7 +240,7 @@
         ]
     },
     {
-        "name": "otx_models/maskRCNN_with_xai_head/openvino.xml",
+        "name": "otx_models/maskrcnn_model_with_xai_head.xml",
         "type": "MaskRCNNModel",
         "test_data": [
             {
