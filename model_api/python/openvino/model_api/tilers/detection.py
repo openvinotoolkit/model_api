@@ -75,7 +75,7 @@ class DetectionTiler(Tiler):
         offset_x, offset_y = meta["coord"][:2]
         detections[:, 2:] += np.tile((offset_x, offset_y), 2)
         output_dict["bboxes"] = detections
-        output_dict["tile_coords"] = meta["coord"]
+        output_dict["coords"] = meta["coord"]
 
         return output_dict
 
@@ -100,7 +100,7 @@ class DetectionTiler(Tiler):
                 detections_array = np.concatenate((detections_array, result["bboxes"]))
             feature_vectors.append(result["features"])
             saliency_maps.append(result["saliency_map"])
-            tiles_coords.append(result["tile_coords"])
+            tiles_coords.append(result["coords"])
 
         if np.prod(detections_array.shape):
             detections_array, keep_idx = _multiclass_nms(
@@ -110,7 +110,7 @@ class DetectionTiler(Tiler):
                 meta["keep_idx"] = keep_idx
 
         merged_vector = (
-            np.average(feature_vectors, axis=0) if feature_vectors else np.ndarray(0)
+            np.mean(feature_vectors, axis=0) if feature_vectors else np.ndarray(0)
         )
         saliency_map = (
             self._merge_saliency_maps(saliency_maps, shape, tiles_coords)
@@ -162,7 +162,7 @@ class DetectionTiler(Tiler):
         map_h, map_w = image_saliency_map.shape[1:]
 
         image_h, image_w, _ = shape
-        ratio = np.array([map_h, map_w]) / self.tile_size
+        ratio = map_h / self.tile_size, map_w / self.tile_size
 
         image_map_h = int(image_h * ratio[0])
         image_map_w = int(image_w * ratio[1])
@@ -176,8 +176,8 @@ class DetectionTiler(Tiler):
                 cls_map = saliency_map[class_idx]
 
                 x_1, y_1, x_2, y_2 = tiles_coords[i]
-                y_1, x_1 = ((y_1, x_1) * ratio).astype(np.uint16)
-                y_2, x_2 = ((y_2, x_2) * ratio).astype(np.uint16)
+                y_1, x_1 = int(y_1 * ratio[0]), int(x_1 * ratio[1])
+                y_2, x_2 = int(y_2 * ratio[0]), int(x_2 * ratio[1])
 
                 map_h, map_w = cls_map.shape
 
@@ -190,7 +190,9 @@ class DetectionTiler(Tiler):
                     map_pixel = cls_map[hi, wi]
                     merged_pixel = merged_map[class_idx][y_1 + hi, x_1 + wi]
                     if merged_pixel != 0:
-                        merged_map[class_idx][y_1 + hi, x_1 + wi] = 0.5 * (map_pixel + merged_pixel)
+                        merged_map[class_idx][y_1 + hi, x_1 + wi] = 0.5 * (
+                            map_pixel + merged_pixel
+                        )
                     else:
                         merged_map[class_idx][y_1 + hi, x_1 + wi] = map_pixel
 

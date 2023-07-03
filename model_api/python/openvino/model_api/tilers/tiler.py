@@ -23,6 +23,7 @@ from openvino.model_api.pipelines import AsyncPipeline
 
 
 class Tiler(metaclass=abc.ABCMeta):
+    EXECUTION_MODES = ["async", "sync"]
     """
     An abstract tiler
 
@@ -57,6 +58,10 @@ class Tiler(metaclass=abc.ABCMeta):
             self.__setattr__(name, parameter.default_value)
         self._load_config(configuration)
         self.async_pipeline = AsyncPipeline(self.model)
+        if execution_mode not in Tiler.EXECUTION_MODES:
+            raise ValueError(
+                f"Wrong execution mode. The following model are supported {Tiler.EXECUTION_MODES}"
+            )
         self.execution_mode = execution_mode
 
     @classmethod
@@ -215,7 +220,7 @@ class Tiler(metaclass=abc.ABCMeta):
         for coord in tile_coords:
             tile_img = self._crop_tile(image, coord)
             tile_predictions = self.model(tile_img)
-            tile_result = self._postprocess_tile(tile_predictions, coord)
+            tile_result = self._postprocess_tile(tile_predictions, {"coord": coord})
             tile_results.append(tile_result)
 
         return self._merge_results(tile_results, image.shape)
@@ -232,7 +237,7 @@ class Tiler(metaclass=abc.ABCMeta):
         """
         tiles_meta = {}
         for i, coord in enumerate(tile_coords):
-            tiles_meta[i] = {"coord": coord, "tile_i": i}
+            tiles_meta[i] = {"coord": coord}
             self.async_pipeline.submit_data(self._crop_tile(image, coord), i)
         self.async_pipeline.await_all()
 
