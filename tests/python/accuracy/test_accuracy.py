@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 
 import cv2
-import numpy as np
 import pytest
 from openvino.model_api.models import (
     ClassificationModel,
@@ -11,17 +10,11 @@ from openvino.model_api.models import (
     DetectionModel,
     DetectionResult,
     ImageResultWithSoftPrediction,
+    InstanceSegmentationResult,
     MaskRCNNModel,
     SegmentationModel,
     add_rotated_rects,
 )
-
-
-def process_output(output, model_type):
-    if model_type == MaskRCNNModel.__name__:
-        return str(output)
-    else:
-        raise ValueError("Unknown model type to precess ouput")
 
 
 def read_config(path: Path):
@@ -53,8 +46,6 @@ def test_image_models(data, dump, result, model_data):
         name = f"{data}/{name}"
     model = eval(model_data["type"]).create_model(name, device="CPU", download_dir=data)
 
-    test_result = []
-
     if dump:
         result.append(model_data)
         inference_results = []
@@ -68,14 +59,14 @@ def test_image_models(data, dump, result, model_data):
         if isinstance(outputs, ClassificationResult):
             assert 1 == len(test_data["reference"])
             output_str = str(outputs)
-            test_result.append(test_data["reference"][0] == output_str)
+            assert test_data["reference"][0] == output_str
             image_result = [output_str]
         elif isinstance(outputs, DetectionResult):
             assert 1 == len(
                 test_data["reference"]
             )  # TODO: make "reference" to be a single element after SegmentationModel is updated
             output_str = str(outputs)
-            test_result.append(test_data["reference"][0] == output_str)
+            assert test_data["reference"][0] == output_str
             image_result = [output_str]
         elif isinstance(outputs, ImageResultWithSoftPrediction):
             assert 1 == len(test_data["reference"])
@@ -84,24 +75,21 @@ def test_image_models(data, dump, result, model_data):
             for contour in contours:
                 contour_str += str(contour) + ", "
             output_str = str(outputs) + contour_str
-            test_result.append(test_data["reference"][0] == output_str)
+            assert test_data["reference"][0] == output_str
+            image_result = [output_str]
+        elif isinstance(outputs, InstanceSegmentationResult):
+            assert 1 == len(test_data["reference"])
+            output_str = str(
+                InstanceSegmentationResult(
+                    add_rotated_rects(outputs.segmentedObjects),
+                    outputs.saliency_map,
+                    outputs.feature_vector,
+                )
+            )
+            assert test_data["reference"][0] == output_str
             image_result = [output_str]
         else:
-            if not isinstance(outputs, list):
-                outputs = [outputs]
-            if model_data["type"] == MaskRCNNModel.__name__:
-                outputs = add_rotated_rects(outputs)
-
-            image_result = []
-
-            for i, output in enumerate(outputs):
-                output_str = process_output(output, model_data["type"])
-                if len(test_data["reference"]) > i:
-                    test_result.append(test_data["reference"][i] == output_str)
-                else:
-                    test_result.append(False)
-                image_result.append(output_str)
-
+            assert False
         if dump:
             inference_results.append(
                 {"image": test_data["image"], "reference": image_result}
@@ -113,5 +101,3 @@ def test_image_models(data, dump, result, model_data):
     model.save(data + "/serialized/" + save_name)
     if dump:
         result[-1]["test_data"] = inference_results
-
-    assert all(test_result)
