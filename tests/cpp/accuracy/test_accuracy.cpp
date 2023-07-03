@@ -155,22 +155,32 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             bool preload = true;
             auto model = MaskRCNNModel::create_model(modelXml, {}, preload, "CPU");
             for (size_t i = 0; i < modelData.testData.size(); i++) {
+                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                 cv::Mat image = cv::imread(imagePath);
                 if (!image.data) {
                     throw std::runtime_error{"Failed to read the image"};
                 }
-                const std::vector<SegmentedObject> objects = model->infer(image)->segmentedObjects;
-                const std::vector<SegmentedObjectWithRects> withRects = add_rotated_rects(objects);
-                ASSERT_EQ(withRects.size(), modelData.testData[i].reference.size());
-
-                for (size_t j = 0; j < withRects.size(); j++) {
-                    std::stringstream prediction_buffer;
-                    prediction_buffer << withRects[j];
-                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                const std::unique_ptr<InstanceSegmentationResult>& res = model->infer(image);
+                const std::vector<SegmentedObjectWithRects>& withRects = add_rotated_rects(res->segmentedObjects);
+                std::stringstream ss;
+                for (const SegmentedObjectWithRects& obj : withRects) {
+                    ss << obj << "; ";
                 }
-
+                size_t filled = 0;
+                for (const cv::Mat_<std::uint8_t>& cls_map : res->saliency_map) {
+                    if (cls_map.data) {
+                        ++filled;
+                    }
+                }
+                ss << filled << "; ";
+                try {
+                    ss << res->feature_vector.get_shape();
+                } catch (ov::Exception&) {
+                    ss << "[0]";
+                }
+                EXPECT_EQ(ss.str(), modelData.testData[i].reference[0]);
             }
         }
         else {

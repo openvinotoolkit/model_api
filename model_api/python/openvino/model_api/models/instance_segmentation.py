@@ -59,7 +59,10 @@ class MaskRCNNModel(ImageModel):
             return self._get_segmentoly_outputs()
         filtered_names = []
         for name, output in self.outputs.items():
-            if _saliency_map_name not in output.names and _feature_vector_name not in output.names:
+            if (
+                _saliency_map_name not in output.names
+                and _feature_vector_name not in output.names
+            ):
                 filtered_names.append(name)
         outputs = {}
         for layer_name in filtered_names:
@@ -196,19 +199,31 @@ class MaskRCNNModel(ImageModel):
             saliency_maps = [[] for _ in range(len(self.labels))]
         else:
             saliency_maps = []
-        for box, confidence, cls, str_label, raw_mask in zip(boxes, scores, labels, str_labels, masks):
+        for box, confidence, cls, str_label, raw_mask in zip(
+            boxes, scores, labels, str_labels, masks
+        ):
             if confidence <= self.confidence_threshold and not has_feature_vector_name:
                 continue
             raw_cls_mask = raw_mask[cls, ...] if self.is_segmentoly else raw_mask
             if self.postprocess_semantic_masks:
-                resized_mask = _segm_postprocess(box, raw_cls_mask, *meta["original_shape"][:-1])
+                resized_mask = _segm_postprocess(
+                    box, raw_cls_mask, *meta["original_shape"][:-1]
+                )
             else:
                 resized_mask = raw_cls_mask
             if confidence > self.confidence_threshold:
-                objects.append(SegmentedObject(*box.astype(int), confidence, cls, str_label, resized_mask))
+                objects.append(
+                    SegmentedObject(
+                        *box.astype(int), confidence, cls, str_label, resized_mask
+                    )
+                )
             if has_feature_vector_name:
                 saliency_maps[cls - 1].append(resized_mask)
-        return InstanceSegmentationResult(objects, _average_and_normalize(saliency_maps), outputs.get(_feature_vector_name, np.ndarray(0)))
+        return InstanceSegmentationResult(
+            objects,
+            _average_and_normalize(saliency_maps),
+            outputs.get(_feature_vector_name, np.ndarray(0)),
+        )
 
 
 def _average_and_normalize(saliency_maps):
@@ -218,7 +233,6 @@ def _average_and_normalize(saliency_maps):
             saliency_map = np.array(per_class_maps).mean(0)
             max_values = np.max(saliency_map)
             saliency_map = 255 * (saliency_map) / (max_values + 1e-12)
-            print(saliency_map.dtype)
             aggregated.append(saliency_map.astype(np.uint8))
         else:
             aggregated.append(np.ndarray(0))

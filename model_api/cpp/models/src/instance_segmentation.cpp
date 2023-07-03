@@ -77,20 +77,29 @@ cv::Mat segm_postprocess(const SegmentedObject& box, const cv::Mat& unpadded, in
 std::vector<cv::Mat_<std::uint8_t>> average_and_normalize(const std::vector<std::vector<cv::Mat>>& saliency_maps) {
     std::vector<cv::Mat_<std::uint8_t>> aggregated;
     aggregated.reserve(saliency_maps.size());
-    std::cout << "AAAAAAAAAAAa\n";
     for (const std::vector<cv::Mat>& per_class_maps : saliency_maps) {
         if (per_class_maps.empty()) {
             aggregated.emplace_back();
         } else {
-            cv::Mat_<double> saliency_map;
-            std::cout << (saliency_map.type() == CV_64F) << '\n';
-            cv::Mat merged;
-            cv::merge(per_class_maps.data(), per_class_maps.size(), merged);
-            std::cout << per_class_maps.size() << '\n';
-            std::cout << per_class_maps[0].size() << '\n';
-            std::cout << merged.channels() << '\n';
-            cv::reduce(merged, saliency_map, 0, cv::REDUCE_AVG, CV_64F);
-            std::cout << "BBBBBBBBBBBBBBB\n";
+            cv::Mat_<double> saliency_map{per_class_maps.front().size()};
+            for (const cv::Mat& per_class_map : per_class_maps) {
+                if (saliency_map.size != per_class_map.size) {
+                    throw std::runtime_error("saliency_maps must have same size");
+                } if (per_class_map.channels() != 1) {
+                    throw std::runtime_error("saliency_maps must have one channel");
+                } if (per_class_map.type() != CV_8U) {
+                    throw std::runtime_error("saliency_maps must have type CV_8U");
+                }
+            }
+            for (int row = 0; row < saliency_map.rows; ++row) {
+                for (int col = 0; col < saliency_map.cols; ++col) {
+                    double sum = 0.0;
+                    for (const cv::Mat& per_class_map : per_class_maps) {
+                        sum += per_class_map.at<std::uint8_t>(row, col);
+                    }
+                    saliency_map.at<double>(row, col) = sum / per_class_maps.size();
+                }
+            }
             double min, max;
             cv::minMaxLoc(saliency_map, &min, &max);
             cv::Mat_<std::uint8_t> converted;
@@ -325,7 +334,10 @@ std::unique_ptr<ResultBase> MaskRCNNModel::postprocess(InferenceResult& infResul
         if (has_feature_vector_name) {
             saliency_maps[obj.labelID - 1].push_back(obj.mask);
         }
-        result->saliency_map = average_and_normalize(saliency_maps);
+    }
+    result->saliency_map = average_and_normalize(saliency_maps);
+    if (has_feature_vector_name) {
+        result->feature_vector = std::move(infResult.outputsData[feature_vector_name]);
     }
     return retVal;
 }

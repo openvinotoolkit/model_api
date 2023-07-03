@@ -88,27 +88,18 @@ def test_image_models(data, dump, result, model_data):
             test_result.append(test_data["reference"][0] == output_str)
             image_result = [output_str]
         elif isinstance(outputs, InstanceSegmentationResult):
-            assert 1 == len(test_data["reference"])
-            output_str = str(InstanceSegmentationResult(add_rotated_rects(outputs.segmentedObjects), outputs.saliency_map, outputs.feature_vector))
-            print(output_str)
+            # assert 1 == len(test_data["reference"])
+            output_str = str(
+                InstanceSegmentationResult(
+                    add_rotated_rects(outputs.segmentedObjects),
+                    outputs.saliency_map,
+                    outputs.feature_vector,
+                )
+            )
             test_result.append(test_data["reference"][0] == output_str)
             image_result = [output_str]
-        else:  # TODO: remove?
-            if not isinstance(outputs, list):
-                outputs = [outputs]
-            if model_data["type"] == MaskRCNNModel.__name__:
-                outputs = add_rotated_rects(outputs)
-
-            image_result = []
-
-            for i, output in enumerate(outputs):
-                output_str = process_output(output, model_data["type"])
-                if len(test_data["reference"]) > i:
-                    test_result.append(test_data["reference"][i] == output_str)
-                else:
-                    test_result.append(False)
-                image_result.append(output_str)
-
+        else:
+            assert False
         if dump:
             inference_results.append(
                 {"image": test_data["image"], "reference": image_result}
