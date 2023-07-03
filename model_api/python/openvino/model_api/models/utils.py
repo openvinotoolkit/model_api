@@ -91,7 +91,7 @@ class SegmentedObjectWithRects(SegmentedObject):
 
 class InstanceSegmentationResult(NamedTuple):
     segmentedObjects: List[Union[SegmentedObject, SegmentedObjectWithRects]]
-    # Contan "saliency_map" and "feature_vector" model outputs if such exist
+    # Contan per class saliency_maps and "feature_vector" model output if feature_vector exists
     saliency_map: List[np.ndarray]
     feature_vector: np.ndarray
 
