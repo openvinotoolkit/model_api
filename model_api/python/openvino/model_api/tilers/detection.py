@@ -52,13 +52,13 @@ class DetectionTiler(Tiler):
         )
         return parameters
 
-    def _postprocess_tile(self, predictions, meta):
+    def _postprocess_tile(self, predictions, coord):
         """Converts predictions to a format convinient for further merging.
 
         Args:
              predictions: predictions from a detection model: a list of `Detection` objects
              or one `DetectionResult`
-             meta: a dict containing key "coord", representing tile coordinates
+             coord: a list containing coordinates for the processed tile
 
         Returns:
              a dict with postprocessed predictions in 6-items format: (label id, score, bbox)
@@ -67,15 +67,18 @@ class DetectionTiler(Tiler):
         output_dict = {}
         if hasattr(predictions, "objects"):
             detections = _detection2array(predictions.objects)
-            output_dict["saliency_map"] = predictions.saliency_map
-            output_dict["features"] = predictions.feature_vector
+        elif hasattr(predictions, "segmentedObjects"):
+            detections = _detection2array(predictions.segmentedObjects)
         else:
-            detections = _detection2array(predictions)
+            raise RuntimeError("Unsupported model predictions fromat")
 
-        offset_x, offset_y = meta["coord"][:2]
+        output_dict["saliency_map"] = predictions.saliency_map
+        output_dict["features"] = predictions.feature_vector
+
+        offset_x, offset_y = coord[:2]
         detections[:, 2:] += np.tile((offset_x, offset_y), 2)
         output_dict["bboxes"] = detections
-        output_dict["coords"] = meta["coord"]
+        output_dict["coords"] = coord
 
         return output_dict
 
