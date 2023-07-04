@@ -216,11 +216,10 @@ class Tiler(metaclass=abc.ABCMeta):
             Inference results aggregated from all tiles
         """
         tile_results = []
-
         for coord in tile_coords:
             tile_img = self._crop_tile(image, coord)
             tile_predictions = self.model(tile_img)
-            tile_result = self._postprocess_tile(tile_predictions, {"coord": coord})
+            tile_result = self._postprocess_tile(tile_predictions, coord)
             tile_results.append(tile_result)
 
         return self._merge_results(tile_results, image.shape)
@@ -235,9 +234,7 @@ class Tiler(metaclass=abc.ABCMeta):
         Returns:
             Inference results aggregated from all tiles
         """
-        tiles_meta = {}
         for i, coord in enumerate(tile_coords):
-            tiles_meta[i] = {"coord": coord}
             self.async_pipeline.submit_data(self._crop_tile(image, coord), i)
         self.async_pipeline.await_all()
 
@@ -245,18 +242,18 @@ class Tiler(metaclass=abc.ABCMeta):
         tile_results = []
         for j in range(num_tiles):
             tile_prediction, meta = self.async_pipeline.get_result(j)
-            tile_result = self._postprocess_tile(tile_prediction, tiles_meta[j])
+            tile_result = self._postprocess_tile(tile_prediction, tile_coords[j])
             tile_results.append(tile_result)
 
         return self._merge_results(tile_results, image.shape)
 
     @abc.abstractmethod
-    def _postprocess_tile(self, predictions, meta):
+    def _postprocess_tile(self, predictions, coord):
         """Postprocesses predicitons made by a model from one tile.
 
         Args:
-            predictions: model-dependent set of predicitons or one prediciton.
-            meta: a dict containing meta information required for postprocessing
+            predictions: model-dependent set of predicitons or one prediciton
+            coord: a list containing coordinates for the processed tile
 
         Returns:
             Postprocessed predictions
