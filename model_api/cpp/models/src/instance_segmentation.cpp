@@ -77,12 +77,12 @@ cv::Mat segm_postprocess(const SegmentedObject& box, const cv::Mat& unpadded, in
 std::vector<cv::Mat_<std::uint8_t>> average_and_normalize(const std::vector<std::vector<cv::Mat>>& saliency_maps) {
     std::vector<cv::Mat_<std::uint8_t>> aggregated;
     aggregated.reserve(saliency_maps.size());
-    for (const std::vector<cv::Mat>& per_class_maps : saliency_maps) {
-        if (per_class_maps.empty()) {
+    for (const std::vector<cv::Mat>& per_object_maps : saliency_maps) {
+        if (per_object_maps.empty()) {
             aggregated.emplace_back();
         } else {
-            cv::Mat_<double> saliency_map{per_class_maps.front().size()};
-            for (const cv::Mat& per_class_map : per_class_maps) {
+            cv::Mat_<double> saliency_map{per_object_maps.front().size()};
+            for (const cv::Mat& per_class_map : per_object_maps) {
                 if (saliency_map.size != per_class_map.size) {
                     throw std::runtime_error("saliency_maps must have same size");
                 } if (per_class_map.channels() != 1) {
@@ -94,10 +94,10 @@ std::vector<cv::Mat_<std::uint8_t>> average_and_normalize(const std::vector<std:
             for (int row = 0; row < saliency_map.rows; ++row) {
                 for (int col = 0; col < saliency_map.cols; ++col) {
                     double sum = 0.0;
-                    for (const cv::Mat& per_class_map : per_class_maps) {
+                    for (const cv::Mat& per_class_map : per_object_maps) {
                         sum += per_class_map.at<std::uint8_t>(row, col);
                     }
-                    saliency_map.at<double>(row, col) = sum / per_class_maps.size();
+                    saliency_map.at<double>(row, col) = sum / per_object_maps.size();
                 }
             }
             double min, max;
