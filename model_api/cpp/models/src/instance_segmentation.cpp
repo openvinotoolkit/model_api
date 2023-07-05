@@ -82,22 +82,22 @@ std::vector<cv::Mat_<std::uint8_t>> average_and_normalize(const std::vector<std:
             aggregated.emplace_back();
         } else {
             cv::Mat_<double> saliency_map{per_object_maps.front().size()};
-            for (const cv::Mat& per_class_map : per_object_maps) {
-                if (saliency_map.size != per_class_map.size) {
+            for (const cv::Mat& per_object_map : per_object_maps) {
+                if (saliency_map.size != per_object_map.size) {
                     throw std::runtime_error("saliency_maps must have same size");
-                } if (per_class_map.channels() != 1) {
+                } if (per_object_map.channels() != 1) {
                     throw std::runtime_error("saliency_maps must have one channel");
-                } if (per_class_map.type() != CV_8U) {
+                } if (per_object_map.type() != CV_8U) {
                     throw std::runtime_error("saliency_maps must have type CV_8U");
                 }
             }
             for (int row = 0; row < saliency_map.rows; ++row) {
                 for (int col = 0; col < saliency_map.cols; ++col) {
-                    double sum = 0.0;
-                    for (const cv::Mat& per_class_map : per_object_maps) {
-                        sum += per_class_map.at<std::uint8_t>(row, col);
+                    std::uint8_t max_val = 0;
+                    for (const cv::Mat& per_object_map : per_object_maps) {
+                        max_val = std::max(max_val, per_object_map.at<std::uint8_t>(row, col));
                     }
-                    saliency_map.at<double>(row, col) = sum / per_object_maps.size();
+                    saliency_map.at<double>(row, col) = max_val;
                 }
             }
             double min, max;

@@ -230,7 +230,7 @@ def _average_and_normalize(saliency_maps):
     aggregated = []
     for per_object_maps in saliency_maps:
         if per_object_maps:
-            saliency_map = np.array(per_object_maps).mean(0)
+            saliency_map = np.max(np.array(per_object_maps), axis=0)
             max_values = np.max(saliency_map)
             saliency_map = 255 * (saliency_map) / (max_values + 1e-12)
             aggregated.append(saliency_map.astype(np.uint8))

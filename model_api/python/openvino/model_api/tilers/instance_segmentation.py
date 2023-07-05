@@ -204,7 +204,7 @@ class InstanceSegmentationTiler(DetectionTiler):
                 map_h, map_w = y_2 - y_1, x_2 - x_1
 
                 tile_map = merged_map[class_idx][y_1 : y_1 + map_h, x_1 : x_1 + map_w]
-                tile_map = np.where(tile_map > 0, 0.5 * (tile_map + cls_map), cls_map)
+                tile_map = np.maximum(tile_map, cls_map)
                 merged_map[class_idx][y_1 : y_1 + map_h, x_1 : x_1 + map_w] = tile_map
 
         for class_idx in range(num_classes):
