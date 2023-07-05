@@ -27,7 +27,7 @@ class MaskRCNNModel(ImageModel):
 
     def __init__(self, inference_adapter, configuration, preload=False):
         super().__init__(inference_adapter, configuration, preload)
-        self._check_io_number((1, 2), (3, 4, 5, 8))
+        self._check_io_number((1, 2), (3, 4, 5, 6, 8))
         if self.path_to_labels:
             self.labels = load_labels(self.path_to_labels)
         self.is_segmentoly = len(self.inputs) == 2
