@@ -92,7 +92,7 @@ class InstanceSegmentationTiler(DetectionTiler):
 
         return output_dict
 
-    def _merge_results(self, results, shape, meta=None):
+    def _merge_results(self, results, shape):
         """Merge results from all tiles.
 
         To merge detections, per-class NMS is applied.

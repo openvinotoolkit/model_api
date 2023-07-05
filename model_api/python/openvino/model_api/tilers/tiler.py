@@ -241,7 +241,7 @@ class Tiler(metaclass=abc.ABCMeta):
         num_tiles = len(tile_coords)
         tile_results = []
         for j in range(num_tiles):
-            tile_prediction, meta = self.async_pipeline.get_result(j)
+            tile_prediction, _ = self.async_pipeline.get_result(j)
             tile_result = self._postprocess_tile(tile_prediction, tile_coords[j])
             tile_results.append(tile_result)
 
@@ -260,7 +260,7 @@ class Tiler(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def _merge_results(self, results, shapem, meta=None):
+    def _merge_results(self, results, shape):
         """Merge results from all tiles.
 
         Args:

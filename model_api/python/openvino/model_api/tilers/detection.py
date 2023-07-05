@@ -82,7 +82,7 @@ class DetectionTiler(Tiler):
 
         return output_dict
 
-    def _merge_results(self, results, shape, meta=None):
+    def _merge_results(self, results, shape):
         """Merge results from all tiles.
 
         To merge detections, per-class NMS is applied.
@@ -106,11 +106,9 @@ class DetectionTiler(Tiler):
             tiles_coords.append(result["coords"])
 
         if np.prod(detections_array.shape):
-            detections_array, keep_idx = _multiclass_nms(
+            detections_array, _ = _multiclass_nms(
                 detections_array, max_num=self.max_pred_number
             )
-            if meta is not None:
-                meta["keep_idx"] = keep_idx
 
         merged_vector = (
             np.mean(feature_vectors, axis=0) if feature_vectors else np.ndarray(0)
