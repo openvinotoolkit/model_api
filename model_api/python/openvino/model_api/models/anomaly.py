@@ -51,7 +51,7 @@ class AnomalyDetection(ImageModel):
             meta (dict[str, Any]): Meta data containing the original image shape
 
         Returns:
-            _type_: Results
+            AnomalyResult: Results
         """
         anomaly_map: np.ndarray | None = None
         pred_label: str | None = None
