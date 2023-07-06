@@ -27,9 +27,9 @@ import numpy as np
 class AnomalyResult(NamedTuple):
     """Results for anomaly models."""
 
-    anomaly_map: np.ndarray | None
-    box_labels: np.ndarray | None
-    pred_boxes: np.ndarray | None
+    anomaly_map: np.ndarray | None = None
+    box_labels: np.ndarray | None = None
+    pred_boxes: np.ndarray | None = None
     pred_label: str | None = None
     pred_mask: np.ndarray | None = None
     pred_score: float | None = None
