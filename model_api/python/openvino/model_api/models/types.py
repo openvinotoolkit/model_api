@@ -172,6 +172,8 @@ class ListValue(BaseValue):
     def from_str(self, value):
         try:
             floats = [float(i) for i in value.split()]
+            # In certain instances when a string contains a list of floats like "1.0 2.0 3.0",
+            # directly converting to ints will raise a ValueError
             ints = [int(float(i)) for i in value.split()]
             if ints == floats:
                 return ints

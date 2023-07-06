@@ -19,11 +19,13 @@ Note: This file will change when anomalib is upgraded in OTX. CVS-114640
  limitations under the License.
 """
 from typing import Any
-import numpy as np
-from .types import ListValue, NumericalValue, StringValue
-from .image_model import ImageModel
-from .utils import AnomalyResult
+
 import cv2
+import numpy as np
+
+from .image_model import ImageModel
+from .types import ListValue, NumericalValue, StringValue
+from .utils import AnomalyResult
 
 
 class AnomalyDetection(ImageModel):
@@ -80,8 +82,12 @@ class AnomalyDetection(ImageModel):
 
         # resize outputs
         if anomaly_map is not None:
-            anomaly_map = cv2.resize(anomaly_map, (meta["original_shape"][1], meta["original_shape"][0]))
-            pred_mask = cv2.resize(pred_mask, (meta["original_shape"][1], meta["original_shape"][0]))
+            anomaly_map = cv2.resize(
+                anomaly_map, (meta["original_shape"][1], meta["original_shape"][0])
+            )
+            pred_mask = cv2.resize(
+                pred_mask, (meta["original_shape"][1], meta["original_shape"][0])
+            )
 
         if hasattr(self, "task") and self.task == "detection":
             pred_boxes = self._get_boxes(pred_mask)
@@ -104,15 +110,21 @@ class AnomalyDetection(ImageModel):
                 "image_shape": ListValue(
                     description="Image shape",
                 ),
-                "image_threshold": NumericalValue(description="Image threshold", min=0.0, default_value=0.5),
-                "pixel_threshold": NumericalValue(description="Pixel threshold", min=0.0, default_value=0.5),
+                "image_threshold": NumericalValue(
+                    description="Image threshold", min=0.0, default_value=0.5
+                ),
+                "pixel_threshold": NumericalValue(
+                    description="Pixel threshold", min=0.0, default_value=0.5
+                ),
                 "max": NumericalValue(
                     description="max value for normalization",
                 ),
                 "min": NumericalValue(
                     description="min value for normalization",
                 ),
-                "task": StringValue(description="Task type", default_value="segmentation"),
+                "task": StringValue(
+                    description="Task type", default_value="segmentation"
+                ),
             }
         )
         return parameters

@@ -23,6 +23,7 @@ from typing import List, NamedTuple, Tuple, Union
 import cv2
 import numpy as np
 
+
 class AnomalyResult(NamedTuple):
     """Results for anomaly models."""
 
@@ -32,6 +33,7 @@ class AnomalyResult(NamedTuple):
     pred_label: str | None = None
     pred_mask: np.ndarray | None = None
     pred_score: float | None = None
+
 
 class ClassificationResult(
     namedtuple(
