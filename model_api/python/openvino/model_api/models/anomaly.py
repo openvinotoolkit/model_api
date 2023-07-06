@@ -18,7 +18,7 @@ Note: This file will change when anomalib is upgraded in OTX. CVS-114640
  See the License for the specific language governing permissions and
  limitations under the License.
 """
-from typing import Any
+from typing import Any, Dict
 
 import cv2
 import numpy as np
@@ -45,12 +45,12 @@ class AnomalyDetection(ImageModel):
         inputs = inputs / 255.0  # model expects inputs in range [0, 1]
         return super().preprocess(inputs)
 
-    def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]):
+    def postprocess(self, outputs: Dict[str, np.ndarray], meta: Dict[str, Any]):
         """Post-processes the outputs and returns the results.
 
         Args:
-            outputs (dict[str, np.ndarray]): Raw model outputs
-            meta (dict[str, Any]): Meta data containing the original image shape
+            outputs (Dict[str, np.ndarray]): Raw model outputs
+            meta (Dict[str, Any]): Meta data containing the original image shape
 
         Returns:
             AnomalyResult: Results
@@ -103,7 +103,7 @@ class AnomalyDetection(ImageModel):
         )
 
     @classmethod
-    def parameters(cls) -> dict:
+    def parameters(cls) -> Dict:
         parameters = super().parameters()
         parameters.update(
             {
