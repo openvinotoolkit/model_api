@@ -64,6 +64,10 @@ class Tiler(metaclass=abc.ABCMeta):
             )
         self.execution_mode = execution_mode
 
+    def get_model(self):
+        """Getter for underlying model"""
+        return self.model
+
     @classmethod
     def parameters(cls):
         """Defines the description and type of configurable data parameters for the tiler.
