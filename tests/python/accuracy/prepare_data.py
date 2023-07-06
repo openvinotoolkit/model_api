@@ -31,11 +31,6 @@ def prepare_data(data_dir="./data"):
         os.path.join(data_dir, "BloodImage_00007.jpg"),
     )
 
-    urlretrieve(
-        "https://raw.githubusercontent.com/openvinotoolkit/training_extensions/ec41b6c848366cfa9256383607b56776a999cfc2/tests/assets/small_objects/images/val/sample_8.jpg",
-        os.path.join(data_dir, "sample_8.jpg"),
-    )
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Data and model preparate script")

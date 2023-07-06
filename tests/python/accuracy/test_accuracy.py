@@ -16,6 +16,8 @@ from openvino.model_api.models import (
     add_rotated_rects,
 )
 
+from openvino.model_api.tilers import DetectionTiler, InstanceSegmentationTiler
+
 
 def read_config(path: Path):
     with open(path, "r") as f:
@@ -44,7 +46,14 @@ def test_image_models(data, dump, result, model_data):
     name = model_data["name"]
     if name.endswith(".xml"):
         name = f"{data}/{name}"
+
     model = eval(model_data["type"]).create_model(name, device="CPU", download_dir=data)
+    if "tiler" in model_data:
+        if "extra_model" in model_data:
+            extra_model = eval(model_data["extra_type"]).create_model(model_data["extra_model"], device="CPU", download_dir=data)
+            model = eval(model_data["tiler"])(model, configuration={}, tile_classifier=extra_model)
+        else:
+            model = eval(model_data["tiler"])(model, configuration={})
 
     if dump:
         result.append(model_data)
@@ -55,6 +64,8 @@ def test_image_models(data, dump, result, model_data):
         image = cv2.imread(str(image_path))
         if image is None:
             raise RuntimeError("Failed to read the image")
+        if "input_res" in model_data:
+            image = cv2.resize(image, eval(model_data["input_res"]))
         outputs = model(image)
         if isinstance(outputs, ClassificationResult):
             assert 1 == len(test_data["reference"])
@@ -98,6 +109,11 @@ def test_image_models(data, dump, result, model_data):
         save_name = os.path.basename(name)
     else:
         save_name = name + ".xml"
-    model.save(data + "/serialized/" + save_name)
+
+    if "tiler" in model_data:
+        model.get_model().save(data + "/serialized/" + save_name)
+    else:
+        model.save(data + "/serialized/" + save_name)
+
     if dump:
         result[-1]["test_data"] = inference_results
