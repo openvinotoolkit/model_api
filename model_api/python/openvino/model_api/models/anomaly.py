@@ -33,7 +33,6 @@ class AnomalyDetection(ImageModel):
 
     def __init__(self, inference_adapter, configuration=None, preload=False):
         super().__init__(inference_adapter, configuration, preload)
-        self.output_name = self.inference_adapter.model.outputs[0].any_name
         # attributes for mypy
         self.max: float
         self.min: float
@@ -61,7 +60,7 @@ class AnomalyDetection(ImageModel):
         pred_boxes: np.ndarray | None = None
         box_labels: np.ndarray | None = None
 
-        predictions = outputs[self.output_name]
+        predictions = outputs[list(self.outputs)[0]]
 
         if len(predictions.shape) == 1:
             pred_score = predictions
@@ -69,10 +68,9 @@ class AnomalyDetection(ImageModel):
             anomaly_map = predictions.squeeze()
             pred_score = anomaly_map.reshape(-1).max()
 
-        if hasattr(self, "image_threshold"):
-            pred_label = "Anomalous" if pred_score > self.image_threshold else "Normal"
+        pred_label = "Anomalous" if pred_score > self.image_threshold else "Normal"
 
-        if hasattr(self, "task") and self.task in ("segmentation", "detection"):
+        if self.task in ("segmentation", "detection"):
             assert anomaly_map is not None  # for mypy
             pred_mask = (anomaly_map >= self.pixel_threshold).astype(np.uint8)
             anomaly_map = self._normalize(anomaly_map, self.pixel_threshold)
@@ -89,7 +87,7 @@ class AnomalyDetection(ImageModel):
                 pred_mask, (meta["original_shape"][1], meta["original_shape"][0])
             )
 
-        if hasattr(self, "task") and self.task == "detection":
+        if self.task == "detection":
             pred_boxes = self._get_boxes(pred_mask)
             box_labels = np.ones(pred_boxes.shape[0])
 
