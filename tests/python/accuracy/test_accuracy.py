@@ -15,7 +15,6 @@ from openvino.model_api.models import (
     SegmentationModel,
     add_rotated_rects,
 )
-
 from openvino.model_api.tilers import DetectionTiler, InstanceSegmentationTiler
 
 
