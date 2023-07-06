@@ -14,6 +14,8 @@
  limitations under the License.
 """
 
+from __future__ import annotations
+
 import math
 from collections import namedtuple
 from typing import List, NamedTuple, Tuple, Union
