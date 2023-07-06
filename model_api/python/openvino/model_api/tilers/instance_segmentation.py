@@ -108,18 +108,24 @@ class InstanceSegmentationTiler(DetectionTiler):
         feature_vectors = []
         saliency_maps = []
         tiles_coords = []
+        masks = []
         for result in results:
             if len(result["bboxes"]):
                 detections_array = np.concatenate((detections_array, result["bboxes"]))
             feature_vectors.append(result["features"])
             saliency_maps.append(result["saliency_map"])
             tiles_coords.append(result["coords"])
+            if len(result["masks"]):
+                masks.extend(result["masks"])
 
         keep_idxs = []
         if np.prod(detections_array.shape):
             detections_array, keep_idxs = _multiclass_nms(
                 detections_array, max_num=self.max_pred_number
             )
+
+        if masks:
+            masks = [masks[keep_idx] for keep_idx in keep_idxs]
 
         merged_vector = (
             np.mean(feature_vectors, axis=0) if feature_vectors else np.ndarray(0)
@@ -129,14 +135,6 @@ class InstanceSegmentationTiler(DetectionTiler):
             if saliency_maps
             else []
         )
-
-        masks = []
-        for result in results:
-            if len(result["masks"]):
-                masks.extend(result["masks"])
-
-        if masks:
-            masks = [masks[keep_idx] for keep_idx in keep_idxs]
 
         detected_objects = []
         for i in range(detections_array.shape[0]):
