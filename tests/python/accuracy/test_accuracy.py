@@ -50,8 +50,12 @@ def test_image_models(data, dump, result, model_data):
     model = eval(model_data["type"]).create_model(name, device="CPU", download_dir=data)
     if "tiler" in model_data:
         if "extra_model" in model_data:
-            extra_model = eval(model_data["extra_type"]).create_model(model_data["extra_model"], device="CPU", download_dir=data)
-            model = eval(model_data["tiler"])(model, configuration={}, tile_classifier=extra_model)
+            extra_model = eval(model_data["extra_type"]).create_model(
+                model_data["extra_model"], device="CPU", download_dir=data
+            )
+            model = eval(model_data["tiler"])(
+                model, configuration={}, tile_classifier=extra_model
+            )
         else:
             model = eval(model_data["tiler"])(model, configuration={})
 
