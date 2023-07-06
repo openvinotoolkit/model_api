@@ -60,7 +60,7 @@ class Tiler(metaclass=abc.ABCMeta):
         self.async_pipeline = AsyncPipeline(self.model)
         if execution_mode not in Tiler.EXECUTION_MODES:
             raise ValueError(
-                f"Wrong execution mode. The following model are supported {Tiler.EXECUTION_MODES}"
+                f"Wrong execution mode. The following modes are supported {Tiler.EXECUTION_MODES}"
             )
         self.execution_mode = execution_mode
 
