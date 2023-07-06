@@ -245,8 +245,8 @@ void MaskRCNNModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
             filtered.push_back({output.get_any_name(), output.get_partial_shape().get_max_shape().size()});
         }
     }
-    if (filtered.size() != 3) {
-        throw std::logic_error(std::string{"MaskRCNNModel model wrapper supports topologies with "} + saliency_map_name + ", " + feature_vector_name + " and 3 other outputs");
+    if (filtered.size() != 3 && filtered.size() != 4) {
+        throw std::logic_error(std::string{"MaskRCNNModel model wrapper supports topologies with "} + saliency_map_name + ", " + feature_vector_name + " and 3 or 4 other outputs");
     }
     outputNames.resize(3);
     for (const NameRank& name_rank : filtered) {
@@ -259,6 +259,8 @@ void MaskRCNNModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
                 break;
             case 4:
                 outputNames[2] = name_rank.name;
+                break;
+            case 0:
                 break;
             default:
                 throw std::runtime_error("Unexpected output: " + name_rank.name);
