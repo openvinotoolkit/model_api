@@ -123,9 +123,7 @@ class InstanceSegmentationTiler(DetectionTiler):
             detections_array, keep_idxs = _multiclass_nms(
                 detections_array, max_num=self.max_pred_number
             )
-
-        if masks:
-            masks = [masks[keep_idx] for keep_idx in keep_idxs]
+        masks = [masks[keep_idx] for keep_idx in keep_idxs]
 
         merged_vector = (
             np.mean(feature_vectors, axis=0) if feature_vectors else np.ndarray(0)
