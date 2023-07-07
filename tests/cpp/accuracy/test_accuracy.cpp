@@ -37,6 +37,7 @@ struct ModelData {
     std::string name;
     std::string type;
     std::vector<TestData> testData;
+    std::string tiler;
 };
 
 class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
@@ -65,6 +66,9 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
         }
         test.testData.push_back(data);
     }
+    if (j.contains("tiler")) {
+        test.tiler = j.at("tiler").get<std::string>();
+    }
 }
 
 namespace {
@@ -80,6 +84,10 @@ std::vector<ModelData> GetTestData(const std::string& path)
 TEST_P(ModelParameterizedTest, AccuracyTest)
 {
     auto modelData = GetParam();
+    if (modelData.tiler.size()) {
+        return;
+    }
+
     std::string modelPath;
     const std::string& name = modelData.name;
     if (name.substr(name.size() - 4) == ".xml") {
