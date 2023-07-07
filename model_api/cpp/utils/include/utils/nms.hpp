@@ -26,6 +26,10 @@ struct Anchor {
     float right;
     float bottom;
 
+    Anchor() = default;
+    Anchor(float _left, float _top, float _right, float _bottom) :
+        left(_left), top(_top), right(_right), bottom(_bottom) {}
+
     float getWidth() const {
         return (right - left) + 1.0f;
     }
@@ -40,9 +44,20 @@ struct Anchor {
     }
 };
 
+struct AnchorLabeled : public Anchor {
+    int labelID = -1;
+
+    AnchorLabeled() = default;
+    AnchorLabeled(float _left, float _top, float _right, float _bottom, int _labelID) :
+        Anchor(_left, _top, _right, _bottom), labelID(_labelID) {}
+};
+
 template <typename Anchor>
 std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>& scores,
-                     const float thresh, bool includeBoundaries=false) {
+                     const float thresh, bool includeBoundaries=false, int maxDets=-1) {
+    if (maxDets < 0) {
+        maxDets = boxes.size();
+    }
     std::vector<float> areas(boxes.size());
     for (size_t i = 0; i < boxes.size(); ++i) {
         areas[i] = (boxes[i].right - boxes[i].left + includeBoundaries) * (boxes[i].bottom - boxes[i].top + includeBoundaries);
@@ -52,7 +67,7 @@ std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>&
     std::sort(order.begin(), order.end(), [&scores](int o1, int o2) { return scores[o1] > scores[o2]; });
 
     size_t ordersNum = 0;
-    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0; ordersNum++);
+    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0  && static_cast<int>(ordersNum) < maxDets; ordersNum++);
 
     std::vector<int> keep;
     bool shouldContinue = true;
@@ -78,4 +93,22 @@ std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>&
         }
     }
     return keep;
+}
+
+template <typename AnchorLabeled>
+std::vector<int> multiclass_nms(const std::vector<AnchorLabeled>& boxes, const std::vector<float>& scores,
+                     const float thresh, bool includeBoundaries=false, int maxDets=-1) {
+    std::vector<Anchor> boxes_copy;
+    boxes_copy.reserve(boxes.size());
+
+    float max_coord = 0.f;
+    for (const auto& box : boxes) {
+        max_coord = std::max(max_coord, std::max(box.right, box.bottom));
+    }
+    for (auto& box : boxes) {
+        float offset = box.labelID * max_coord;
+        boxes_copy.emplace_back(box.left + offset, box.top + offset, box.right + offset, box.bottom + offset);
+    }
+
+    return nms(boxes_copy, scores, thresh, includeBoundaries, maxDets);
 }
