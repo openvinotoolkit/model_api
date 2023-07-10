@@ -114,7 +114,7 @@ def resize_image_letterbox_graph(input: Output, size, interpolation, pad_value):
     nh = opset.convert(
         opset.round(opset.multiply(ih, scale), "half_to_even"), destination_type="i32"
     )
-    new_size = opset.concat([opset.unsqueeze(nh, 0), opset.unsqueeze(nw, 0)], axis=-1)
+    new_size = opset.concat([opset.unsqueeze(nh, 0), opset.unsqueeze(nw, 0)], axis=0)
     image = opset.interpolate(
         input,
         new_size,
@@ -311,7 +311,7 @@ def resize_image_graph(
     nh = opset.convert(
         opset.round(opset.multiply(ih, scale), "half_to_even"), destination_type="i32"
     )
-    new_size = opset.concat([opset.unsqueeze(nh, 0), opset.unsqueeze(nw, 0)], axis=-1)
+    new_size = opset.concat([opset.unsqueeze(nh, 0), opset.unsqueeze(nw, 0)], axis=0)
     image = opset.interpolate(
         input,
         new_size,
