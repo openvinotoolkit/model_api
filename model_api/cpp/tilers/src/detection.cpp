@@ -27,15 +27,11 @@ namespace {
 
 cv::Mat non_linear_normalization(cv::Mat& class_map) {
     double min_soft_score, max_soft_score;
-    cv::minMaxLoc(class_map, &min_soft_score, &max_soft_score);
-    std::cout << min_soft_score << " "  << max_soft_score << "\n";
-
+    cv::minMaxLoc(class_map, &min_soft_score);
     cv::pow(class_map - min_soft_score, 1.5, class_map);
+
     cv::minMaxLoc(class_map, &min_soft_score, &max_soft_score);
-    std::cout << min_soft_score << " "  << max_soft_score << "\n";
     class_map = 255.0 / (max_soft_score + 1e-12) * class_map;
-    cv::minMaxLoc(class_map, &min_soft_score, &max_soft_score);
-    std::cout << min_soft_score << " "  << max_soft_score << "\n";
 
     return class_map;
 }

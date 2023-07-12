@@ -61,7 +61,7 @@ std::vector<cv::Rect> TilerBase::tile(const cv::Size& image_size) {
         num_w_tiles += 1;
     }
 
-    coords.reserve(num_h_tiles * num_w_tiles);
+    coords.reserve(num_h_tiles * num_w_tiles + 1);
     coords.push_back(cv::Rect(0, 0, image_size.width, image_size.height));
 
     for (size_t i = 0; i < num_w_tiles; ++i) {
