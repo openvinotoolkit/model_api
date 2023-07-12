@@ -53,11 +53,11 @@ std::vector<cv::Rect> TilerBase::tile(const cv::Size& image_size) {
     size_t num_h_tiles = image_size.height / tile_step;
     size_t num_w_tiles = image_size.width / tile_step;
 
-    if (num_h_tiles * tile_step < image_size.height) {
+    if (num_h_tiles * tile_step < static_cast<size_t>(image_size.height)) {
         num_h_tiles += 1;
     }
 
-    if (num_w_tiles * tile_step < image_size.width) {
+    if (num_w_tiles * tile_step < static_cast<size_t>(image_size.width)) {
         num_w_tiles += 1;
     }
 

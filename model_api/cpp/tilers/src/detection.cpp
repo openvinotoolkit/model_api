@@ -125,26 +125,6 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
     return retVal;
 }
 
-cv::Mat wrap_to_mat(ov::Tensor& t, size_t shape_shift, size_t class_idx) {
-    void* t_ptr;
-    int ocv_dtype;
-
-    if (t.get_element_type().get_type_name() == "u8") {
-        t_ptr = t.data<unsigned char>();
-        ocv_dtype = CV_8U;
-    }
-    else if (t.get_element_type().get_type_name() == "f32") {
-        t_ptr = t.data<float>();
-        ocv_dtype = CV_32F;
-    }
-    else {
-        throw std::runtime_error("Unsupported saliency map data type in tiler: " + t.get_element_type().get_type_name());
-    }
-
-    t_ptr += class_idx * t.get_strides()[shape_shift];
-    return cv::Mat(cv::Size(t.get_shape()[shape_shift + 2], t.get_shape()[shape_shift + 1]), ocv_dtype, t_ptr, t.get_strides()[shape_shift + 1]);
-}
-
 ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr<ResultBase>>& tiles_results, const cv::Size& image_size, const std::vector<cv::Rect>& tile_coords) {
     std::vector<ov::Tensor> all_saliecy_maps;
     all_saliecy_maps.reserve(tiles_results.size());
@@ -188,7 +168,7 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
     }
     for (size_t i = 1; i < all_saliecy_maps.size(); ++i) {
         for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
-            auto current_cls_map_mat = wrap_to_mat(all_saliecy_maps[i], shape_shift, class_idx);
+            auto current_cls_map_mat = wrap_saliency_map_tensor_to_mat(all_saliecy_maps[i], shape_shift, class_idx);
             cv::Mat current_cls_map_mat_float;
             current_cls_map_mat.convertTo(current_cls_map_mat_float, CV_32F);
 
@@ -216,11 +196,11 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
     }
 
     for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
-        auto image_map_cls = wrap_to_mat(image_saliency_map, shape_shift, class_idx);
+        auto image_map_cls = wrap_saliency_map_tensor_to_mat(image_saliency_map, shape_shift, class_idx);
         cv::resize(image_map_cls, image_map_cls, cv::Size(image_map_w, image_map_h));
         cv::addWeighted(merged_map_mat[class_idx], 1.0, image_map_cls, 0.5, 0., merged_map_mat[class_idx]);
         merged_map_mat[class_idx] = non_linear_normalization(merged_map_mat[class_idx]);
-        auto merged_cls_map_mat = wrap_to_mat(merged_map, shape_shift, class_idx);
+        auto merged_cls_map_mat = wrap_saliency_map_tensor_to_mat(merged_map, shape_shift, class_idx);
         merged_map_mat[class_idx].convertTo(merged_cls_map_mat, merged_cls_map_mat.type());
     }
 
