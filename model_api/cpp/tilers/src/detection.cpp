@@ -22,6 +22,26 @@
 #include <models/results.h>
 #include <utils/nms.hpp>
 
+
+namespace {
+
+cv::Mat non_linear_normalization(cv::Mat& class_map) {
+    double min_soft_score, max_soft_score;
+    cv::minMaxLoc(class_map, &min_soft_score, &max_soft_score);
+    std::cout << min_soft_score << " "  << max_soft_score << "\n";
+
+    cv::pow(class_map - min_soft_score, 1.5, class_map);
+    cv::minMaxLoc(class_map, &min_soft_score, &max_soft_score);
+    std::cout << min_soft_score << " "  << max_soft_score << "\n";
+    class_map = 255.0 / (max_soft_score + 1e-12) * class_map;
+    cv::minMaxLoc(class_map, &min_soft_score, &max_soft_score);
+    std::cout << min_soft_score << " "  << max_soft_score << "\n";
+
+    return class_map;
+}
+
+}
+
 DetectionTiler::DetectionTiler(std::unique_ptr<ModelBase> _model, const ov::AnyMap& configuration) :
     TilerBase(std::move(_model), configuration) {
 
@@ -36,7 +56,6 @@ DetectionTiler::DetectionTiler(std::unique_ptr<ModelBase> _model, const ov::AnyM
         max_pred_number = max_pred_iter->second.as<size_t>();
     }
 }
-
 
 std::unique_ptr<ResultBase> DetectionTiler::postprocess_tile(std::unique_ptr<ResultBase> tile_result, const cv::Rect& coord) {
     DetectionResult* det_res = static_cast<DetectionResult*>(tile_result.get());
@@ -113,24 +132,11 @@ cv::Mat wrap_to_mat(ov::Tensor& t, size_t shape_shift, size_t class_idx) {
         t_ptr = t.data<float>();
         ocv_dtype = CV_32F;
     }
+    else {
+        throw std::runtime_error("Unsupported saliency map data type in tiler: " + t.get_element_type().get_type_name());
+    }
 
     t_ptr += class_idx * t.get_strides()[shape_shift];
-    /*
-    std::vector<int> cv_shape;
-    cv_shape.reserve(t.get_shape().size());
-    for (auto s : t.get_shape()) {
-        cv_shape.push_back(s);
-    }
-
-    std::vector<size_t> cv_strides;
-    cv_strides.reserve(t.get_strides().size());
-    for (auto s : t.get_strides()) {
-        cv_strides.push_back(s);
-    }
-    */
-
-    //return cv::Mat(2, cv_shape.data(), ocv_dtype, t_ptr, cv_strides.data());
-    //	Mat (Size size, int type, void *data, size_t step=AUTO_STEP)
     return cv::Mat(cv::Size(t.get_shape()[shape_shift + 2], t.get_shape()[shape_shift + 1]), ocv_dtype, t_ptr, t.get_strides()[shape_shift + 1]);
 }
 
@@ -170,19 +176,47 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
         merged_map = ov::Tensor(image_saliency_map.get_element_type(), {num_classes, image_map_h, image_map_w});
     }
 
+    std::vector<cv::Mat_<float>> merged_map_mat(num_classes);
+    for (auto& class_map : merged_map_mat)  {
+        class_map = cv::Mat_<float>(cv::Size(image_map_w, image_map_h));
+        class_map = 0.f;
+    }
     for (size_t i = 1; i < all_saliecy_maps.size(); ++i) {
         for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
             auto current_cls_map_mat = wrap_to_mat(all_saliecy_maps[i], shape_shift, class_idx);
+            cv::Mat current_cls_map_mat_float;
+            current_cls_map_mat.convertTo(current_cls_map_mat_float, CV_32F);
+
             cv::Rect2i map_location(tile_coords[i].x * ratio_w, tile_coords[i].y * ratio_h,
-                                  tile_coords[i].width * ratio_w, tile_coords[i].height * ratio_h);
+                                    tile_coords[i].width * ratio_w, tile_coords[i].height * ratio_h);
 
             if (current_cls_map_mat.rows > map_location.height && map_location.height > 0 && current_cls_map_mat.cols > map_location.width && map_location.width > 0) {
-                cv::resize(current_cls_map_mat, current_cls_map_mat, cv::Size(map_location.width, map_location.height));
+                cv::resize(current_cls_map_mat_float, current_cls_map_mat_float, cv::Size(map_location.width, map_location.height));
             }
 
+            auto class_map_roi = cv::Mat(merged_map_mat[class_idx], map_location);
+            for (int row_i = 0; row_i < map_location.height; ++row_i) {
+                for (int col_i = 0; col_i < map_location.width; ++col_i) {
+                    float merged_mixel = class_map_roi.at<float>(row_i, col_i);
+                    if (merged_mixel > 0) {
+                        class_map_roi.at<float>(row_i, col_i) = 0.5 * (merged_mixel + current_cls_map_mat_float.at<float>(row_i, col_i));
+                    }
+                    else {
+                        class_map_roi.at<float>(row_i, col_i) = current_cls_map_mat_float.at<float>(row_i, col_i);
+                    }
+                }
+            }
         }
     }
 
+    for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
+        auto image_map_cls = wrap_to_mat(image_saliency_map, shape_shift, class_idx);
+        cv::resize(image_map_cls, image_map_cls, cv::Size(image_map_w, image_map_h));
+        cv::addWeighted(merged_map_mat[class_idx], 1.0, image_map_cls, 0.5, 0., merged_map_mat[class_idx]);
+        merged_map_mat[class_idx] = non_linear_normalization(merged_map_mat[class_idx]);
+        auto merged_cls_map_mat = wrap_to_mat(merged_map, shape_shift, class_idx);
+        merged_map_mat[class_idx].convertTo(merged_cls_map_mat, merged_cls_map_mat.type());
+    }
 
     return merged_map;
 }
