@@ -88,7 +88,7 @@ std::unique_ptr<ResultBase> TilerBase::predict_sync(const cv::Mat& image, const 
         auto tile_img = crop_tile(image, coord);
         auto tile_prediction = model->infer(ImageInputData(tile_img.clone()));
         auto tile_result = postprocess_tile(std::move(tile_prediction), coord);
-        tile_results.push_back(std::move(tile_result));
+        tile_results.emplace_back(std::move(tile_result));
     }
 
     return merge_results(tile_results, image.size(), tile_coords);
