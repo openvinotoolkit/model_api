@@ -253,7 +253,7 @@
         "name": "otx_models/maskrcnn_xai_tiling.xml",
         "type": "MaskRCNNModel",
         "tiler": "InstanceSegmentationTiler",
-        "extra_name": "otx_models/tile_classifier.xml",
+        "extra_model": "otx_models/tile_classifier.xml",
         "extra_type": "ImageModel",
         "input_res": "(3500,3500)",
         "test_data": [
