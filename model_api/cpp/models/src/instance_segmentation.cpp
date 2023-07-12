@@ -325,11 +325,13 @@ std::unique_ptr<ResultBase> MaskRCNNModel::postprocess(InferenceResult& infResul
             round((boxes[i * objectSize + 3] - padTop) * invertedScaleY - obj.y),
             0.f, floatInputImgHeight);
         cv::Mat raw_cls_mask{masks_size, CV_32F, masks + masks_size.area() * i};
-        if (postprocess_semantic_masks) {
-            obj.mask = segm_postprocess(obj, raw_cls_mask, internalData.inputImgHeight, internalData.inputImgWidth);
+        cv::Mat resized_mask;
+        if (postprocess_semantic_masks || has_feature_vector_name) {
+            resized_mask = segm_postprocess(obj, raw_cls_mask, internalData.inputImgHeight, internalData.inputImgWidth);
         } else {
-            obj.mask = raw_cls_mask;
+            resized_mask = raw_cls_mask;
         }
+        obj.mask = postprocess_semantic_masks ? resized_mask : raw_cls_mask;
         if (confidence > confidence_threshold) {
             result->segmentedObjects.push_back(obj);
         }
