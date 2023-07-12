@@ -60,6 +60,15 @@ std::unique_ptr<ResultBase> DetectionTiler::postprocess_tile(std::unique_ptr<Res
         det.y += coord.y;
     }
 
+    auto tmp_feature_vector = ov::Tensor(det_res->feature_vector.get_element_type(), det_res->feature_vector.get_shape());
+    auto tmp_saliency_map = ov::Tensor(det_res->saliency_map.get_element_type(), det_res->saliency_map.get_shape());
+
+    det_res->feature_vector.copy_to(tmp_feature_vector);
+    det_res->feature_vector = tmp_feature_vector;
+
+    det_res->saliency_map.copy_to(tmp_saliency_map);
+    det_res->saliency_map = tmp_saliency_map;
+
     return tile_result;
 }
 
@@ -183,10 +192,11 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
             cv::Mat current_cls_map_mat_float;
             current_cls_map_mat.convertTo(current_cls_map_mat_float, CV_32F);
 
-            cv::Rect2i map_location(tile_coords[i].x * ratio_w, tile_coords[i].y * ratio_h,
-                                    tile_coords[i].width * ratio_w, tile_coords[i].height * ratio_h);
+            cv::Rect map_location(tile_coords[i].x * ratio_w, tile_coords[i].y * ratio_h,
+                                    static_cast<int>(tile_coords[i].width + tile_coords[i].x) * ratio_w - static_cast<int>(tile_coords[i].x * ratio_w),
+                                    static_cast<int>(tile_coords[i].height + tile_coords[i].y) * ratio_h - static_cast<int>(tile_coords[i].y * ratio_h));
 
-            if (current_cls_map_mat.rows > map_location.height && map_location.height > 0 && current_cls_map_mat.cols > map_location.width && map_location.width > 0) {
+                    if (current_cls_map_mat.rows > map_location.height && map_location.height > 0 && current_cls_map_mat.cols > map_location.width && map_location.width > 0) {
                 cv::resize(current_cls_map_mat_float, current_cls_map_mat_float, cv::Size(map_location.width, map_location.height));
             }
 
