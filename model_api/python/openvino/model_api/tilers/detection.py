@@ -127,7 +127,7 @@ class DetectionTiler(Tiler):
         for i in range(detections_array.shape[0]):
             label = int(detections_array[i][0])
             score = float(detections_array[i][1])
-            bbox = list(detections_array[i][2:])
+            bbox = list(detections_array[i][2:].astype(np.int32))
             detected_objects.append(
                 Detection(*bbox, score, label, self.model.labels[label])
             )
