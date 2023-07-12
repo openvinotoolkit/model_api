@@ -75,6 +75,10 @@ class DetectionTiler(Tiler):
         output_dict["saliency_map"] = predictions.saliency_map
         output_dict["features"] = predictions.feature_vector
 
+        if self.execution_mode == "sync":
+            output_dict["saliency_map"] = np.copy(output_dict["saliency_map"])
+            output_dict["features"] = np.copy(output_dict["features"])
+
         offset_x, offset_y = coord[:2]
         detections[:, 2:] += np.tile((offset_x, offset_y), 2)
         output_dict["bboxes"] = detections
