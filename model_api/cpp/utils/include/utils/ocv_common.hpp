@@ -176,7 +176,7 @@ static inline cv::Mat wrap_saliency_map_tensor_to_mat(ov::Tensor& t, size_t shap
         ocv_dtype = CV_32F;
     }
     else {
-        throw std::runtime_error("Unsupported saliency map data type in tiler: " + t.get_element_type().get_type_name());
+        throw std::runtime_error("Unsupported saliency map data type in ov::Tensor to cv::Mat wrapper: " + t.get_element_type().get_type_name());
     }
 
     t_ptr = static_cast<void*>(static_cast<char*>(t_ptr) + class_idx * t.get_strides()[shape_shift]);
