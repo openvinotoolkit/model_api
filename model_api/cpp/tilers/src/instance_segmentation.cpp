@@ -27,23 +27,25 @@
 namespace {
 class MaskRCNNModelParamsSetter {
     public:
-        std::shared_ptr<MaskRCNNModel> model;
+        std::shared_ptr<ModelBase> model;
         bool state;
-    MaskRCNNModelParamsSetter(std::shared_ptr<MaskRCNNModel> model_) : model(model_) {
-        state = model->postprocess_semantic_masks;
-        model->postprocess_semantic_masks = false;
+        MaskRCNNModel* model_ptr;
+    MaskRCNNModelParamsSetter(std::shared_ptr<ModelBase> model_) : model(model_) {
+        model_ptr = static_cast<MaskRCNNModel*>(model.get());
+        state = model_ptr->postprocess_semantic_masks;
+        model_ptr->postprocess_semantic_masks = false;
     }
     ~MaskRCNNModelParamsSetter() {
-        model->postprocess_semantic_masks = state;
+        model_ptr->postprocess_semantic_masks = state;
     }
 };
 }
 
-InstanceSegmentationTiler::InstanceSegmentationTiler(std::unique_ptr<ModelBase> _model, const ov::AnyMap& configuration) :
+InstanceSegmentationTiler::InstanceSegmentationTiler(std::shared_ptr<ModelBase> _model, const ov::AnyMap& configuration) :
     DetectionTiler(std::move(_model), configuration) {}
 
 std::unique_ptr<ResultBase> InstanceSegmentationTiler::run(const ImageInputData& inputData) {
-    //auto setter = MaskRCNNModelParamsSetter(model);
+    auto setter = MaskRCNNModelParamsSetter(model);
     return TilerBase::run(inputData);
 }
 

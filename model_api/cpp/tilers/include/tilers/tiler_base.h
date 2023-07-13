@@ -32,7 +32,7 @@ struct ResultBase;
 
 class TilerBase {
 public:
-    TilerBase(std::unique_ptr<ModelBase> model, const ov::AnyMap& configuration);
+    TilerBase(std::shared_ptr<ModelBase> model, const ov::AnyMap& configuration);
 
     virtual ~TilerBase() = default;
 
@@ -47,7 +47,7 @@ protected:
     virtual std::unique_ptr<ResultBase> postprocess_tile(std::unique_ptr<ResultBase>, const cv::Rect&) = 0;
     virtual std::unique_ptr<ResultBase> merge_results(const std::vector<std::unique_ptr<ResultBase>>&, const cv::Size&, const std::vector<cv::Rect>&) = 0;
 
-    std::unique_ptr<ModelBase> model;
+    std::shared_ptr<ModelBase> model;
     size_t tile_size = 400;
     float tiles_overlap = 0.5f;
 };

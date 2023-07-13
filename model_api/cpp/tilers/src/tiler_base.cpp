@@ -22,8 +22,8 @@
 #include <models/input_data.h>
 
 
-TilerBase::TilerBase(std::unique_ptr<ModelBase> _model, const ov::AnyMap& configuration) :
-    model(std::move(_model)) {
+TilerBase::TilerBase(std::shared_ptr<ModelBase> _model, const ov::AnyMap& configuration) :
+    model(_model) {
 
     auto ov_model = model->getModel();
 
