@@ -129,7 +129,7 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
     std::vector<ov::Tensor> all_saliecy_maps;
     all_saliecy_maps.reserve(tiles_results.size());
     for (const auto& result : tiles_results) {
-        DetectionResult* det_res = static_cast<DetectionResult*>(result.get());
+        auto det_res = static_cast<DetectionResult*>(result.get());
         all_saliecy_maps.push_back(det_res->saliency_map);
     }
 

@@ -54,9 +54,9 @@ struct AnchorLabeled : public Anchor {
 
 template <typename Anchor>
 std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>& scores,
-                     const float thresh, bool includeBoundaries=false, int maxDets=-1) {
-    if (maxDets < 0) {
-        maxDets = boxes.size();
+                     const float thresh, bool includeBoundaries=false, size_t maxNum=0) {
+    if (maxNum == 0) {
+        maxNum = boxes.size();
     }
     std::vector<float> areas(boxes.size());
     for (size_t i = 0; i < boxes.size(); ++i) {
@@ -67,7 +67,7 @@ std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>&
     std::sort(order.begin(), order.end(), [&scores](int o1, int o2) { return scores[o1] > scores[o2]; });
 
     size_t ordersNum = 0;
-    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0  && static_cast<int>(ordersNum) < maxDets; ordersNum++);
+    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0  && ordersNum < maxNum; ordersNum++);
 
     std::vector<int> keep;
     bool shouldContinue = true;
@@ -95,20 +95,5 @@ std::vector<int> nms(const std::vector<Anchor>& boxes, const std::vector<float>&
     return keep;
 }
 
-template <typename AnchorLabeled>
 std::vector<int> multiclass_nms(const std::vector<AnchorLabeled>& boxes, const std::vector<float>& scores,
-                     const float thresh, bool includeBoundaries=false, int maxDets=-1) {
-    std::vector<Anchor> boxes_copy;
-    boxes_copy.reserve(boxes.size());
-
-    float max_coord = 0.f;
-    for (const auto& box : boxes) {
-        max_coord = std::max(max_coord, std::max(box.right, box.bottom));
-    }
-    for (auto& box : boxes) {
-        float offset = box.labelID * max_coord;
-        boxes_copy.emplace_back(box.left + offset, box.top + offset, box.right + offset, box.bottom + offset);
-    }
-
-    return nms(boxes_copy, scores, thresh, includeBoundaries, maxDets);
-}
+                     const float iou_threshold=0.45f, bool includeBoundaries=false, size_t maxNum=200);

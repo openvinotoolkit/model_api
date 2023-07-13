@@ -49,5 +49,5 @@ protected:
 
     std::unique_ptr<ModelBase> model;
     size_t tile_size = 400;
-    float tiles_overlap = 0.05f;
+    float tiles_overlap = 0.5f;
 };
