@@ -19,6 +19,7 @@
 
 
 class InstanceSegmentationTiler : public DetectionTiler {
+    /*InstanceSegmentationTiler tiler works with MaskRCNNModel model only*/
 public:
     InstanceSegmentationTiler(std::shared_ptr<ModelBase> model, const ov::AnyMap& configuration);
     virtual std::unique_ptr<ResultBase> run(const ImageInputData& inputData);

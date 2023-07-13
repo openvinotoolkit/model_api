@@ -14,6 +14,7 @@
  limitations under the License.
 """
 
+from contextlib import contextmanager
 import cv2 as cv
 import numpy as np
 from openvino.model_api.models.instance_segmentation import (
@@ -207,13 +208,17 @@ class InstanceSegmentationTiler(DetectionTiler):
         return merged_map
 
     def __call__(self, inputs):
-        if isinstance(self.model, MaskRCNNModel):
-            postprocess_state = self.model.postprocess_semantic_masks
-            self.model.postprocess_semantic_masks = False
+        @contextmanager
+        def setup_maskrcnn(*args, **kwds):
+            postprocess_state = None
+            if isinstance(self.model, MaskRCNNModel):
+                postprocess_state = self.model.postprocess_semantic_masks
+                self.model.postprocess_semantic_masks = False
+            try:
+                yield
+            finally:
+                if isinstance(self.model, MaskRCNNModel):
+                    self.model.postprocess_semantic_masks = postprocess_state
 
-        predictions = super().__call__(inputs)
-
-        if isinstance(self.model, MaskRCNNModel):
-            self.model.postprocess_semantic_masks = postprocess_state
-
-        return predictions
+        with setup_maskrcnn():
+            return super().__call__(inputs)
