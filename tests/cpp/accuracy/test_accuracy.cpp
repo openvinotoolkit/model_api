@@ -121,7 +121,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 std::unique_ptr<ResultBase> result;
                 if (modelData.tiler == "DetectionTiler") {
                     auto tiler = DetectionTiler(std::move(model), {});
-                    if (modelData.input_res.height > 0 && modelData.input_res.width) {
+                    if (modelData.input_res.height > 0 && modelData.input_res.width > 0) {
                         cv::resize(image, image, modelData.input_res);
                     }
                     result = tiler.run(image);
@@ -192,7 +192,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 std::unique_ptr<ResultBase> result;
                 if (modelData.tiler == "InstanceSegmentationTiler") {
                     auto tiler = InstanceSegmentationTiler(std::move(model), {});
-                    if (modelData.input_res.height > 0 && modelData.input_res.width) {
+                    if (modelData.input_res.height > 0 && modelData.input_res.width > 0) {
                         cv::resize(image, image, modelData.input_res);
                     }
                     result = tiler.run(image);
