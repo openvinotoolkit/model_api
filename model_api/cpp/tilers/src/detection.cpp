@@ -126,16 +126,16 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
 }
 
 ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr<ResultBase>>& tiles_results, const cv::Size& image_size, const std::vector<cv::Rect>& tile_coords) {
-    std::vector<ov::Tensor> all_saliecy_maps;
-    all_saliecy_maps.reserve(tiles_results.size());
+    std::vector<ov::Tensor> all_saliency_maps;
+    all_saliency_maps.reserve(tiles_results.size());
     for (const auto& result : tiles_results) {
         auto det_res = static_cast<DetectionResult*>(result.get());
-        all_saliecy_maps.push_back(det_res->saliency_map);
+        all_saliency_maps.push_back(det_res->saliency_map);
     }
 
     ov::Tensor image_saliency_map;
-    if (all_saliecy_maps.size()) {
-        image_saliency_map = all_saliecy_maps[0];
+    if (all_saliency_maps.size()) {
+        image_saliency_map = all_saliency_maps[0];
     }
 
     if (image_saliency_map.get_size() == 1) {
@@ -153,22 +153,14 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
     size_t image_map_h = static_cast<size_t>(image_size.height * ratio_h);
     size_t image_map_w = static_cast<size_t>(image_size.width * ratio_w);
 
-    ov::Tensor merged_map;
-    if (shape_shift) {
-        merged_map = ov::Tensor(image_saliency_map.get_element_type(), {1, num_classes, image_map_h, image_map_w});
-    }
-    else {
-        merged_map = ov::Tensor(image_saliency_map.get_element_type(), {num_classes, image_map_h, image_map_w});
-    }
-
     std::vector<cv::Mat_<float>> merged_map_mat(num_classes);
     for (auto& class_map : merged_map_mat)  {
         class_map = cv::Mat_<float>(cv::Size(image_map_w, image_map_h));
         class_map = 0.f;
     }
-    for (size_t i = 1; i < all_saliecy_maps.size(); ++i) {
+    for (size_t i = 1; i < all_saliency_maps.size(); ++i) {
         for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
-            auto current_cls_map_mat = wrap_saliency_map_tensor_to_mat(all_saliecy_maps[i], shape_shift, class_idx);
+            auto current_cls_map_mat = wrap_saliency_map_tensor_to_mat(all_saliency_maps[i], shape_shift, class_idx);
             cv::Mat current_cls_map_mat_float;
             current_cls_map_mat.convertTo(current_cls_map_mat_float, CV_32F);
 
@@ -193,6 +185,14 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
                 }
             }
         }
+    }
+
+    ov::Tensor merged_map;
+    if (shape_shift) {
+        merged_map = ov::Tensor(ov::element::Type("u8"), {1, num_classes, image_map_h, image_map_w});
+    }
+    else {
+        merged_map = ov::Tensor(ov::element::Type("u8"), {num_classes, image_map_h, image_map_w});
     }
 
     for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {

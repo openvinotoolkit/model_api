@@ -119,85 +119,53 @@ std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::
     return retVal;
 }
 
-std::vector<cv::Mat_<std::uint8_t>> InstanceSegmentationTiler::merge_saliency_maps(const std::vector<std::unique_ptr<ResultBase>>& tiles_results, const cv::Size& image_size, const std::vector<cv::Rect>& tile_coords) {
-    /*
-    std::vector<ov::Tensor> all_saliecy_maps;
+std::vector<cv::Mat_<std::uint8_t>> InstanceSegmentationTiler::merge_saliency_maps(const std::vector<std::unique_ptr<ResultBase>>& tiles_results,
+                                                                                   const cv::Size& image_size, const std::vector<cv::Rect>& tile_coords) {
+    std::vector<std::vector<cv::Mat_<std::uint8_t>>> all_saliecy_maps;
     all_saliecy_maps.reserve(tiles_results.size());
     for (const auto& result : tiles_results) {
         auto det_res = static_cast<InstanceSegmentationResult*>(result.get());
         all_saliecy_maps.push_back(det_res->saliency_map);
     }
 
-    ov::Tensor image_saliency_map;
+    std::vector<cv::Mat_<std::uint8_t>> image_saliency_map;
     if (all_saliecy_maps.size()) {
         image_saliency_map = all_saliecy_maps[0];
     }
 
-    //if (image_saliency_map.get_size() == 1) {
-    //    return image_saliency_map;
-    //}
-
-    size_t shape_shift = (image_saliency_map.get_shape().size() > 3) ? 1 : 0;
-    size_t num_classes = image_saliency_map.get_shape()[shape_shift];
-    size_t map_h = image_saliency_map.get_shape()[shape_shift + 1];
-    size_t map_w = image_saliency_map.get_shape()[shape_shift + 2];
-
-    float ratio_h = static_cast<float>(map_h) / tile_size;
-    float ratio_w = static_cast<float>(map_w) / tile_size;
-
-    size_t image_map_h = static_cast<size_t>(image_size.height * ratio_h);
-    size_t image_map_w = static_cast<size_t>(image_size.width * ratio_w);
-
-    ov::Tensor merged_map;
-    if (shape_shift) {
-        merged_map = ov::Tensor(image_saliency_map.get_element_type(), {1, num_classes, image_map_h, image_map_w});
-    }
-    else {
-        merged_map = ov::Tensor(image_saliency_map.get_element_type(), {num_classes, image_map_h, image_map_w});
+    if (image_saliency_map.empty()) {
+        return image_saliency_map;
     }
 
-    std::vector<cv::Mat_<float>> merged_map_mat(num_classes);
-    for (auto& class_map : merged_map_mat)  {
-        class_map = cv::Mat_<float>(cv::Size(image_map_w, image_map_h));
-        class_map = 0.f;
+    size_t num_classes = image_saliency_map.size();
+    std::vector<cv::Mat_<std::uint8_t>> merged_map(num_classes);
+    for (auto& map : merged_map) {
+        map = cv::Mat_<std::uint8_t>(image_size);
+        map = 0;
     }
+
     for (size_t i = 1; i < all_saliecy_maps.size(); ++i) {
         for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
-            auto current_cls_map_mat = wrap_saliency_map_tensor_to_mat(all_saliecy_maps[i], shape_shift, class_idx);
-            cv::Mat current_cls_map_mat_float;
-            current_cls_map_mat.convertTo(current_cls_map_mat_float, CV_32F);
-
-            cv::Rect map_location(tile_coords[i].x * ratio_w, tile_coords[i].y * ratio_h,
-                                    static_cast<int>(tile_coords[i].width + tile_coords[i].x) * ratio_w - static_cast<int>(tile_coords[i].x * ratio_w),
-                                    static_cast<int>(tile_coords[i].height + tile_coords[i].y) * ratio_h - static_cast<int>(tile_coords[i].y * ratio_h));
-
-            if (current_cls_map_mat.rows > map_location.height && map_location.height > 0 && current_cls_map_mat.cols > map_location.width && map_location.width > 0) {
-                cv::resize(current_cls_map_mat_float, current_cls_map_mat_float, cv::Size(map_location.width, map_location.height));
+            auto current_cls_map_mat = all_saliecy_maps[i][class_idx];
+            if (current_cls_map_mat.empty()) {
+                continue;
             }
-
-            auto class_map_roi = cv::Mat(merged_map_mat[class_idx], map_location);
-            for (int row_i = 0; row_i < map_location.height; ++row_i) {
-                for (int col_i = 0; col_i < map_location.width; ++col_i) {
-                    float merged_mixel = class_map_roi.at<float>(row_i, col_i);
-                    if (merged_mixel > 0) {
-                        class_map_roi.at<float>(row_i, col_i) = 0.5 * (merged_mixel + current_cls_map_mat_float.at<float>(row_i, col_i));
-                    }
-                    else {
-                        class_map_roi.at<float>(row_i, col_i) = current_cls_map_mat_float.at<float>(row_i, col_i);
-                    }
-                }
-            }
+            const auto& tile = tile_coords[i];
+            cv::Mat tile_map;
+            cv::resize(current_cls_map_mat, tile_map, tile.size());
+            auto tile_map_merged = cv::Mat(merged_map[class_idx], tile);
+            cv::Mat(cv::max(tile_map, tile_map_merged)).copyTo(tile_map_merged);
         }
     }
 
     for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
-        auto image_map_cls = wrap_saliency_map_tensor_to_mat(image_saliency_map, shape_shift, class_idx);
-        cv::resize(image_map_cls, image_map_cls, cv::Size(image_map_w, image_map_h));
-        cv::addWeighted(merged_map_mat[class_idx], 1.0, image_map_cls, 0.5, 0., merged_map_mat[class_idx]);
-        auto merged_cls_map_mat = wrap_saliency_map_tensor_to_mat(merged_map, shape_shift, class_idx);
-        merged_map_mat[class_idx].convertTo(merged_cls_map_mat, merged_cls_map_mat.type());
+        auto image_map_cls = image_saliency_map[class_idx];
+        if (image_map_cls.empty()) {
+            continue;
+        }
+        cv::resize(image_map_cls, image_map_cls, image_size);
+        cv::addWeighted(merged_map[class_idx], 1.0, image_map_cls, 0.5, 0., merged_map[class_idx]);
     }
 
-    //return merged_map;
-    */
+    return merged_map;
 }
