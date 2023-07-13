@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <limits>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
@@ -87,17 +88,28 @@ std::vector<cv::Mat_<std::uint8_t>> average_and_normalize(const std::vector<std:
                     throw std::runtime_error("saliency_maps must have same size");
                 } if (per_object_map.channels() != 1) {
                     throw std::runtime_error("saliency_maps must have one channel");
-                } if (per_object_map.type() != CV_8U) {
-                    throw std::runtime_error("saliency_maps must have type CV_8U");
+                } if (per_object_map.type() != CV_8U && per_object_map.type() != CV_32F) {
+                    throw std::runtime_error("saliency_maps must have type CV_8U or CV_32F");
                 }
             }
             for (int row = 0; row < saliency_map.rows; ++row) {
                 for (int col = 0; col < saliency_map.cols; ++col) {
-                    std::uint8_t max_val = 0;
+                    std::uint8_t max_val_ui8 = 0;
+                    float max_val_f = std::numeric_limits<float>::min();
                     for (const cv::Mat& per_object_map : per_object_maps) {
-                        max_val = std::max(max_val, per_object_map.at<std::uint8_t>(row, col));
+                        if (per_object_map.type() == CV_8U) {
+                            max_val_ui8 = std::max(max_val_ui8, per_object_map.at<std::uint8_t>(row, col));
+                        }
+                        else {
+                            max_val_f = std::max(max_val_f, per_object_map.at<float>(row, col));
+                        }
                     }
-                    saliency_map.at<double>(row, col) = max_val;
+                    if (max_val_f == std::numeric_limits<float>::min()) {
+                        saliency_map.at<double>(row, col) = max_val_ui8;
+                    }
+                    else {
+                        saliency_map.at<double>(row, col) = max_val_f;
+                    }
                 }
             }
             double min, max;
@@ -331,12 +343,12 @@ std::unique_ptr<ResultBase> MaskRCNNModel::postprocess(InferenceResult& infResul
         } else {
             resized_mask = raw_cls_mask;
         }
-        obj.mask = postprocess_semantic_masks ? resized_mask : raw_cls_mask;
+        obj.mask = postprocess_semantic_masks ? resized_mask : std::move(raw_cls_mask);
         if (confidence > confidence_threshold) {
             result->segmentedObjects.push_back(obj);
         }
-        if (has_feature_vector_name) {
-            saliency_maps[obj.labelID - 1].push_back(obj.mask);
+        if (has_feature_vector_name && confidence > confidence_threshold) {
+            saliency_maps[obj.labelID - 1].push_back(resized_mask);
         }
     }
     result->saliency_map = average_and_normalize(saliency_maps);
