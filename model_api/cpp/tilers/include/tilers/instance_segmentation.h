@@ -21,6 +21,7 @@
 class InstanceSegmentationTiler : public DetectionTiler {
 public:
     InstanceSegmentationTiler(std::unique_ptr<ModelBase> model, const ov::AnyMap& configuration);
+    virtual std::unique_ptr<ResultBase> run(const ImageInputData& inputData);
     virtual ~InstanceSegmentationTiler() = default;
 
 protected:

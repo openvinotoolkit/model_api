@@ -19,40 +19,33 @@
 #include <opencv2/core.hpp>
 
 #include <tilers/instance_segmentation.h>
+#include <models/instance_segmentation.h>
 #include <models/results.h>
 #include <utils/nms.hpp>
 #include "utils/common.hpp"
 
-cv::Rect expand_box(const cv::Rect2f& box, float scale) {
-    float w_half = box.width * 0.5f * scale,
-        h_half = box.height * 0.5f * scale;
-    const cv::Point2f& center = (box.tl() + box.br()) * 0.5f;
-    return {cv::Point(int(center.x - w_half), int(center.y - h_half)), cv::Point(int(center.x + w_half), int(center.y + h_half))};
-}
-
-cv::Mat segm_postprocess(const SegmentedObject& box, const cv::Mat& unpadded, int im_h, int im_w) {
-    // Add zero border to prevent upsampling artifacts on segment borders.
-    cv::Mat raw_cls_mask;
-    cv::copyMakeBorder(unpadded, raw_cls_mask, 1, 1, 1, 1, cv::BORDER_CONSTANT, {0});
-    cv::Rect extended_box = expand_box(box, float(raw_cls_mask.cols) / (raw_cls_mask.cols - 2));
-
-    int w = std::max(extended_box.width + 1, 1);
-    int h = std::max(extended_box.height + 1, 1);
-    int x0 = clamp(extended_box.x, 0, im_w);
-    int y0 = clamp(extended_box.y, 0, im_h);
-    int x1 = clamp(extended_box.x + extended_box.width + 1, 0, im_w);
-    int y1 = clamp(extended_box.y + extended_box.height + 1, 0, im_h);
-
-    cv::Mat resized;
-    cv::resize(raw_cls_mask, resized, {w, h});
-    cv::Mat im_mask(cv::Size{im_w, im_h}, CV_8UC1, cv::Scalar{0});
-    im_mask(cv::Rect{x0, y0, x1-x0, y1-y0}).setTo(1, resized({cv::Point(x0-extended_box.x, y0-extended_box.y), cv::Point(x1-extended_box.x, y1-extended_box.y)}) > 0.5f);
-    return im_mask;
+namespace {
+class MaskRCNNModelParamsSetter {
+    public:
+        std::shared_ptr<MaskRCNNModel> model;
+        bool state;
+    MaskRCNNModelParamsSetter(std::shared_ptr<MaskRCNNModel> model_) : model(model_) {
+        state = model->postprocess_semantic_masks;
+        model->postprocess_semantic_masks = false;
+    }
+    ~MaskRCNNModelParamsSetter() {
+        model->postprocess_semantic_masks = state;
+    }
+};
 }
 
 InstanceSegmentationTiler::InstanceSegmentationTiler(std::unique_ptr<ModelBase> _model, const ov::AnyMap& configuration) :
     DetectionTiler(std::move(_model), configuration) {}
 
+std::unique_ptr<ResultBase> InstanceSegmentationTiler::run(const ImageInputData& inputData) {
+    //auto setter = MaskRCNNModelParamsSetter(model);
+    return TilerBase::run(inputData);
+}
 
 std::unique_ptr<ResultBase> InstanceSegmentationTiler::postprocess_tile(std::unique_ptr<ResultBase> tile_result, const cv::Rect& coord) {
     auto* iseg_res = static_cast<InstanceSegmentationResult*>(tile_result.get());
