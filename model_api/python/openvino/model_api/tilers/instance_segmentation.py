@@ -174,14 +174,9 @@ class InstanceSegmentationTiler(DetectionTiler):
             return image_saliency_map
 
         num_classes = len(image_saliency_map)
-        map_h, map_w = image_saliency_map[0].shape
         image_h, image_w, _ = shape
 
-        ratio = map_h / self.tile_size, map_w / self.tile_size
-        image_map_h = int(image_h * ratio[0])
-        image_map_w = int(image_w * ratio[1])
-
-        merged_map = [np.zeros((image_map_h, image_map_w)) for _ in range(num_classes)]
+        merged_map = [np.zeros((image_h, image_w)) for _ in range(num_classes)]
 
         for i, saliency_map in enumerate(saliency_maps[1:], 1):
             for class_idx in range(num_classes):
@@ -190,9 +185,6 @@ class InstanceSegmentationTiler(DetectionTiler):
                     continue
 
                 x_1, y_1, x_2, y_2 = tiles_coords[i]
-                y_1, x_1 = int(y_1 * ratio[0]), int(x_1 * ratio[1])
-                y_2, x_2 = int(y_2 * ratio[0]), int(x_2 * ratio[1])
-
                 map_h, map_w = cls_map.shape
 
                 cls_map = cv.resize(cls_map, (x_2 - x_1, y_2 - y_1))
@@ -208,7 +200,7 @@ class InstanceSegmentationTiler(DetectionTiler):
             image_map_cls = image_saliency_map[class_idx]
             if len(image_map_cls.shape) < 2:
                 continue
-            image_map_cls = cv.resize(image_map_cls, (image_map_w, image_map_h))
+            image_map_cls = cv.resize(image_map_cls, (image_h, image_w))
             merged_map[class_idx] += 0.5 * image_map_cls
             merged_map[class_idx] = merged_map[class_idx].astype(np.uint8)
 
