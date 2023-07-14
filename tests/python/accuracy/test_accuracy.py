@@ -3,43 +3,19 @@ import os
 from pathlib import Path
 
 import cv2
-import numpy as np
 import pytest
 from openvino.model_api.models import (
     ClassificationModel,
     ClassificationResult,
     DetectionModel,
+    DetectionResult,
+    ImageResultWithSoftPrediction,
+    InstanceSegmentationResult,
     MaskRCNNModel,
     SegmentationModel,
     add_rotated_rects,
 )
-
-
-def process_output(output, model_type):
-    if model_type == DetectionModel.__name__:
-        return f"{output}"
-    elif model_type == SegmentationModel.__name__:
-        if isinstance(output, dict):
-            return "({probability:.3f}, {label})".format(**output)
-        else:
-            if isinstance(output, tuple):
-                output = output[0]
-            outHist = cv2.calcHist(
-                [output.astype(np.uint8)],
-                channels=None,
-                mask=None,
-                histSize=[256],
-                ranges=[0, 255],
-            )
-            prediction_buffer = ""
-            for i, count in enumerate(outHist):
-                if count > 0:
-                    prediction_buffer += f"{i}: {count[0] / output.size:.3f}, "
-            return prediction_buffer
-    elif model_type == MaskRCNNModel.__name__:
-        return str(output)
-    else:
-        raise ValueError("Unknown model type to precess ouput")
+from openvino.model_api.tilers import DetectionTiler, InstanceSegmentationTiler
 
 
 def read_config(path: Path):
@@ -69,9 +45,18 @@ def test_image_models(data, dump, result, model_data):
     name = model_data["name"]
     if name.endswith(".xml"):
         name = f"{data}/{name}"
-    model = eval(model_data["type"]).create_model(name, device="CPU", download_dir=data)
 
-    test_result = []
+    model = eval(model_data["type"]).create_model(name, device="CPU", download_dir=data)
+    if "tiler" in model_data:
+        if "extra_model" in model_data:
+            extra_model = eval(model_data["extra_type"]).create_model(
+                model_data["extra_model"], device="CPU", download_dir=data
+            )
+            model = eval(model_data["tiler"])(
+                model, configuration={}, tile_classifier=extra_model
+            )
+        else:
+            model = eval(model_data["tiler"])(model, configuration={})
 
     if dump:
         result.append(model_data)
@@ -82,30 +67,43 @@ def test_image_models(data, dump, result, model_data):
         image = cv2.imread(str(image_path))
         if image is None:
             raise RuntimeError("Failed to read the image")
+        if "input_res" in model_data:
+            image = cv2.resize(image, eval(model_data["input_res"]))
         outputs = model(image)
         if isinstance(outputs, ClassificationResult):
             assert 1 == len(test_data["reference"])
             output_str = str(outputs)
-            test_result.append(test_data["reference"][0] == output_str)
+            assert test_data["reference"][0] == output_str
+            image_result = [output_str]
+        elif isinstance(outputs, DetectionResult):
+            assert 1 == len(
+                test_data["reference"]
+            )  # TODO: make "reference" to be a single element after SegmentationModel is updated
+            output_str = str(outputs)
+            assert test_data["reference"][0] == output_str
+            image_result = [output_str]
+        elif isinstance(outputs, ImageResultWithSoftPrediction):
+            assert 1 == len(test_data["reference"])
+            contours = model.get_contours(outputs.resultImage, outputs.soft_prediction)
+            contour_str = "; "
+            for contour in contours:
+                contour_str += str(contour) + ", "
+            output_str = str(outputs) + contour_str
+            assert test_data["reference"][0] == output_str
+            image_result = [output_str]
+        elif isinstance(outputs, InstanceSegmentationResult):
+            assert 1 == len(test_data["reference"])
+            output_str = str(
+                InstanceSegmentationResult(
+                    add_rotated_rects(outputs.segmentedObjects),
+                    outputs.saliency_map,
+                    outputs.feature_vector,
+                )
+            )
+            assert test_data["reference"][0] == output_str
             image_result = [output_str]
         else:
-            if not isinstance(outputs, list):
-                outputs = [outputs]
-            if model_data["type"] == MaskRCNNModel.__name__:
-                outputs = add_rotated_rects(outputs)
-            if model_data["type"] == SegmentationModel.__name__:
-                outputs.extend(model.get_contours(*outputs[0]))
-
-            image_result = []
-
-            for i, output in enumerate(outputs):
-                output_str = process_output(output, model_data["type"])
-                if len(test_data["reference"]) > i:
-                    test_result.append(test_data["reference"][i] == output_str)
-                else:
-                    test_result.append(False)
-                image_result.append(output_str)
-
+            assert False
         if dump:
             inference_results.append(
                 {"image": test_data["image"], "reference": image_result}
@@ -114,8 +112,11 @@ def test_image_models(data, dump, result, model_data):
         save_name = os.path.basename(name)
     else:
         save_name = name + ".xml"
-    model.save(data + "/serialized/" + save_name)
+
+    if "tiler" in model_data:
+        model.get_model().save(data + "/serialized/" + save_name)
+    else:
+        model.save(data + "/serialized/" + save_name)
+
     if dump:
         result[-1]["test_data"] = inference_results
-
-    assert all(test_result)

@@ -61,3 +61,6 @@ if __name__ == "__main__":
     retrieve_otx_model(args.data_dir, "classification_model_with_xai_head")
     retrieve_otx_model(args.data_dir, "detection_model_with_xai_head")
     retrieve_otx_model(args.data_dir, "segmentation_model_with_xai_head")
+    retrieve_otx_model(args.data_dir, "maskrcnn_model_with_xai_head")
+    retrieve_otx_model(args.data_dir, "maskrcnn_xai_tiling")
+    retrieve_otx_model(args.data_dir, "tile_classifier")

@@ -37,6 +37,7 @@ struct ModelData {
     std::string name;
     std::string type;
     std::vector<TestData> testData;
+    std::string tiler;
 };
 
 class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
@@ -65,6 +66,9 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
         }
         test.testData.push_back(data);
     }
+    if (j.contains("tiler")) {
+        test.tiler = j.at("tiler").get<std::string>();
+    }
 }
 
 namespace {
@@ -80,6 +84,10 @@ std::vector<ModelData> GetTestData(const std::string& path)
 TEST_P(ModelParameterizedTest, AccuracyTest)
 {
     auto modelData = GetParam();
+    if (modelData.tiler.size()) {
+        return;
+    }
+
     std::string modelPath;
     const std::string& name = modelData.name;
     if (name.substr(name.size() - 4) == ".xml") {
@@ -94,6 +102,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             auto model = DetectionModel::create_model(modelXml, {}, "", preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
+                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                 cv::Mat image = cv::imread(imagePath);
@@ -102,14 +111,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
 
                 auto result = model->infer(image);
-                auto objects = result->objects;
-                ASSERT_EQ(objects.size(), modelData.testData[i].reference.size());
-
-                for (size_t j = 0; j < objects.size(); j++) {
-                    std::stringstream prediction_buffer;
-                    prediction_buffer << objects[j];
-                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
-                }
+                EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "ClassificationModel") {
@@ -134,6 +136,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             auto model = SegmentationModel::create_model(modelXml, {}, preload, "CPU");
 
             for (size_t i = 0; i < modelData.testData.size(); i++) {
+                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                 cv::Mat image = cv::imread(imagePath);
@@ -141,38 +144,18 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     throw std::runtime_error{"Failed to read the image"};
                 }
 
-                auto inference_result = model->infer(image)->asRef<ImageResultWithSoftPrediction>();
-
-                cv::Mat predicted_mask[] = {inference_result.resultImage};
-                int nimages = 1;
-                int *channels = nullptr;
-                cv::Mat mask;
-                cv::Mat outHist;
-                int dims = 1;
-                int histSize[] = {256};
-                float range[] = {0, 256};
-                const float *ranges[] = {range};
-                cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
-
-
-                std::stringstream prediction_buffer;
-                prediction_buffer << std::fixed << std::setprecision(3);
-                for (int i = 0; i < range[1]; ++i) {
-                    const float count = outHist.at<float>(i);
-                    if (count > 0) {
-                        prediction_buffer << i << ": " << count / predicted_mask[0].total() << ", ";
+                std::unique_ptr<ImageResult> pred = model->infer(image);
+                ImageResultWithSoftPrediction* soft = dynamic_cast<ImageResultWithSoftPrediction*>(pred.get());
+                if (soft) {
+                    const std::vector<Contour>& contours = model->getContours(*soft);
+                    std::stringstream ss;
+                    ss << *soft << "; ";
+                    for (const Contour& contour : contours) {
+                        ss << contour << ", ";
                     }
-                }
-
-                ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[0]);
-
-                auto contours = model->getContours(inference_result);
-                int j = 1; //First reference is histogram of mask
-                for (auto &contour: contours) {
-                    std::stringstream prediction_buffer;
-                    prediction_buffer << contour;
-                    ASSERT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
-                    j++;
+                    ASSERT_EQ(ss.str(), modelData.testData[i].reference[0]);
+                } else {
+                    ASSERT_EQ(std::string{*pred}, modelData.testData[i].reference[0]);
                 }
             }
         }
@@ -180,22 +163,32 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             bool preload = true;
             auto model = MaskRCNNModel::create_model(modelXml, {}, preload, "CPU");
             for (size_t i = 0; i < modelData.testData.size(); i++) {
+                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                 auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                 cv::Mat image = cv::imread(imagePath);
                 if (!image.data) {
                     throw std::runtime_error{"Failed to read the image"};
                 }
-                const std::vector<SegmentedObject> objects = model->infer(image)->segmentedObjects;
-                const std::vector<SegmentedObjectWithRects> withRects = add_rotated_rects(objects);
-                ASSERT_EQ(withRects.size(), modelData.testData[i].reference.size());
-
-                for (size_t j = 0; j < withRects.size(); j++) {
-                    std::stringstream prediction_buffer;
-                    prediction_buffer << withRects[j];
-                    EXPECT_EQ(prediction_buffer.str(), modelData.testData[i].reference[j]);
+                const std::unique_ptr<InstanceSegmentationResult>& res = model->infer(image);
+                const std::vector<SegmentedObjectWithRects>& withRects = add_rotated_rects(res->segmentedObjects);
+                std::stringstream ss;
+                for (const SegmentedObjectWithRects& obj : withRects) {
+                    ss << obj << "; ";
                 }
-
+                size_t filled = 0;
+                for (const cv::Mat_<std::uint8_t>& cls_map : res->saliency_map) {
+                    if (cls_map.data) {
+                        ++filled;
+                    }
+                }
+                ss << filled << "; ";
+                try {
+                    ss << res->feature_vector.get_shape();
+                } catch (ov::Exception&) {
+                    ss << "[0]";
+                }
+                EXPECT_EQ(ss.str(), modelData.testData[i].reference[0]);
             }
         }
         else {

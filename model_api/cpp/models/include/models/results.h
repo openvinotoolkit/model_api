@@ -120,14 +120,10 @@ struct DetectedObject : public cv::Rect2f {
     std::string label;
     float confidence;
 
-    friend std::ostream& operator<< (std::ostream& stream, const DetectedObject& detection)
-    {
-        stream << "(" << int(detection.x) << ", " << int(detection.y) << ", " << int(detection.x + detection.width)
-            << ", " << int(detection.y + detection.height) << ", ";
-        stream << std::fixed;
-        stream << std::setprecision(3) << detection.confidence << ", ";
-        stream << std::setprecision(-1) << detection.labelID << ", " << detection.label << ")";
-        return stream;
+    friend std::ostream& operator<< (std::ostream& os, const DetectedObject& detection) {
+        return os << int(detection.x) << ", " << int(detection.y) << ", " << int(detection.x + detection.width)
+            << ", " << int(detection.y + detection.height) << ", "
+            << detection.labelID << " (" << detection.label << "): " << std::fixed << std::setprecision(3) << detection.confidence;
     }
 };
 
@@ -135,6 +131,30 @@ struct DetectionResult : public ResultBase {
     DetectionResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     std::vector<DetectedObject> objects;
+    ov::Tensor saliency_map, feature_vector;  // Contan "saliency_map" and "feature_vector" model outputs if such exist
+
+    friend std::ostream& operator<< (std::ostream& os, const DetectionResult& prediction) {
+        for (const DetectedObject& obj : prediction.objects) {
+            os << obj << "; ";
+        }
+        try {
+            os << prediction.saliency_map.get_shape() << "; ";
+        } catch (ov::Exception&) {
+            os << "[0]; ";
+        }
+        try {
+            os << prediction.feature_vector.get_shape();
+        } catch (ov::Exception&) {
+            os << "[0]";
+        }
+        return os;
+    }
+
+    explicit operator std::string() {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
 };
 
 struct RetinaFaceDetectionResult : public DetectionResult {
@@ -146,14 +166,8 @@ struct RetinaFaceDetectionResult : public DetectionResult {
 struct SegmentedObject : DetectedObject {
     cv::Mat mask;
 
-    friend std::ostream& operator<< (std::ostream& stream, const SegmentedObject& segmentation)
-    {
-        stream << "(" << int(segmentation.x) << ", " << int(segmentation.y) << ", " << int(segmentation.x + segmentation.width)
-            << ", " << int(segmentation.y + segmentation.height) << ", ";
-        stream << std::fixed;
-        stream << std::setprecision(3) << segmentation.confidence << ", ";
-        stream << std::setprecision(-1) << segmentation.labelID << ", " << segmentation.label << ", " << cv::countNonZero(segmentation.mask > 0.5) << ")";
-        return stream;
+    friend std::ostream& operator<< (std::ostream& os, const SegmentedObject& prediction) {
+        return os << static_cast<const DetectedObject&>(prediction) << ", " << cv::countNonZero(prediction.mask > 0.5);
     }
 };
 
@@ -162,18 +176,12 @@ struct SegmentedObjectWithRects : SegmentedObject {
 
     SegmentedObjectWithRects(const SegmentedObject& segmented_object) : SegmentedObject(segmented_object) {}
 
-    friend std::ostream& operator<< (std::ostream& stream, const SegmentedObjectWithRects& segmentation)
-    {
-        stream << "(" << int(segmentation.x) << ", " << int(segmentation.y) << ", " << int(segmentation.x + segmentation.width)
-            << ", " << int(segmentation.y + segmentation.height) << ", ";
-        stream << std::fixed;
-        stream << std::setprecision(3) << segmentation.confidence << ", ";
-        stream << segmentation.labelID << ", " << segmentation.label << ", " << cv::countNonZero(segmentation.mask > 0.5);
-        for (const cv::RotatedRect& rect : segmentation.rotated_rects) {
-            stream << ", RotatedRect: " << rect.center.x << ' ' << rect.center.y << ' ' <<  rect.size.width << ' ' << rect.size.height << ' ' << rect.angle;
+    friend std::ostream& operator<< (std::ostream& os, const SegmentedObjectWithRects& prediction) {
+        os << static_cast<const SegmentedObject&>(prediction) << std::fixed << std::setprecision(3);
+        for (const cv::RotatedRect& rect : prediction.rotated_rects) {
+            os << ", RotatedRect: " << rect.center.x << ' ' << rect.center.y << ' ' <<  rect.size.width << ' ' << rect.size.height << ' ' << rect.angle;
         }
-        stream << ")";
-        return stream;
+        return os;
     }
 };
 
@@ -207,18 +215,61 @@ struct InstanceSegmentationResult : ResultBase {
     InstanceSegmentationResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     std::vector<SegmentedObject> segmentedObjects;
+    // Contan per class saliency_maps and "feature_vector" model output if feature_vector exists
+    std::vector<cv::Mat_<std::uint8_t>> saliency_map;
+    ov::Tensor feature_vector;
 };
 
 struct ImageResult : public ResultBase {
     ImageResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     cv::Mat resultImage;
+    friend std::ostream& operator<< (std::ostream& os, const ImageResult& prediction) {
+        cv::Mat predicted_mask[] = {prediction.resultImage};
+        int nimages = 1;
+        int *channels = nullptr;
+        cv::Mat mask;
+        cv::Mat outHist;
+        int dims = 1;
+        int histSize[] = {256};
+        float range[] = {0, 256};
+        const float *ranges[] = {range};
+        cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
+
+        os << std::fixed << std::setprecision(3);
+        for (int i = 0; i < range[1]; ++i) {
+            const float count = outHist.at<float>(i);
+            if (count > 0) {
+                os << i << ": " << count / prediction.resultImage.total() << ", ";
+            }
+        }
+        return os;
+    }
+    explicit operator std::string() {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
 };
 
 struct ImageResultWithSoftPrediction : public ImageResult {
     ImageResultWithSoftPrediction(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ImageResult(frameId, metaData) {}
     cv::Mat soft_prediction;
+    ov::Tensor feature_vector;  // Contans "feature_vector" model output if such exists
+    friend std::ostream& operator<< (std::ostream& os, const ImageResultWithSoftPrediction& prediction) {
+        os << static_cast<const ImageResult&>(prediction) << '[';
+        for (int i = 0; i < prediction.soft_prediction.dims; ++i) {
+            os << prediction.soft_prediction.size[i] << ',';
+        }
+        os << prediction.soft_prediction.channels() << "], ";
+        try {
+            os << prediction.feature_vector.get_shape();
+        } catch (ov::Exception&) {
+            os << "[0]";
+        }
+        return os;
+    }
 };
 
 struct Contour {
@@ -226,13 +277,8 @@ struct Contour {
     float probability;
     std::vector<cv::Point> shape;
 
-    friend std::ostream& operator<< (std::ostream& stream, const Contour& contour)
-    {
-        stream << "(";
-        stream << std::fixed;
-        stream << std::setprecision(3) << contour.probability << ", ";
-        stream << std::setprecision(-1) << contour.label << ")";
-        return stream;
+    friend std::ostream& operator<< (std::ostream& os, const Contour& contour) {
+        return os << contour.label << ": " << std::fixed << std::setprecision(3) << contour.probability << ", " << contour.shape.size();
     }
 };
 

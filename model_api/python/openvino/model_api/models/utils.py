@@ -16,13 +16,16 @@
 
 import math
 from collections import namedtuple
+from typing import List, NamedTuple, Tuple, Union
 
 import cv2
 import numpy as np
 
 
 class ClassificationResult(
-    namedtuple("ClassificationResult", "top_labels saliency_map feature_vector")
+    namedtuple(
+        "ClassificationResult", "top_labels saliency_map feature_vector"
+    )  # Contan "saliency_map" and "feature_vector" model outputs if such exist
 ):
     def __str__(self):
         labels = ", ".join(
@@ -42,17 +45,18 @@ class Detection:
         self.id = int(id)
         self.str_label = str_label
 
-    def get_coords(self):
-        return self.xmin, self.ymin, self.xmax, self.ymax
-
-    def __to_str(self):
-        return f"({self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.score:.3f}, {self.id}, {self.str_label})"
-
     def __str__(self):
-        return self.__to_str()
+        return f"{self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.id} ({self.str_label}): {self.score:.3f}"
 
-    def __repr__(self):
-        return self.__to_str()
+
+class DetectionResult(
+    namedtuple(
+        "DetectionResult", "objects saliency_map feature_vector"
+    )  # Contan "saliency_map" and "feature_vector" model outputs if such exist
+):
+    def __str__(self):
+        obj_str = "; ".join(str(obj) for obj in self.objects)
+        return f"{obj_str}; [{','.join(str(i) for i in self.saliency_map.shape)}]; [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class SegmentedObject(Detection):
@@ -60,14 +64,8 @@ class SegmentedObject(Detection):
         super().__init__(xmin, ymin, xmax, ymax, score, id, str_label)
         self.mask = mask
 
-    def __to_str(self):
-        return f"({self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.score:.3f}, {self.id}, {self.str_label}, {(self.mask > 0.5).sum()})"
-
     def __str__(self):
-        return self.__to_str()
-
-    def __repr__(self):
-        return self.__to_str()
+        return f"{super().__str__()}, {(self.mask > 0.5).sum()}"
 
 
 class SegmentedObjectWithRects(SegmentedObject):
@@ -84,17 +82,26 @@ class SegmentedObjectWithRects(SegmentedObject):
         )
         self.rotated_rects = []
 
-    def __to_str(self):
-        res = f"({self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.score:.3f}, {self.id}, {self.str_label}, {(self.mask > 0.5).sum()}"
+    def __str__(self):
+        res = super().__str__()
         for rect in self.rotated_rects:
             res += f", RotatedRect: {rect[0][0]:.3f} {rect[0][1]:.3f} {rect[1][0]:.3f} {rect[1][1]:.3f} {rect[2]:.3f}"
-        return res + ")"
+        return res
+
+
+class InstanceSegmentationResult(NamedTuple):
+    segmentedObjects: List[Union[SegmentedObject, SegmentedObjectWithRects]]
+    # Contan per class saliency_maps and "feature_vector" model output if feature_vector exists
+    saliency_map: List[np.ndarray]
+    feature_vector: np.ndarray
 
     def __str__(self):
-        return self.__to_str()
-
-    def __repr__(self):
-        return self.__to_str()
+        obj_str = "; ".join(str(obj) for obj in self.segmentedObjects)
+        filled = 0
+        for cls_map in self.saliency_map:
+            if cls_map.size:
+                filled += 1
+        return f"{obj_str}; {filled}; [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 def add_rotated_rects(segmented_objects):
@@ -123,6 +130,35 @@ def clip_detections(detections, size):
         detection.xmax = min(max(round(detection.xmax), 0), size[1])
         detection.ymax = min(max(round(detection.ymax), 0), size[0])
     return detections
+
+
+class Contour(NamedTuple):
+    label: str
+    probability: float
+    shape: List[Tuple[int, int]]
+
+    def __str__(self):
+        return f"{self.label}: {self.probability:.3f}, {len(self.shape)}"
+
+
+class ImageResultWithSoftPrediction(NamedTuple):
+    resultImage: np.ndarray
+    soft_prediction: np.ndarray
+    feature_vector: np.ndarray  # Contans "feature_vector" model output if such exists
+
+    def __str__(self):
+        outHist = cv2.calcHist(
+            [self.resultImage.astype(np.uint8)],
+            channels=None,
+            mask=None,
+            histSize=[256],
+            ranges=[0, 255],
+        )
+        hist = ""
+        for i, count in enumerate(outHist):
+            if count > 0:
+                hist += f"{i}: {count[0] / self.resultImage.size:.3f}, "
+        return f"{hist}[{','.join(str(i) for i in self.soft_prediction.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class DetectionWithLandmarks(Detection):
