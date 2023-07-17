@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 
 import cv2
-from openvino.model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 import pytest
+from openvino.model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 from openvino.model_api.models import (
     ClassificationModel,
     ClassificationResult,
