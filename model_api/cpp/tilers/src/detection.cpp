@@ -102,7 +102,6 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
         result->objects.push_back(*all_detections_ptrs[idx]);
     }
 
-    result->feature_vector = ov::Tensor();
     if (tiles_results.size()) {
         DetectionResult* det_res = static_cast<DetectionResult*>(tiles_results.begin()->get());
         result->feature_vector = ov::Tensor(det_res->feature_vector.get_element_type(), det_res->feature_vector.get_shape());

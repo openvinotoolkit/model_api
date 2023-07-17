@@ -85,7 +85,6 @@ std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::
                                     image_size.height, image_size.width);
     }
 
-    result->feature_vector = ov::Tensor();
     if (tiles_results.size()) {
         auto* iseg_res = static_cast<InstanceSegmentationResult*>(tiles_results.begin()->get());
         result->feature_vector = ov::Tensor(iseg_res->feature_vector.get_element_type(), iseg_res->feature_vector.get_shape());

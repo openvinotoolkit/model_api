@@ -164,21 +164,18 @@ private:
 };
 
 static inline cv::Mat wrap_saliency_map_tensor_to_mat(ov::Tensor& t, size_t shape_shift, size_t class_idx) {
-    void* t_ptr;
     int ocv_dtype;
+    switch (t.get_element_type()) {
+        case ov::element::u8:
+            ocv_dtype = CV_8U;
+            break;
+        case ov::element::f32:
+            ocv_dtype = CV_32F;
+            break;
+        default:
+            throw std::runtime_error("Unsupported saliency map data type in ov::Tensor to cv::Mat wrapper: " + t.get_element_type().get_type_name());
+    }
+    void* t_ptr = static_cast<char*>(t.data()) + class_idx * t.get_strides()[shape_shift];
 
-    if (t.get_element_type().get_type_name() == "u8") {
-        t_ptr = t.data<unsigned char>();
-        ocv_dtype = CV_8U;
-    }
-    else if (t.get_element_type().get_type_name() == "f32") {
-        t_ptr = t.data<float>();
-        ocv_dtype = CV_32F;
-    }
-    else {
-        throw std::runtime_error("Unsupported saliency map data type in ov::Tensor to cv::Mat wrapper: " + t.get_element_type().get_type_name());
-    }
-
-    t_ptr = static_cast<void*>(static_cast<char*>(t_ptr) + class_idx * t.get_strides()[shape_shift]);
     return cv::Mat(cv::Size(t.get_shape()[shape_shift + 2], t.get_shape()[shape_shift + 1]), ocv_dtype, t_ptr, t.get_strides()[shape_shift + 1]);
 }
