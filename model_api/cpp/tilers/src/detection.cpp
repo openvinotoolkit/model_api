@@ -15,6 +15,7 @@
 */
 
 #include <algorithm>
+#include <functional>
 #include <vector>
 #include <opencv2/core.hpp>
 
@@ -83,7 +84,7 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
     auto retVal = std::unique_ptr<ResultBase>(result);
 
     std::vector<AnchorLabeled> all_detections;
-    std::vector<DetectedObject*> all_detections_ptrs;
+    std::vector<std::reference_wrapper<DetectedObject>> all_detections_refs;
     std::vector<float> all_scores;
 
     for (const auto& result : tiles_results) {
@@ -91,7 +92,7 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
         for (auto& det : det_res->objects) {
             all_detections.emplace_back(det.x, det.y, det.x + det.width, det.y + det.height, det.labelID);
             all_scores.push_back(det.confidence);
-            all_detections_ptrs.push_back(&det);
+            all_detections_refs.push_back(det);
         }
     }
 
@@ -99,7 +100,7 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
 
     result->objects.reserve(keep_idx.size());
     for (auto idx : keep_idx) {
-        result->objects.push_back(*all_detections_ptrs[idx]);
+        result->objects.push_back(all_detections_refs[idx]);
     }
 
     if (tiles_results.size()) {

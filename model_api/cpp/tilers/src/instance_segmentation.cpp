@@ -15,6 +15,7 @@
 */
 
 #include <algorithm>
+#include <functional>
 #include <vector>
 #include <opencv2/core.hpp>
 
@@ -64,7 +65,7 @@ std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::
     auto retVal = std::unique_ptr<ResultBase>(result);
 
     std::vector<AnchorLabeled> all_detections;
-    std::vector<SegmentedObject*> all_detections_ptrs;
+    std::vector<std::reference_wrapper<SegmentedObject>> all_detections_ptrs;
     std::vector<float> all_scores;
 
     for (const auto& result : tiles_results) {
@@ -72,7 +73,7 @@ std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::
         for (auto& det : iseg_res->segmentedObjects) {
             all_detections.emplace_back(det.x, det.y, det.x + det.width, det.y + det.height, det.labelID);
             all_scores.push_back(det.confidence);
-            all_detections_ptrs.push_back(&det);
+            all_detections_ptrs.push_back(det);
         }
     }
 
@@ -80,8 +81,8 @@ std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::
 
     result->segmentedObjects.reserve(keep_idx.size());
     for (auto idx : keep_idx) {
-        result->segmentedObjects.push_back(*all_detections_ptrs[idx]);
-        all_detections_ptrs[idx]->mask = segm_postprocess(*all_detections_ptrs[idx], all_detections_ptrs[idx]->mask,
+        result->segmentedObjects.push_back(all_detections_ptrs[idx]);
+        all_detections_ptrs[idx].get().mask = segm_postprocess(all_detections_ptrs[idx], all_detections_ptrs[idx].get().mask,
                                     image_size.height, image_size.width);
     }
 
