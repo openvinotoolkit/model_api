@@ -131,3 +131,11 @@ std::shared_ptr<ov::Model> ModelBase::getModel() {
     updateModelInfo();
     return model;
 }
+
+std::shared_ptr<InferenceAdapter> ModelBase::getInferenceAdapter() {
+    if (!inferenceAdapter) {
+        throw std::runtime_error(std::string("Model was created without inference adapter"));
+    }
+
+    return inferenceAdapter;
+}

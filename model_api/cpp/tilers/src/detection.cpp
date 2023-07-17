@@ -41,14 +41,20 @@ cv::Mat non_linear_normalization(cv::Mat& class_map) {
 DetectionTiler::DetectionTiler(std::shared_ptr<ModelBase> _model, const ov::AnyMap& configuration) :
     TilerBase(_model, configuration) {
 
-    auto ov_model = model->getModel();
+    ov::AnyMap extra_config;
+    try {
+        auto ov_model = model->getModel();
+        extra_config = ov_model->get_rt_info<ov::AnyMap>("model_info");
+    }
+    catch (const std::runtime_error& err) {
+        extra_config = model->getInferenceAdapter()->getModelConfig();
+    }
 
-    auto max_pred_iter = configuration.find("max_pred_number");
-    if (max_pred_iter == configuration.end()) {
-        if (ov_model->has_rt_info("model_info", "max_pred_number")) {
-            max_pred_number = ov_model->get_rt_info<size_t>("model_info", "max_pred_number");
-        }
-    } else {
+    ov::AnyMap merged_config(configuration);
+    merged_config.merge(extra_config);
+
+    auto max_pred_iter = merged_config.find("max_pred_number");
+    if (max_pred_iter != merged_config.end()) {
         max_pred_number = max_pred_iter->second.as<size_t>();
     }
 }

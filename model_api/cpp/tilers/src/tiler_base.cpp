@@ -25,23 +25,25 @@
 TilerBase::TilerBase(std::shared_ptr<ModelBase> _model, const ov::AnyMap& configuration) :
     model(_model) {
 
-    auto ov_model = model->getModel();
+    ov::AnyMap extra_config;
+    try {
+        auto ov_model = model->getModel();
+        extra_config = ov_model->get_rt_info<ov::AnyMap>("model_info");
+    }
+    catch (const std::runtime_error& err) {
+        extra_config = model->getInferenceAdapter()->getModelConfig();
+    }
 
-    auto tile_size_iter = configuration.find("tile_size");
-    if (tile_size_iter == configuration.end()) {
-        if (ov_model->has_rt_info("model_info", "tile_size")) {
-            tile_size = ov_model->get_rt_info<size_t>("model_info", "tile_size");
-        }
-    } else {
+    ov::AnyMap merged_config(configuration);
+    merged_config.merge(extra_config);
+
+    auto tile_size_iter = merged_config.find("tile_size");
+    if (tile_size_iter != merged_config.end()) {
         tile_size = tile_size_iter->second.as<size_t>();
     }
 
-    auto tiles_overlap_iter = configuration.find("tiles_overlap");
-    if (tiles_overlap_iter == configuration.end()) {
-        if (ov_model->has_rt_info("model_info", "tiles_overlap")) {
-            tiles_overlap = ov_model->get_rt_info<float>("model_info", "tiles_overlap");
-        }
-    } else {
+    auto tiles_overlap_iter = merged_config.find("tiles_overlap");
+    if (tiles_overlap_iter != merged_config.end()) {
         tiles_overlap = tiles_overlap_iter->second.as<float>();
     }
 }
