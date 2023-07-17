@@ -15,6 +15,7 @@
 """
 
 from contextlib import contextmanager
+
 import cv2 as cv
 import numpy as np
 from openvino.model_api.models.instance_segmentation import (
