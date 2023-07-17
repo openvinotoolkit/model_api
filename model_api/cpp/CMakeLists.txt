@@ -79,7 +79,7 @@ install(TARGETS model_api EXPORT model_apiTargets
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
     INCLUDES DESTINATION include)
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/models/include/" "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/" "${CMAKE_CURRENT_SOURCE_DIR}/adapters/include/"
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/models/include/" "${CMAKE_CURRENT_SOURCE_DIR}/utils/include/" "${CMAKE_CURRENT_SOURCE_DIR}/adapters/include/" "${CMAKE_CURRENT_SOURCE_DIR}/tilers/include/"
     DESTINATION include COMPONENT Devel)
 
 include(CMakePackageConfigHelpers)
