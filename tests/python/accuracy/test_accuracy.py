@@ -59,7 +59,9 @@ def test_image_models(data, dump, result, model_data):
                 extra_adapter, configuration={}, preload=True
             )
             model = eval(model_data["tiler"])(
-                model, configuration={}, tile_classifier_model=extra_model,
+                model,
+                configuration={},
+                tile_classifier_model=extra_model,
             )
         else:
             model = eval(model_data["tiler"])(model, configuration={})
