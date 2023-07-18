@@ -81,9 +81,9 @@ std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::
 
     result->segmentedObjects.reserve(keep_idx.size());
     for (auto idx : keep_idx) {
-        result->segmentedObjects.push_back(all_detections_ptrs[idx]);
         all_detections_ptrs[idx].get().mask = segm_postprocess(all_detections_ptrs[idx], all_detections_ptrs[idx].get().mask,
                                     image_size.height, image_size.width);
+        result->segmentedObjects.push_back(all_detections_ptrs[idx]);
     }
 
     if (tiles_results.size()) {
@@ -156,10 +156,14 @@ std::vector<cv::Mat_<std::uint8_t>> InstanceSegmentationTiler::merge_saliency_ma
     for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
         auto image_map_cls = image_saliency_map[class_idx];
         if (image_map_cls.empty()) {
-            continue;
+            if (cv::sum(image_saliency_map[class_idx]) == cv::Scalar(0.)) {
+                image_saliency_map[class_idx] = cv::Mat_<std::uint8_t>();
+            }
         }
-        cv::resize(image_map_cls, image_map_cls, image_size);
-        cv::addWeighted(merged_map[class_idx], 1.0, image_map_cls, 0.5, 0., merged_map[class_idx]);
+        else {
+            cv::resize(image_map_cls, image_map_cls, image_size);
+            cv::addWeighted(merged_map[class_idx], 1.0, image_map_cls, 0.5, 0., merged_map[class_idx]);
+        }
     }
 
     return merged_map;
