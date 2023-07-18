@@ -195,10 +195,13 @@ class InstanceSegmentationTiler(DetectionTiler):
         for class_idx in range(num_classes):
             image_map_cls = image_saliency_map[class_idx]
             if len(image_map_cls.shape) < 2:
-                continue
-            image_map_cls = cv.resize(image_map_cls, (image_h, image_w))
-            merged_map[class_idx] += 0.5 * image_map_cls
-            merged_map[class_idx] = merged_map[class_idx].astype(np.uint8)
+                merged_map[class_idx] = np.round(merged_map[class_idx]).astype(np.uint8)
+                if np.sum(merged_map[class_idx]) == 0:
+                    merged_map[class_idx] = np.ndarray(0)
+            else:
+                image_map_cls = cv.resize(image_map_cls, (image_h, image_w))
+                merged_map[class_idx] += 0.5 * image_map_cls
+                merged_map[class_idx] = np.round(merged_map[class_idx]).astype(np.uint8)
 
         return merged_map
 
