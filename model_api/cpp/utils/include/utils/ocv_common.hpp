@@ -176,6 +176,7 @@ static inline cv::Mat wrap_saliency_map_tensor_to_mat(ov::Tensor& t, size_t shap
             throw std::runtime_error("Unsupported saliency map data type in ov::Tensor to cv::Mat wrapper: " + t.get_element_type().get_type_name());
     }
     void* t_ptr = static_cast<char*>(t.data()) + class_idx * t.get_strides()[shape_shift];
+    auto mat_size = cv::Size(static_cast<int>(t.get_shape()[shape_shift + 2]), static_cast<int>(t.get_shape()[shape_shift + 1]));
 
-    return cv::Mat(cv::Size(t.get_shape()[shape_shift + 2], t.get_shape()[shape_shift + 1]), ocv_dtype, t_ptr, t.get_strides()[shape_shift + 1]);
+    return cv::Mat(mat_size, ocv_dtype, t_ptr, t.get_strides()[shape_shift + 1]);
 }
