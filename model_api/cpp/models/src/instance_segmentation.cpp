@@ -333,7 +333,7 @@ std::unique_ptr<ResultBase> MaskRCNNModel::postprocess(InferenceResult& infResul
         } else {
             resized_mask = raw_cls_mask;
         }
-        obj.mask = postprocess_semantic_masks ? resized_mask : std::move(raw_cls_mask);
+        obj.mask = postprocess_semantic_masks ? resized_mask : raw_cls_mask.clone();
         if (confidence > confidence_threshold) {
             result->segmentedObjects.push_back(obj);
         }

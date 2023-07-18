@@ -156,8 +156,8 @@ std::vector<cv::Mat_<std::uint8_t>> InstanceSegmentationTiler::merge_saliency_ma
     for (size_t class_idx = 0; class_idx < num_classes; ++class_idx) {
         auto image_map_cls = image_saliency_map[class_idx];
         if (image_map_cls.empty()) {
-            if (cv::sum(image_saliency_map[class_idx]) == cv::Scalar(0.)) {
-                image_saliency_map[class_idx] = cv::Mat_<std::uint8_t>();
+            if (cv::sum(merged_map[class_idx]) == cv::Scalar(0.)) {
+                merged_map[class_idx] = cv::Mat_<std::uint8_t>();
             }
         }
         else {
