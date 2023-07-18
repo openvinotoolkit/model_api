@@ -30,7 +30,7 @@ TilerBase::TilerBase(std::shared_ptr<ModelBase> _model, const ov::AnyMap& config
         auto ov_model = model->getModel();
         extra_config = ov_model->get_rt_info<ov::AnyMap>("model_info");
     }
-    catch (const std::runtime_error& err) {
+    catch (const std::runtime_error&) {
         extra_config = model->getInferenceAdapter()->getModelConfig();
     }
 
@@ -72,8 +72,8 @@ std::vector<cv::Rect> TilerBase::tile(const cv::Size& image_size) {
             size_t loc_w = i * tile_step;
 
             coords.push_back(cv::Rect(loc_w, loc_h,
-                std::min(tile_size, image_size.width - loc_w),
-                std::min(tile_size, image_size.height - loc_h)));
+                std::min(tile_size, static_cast<size_t>(image_size.width) - loc_w),
+                std::min(tile_size, static_cast<size_t>(image_size.height) - loc_h)));
         }
     }
     return coords;

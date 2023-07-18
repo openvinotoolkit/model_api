@@ -47,7 +47,7 @@ DetectionTiler::DetectionTiler(std::shared_ptr<ModelBase> _model, const ov::AnyM
         auto ov_model = model->getModel();
         extra_config = ov_model->get_rt_info<ov::AnyMap>("model_info");
     }
-    catch (const std::runtime_error& err) {
+    catch (const std::runtime_error&) {
         extra_config = model->getInferenceAdapter()->getModelConfig();
     }
 
@@ -170,9 +170,10 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
             cv::Mat current_cls_map_mat_float;
             current_cls_map_mat.convertTo(current_cls_map_mat_float, CV_32F);
 
-            cv::Rect map_location(tile_coords[i].x * ratio_w, tile_coords[i].y * ratio_h,
-                                    static_cast<int>(tile_coords[i].width + tile_coords[i].x) * ratio_w - static_cast<int>(tile_coords[i].x * ratio_w),
-                                    static_cast<int>(tile_coords[i].height + tile_coords[i].y) * ratio_h - static_cast<int>(tile_coords[i].y * ratio_h));
+            cv::Rect map_location(static_cast<int>(tile_coords[i].x * ratio_w),
+                                  static_cast<int>(tile_coords[i].y * ratio_h),
+                                  static_cast<int>(static_cast<int>(tile_coords[i].width + tile_coords[i].x) * ratio_w - static_cast<int>(tile_coords[i].x * ratio_w)),
+                                  static_cast<int>(static_cast<int>(tile_coords[i].height + tile_coords[i].y) * ratio_h - static_cast<int>(tile_coords[i].y * ratio_h)));
 
             if (current_cls_map_mat.rows > map_location.height && map_location.height > 0 && current_cls_map_mat.cols > map_location.width && map_location.width > 0) {
                 cv::resize(current_cls_map_mat_float, current_cls_map_mat_float, cv::Size(map_location.width, map_location.height));
