@@ -187,16 +187,10 @@ class InstanceSegmentationTiler(DetectionTiler):
                     continue
 
                 x_1, y_1, x_2, y_2 = tiles_coords[i]
-                map_h, map_w = cls_map.shape
-
                 cls_map = cv.resize(cls_map, (x_2 - x_1, y_2 - y_1))
 
-                map_h, map_w = y_2 - y_1, x_2 - x_1
-
-                tile_map = merged_map[class_idx][y_1 : y_1 + map_h, x_1 : x_1 + map_w]
-                merged_map[class_idx][
-                    y_1 : y_1 + map_h, x_1 : x_1 + map_w
-                ] = np.maximum(tile_map, cls_map)
+                tile_map = merged_map[class_idx][y_1:y_2, x_1:x_2]
+                merged_map[class_idx][y_1:y_2, x_1:x_2] = np.maximum(tile_map, cls_map)
 
         for class_idx in range(num_classes):
             image_map_cls = image_saliency_map[class_idx]
