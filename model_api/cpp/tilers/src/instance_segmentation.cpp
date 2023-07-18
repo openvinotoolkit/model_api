@@ -162,7 +162,7 @@ std::vector<cv::Mat_<std::uint8_t>> InstanceSegmentationTiler::merge_saliency_ma
         }
         else {
             cv::resize(image_map_cls, image_map_cls, image_size);
-            cv::addWeighted(merged_map[class_idx], 1.0, image_map_cls, 0.5, 0., merged_map[class_idx]);
+            cv::Mat(cv::max(merged_map[class_idx], image_map_cls)).copyTo(merged_map[class_idx]);
         }
     }
 

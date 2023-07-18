@@ -200,7 +200,7 @@ class InstanceSegmentationTiler(DetectionTiler):
                     merged_map[class_idx] = np.ndarray(0)
             else:
                 image_map_cls = cv.resize(image_map_cls, (image_h, image_w))
-                merged_map[class_idx] += 0.5 * image_map_cls
+                merged_map[class_idx] = np.maximum(merged_map[class_idx], image_map_cls)
                 merged_map[class_idx] = np.round(merged_map[class_idx]).astype(np.uint8)
 
         return merged_map
