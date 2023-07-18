@@ -68,12 +68,12 @@ std::vector<cv::Rect> TilerBase::tile(const cv::Size& image_size) {
 
     for (size_t i = 0; i < num_w_tiles; ++i) {
         for (size_t j = 0; j < num_h_tiles; ++j) {
-            size_t loc_h = j * tile_step;
-            size_t loc_w = i * tile_step;
+            int loc_h = static_cast<int>(j * tile_step);
+            int loc_w = static_cast<int>(i * tile_step);
 
             coords.push_back(cv::Rect(loc_w, loc_h,
-                std::min(tile_size, static_cast<size_t>(image_size.width) - loc_w),
-                std::min(tile_size, static_cast<size_t>(image_size.height) - loc_h)));
+                std::min(static_cast<int>(tile_size), image_size.width - loc_w),
+                std::min(static_cast<int>(tile_size), image_size.height - loc_h)));
         }
     }
     return coords;

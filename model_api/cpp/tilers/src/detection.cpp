@@ -184,7 +184,7 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
                 for (int col_i = 0; col_i < map_location.width; ++col_i) {
                     float merged_mixel = class_map_roi.at<float>(row_i, col_i);
                     if (merged_mixel > 0) {
-                        class_map_roi.at<float>(row_i, col_i) = 0.5 * (merged_mixel + current_cls_map_mat_float.at<float>(row_i, col_i));
+                        class_map_roi.at<float>(row_i, col_i) = 0.5f * (merged_mixel + current_cls_map_mat_float.at<float>(row_i, col_i));
                     }
                     else {
                         class_map_roi.at<float>(row_i, col_i) = current_cls_map_mat_float.at<float>(row_i, col_i);
