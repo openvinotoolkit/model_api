@@ -177,11 +177,8 @@ class OpenvinoAdapter(InferenceAdapter):
                     insert_hiararchical(keys[1:], val, root_dict[keys[0]])
 
                 for prop in onnx_model.metadata_props:
-                    keys = prop.key[1:-1].split(',')
-                    for i, key in enumerate(keys):
-                        keys[i] = key.strip()[1:-1]
+                    keys = prop.key.split(" ")
                     insert_hiararchical(keys, prop.value, self.onnx_metadata)
-
 
         self.model_from_buffer = isinstance(self.model_path, bytes) and isinstance(
             weights_path, bytes
@@ -365,7 +362,9 @@ class OpenvinoAdapter(InferenceAdapter):
                     value = value[item]
                 return OVAny(value)
             except KeyError:
-                raise RuntimeError("Cannot get runtime attribute. Path to runtime attribute is incorrect.")
+                raise RuntimeError(
+                    "Cannot get runtime attribute. Path to runtime attribute is incorrect."
+                )
         return self.model.get_rt_info(path)
 
     def embed_preprocessing(
