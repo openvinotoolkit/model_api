@@ -177,7 +177,7 @@ class OpenvinoAdapter(InferenceAdapter):
                     insert_hiararchical(keys[1:], val, root_dict[keys[0]])
 
                 for prop in onnx_model.metadata_props:
-                    keys = prop.key.split(" ")
+                    keys = prop.key.split()
                     insert_hiararchical(keys, prop.value, self.onnx_metadata)
 
         self.model_from_buffer = isinstance(self.model_path, bytes) and isinstance(
