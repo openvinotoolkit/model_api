@@ -39,6 +39,8 @@
 std::string ClassificationModel::ModelType = "Classification";
 
 namespace {
+constexpr char indices_name[]{"indices"};
+constexpr char scores_name[]{"scores"};
 constexpr char saliency_map_name[]{"saliency_map"};
 constexpr char feature_vector_name[]{"feature_vector"};
 
@@ -317,9 +319,9 @@ std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(In
 }
 
 std::unique_ptr<ResultBase> ClassificationModel::get_multiclass_predictions(InferenceResult& infResult) {
-    const ov::Tensor& indicesTensor = infResult.outputsData.find(outputNames[0])->second;
+    const ov::Tensor& indicesTensor = infResult.outputsData.find(indices_name)->second;
     const int* indicesPtr = indicesTensor.data<int>();
-    const ov::Tensor& scoresTensor = infResult.outputsData.find(outputNames[1])->second;
+    const ov::Tensor& scoresTensor = infResult.outputsData.find(scores_name)->second;
     const float* scoresPtr = scoresTensor.data<float>();
 
     ClassificationResult* result = new ClassificationResult(infResult.frameId, infResult.metaData);
@@ -410,7 +412,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     addOrFindSoftmaxAndTopkOutputs(model, topk, output_raw_scores);
     embedded_processing = true;
 
-    outputNames = {"indices", "scores"};
+    outputNames = {indices_name, scores_name};
     if (output_raw_scores) {
         outputNames.emplace_back("raw_scores");
     }
@@ -421,7 +423,6 @@ std::unique_ptr<ClassificationResult> ClassificationModel::infer(const ImageInpu
     auto result = ModelBase::infer(static_cast<const InputData&>(inputData));
     return std::unique_ptr<ClassificationResult>(static_cast<ClassificationResult*>(result.release()));
 }
-
 
 HierarchicalConfig::HierarchicalConfig(const std::string& json_repr)  {
     nlohmann::json data = nlohmann::json::parse(json_repr);

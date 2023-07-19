@@ -31,6 +31,7 @@
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
+#include <adapters/openvino_adapter.h>
 
 
 int main(int argc, char* argv[]) {
@@ -45,6 +46,15 @@ int main(int argc, char* argv[]) {
         if (!image.data) {
             throw std::runtime_error{"Failed to read the image"};
         }
+
+        ov::Core core;
+        std::shared_ptr<InferenceAdapter> ia;
+        {
+            auto model2 = core.read_model(argv[1]);
+            ia = std::make_shared<OpenVINOInferenceAdapter>();
+            ia->loadModel(model2, core, "CPU", {});
+        }
+        auto model3 = DetectionModel::create_model(ia);
 
         // Instantiate Object Detection model
         auto model = DetectionModel::create_model(argv[1]); // works with SSD models. Download it using Python Model API
