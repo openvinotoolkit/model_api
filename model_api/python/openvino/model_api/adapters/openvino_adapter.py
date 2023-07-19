@@ -178,7 +178,8 @@ class OpenvinoAdapter(InferenceAdapter):
 
                 for prop in onnx_model.metadata_props:
                     keys = prop.key.split()
-                    insert_hiararchical(keys, prop.value, self.onnx_metadata)
+                    if "model_info" in keys:
+                        insert_hiararchical(keys, prop.value, self.onnx_metadata)
 
         self.model_from_buffer = isinstance(self.model_path, bytes) and isinstance(
             weights_path, bytes
