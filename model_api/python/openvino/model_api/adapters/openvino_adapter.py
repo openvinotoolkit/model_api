@@ -18,8 +18,6 @@ import logging as log
 from pathlib import Path
 from typing import Dict, Set, Tuple
 
-import onnx
-
 try:
     import openvino.runtime as ov
     from openvino.preprocess import ColorFormat, PrePostProcessor
@@ -165,6 +163,7 @@ class OpenvinoAdapter(InferenceAdapter):
                     'The "weights_path" will be omitted'
                 )
             if Path(self.model_path).suffix == ".onnx" and not weights_path:
+                import onnx
                 self.is_onnx_file = True
                 onnx_model = onnx.load(self.model_path)
 
