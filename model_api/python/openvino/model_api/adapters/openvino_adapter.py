@@ -19,7 +19,6 @@ from pathlib import Path
 from typing import Dict, Set, Tuple
 
 import onnx
-import pandas as pd
 
 try:
     import openvino.runtime as ov
