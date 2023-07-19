@@ -21,6 +21,8 @@
 #include <models/results.h>
 #include <models/segmentation_model.h>
 #include <adapters/openvino_adapter.h>
+#include <tilers/detection.h>
+#include <tilers/instance_segmentation.h>
 
 using json = nlohmann::json;
 
@@ -38,6 +40,7 @@ struct ModelData {
     std::string type;
     std::vector<TestData> testData;
     std::string tiler;
+    cv::Size input_res = cv::Size(0, 0);
 };
 
 class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
@@ -69,6 +72,14 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
     if (j.contains("tiler")) {
         test.tiler = j.at("tiler").get<std::string>();
     }
+    if (j.contains("input_res")) {
+        auto res = j.at("input_res").get<std::string>();
+        res.erase(std::remove(res.begin(), res.end(), '('), res.end());
+        res.erase(std::remove(res.begin(), res.end(), ')'), res.end());
+        test.input_res.width = std::stoi(res.substr(0, res.find(',')));
+        res.erase(0, res.find(',') + 1);
+        test.input_res.height = std::stoi(res);
+    }
 }
 
 namespace {
@@ -84,9 +95,6 @@ std::vector<ModelData> GetTestData(const std::string& path)
 TEST_P(ModelParameterizedTest, AccuracyTest)
 {
     auto modelData = GetParam();
-    if (modelData.tiler.size()) {
-        return;
-    }
 
     std::string modelPath;
     const std::string& name = modelData.name;
@@ -110,8 +118,18 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     throw std::runtime_error{"Failed to read the image"};
                 }
 
-                auto result = model->infer(image);
-                EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
+                std::unique_ptr<ResultBase> result;
+                if (modelData.tiler == "DetectionTiler") {
+                    auto tiler = DetectionTiler(std::move(model), {});
+                    if (modelData.input_res.height > 0 && modelData.input_res.width > 0) {
+                        cv::resize(image, image, modelData.input_res);
+                    }
+                    result = tiler.run(image);
+                }
+                else {
+                    result = model->infer(image);
+                }
+                EXPECT_EQ(std::string{*static_cast<DetectionResult*>(result.get())}, modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "ClassificationModel") {
@@ -170,7 +188,20 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 if (!image.data) {
                     throw std::runtime_error{"Failed to read the image"};
                 }
-                const std::unique_ptr<InstanceSegmentationResult>& res = model->infer(image);
+
+                std::unique_ptr<ResultBase> result;
+                if (modelData.tiler == "InstanceSegmentationTiler") {
+                    auto tiler = InstanceSegmentationTiler(std::move(model), {});
+                    if (modelData.input_res.height > 0 && modelData.input_res.width > 0) {
+                        cv::resize(image, image, modelData.input_res);
+                    }
+                    result = tiler.run(image);
+                }
+                else {
+                    result = model->infer(image);
+                }
+                auto res = static_cast<InstanceSegmentationResult*>(result.get());
+
                 const std::vector<SegmentedObjectWithRects>& withRects = add_rotated_rects(res->segmentedObjects);
                 std::stringstream ss;
                 for (const SegmentedObjectWithRects& obj : withRects) {

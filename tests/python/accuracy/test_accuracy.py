@@ -4,11 +4,13 @@ from pathlib import Path
 
 import cv2
 import pytest
+from openvino.model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 from openvino.model_api.models import (
     ClassificationModel,
     ClassificationResult,
     DetectionModel,
     DetectionResult,
+    ImageModel,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
     MaskRCNNModel,
@@ -49,11 +51,17 @@ def test_image_models(data, dump, result, model_data):
     model = eval(model_data["type"]).create_model(name, device="CPU", download_dir=data)
     if "tiler" in model_data:
         if "extra_model" in model_data:
-            extra_model = eval(model_data["extra_type"]).create_model(
-                model_data["extra_model"], device="CPU", download_dir=data
+            extra_adapter = OpenvinoAdapter(
+                create_core(), f"{data}/{model_data['extra_model']}", device="CPU"
+            )
+
+            extra_model = eval(model_data["extra_type"])(
+                extra_adapter, configuration={}, preload=True
             )
             model = eval(model_data["tiler"])(
-                model, configuration={}, tile_classifier=extra_model
+                model,
+                configuration={},
+                tile_classifier_model=extra_model,
             )
         else:
             model = eval(model_data["tiler"])(model, configuration={})
