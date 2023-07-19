@@ -105,9 +105,7 @@ def test_image_models(data, dump, result, model_data):
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
             elif isinstance(outputs, DetectionResult):
-                assert 1 == len(
-                    test_data["reference"]
-                )
+                assert 1 == len(test_data["reference"])
                 output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]

@@ -91,16 +91,16 @@ std::vector<ModelData> GetTestData(const std::string& path)
     return j;
 }
 
-template <typename T>
-std::vector<std::shared_ptr<T>> create_models(const std::string& model_path) {
+template <typename Type>
+std::vector<std::shared_ptr<Type>> create_models(const std::string& model_path) {
     bool preload = true;
-    std::vector<std::shared_ptr<T>> models{T::create_model(model_path, {}, preload, "CPU")};
+    std::vector<std::shared_ptr<Type>> models{Type::create_model(model_path, {}, preload, "CPU")};
     if (std::string::npos != model_path.find("/serialized/")) {
         static ov::Core core;
         std::shared_ptr<ov::Model> model = core.read_model(model_path);
         std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>();
         adapter->loadModel(model, core, "CPU");
-        models.push_back(T::create_model(adapter));
+        models.push_back(Type::create_model(adapter));
     }
     return models;
 }
