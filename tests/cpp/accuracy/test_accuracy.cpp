@@ -104,19 +104,6 @@ std::vector<std::shared_ptr<Type>> create_models(const std::string& model_path) 
     }
     return models;
 }
-
-template<>
-std::vector<std::shared_ptr<DetectionModel>> create_models<DetectionModel>(const std::string& model_path) {
-    bool preload = true;
-    std::vector<std::shared_ptr<DetectionModel>> models{DetectionModel::create_model(model_path, {}, "", preload, "CPU")};
-    if (std::string::npos != model_path.find("/serialized/")) {
-        static ov::Core core;
-        std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>();
-        adapter->loadModel(core.read_model(model_path), core, "CPU");
-        models.push_back(DetectionModel::create_model(adapter));
-    }
-    return models;
-}
 }
 
 TEST_P(ModelParameterizedTest, AccuracyTest)
