@@ -115,16 +115,16 @@ void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t to
     model = std::make_shared<ov::Model>(outputs_vector, model->get_parameters(), "classification");
 
     // manually set output tensors name for created topK node
-    model->outputs()[0].set_names({"indices"});
-    model->outputs()[1].set_names({"scores"});
+    model->outputs()[0].set_names({indices_name});
+    model->outputs()[1].set_names({scores_name});
     if (add_raw_scores) {
         model->outputs()[2].set_names({"raw_scores"});
     }
 
     // set output precisions
     ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
-    ppp.output("indices").tensor().set_element_type(ov::element::i32);
-    ppp.output("scores").tensor().set_element_type(ov::element::f32);
+    ppp.output(indices_name).tensor().set_element_type(ov::element::i32);
+    ppp.output(scores_name).tensor().set_element_type(ov::element::f32);
     if (add_raw_scores) {
         ppp.output("raw_scores").tensor().set_element_type(ov::element::f32);
     }
