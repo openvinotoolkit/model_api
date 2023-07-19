@@ -59,10 +59,12 @@ void OpenVINOInferenceAdapter::initInputsOutputs() {
     for (const auto& input : compiledModel.inputs()) {
         inputNames.push_back(input.get_any_name());
     }
+    std::sort(inputNames.begin(), inputNames.end());
 
     for (const auto& output : compiledModel.outputs()) {
         outputNames.push_back(output.get_any_name());
     }
+    std::sort(outputNames.begin(), outputNames.end());
 }
 
 std::vector<std::string> OpenVINOInferenceAdapter::getInputNames() const {

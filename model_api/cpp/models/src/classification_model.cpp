@@ -317,10 +317,10 @@ std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(In
 }
 
 std::unique_ptr<ResultBase> ClassificationModel::get_multiclass_predictions(InferenceResult& infResult) {
-    const ov::Tensor& scoresTensor = infResult.outputsData.find(outputNames[0])->second;
-    const float* scoresPtr = scoresTensor.data<float>();
-    const ov::Tensor& indicesTensor = infResult.outputsData.find(outputNames[1])->second;
+    const ov::Tensor& indicesTensor = infResult.outputsData.find(outputNames[0])->second;
     const int* indicesPtr = indicesTensor.data<int>();
+    const ov::Tensor& scoresTensor = infResult.outputsData.find(outputNames[1])->second;
+    const float* scoresPtr = scoresTensor.data<float>();
 
     ClassificationResult* result = new ClassificationResult(infResult.frameId, infResult.metaData);
     auto retVal = std::unique_ptr<ResultBase>(result);
@@ -410,7 +410,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     addOrFindSoftmaxAndTopkOutputs(model, topk, output_raw_scores);
     embedded_processing = true;
 
-    outputNames = {"scores", "indices"};
+    outputNames = {"indices", "scores"};
     if (output_raw_scores) {
         outputNames.emplace_back("raw_scores");
     }
