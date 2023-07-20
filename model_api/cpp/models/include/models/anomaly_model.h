@@ -37,8 +37,7 @@ public:
   static std::unique_ptr<AnomalyModel>
   create_model(std::shared_ptr<InferenceAdapter> &adapter);
 
-  std::shared_ptr<InternalModelData> preprocess(const InputData &inputData,
-                                                InferenceInput &input) override;
+  std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
   virtual std::unique_ptr<AnomalyResult> infer(const ImageInputData &inputData);
   std::unique_ptr<ResultBase> postprocess(InferenceResult &infResult) override;
 
@@ -54,9 +53,13 @@ protected:
   float max = 1.0;
   float min = 0.0;
   std::string task = "segmentation";
+  std::vector<float> mean_values; // ImageNet mean values
+  // Normalize to [0, 1] range
+  InputTransform inputTransform = InputTransform(false, "0. 0. 0.", "255. 255. 255.");
 
   void prepareInputsOutputs(std::shared_ptr<ov::Model> &model) override;
   void updateModelInfo() override;
-  // np.ndarray normalize(tensor: np.ndaarray, threshold: float)
-  // np.ndarray getboxes(mask: np.ndarray)
+  cv::Mat normalize(cv::Mat &tensor, float threshold);
+  double normalize(double &tensor, float threshold);
+  std::vector<std::vector<int>> getBoxes(cv::Mat &mask);
 };

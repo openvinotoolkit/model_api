@@ -25,6 +25,7 @@
 #include <openvino/openvino.hpp>
 
 #include "internal_model_data.h"
+#include "models/anomaly_model.h"
 
 struct MetaData;
 struct ResultBase {
@@ -48,6 +49,35 @@ struct ResultBase {
     template <class T>
     const T& asRef() const {
         return dynamic_cast<const T&>(*this);
+    }
+};
+
+struct AnomalyResult :public ResultBase{
+    AnomalyResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
+        : ResultBase(frameId, metaData) {}
+    cv::Mat anomaly_map; 
+    std::vector<std::vector<int>>pred_boxes;
+    std::string pred_label;
+    cv::Mat pred_mask;
+    double pred_score;
+
+    friend std::ostream& operator<< (std::ostream& os, const AnomalyResult& prediction) {
+        os << "frameId: " << prediction.frameId << ", ";
+        os << "pred_label: " << prediction.pred_label << ", ";
+        os << "pred_score: " << prediction.pred_score << ", ";
+        os << "pred_boxes: ";
+        for(auto box : prediction.pred_boxes){
+            for(auto point : box){
+                os << point << ", ";
+            }
+            os<< "; ";
+        }
+        return os;
+    }
+    explicit operator std::string() {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
     }
 };
 
