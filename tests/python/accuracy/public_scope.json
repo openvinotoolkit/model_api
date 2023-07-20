@@ -160,7 +160,7 @@
         ]
     },
     {
-        "name": "otx_models/cls_mobilenetv3_large_cars_onnx.onnx",
+        "name": "otx_models/cls_mobilenetv3_large_cars.onnx",
         "type": "ClassificationModel",
         "test_data": [
             {
