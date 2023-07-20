@@ -57,10 +57,17 @@ std::unique_ptr<ResultBase> InstanceSegmentationTiler::postprocess_tile(std::uni
         det.y += coord.y;
     }
 
+    if (iseg_res->feature_vector) {
+        auto tmp_feature_vector = ov::Tensor(iseg_res->feature_vector.get_element_type(), iseg_res->feature_vector.get_shape());
+        iseg_res->feature_vector.copy_to(tmp_feature_vector);
+        iseg_res->feature_vector = tmp_feature_vector;
+    }
+
     return tile_result;
 }
 
-std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::vector<std::unique_ptr<ResultBase>>& tiles_results, const cv::Size& image_size, const std::vector<cv::Rect>& tile_coords) {
+std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::vector<std::unique_ptr<ResultBase>>& tiles_results,
+                                                                     const cv::Size& image_size, const std::vector<cv::Rect>& tile_coords) {
     auto* result = new InstanceSegmentationResult();
     auto retVal = std::unique_ptr<ResultBase>(result);
 
@@ -88,25 +95,29 @@ std::unique_ptr<ResultBase> InstanceSegmentationTiler::merge_results(const std::
 
     if (tiles_results.size()) {
         auto* iseg_res = static_cast<InstanceSegmentationResult*>(tiles_results.begin()->get());
-        result->feature_vector = ov::Tensor(iseg_res->feature_vector.get_element_type(), iseg_res->feature_vector.get_shape());
-    }
-
-    float* feature_ptr = result->feature_vector.data<float>();
-    size_t feature_size = result->feature_vector.get_size();
-
-    std::fill(feature_ptr, feature_ptr + feature_size, 0.f);
-
-    for (const auto& result : tiles_results) {
-        auto* iseg_res = static_cast<InstanceSegmentationResult*>(result.get());
-        const float* current_feature_ptr = iseg_res->feature_vector.data<float>();
-
-        for (size_t i = 0; i < feature_size; ++i) {
-            feature_ptr[i] += current_feature_ptr[i];
+        if (iseg_res->feature_vector) {
+            result->feature_vector = ov::Tensor(iseg_res->feature_vector.get_element_type(), iseg_res->feature_vector.get_shape());
         }
     }
 
-    for (size_t i = 0; i < feature_size; ++i) {
-        feature_ptr[i] /= tiles_results.size();
+    if (result->feature_vector) {
+        float* feature_ptr = result->feature_vector.data<float>();
+        size_t feature_size = result->feature_vector.get_size();
+
+        std::fill(feature_ptr, feature_ptr + feature_size, 0.f);
+
+        for (const auto& result : tiles_results) {
+            auto* iseg_res = static_cast<InstanceSegmentationResult*>(result.get());
+            const float* current_feature_ptr = iseg_res->feature_vector.data<float>();
+
+            for (size_t i = 0; i < feature_size; ++i) {
+                feature_ptr[i] += current_feature_ptr[i];
+            }
+        }
+
+        for (size_t i = 0; i < feature_size; ++i) {
+            feature_ptr[i] /= tiles_results.size();
+        }
     }
 
     result->saliency_map = merge_saliency_maps(tiles_results, image_size, tile_coords);
@@ -135,8 +146,7 @@ std::vector<cv::Mat_<std::uint8_t>> InstanceSegmentationTiler::merge_saliency_ma
     size_t num_classes = image_saliency_map.size();
     std::vector<cv::Mat_<std::uint8_t>> merged_map(num_classes);
     for (auto& map : merged_map) {
-        map = cv::Mat_<std::uint8_t>(image_size);
-        map = 0;
+        map = cv::Mat_<std::uint8_t>(image_size, 0);
     }
 
     for (size_t i = 1; i < all_saliecy_maps.size(); ++i) {
