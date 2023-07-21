@@ -22,9 +22,7 @@ class ConfigurableValueError(ValueError):
 
 
 class BaseValue:
-    def __init__(
-        self, description="No description available", default_value=None
-    ) -> None:
+    def __init__(self, description="No description available", default_value=None) -> None:
         self.default_value = default_value
         self.description = description
 
@@ -50,9 +48,7 @@ class BaseValue:
 
 
 class NumericalValue(BaseValue):
-    def __init__(
-        self, value_type=float, choices=(), min=None, max=None, **kwargs
-    ) -> None:
+    def __init__(self, value_type=float, choices=(), min=None, max=None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.choices = choices
         self.min = min
@@ -67,31 +63,17 @@ class NumericalValue(BaseValue):
         if not value:
             return errors
         if not isinstance(value, self.value_type):
-            errors.append(
-                ConfigurableValueError(
-                    f"Incorrect value type {type(value)}: should be {self.value_type}"
-                )
-            )
+            errors.append(ConfigurableValueError(f"Incorrect value type {type(value)}: should be {self.value_type}"))
             return errors
         if len(self.choices):
             if value not in self.choices:
                 errors.append(
-                    ConfigurableValueError(
-                        f"Incorrect value {value}: out of allowable list - {self.choices}"
-                    )
+                    ConfigurableValueError(f"Incorrect value {value}: out of allowable list - {self.choices}")
                 )
         if self.min is not None and value < self.min:
-            errors.append(
-                ConfigurableValueError(
-                    f"Incorrect value {value}: less than minimum allowable {self.min}"
-                )
-            )
+            errors.append(ConfigurableValueError(f"Incorrect value {value}: less than minimum allowable {self.min}"))
         if self.max is not None and value > self.max:
-            errors.append(
-                ConfigurableValueError(
-                    f"Incorrect value {value}: bigger than maximum allowable {self.min}"
-                )
-            )
+            errors.append(ConfigurableValueError(f"Incorrect value {value}: bigger than maximum allowable {self.min}"))
         return errors
 
     def __str__(self) -> str:
@@ -103,9 +85,7 @@ class NumericalValue(BaseValue):
 
 
 class StringValue(BaseValue):
-    def __init__(
-        self, choices=(), description="No description available", default_value=""
-    ):
+    def __init__(self, choices=(), description="No description available", default_value=""):
         super().__init__(description, default_value)
         self.choices = choices
         for choice in self.choices:
@@ -120,17 +100,9 @@ class StringValue(BaseValue):
         if not value:
             return errors
         if not isinstance(value, str):
-            errors.append(
-                ConfigurableValueError(
-                    f'Incorrect value type {type(value)}: should be "str"'
-                )
-            )
+            errors.append(ConfigurableValueError(f'Incorrect value type {type(value)}: should be "str"'))
         if len(self.choices) > 0 and value not in self.choices:
-            errors.append(
-                ConfigurableValueError(
-                    f"Incorrect value {value}: out of allowable list - {self.choices}"
-                )
-            )
+            errors.append(ConfigurableValueError(f"Incorrect value {value}: out of allowable list - {self.choices}"))
         return errors
 
     def __str__(self) -> str:
@@ -154,27 +126,22 @@ class BooleanValue(BaseValue):
         if not value:
             return errors
         if not isinstance(value, bool):
-            errors.append(
-                ConfigurableValueError(
-                    f'Incorrect value type - {type(value)}: should be "bool"'
-                )
-            )
+            errors.append(ConfigurableValueError(f'Incorrect value type - {type(value)}: should be "bool"'))
         return errors
 
 
 class ListValue(BaseValue):
-    def __init__(
-        self, value_type=None, description="No description available", default_value=[]
-    ) -> None:
+    def __init__(self, value_type=None, description="No description available", default_value=[]) -> None:
         super().__init__(description, default_value)
         self.value_type = value_type
 
     def from_str(self, value):
         try:
             floats = [float(i) for i in value.split()]
-            # In certain instances when a string contains a list of floats like "1.0 2.0 3.0",
-            # directly converting to ints will raise a ValueError
-            ints = [int(float(i)) for i in value.split()]
+            try:
+                ints = [int(i) for i in value.split()]
+            except ValueError:
+                ints = [int(float(i)) for i in value.split()]
             if ints == floats:
                 return ints
             return floats
@@ -186,11 +153,7 @@ class ListValue(BaseValue):
         if not value:
             return errors
         if not isinstance(value, (tuple, list)):
-            errors.append(
-                ConfigurableValueError(
-                    f"Incorrect value type - {type(value)}: should be list or tuple"
-                )
-            )
+            errors.append(ConfigurableValueError(f"Incorrect value type - {type(value)}: should be list or tuple"))
         if self.value_type:
             if isinstance(self.value_type, BaseValue):
                 for i, element in enumerate(value):
@@ -198,9 +161,7 @@ class ListValue(BaseValue):
                     if len(temp_errors) > 0:
                         errors.extend(
                             [
-                                ConfigurableValueError(
-                                    f"Incorrect #{i} element of the list"
-                                ),
+                                ConfigurableValueError(f"Incorrect #{i} element of the list"),
                                 *temp_errors,
                             ]
                         )
@@ -227,9 +188,5 @@ class DictValue(BaseValue):
         if not value:
             return errors
         if not isinstance(value, dict):
-            errors.append(
-                ConfigurableValueError(
-                    f'Incorrect value type - {type(value)}: should be "dict"'
-                )
-            )
+            errors.append(ConfigurableValueError(f'Incorrect value type - {type(value)}: should be "dict"'))
         return errors

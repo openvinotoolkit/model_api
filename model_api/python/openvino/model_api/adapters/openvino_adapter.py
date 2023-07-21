@@ -87,9 +87,7 @@ def parse_value_per_device(devices: Set[str], values_string: str) -> Dict[str, i
     return result
 
 
-def get_user_config(
-    flags_d: str, flags_nstreams: str, flags_nthreads: int
-) -> Dict[str, str]:
+def get_user_config(flags_d: str, flags_nstreams: str, flags_nthreads: int) -> Dict[str, str]:
     config = {}
 
     devices = set(parse_devices(flags_d))
@@ -105,15 +103,11 @@ def get_user_config(
 
             # for CPU execution, more throughput-oriented execution via streams
             config["CPU_THROUGHPUT_STREAMS"] = (
-                str(device_nstreams[device])
-                if device in device_nstreams
-                else "CPU_THROUGHPUT_AUTO"
+                str(device_nstreams[device]) if device in device_nstreams else "CPU_THROUGHPUT_AUTO"
             )
         elif device == "GPU":
             config["GPU_THROUGHPUT_STREAMS"] = (
-                str(device_nstreams[device])
-                if device in device_nstreams
-                else "GPU_THROUGHPUT_AUTO"
+                str(device_nstreams[device]) if device in device_nstreams else "GPU_THROUGHPUT_AUTO"
             )
             if "MULTI" in flags_d and "CPU" in devices:
                 # multi-device execution with the CPU + GPU performs best with GPU throttling hint,
@@ -149,9 +143,7 @@ class OpenvinoAdapter(InferenceAdapter):
         self.plugin_config = plugin_config
         self.max_num_requests = max_num_requests
         self.model_parameters = model_parameters
-        self.model_parameters["input_layouts"] = Layout.parse_layouts(
-            self.model_parameters.get("input_layouts", None)
-        )
+        self.model_parameters["input_layouts"] = Layout.parse_layouts(self.model_parameters.get("input_layouts", None))
 
         if isinstance(self.model_path, (str, Path)):
             if Path(self.model_path).suffix == ".onnx" and weights_path:
@@ -160,16 +152,10 @@ class OpenvinoAdapter(InferenceAdapter):
                     'The "weights_path" will be omitted'
                 )
 
-        self.model_from_buffer = isinstance(self.model_path, bytes) and isinstance(
-            weights_path, bytes
-        )
+        self.model_from_buffer = isinstance(self.model_path, bytes) and isinstance(weights_path, bytes)
         model_from_file = not self.model_from_buffer and Path(self.model_path).is_file()
         if model_from_file or self.model_from_buffer:
-            log.info(
-                "Reading model {}".format(
-                    "from buffer" if self.model_from_buffer else self.model_path
-                )
-            )
+            log.info("Reading model {}".format("from buffer" if self.model_from_buffer else self.model_path))
             self.model = core.read_model(self.model_path, weights_path)
             return
         if isinstance(model, str):
@@ -189,15 +175,11 @@ class OpenvinoAdapter(InferenceAdapter):
         raise RuntimeError("Model must be bytes, a file or existing OMZ model name")
 
     def load_model(self):
-        self.compiled_model = self.core.compile_model(
-            self.model, self.device, self.plugin_config
-        )
+        self.compiled_model = self.core.compile_model(self.model, self.device, self.plugin_config)
         self.async_queue = AsyncInferQueue(self.compiled_model, self.max_num_requests)
         if self.max_num_requests == 0:
             # +1 to use it as a buffer of the pipeline
-            self.async_queue = AsyncInferQueue(
-                self.compiled_model, len(self.async_queue) + 1
-            )
+            self.async_queue = AsyncInferQueue(self.compiled_model, len(self.async_queue) + 1)
 
         log.info(
             "The model {} is loaded to {}".format(
@@ -212,18 +194,12 @@ class OpenvinoAdapter(InferenceAdapter):
         if "AUTO" not in devices:
             for device in devices:
                 try:
-                    nstreams = self.compiled_model.get_property(
-                        device + "_THROUGHPUT_STREAMS"
-                    )
+                    nstreams = self.compiled_model.get_property(device + "_THROUGHPUT_STREAMS")
                     log.info("\tDevice: {}".format(device))
                     log.info("\t\tNumber of streams: {}".format(nstreams))
                     if device == "CPU":
                         nthreads = self.compiled_model.get_property("CPU_THREADS_NUM")
-                        log.info(
-                            "\t\tNumber of threads: {}".format(
-                                nthreads if int(nthreads) else "AUTO"
-                            )
-                        )
+                        log.info("\t\tNumber of threads: {}".format(nthreads if int(nthreads) else "AUTO"))
                 except RuntimeError:
                     pass
         log.info("\tNumber of model infer requests: {}".format(len(self.async_queue)))
@@ -245,26 +221,18 @@ class OpenvinoAdapter(InferenceAdapter):
     def get_layout_for_input(self, input, shape=None) -> str:
         input_layout = ""
         if self.model_parameters["input_layouts"]:
-            input_layout = Layout.from_user_layouts(
-                input.get_names(), self.model_parameters["input_layouts"]
-            )
+            input_layout = Layout.from_user_layouts(input.get_names(), self.model_parameters["input_layouts"])
         if not input_layout:
             if not layout_helpers.get_layout(input).empty:
                 input_layout = Layout.from_openvino(input)
             else:
-                input_layout = Layout.from_shape(
-                    shape if shape is not None else input.shape
-                )
+                input_layout = Layout.from_shape(shape if shape is not None else input.shape)
         return input_layout
 
     def get_output_layers(self):
         outputs = {}
         for output in self.model.outputs:
-            output_shape = (
-                output.partial_shape.get_min_shape()
-                if self.model.is_dynamic()
-                else output.shape
-            )
+            output_shape = output.partial_shape.get_min_shape() if self.model.is_dynamic() else output.shape
             outputs[output.get_any_name()] = Metadata(
                 output.get_names(),
                 list(output_shape),
@@ -276,12 +244,7 @@ class OpenvinoAdapter(InferenceAdapter):
     def reshape_model(self, new_shape):
         new_shape = {
             name: PartialShape(
-                [
-                    Dimension(dim)
-                    if not isinstance(dim, tuple)
-                    else Dimension(dim[0], dim[1])
-                    for dim in shape
-                ]
+                [Dimension(dim) if not isinstance(dim, tuple) else Dimension(dim[0], dim[1]) for dim in shape]
             )
             for name, shape in new_shape.items()
         }
@@ -291,9 +254,7 @@ class OpenvinoAdapter(InferenceAdapter):
         return {key: request.get_tensor(key).data for key in self.get_output_layers()}
 
     def copy_raw_result(self, request):
-        return {
-            key: request.get_tensor(key).data.copy() for key in self.get_output_layers()
-        }
+        return {key: request.get_tensor(key).data.copy() for key in self.get_output_layers()}
 
     def infer_sync(self, dict_data):
         self.infer_request = self.async_queue[self.async_queue.get_idle_request_id()]
@@ -329,9 +290,7 @@ class OpenvinoAdapter(InferenceAdapter):
         for node in self.model.get_ordered_ops():
             if node.get_type_name() == operation_type:
                 layer_name = node.get_friendly_name()
-                layers_info[layer_name] = Metadata(
-                    type=node.get_type_name(), meta=node.get_attributes()
-                )
+                layers_info[layer_name] = Metadata(type=node.get_type_name(), meta=node.get_attributes())
         return layers_info
 
     def get_rt_info(self, path):
@@ -344,7 +303,7 @@ class OpenvinoAdapter(InferenceAdapter):
         interpolation_mode,
         target_shape: Tuple[int],
         pad_value,
-        dtype=type(int),
+        dtype: type = int,
         brg2rgb=False,
         mean=None,
         scale=None,
@@ -353,12 +312,12 @@ class OpenvinoAdapter(InferenceAdapter):
         ppp = PrePostProcessor(self.model)
 
         # Change the input type to the 8-bit image
-        if dtype == type(int):
+        if dtype == int:
             ppp.input(input_idx).tensor().set_element_type(Type.u8)
+        elif dtype == float:
+            ppp.input(input_idx).tensor().set_element_type(Type.f32)
 
-        ppp.input(input_idx).tensor().set_layout(ov.Layout("NHWC")).set_color_format(
-            ColorFormat.BGR
-        )
+        ppp.input(input_idx).tensor().set_layout(ov.Layout("NHWC")).set_color_format(ColorFormat.BGR)
 
         INTERPOLATION_MODE_MAP = {
             "LINEAR": "linear",
@@ -389,9 +348,7 @@ class OpenvinoAdapter(InferenceAdapter):
                 )
 
             else:
-                raise ValueError(
-                    f"Upsupported resize type in model preprocessing: {resize_mode}"
-                )
+                raise ValueError(f"Upsupported resize type in model preprocessing: {resize_mode}")
 
         # Handle layout
         ppp.input(input_idx).model().set_layout(ov.Layout(layout))

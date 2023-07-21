@@ -14,8 +14,6 @@
  limitations under the License.
 """
 
-import numpy as np
-
 from .model import Model
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
 from .utils import RESIZE_TYPES, InputTransform
@@ -60,6 +58,7 @@ class ImageModel(Model):
         super().__init__(inference_adapter, configuration, preload)
         self.image_blob_names, self.image_info_blob_names = self._get_inputs()
         self.image_blob_name = self.image_blob_names[0]
+        self.inference_adapter = inference_adapter
 
         self.nchw_layout = self.inputs[self.image_blob_name].layout == "NCHW"
         if self.nchw_layout:
@@ -67,26 +66,37 @@ class ImageModel(Model):
         else:
             self.n, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
-        self.input_transform = InputTransform(
-            self.reverse_input_channels, self.mean_values, self.scale_values
-        )
+        self.input_transform = InputTransform(self.reverse_input_channels, self.mean_values, self.scale_values)
 
-        layout = self.inputs[self.image_blob_name].layout
         if self.embedded_processing:
             self.h, self.w = self.orig_width, self.orig_height
         else:
-            inference_adapter.embed_preprocessing(
-                layout=layout,
-                resize_mode=self.resize_type,
-                interpolation_mode="LINEAR",
-                target_shape=(self.w, self.h),
-                pad_value=self.pad_value,
-                brg2rgb=self.reverse_input_channels,
-                mean=self.mean_values,
-                scale=self.scale_values,
-            )
+            self._setup_embedded_preprocessor()
             self.embedded_processing = True
             self.orig_height, self.orig_width = self.h, self.w
+
+    def _setup_embedded_preprocessor(
+        self,
+        interpolation_mode: str = "LINEAR",
+        dtype: type = int,
+    ) -> None:
+        """Setup the embedded preprocessing for the model
+
+        Args:
+            interpolation_mode (str, optional): Interpolation mode. Defaults to "LINEAR".
+            dtype (type, optional): Model input dtype. Defaults to int.
+        """
+        self.inference_adapter.embed_preprocessing(
+            layout=self.inputs[self.image_blob_name].layout,
+            resize_mode=self.resize_type,
+            interpolation_mode=interpolation_mode,
+            target_shape=(self.w, self.h),
+            pad_value=self.pad_value,
+            brg2rgb=self.reverse_input_channels,
+            mean=self.mean_values,
+            scale=self.scale_values,
+            dtype=dtype,
+        )
 
     @classmethod
     def parameters(cls):
@@ -102,7 +112,10 @@ class ImageModel(Model):
                 ),
                 "mean_values": ListValue(
                     default_value=[],
-                    description="Normalization values, which will be subtracted from image channels for image-input layer during preprocessing",
+                    description=(
+                        "Normalization values, which will be subtracted from image channels for image-input "
+                        "layer during preprocessing"
+                    ),
                 ),
                 "scale_values": ListValue(
                     default_value=[],
@@ -120,12 +133,8 @@ class ImageModel(Model):
                     default_value=False,
                     description="Flag that pre/postprocessing embedded",
                 ),
-                "orig_width": NumericalValue(
-                    description="Model input width before embedding processing"
-                ),
-                "orig_height": NumericalValue(
-                    description="Model input height before embedding processing"
-                ),
+                "orig_width": NumericalValue(description="Model input width before embedding processing"),
+                "orig_height": NumericalValue(description="Model input height before embedding processing"),
             }
         )
         return parameters
@@ -154,13 +163,9 @@ class ImageModel(Model):
             elif len(metadata.shape) == 2:
                 image_info_blob_names.append(name)
             else:
-                self.raise_error(
-                    "Failed to identify the input for ImageModel: only 2D and 4D input layer supported"
-                )
+                self.raise_error("Failed to identify the input for ImageModel: only 2D and 4D input layer supported")
         if not image_blob_names:
-            self.raise_error(
-                "Failed to identify the input for the image: no 4D input layer found"
-            )
+            self.raise_error("Failed to identify the input for the image: no 4D input layer found")
         return image_blob_names, image_info_blob_names
 
     def preprocess(self, inputs):

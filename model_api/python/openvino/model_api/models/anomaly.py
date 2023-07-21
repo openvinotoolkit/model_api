@@ -1,9 +1,7 @@
 """Definition for anomaly models.
 
 Note: This file will change when anomalib is upgraded in OTX. CVS-114640
-"""
 
-"""
  Copyright (c) 2021-2023 Intel Corporation
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +16,10 @@ Note: This file will change when anomalib is upgraded in OTX. CVS-114640
  See the License for the specific language governing permissions and
  limitations under the License.
 """
-from typing import Any, Dict
+
+from __future__ import annotations
+
+from typing import Any
 
 import cv2
 import numpy as np
@@ -33,18 +34,27 @@ class AnomalyDetection(ImageModel):
 
     def __init__(self, inference_adapter, configuration=None, preload=False):
         super().__init__(inference_adapter, configuration, preload)
-        # attributes for mypy
         self.max: float
         self.min: float
         self.image_threshold: float
         self.pixel_threshold: float
         self.task: str
+        self.normalization_scale: float = self.max - self.min
+
+    def _setup_embedded_preprocessor(self, interpolation_mode: str = "LINEAR", dtype: type = ...) -> None:
+        """Override the parent method to set the dtype to float.
+
+        Args:
+            interpolation_mode (str, optional): Interpolation mode. Defaults to "LINEAR".
+            dtype (type, optional): Unused dtype. Overridden to float
+        """
+        super()._setup_embedded_preprocessor(interpolation_mode, dtype=float)
 
     def preprocess(self, inputs: np.ndarray):
         inputs = inputs / 255.0  # model expects inputs in range [0, 1]
         return super().preprocess(inputs)
 
-    def postprocess(self, outputs: Dict[str, np.ndarray], meta: Dict[str, Any]):
+    def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]):
         """Post-processes the outputs and returns the results.
 
         Args:
@@ -58,8 +68,6 @@ class AnomalyDetection(ImageModel):
         pred_label: str | None = None
         pred_mask: np.ndarray | None = None
         pred_boxes: np.ndarray | None = None
-        box_labels: np.ndarray | None = None
-
         predictions = outputs[list(self.outputs)[0]]
 
         if len(predictions.shape) == 1:
@@ -80,20 +88,14 @@ class AnomalyDetection(ImageModel):
 
         # resize outputs
         if anomaly_map is not None:
-            anomaly_map = cv2.resize(
-                anomaly_map, (meta["original_shape"][1], meta["original_shape"][0])
-            )
-            pred_mask = cv2.resize(
-                pred_mask, (meta["original_shape"][1], meta["original_shape"][0])
-            )
+            anomaly_map = cv2.resize(anomaly_map, (meta["original_shape"][1], meta["original_shape"][0]))
+            pred_mask = cv2.resize(pred_mask, (meta["original_shape"][1], meta["original_shape"][0]))
 
         if self.task == "detection":
             pred_boxes = self._get_boxes(pred_mask)
-            box_labels = np.ones(pred_boxes.shape[0])
 
         return AnomalyResult(
             anomaly_map=anomaly_map,
-            box_labels=box_labels,
             pred_boxes=pred_boxes,
             pred_label=pred_label,
             pred_mask=pred_mask,
@@ -101,35 +103,29 @@ class AnomalyDetection(ImageModel):
         )
 
     @classmethod
-    def parameters(cls) -> Dict:
+    def parameters(cls) -> dict:
         parameters = super().parameters()
         parameters.update(
             {
                 "image_shape": ListValue(
                     description="Image shape",
                 ),
-                "image_threshold": NumericalValue(
-                    description="Image threshold", min=0.0, default_value=0.5
-                ),
-                "pixel_threshold": NumericalValue(
-                    description="Pixel threshold", min=0.0, default_value=0.5
-                ),
+                "image_threshold": NumericalValue(description="Image threshold", min=0.0, default_value=0.5),
+                "pixel_threshold": NumericalValue(description="Pixel threshold", min=0.0, default_value=0.5),
                 "max": NumericalValue(
                     description="max value for normalization",
                 ),
                 "min": NumericalValue(
                     description="min value for normalization",
                 ),
-                "task": StringValue(
-                    description="Task type", default_value="segmentation"
-                ),
+                "task": StringValue(description="Task type", default_value="segmentation"),
             }
         )
         return parameters
 
     def _normalize(self, tensor: np.ndarray, threshold: float) -> np.ndarray:
         """Currently supports only min-max normalization."""
-        normalized = ((tensor - threshold) / (self.max - self.min)) + 0.5
+        normalized = ((tensor - threshold) / self.normalization_scale) + 0.5
         normalized = np.clip(normalized, 0, 1)
         return normalized
 

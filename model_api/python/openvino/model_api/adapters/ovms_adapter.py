@@ -31,15 +31,11 @@ class OVMSAdapter(InferenceAdapter):
         """Expected format: <address>:<port>/models/<model_name>[:<model_version>]"""
         import ovmsclient
 
-        service_url, self.model_name, self.model_version = _parse_model_arg(
-            target_model
-        )
+        service_url, self.model_name, self.model_version = _parse_model_arg(target_model)
         self.client = ovmsclient.make_grpc_client(url=service_url)
         _verify_model_available(self.client, self.model_name, self.model_version)
 
-        self.metadata = self.client.get_model_metadata(
-            model_name=self.model_name, model_version=self.model_version
-        )
+        self.metadata = self.client.get_model_metadata(model_name=self.model_name, model_version=self.model_version)
 
     def get_input_layers(self):
         return {
@@ -64,9 +60,7 @@ class OVMSAdapter(InferenceAdapter):
 
     def infer_sync(self, dict_data):
         inputs = _prepare_inputs(dict_data, self.metadata["inputs"])
-        raw_result = self.client.predict(
-            inputs, model_name=self.model_name, model_version=self.model_version
-        )
+        raw_result = self.client.predict(inputs, model_name=self.model_name, model_version=self.model_version)
         # For models with single output ovmsclient returns ndarray with results,
         # so the dict must be created to correctly implement interface.
         if isinstance(raw_result, np.ndarray):
@@ -76,9 +70,7 @@ class OVMSAdapter(InferenceAdapter):
 
     def infer_async(self, dict_data, callback_data):
         inputs = _prepare_inputs(dict_data, self.metadata["inputs"])
-        raw_result = self.client.predict(
-            inputs, model_name=self.model_name, model_version=self.model_version
-        )
+        raw_result = self.client.predict(inputs, model_name=self.model_name, model_version=self.model_version)
         # For models with single output ovmsclient returns ndarray with results,
         # so the dict must be created to correctly implement interface.
         if isinstance(raw_result, np.ndarray):
@@ -108,7 +100,7 @@ class OVMSAdapter(InferenceAdapter):
         interpolation_mode,
         target_shape,
         pad_value,
-        dtype=type(int),
+        dtype=int,
         brg2rgb=False,
         mean=None,
         scale=None,
@@ -153,9 +145,7 @@ def _parse_model_arg(target_model: str):
     if not isinstance(target_model, str):
         raise TypeError("target_model must be str")
     # Expected format: <address>:<port>/models/<model_name>[:<model_version>]
-    if not re.fullmatch(
-        r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*", target_model
-    ):
+    if not re.fullmatch(r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*", target_model):
         raise ValueError("invalid --model option format")
     service_url, _, model = target_model.split("/")
     model_spec = model.split(":")
@@ -174,15 +164,11 @@ def _verify_model_available(client, model_name, model_version):
     try:
         model_status = client.get_model_status(model_name, model_version)
     except ovmsclient.ModelNotFoundError as e:
-        raise RuntimeError(
-            f"Requested model: {model_name}, version: {version} has not been found"
-        ) from e
+        raise RuntimeError(f"Requested model: {model_name}, version: {version} has not been found") from e
     target_version = max(model_status.keys())
     version_status = model_status[target_version]
     if version_status["state"] != "AVAILABLE" or version_status["error_code"] != 0:
-        raise RuntimeError(
-            f"Requested model: {model_name}, version: {version} is not in available state"
-        )
+        raise RuntimeError(f"Requested model: {model_name}, version: {version} is not in available state")
 
 
 def _prepare_inputs(dict_data, inputs_meta):
