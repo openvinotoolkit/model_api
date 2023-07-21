@@ -34,6 +34,7 @@ class AnomalyDetection(ImageModel):
 
     def __init__(self, inference_adapter, configuration=None, preload=False):
         super().__init__(inference_adapter, configuration, preload)
+        self._check_io_number(1, 1)
         self.max: float
         self.min: float
         self.image_threshold: float
