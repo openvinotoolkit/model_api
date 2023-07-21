@@ -25,7 +25,6 @@
 #include <openvino/openvino.hpp>
 
 #include "internal_model_data.h"
-#include "models/anomaly_model.h"
 
 struct MetaData;
 struct ResultBase {
