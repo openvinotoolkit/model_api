@@ -17,27 +17,29 @@
 #pragma once
 #include "models/image_model.h"
 
-namespace ov {
-class Model;
+namespace ov
+{
+  class Model;
 } // namespace ov
 struct AnomalyResult;
 struct ImageInputData;
 
-class AnomalyModel : public ImageModel {
+class AnomalyModel : public ImageModel
+{
 public:
   AnomalyModel(std::shared_ptr<ov::Model> &model,
                const ov::AnyMap &configuration);
   AnomalyModel(std::shared_ptr<InferenceAdapter> &adapter);
 
-  static std::unique_ptr<AnomalyModel>
-  create_model(const std::string &modelFile,
-               const ov::AnyMap &configuration = {},
-               std::string model_type = "", bool preload = true,
-               const std::string &device = "AUTO");
-  static std::unique_ptr<AnomalyModel>
-  create_model(std::shared_ptr<InferenceAdapter> &adapter);
+  static std::unique_ptr<AnomalyModel> create_model(
+      const std::string &modelFile, const ov::AnyMap &configuration = {},
+      std::string model_type = "", bool preload = true,
+      const std::string &device = "AUTO");
+  static std::unique_ptr<AnomalyModel> create_model(
+      std::shared_ptr<InferenceAdapter> &adapter);
 
-  std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
+  std::shared_ptr<InternalModelData> preprocess(const InputData &inputData,
+                                                InferenceInput &input) override;
   virtual std::unique_ptr<AnomalyResult> infer(const ImageInputData &inputData);
   std::unique_ptr<ResultBase> postprocess(InferenceResult &infResult) override;
 
@@ -55,7 +57,8 @@ protected:
   std::string task = "segmentation";
   std::vector<float> mean_values; // ImageNet mean values
   // Normalize to [0, 1] range
-  InputTransform inputTransform = InputTransform(false, "0. 0. 0.", "255. 255. 255.");
+  InputTransform inputTransform =
+      InputTransform(false, "0. 0. 0.", "255. 255. 255.");
 
   void prepareInputsOutputs(std::shared_ptr<ov::Model> &model) override;
   void updateModelInfo() override;

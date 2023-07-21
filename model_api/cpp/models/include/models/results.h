@@ -55,7 +55,7 @@ struct ResultBase {
 struct AnomalyResult :public ResultBase{
     AnomalyResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
-    cv::Mat anomaly_map; 
+    cv::Mat anomaly_map;
     std::vector<std::vector<int>>pred_boxes;
     std::string pred_label;
     cv::Mat pred_mask;
