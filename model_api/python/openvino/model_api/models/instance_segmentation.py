@@ -27,7 +27,7 @@ class MaskRCNNModel(ImageModel):
 
     def __init__(self, inference_adapter, configuration, preload=False):
         super().__init__(inference_adapter, configuration, preload)
-        self._check_io_number((1, 2), (3, 4, 5, 8))
+        self._check_io_number((1, 2), (3, 4, 5, 6, 8))
         if self.path_to_labels:
             self.labels = load_labels(self.path_to_labels)
         self.is_segmentoly = len(self.inputs) == 2
@@ -205,20 +205,24 @@ class MaskRCNNModel(ImageModel):
             if confidence <= self.confidence_threshold and not has_feature_vector_name:
                 continue
             raw_cls_mask = raw_mask[cls, ...] if self.is_segmentoly else raw_mask
-            if self.postprocess_semantic_masks:
+            if self.postprocess_semantic_masks or has_feature_vector_name:
                 resized_mask = _segm_postprocess(
                     box, raw_cls_mask, *meta["original_shape"][:-1]
                 )
             else:
                 resized_mask = raw_cls_mask
             if confidence > self.confidence_threshold:
+                output_mask = (
+                    resized_mask if self.postprocess_semantic_masks else raw_cls_mask
+                )
                 objects.append(
                     SegmentedObject(
-                        *box.astype(int), confidence, cls, str_label, resized_mask
+                        *box.astype(int), confidence, cls, str_label, output_mask
                     )
                 )
             if has_feature_vector_name:
-                saliency_maps[cls - 1].append(resized_mask)
+                if confidence > self.confidence_threshold:
+                    saliency_maps[cls - 1].append(resized_mask)
         return InstanceSegmentationResult(
             objects,
             _average_and_normalize(saliency_maps),
@@ -228,12 +232,12 @@ class MaskRCNNModel(ImageModel):
 
 def _average_and_normalize(saliency_maps):
     aggregated = []
-    for per_class_maps in saliency_maps:
-        if per_class_maps:
-            saliency_map = np.array(per_class_maps).mean(0)
+    for per_object_maps in saliency_maps:
+        if per_object_maps:
+            saliency_map = np.max(np.array(per_object_maps), axis=0)
             max_values = np.max(saliency_map)
             saliency_map = 255 * (saliency_map) / (max_values + 1e-12)
-            aggregated.append(saliency_map.astype(np.uint8))
+            aggregated.append(np.round(saliency_map).astype(np.uint8))
         else:
             aggregated.append(np.ndarray(0))
     return aggregated
