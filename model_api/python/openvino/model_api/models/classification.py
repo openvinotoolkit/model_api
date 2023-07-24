@@ -64,7 +64,7 @@ class ClassificationModel(ImageModel):
 
         self.out_layer_names = ["indices", "scores"]
         if self.output_raw_scores:
-            self.out_layer_names.append("raw_scores")
+            self.out_layer_names.append(_raw_scores_name)
         _append_xai_names(self.outputs.keys(), self.out_layer_names)
         if preload:
             self.load()
@@ -154,11 +154,38 @@ class ClassificationModel(ImageModel):
         else:
             result = self.get_multiclass_predictions(outputs)
 
+        raw_scores = np.ndarray(0)
+        if self.output_raw_scores:
+            raw_scores = self.get_all_probs(outputs[self.out_layer_names[-1]])
+
         return ClassificationResult(
             result,
             outputs.get(_saliency_map_name, np.ndarray(0)),
             outputs.get(_feature_vector_name, np.ndarray(0)),
+            raw_scores,
         )
+
+    def get_all_probs(self, logits: np.ndarray):
+        if self.multilabel:
+            probs = sigmoid_numpy(logits)
+        elif self.hierarchical:
+            logits = logits.reshape(-1)
+            probs = np.copy(logits)
+            cls_heads_info = self.hierarchical_info["cls_heads_info"]
+            for i in range(cls_heads_info["num_multiclass_heads"]):
+                logits_begin, logits_end = cls_heads_info["head_idx_to_logits_range"][
+                    str(i)
+                ]
+                probs[logits_begin:logits_end] = softmax_numpy(
+                    logits[logits_begin:logits_end]
+                )
+
+            if cls_heads_info["num_multilabel_classes"]:
+                logits_begin = cls_heads_info["num_single_label_classes"]
+                probs[logits_begin:] = sigmoid_numpy(logits[logits_begin:])
+        else:
+            probs = softmax_numpy(logits)
+        return probs
 
     def get_hierarchical_predictions(self, logits: np.ndarray):
         predicted_labels = []
@@ -249,14 +276,14 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
     inference_adapter.model.outputs[0].tensor.set_names({"scores"})
     inference_adapter.model.outputs[1].tensor.set_names({"indices"})
     if output_raw_scores:
-        inference_adapter.model.outputs[2].tensor.set_names({"raw_scores"})
+        inference_adapter.model.outputs[2].tensor.set_names({_raw_scores_name})
 
     # set output precisions
     ppp = PrePostProcessor(inference_adapter.model)
     ppp.output("indices").tensor().set_element_type(Type.i32)
     ppp.output("scores").tensor().set_element_type(Type.f32)
     if output_raw_scores:
-        ppp.output("raw_scores").tensor().set_element_type(Type.f32)
+        ppp.output(_raw_scores_name).tensor().set_element_type(Type.f32)
     inference_adapter.model = ppp.build()
 
 
@@ -341,6 +368,7 @@ class GreedyLabelsResolver:
 
 _saliency_map_name = "saliency_map"
 _feature_vector_name = "feature_vector"
+_raw_scores_name = "raw_scores"
 
 
 def _get_non_xai_names(output_names):
