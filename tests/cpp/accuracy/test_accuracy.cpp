@@ -90,6 +90,20 @@ std::vector<ModelData> GetTestData(const std::string& path)
     input >> j;
     return j;
 }
+
+template <typename Type>
+std::vector<std::shared_ptr<Type>> create_models(const std::string& model_path) {
+    bool preload = true;
+    std::vector<std::shared_ptr<Type>> models{Type::create_model(model_path, {}, preload, "CPU")};
+    if (std::string::npos != model_path.find("/serialized/")) {
+        static ov::Core core;
+        std::shared_ptr<ov::Model> model = core.read_model(model_path);
+        std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>();
+        adapter->loadModel(model, core, "CPU");
+        models.push_back(Type::create_model(adapter));
+    }
+    return models;
+}
 }
 
 TEST_P(ModelParameterizedTest, AccuracyTest)
@@ -137,20 +151,18 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
             }
         }
         else if (modelData.type == "ClassificationModel") {
-            bool preload = true;
-            auto model = ClassificationModel::create_model(modelXml, {}, preload, "CPU");
+            for (const std::shared_ptr<ClassificationModel>& model : create_models<ClassificationModel>(modelXml)) {
+                for (size_t i = 0; i < modelData.testData.size(); i++) {
+                    ASSERT_EQ(modelData.testData[i].reference.size(), 1);
+                    auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
-            for (size_t i = 0; i < modelData.testData.size(); i++) {
-                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
-                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
-
-                cv::Mat image = cv::imread(imagePath);
-                if (!image.data) {
-                    throw std::runtime_error{"Failed to read the image"};
+                    cv::Mat image = cv::imread(imagePath);
+                    if (!image.data) {
+                        throw std::runtime_error{"Failed to read the image"};
+                    }
+                    auto result = model->infer(image);
+                    EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
                 }
-
-                auto result = model->infer(image);
-                EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "SegmentationModel") {
