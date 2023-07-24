@@ -66,7 +66,7 @@ def result(pytestconfig):
 )
 def test_image_models(data, dump, result, model_data):
     name = model_data["name"]
-    if name.endswith(".xml"):
+    if name.endswith(".xml") or name.endswith(".onnx"):
         name = f"{data}/{name}"
 
     for model in create_models(eval(model_data["type"]), name, data):

@@ -126,6 +126,10 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
 
     std::string modelPath;
     const std::string& name = modelData.name;
+    if (name.find(".onnx") != std::string::npos) {
+        GTEST_SKIP() << "ONNX models are not supported in C++ implementation";
+    }
+
     if (name.substr(name.size() - 4) == ".xml") {
         modelPath = DATA_DIR + '/' + name;
     } else {
