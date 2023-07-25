@@ -35,25 +35,10 @@ class AnomalyDetection(ImageModel):
     def __init__(self, inference_adapter, configuration=None, preload=False):
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 1)
-        self.max: float
-        self.min: float
+        self.normalization_scale: float
         self.image_threshold: float
         self.pixel_threshold: float
         self.task: str
-        self.normalization_scale: float = self.max - self.min
-
-    def _setup_embedded_preprocessor(self, interpolation_mode: str = "LINEAR", dtype: type = ...) -> None:
-        """Override the parent method to set the dtype to float.
-
-        Args:
-            interpolation_mode (str, optional): Interpolation mode. Defaults to "LINEAR".
-            dtype (type, optional): Unused dtype. Overridden to float
-        """
-        super()._setup_embedded_preprocessor(interpolation_mode, dtype=float)
-
-    def preprocess(self, inputs: np.ndarray):
-        inputs = inputs / 255.0  # model expects inputs in range [0, 1]
-        return super().preprocess(inputs)
 
     def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]):
         """Post-processes the outputs and returns the results.
@@ -113,11 +98,8 @@ class AnomalyDetection(ImageModel):
                 ),
                 "image_threshold": NumericalValue(description="Image threshold", min=0.0, default_value=0.5),
                 "pixel_threshold": NumericalValue(description="Pixel threshold", min=0.0, default_value=0.5),
-                "max": NumericalValue(
-                    description="max value for normalization",
-                ),
-                "min": NumericalValue(
-                    description="min value for normalization",
+                "normalization_scale": NumericalValue(
+                    description="Value used for normalization",
                 ),
                 "task": StringValue(description="Task type", default_value="segmentation"),
             }

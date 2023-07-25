@@ -68,35 +68,22 @@ class ImageModel(Model):
         self.resize = RESIZE_TYPES[self.resize_type]
         self.input_transform = InputTransform(self.reverse_input_channels, self.mean_values, self.scale_values)
 
+        layout = self.inputs[self.image_blob_name].layout
         if self.embedded_processing:
             self.h, self.w = self.orig_width, self.orig_height
         else:
-            self._setup_embedded_preprocessor()
+            inference_adapter.embed_preprocessing(
+                layout=layout,
+                resize_mode=self.resize_type,
+                interpolation_mode="LINEAR",
+                target_shape=(self.w, self.h),
+                pad_value=self.pad_value,
+                brg2rgb=self.reverse_input_channels,
+                mean=self.mean_values,
+                scale=self.scale_values,
+            )
             self.embedded_processing = True
             self.orig_height, self.orig_width = self.h, self.w
-
-    def _setup_embedded_preprocessor(
-        self,
-        interpolation_mode: str = "LINEAR",
-        dtype: type = int,
-    ) -> None:
-        """Setup the embedded preprocessing for the model
-
-        Args:
-            interpolation_mode (str, optional): Interpolation mode. Defaults to "LINEAR".
-            dtype (type, optional): Model input dtype. Defaults to int.
-        """
-        self.inference_adapter.embed_preprocessing(
-            layout=self.inputs[self.image_blob_name].layout,
-            resize_mode=self.resize_type,
-            interpolation_mode=interpolation_mode,
-            target_shape=(self.w, self.h),
-            pad_value=self.pad_value,
-            brg2rgb=self.reverse_input_channels,
-            mean=self.mean_values,
-            scale=self.scale_values,
-            dtype=dtype,
-        )
 
     @classmethod
     def parameters(cls):
