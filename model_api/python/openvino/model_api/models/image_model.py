@@ -58,7 +58,6 @@ class ImageModel(Model):
         super().__init__(inference_adapter, configuration, preload)
         self.image_blob_names, self.image_info_blob_names = self._get_inputs()
         self.image_blob_name = self.image_blob_names[0]
-        self.inference_adapter = inference_adapter
 
         self.nchw_layout = self.inputs[self.image_blob_name].layout == "NCHW"
         if self.nchw_layout:
@@ -66,7 +65,9 @@ class ImageModel(Model):
         else:
             self.n, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
-        self.input_transform = InputTransform(self.reverse_input_channels, self.mean_values, self.scale_values)
+        self.input_transform = InputTransform(
+            self.reverse_input_channels, self.mean_values, self.scale_values
+        )
 
         layout = self.inputs[self.image_blob_name].layout
         if self.embedded_processing:
@@ -99,10 +100,7 @@ class ImageModel(Model):
                 ),
                 "mean_values": ListValue(
                     default_value=[],
-                    description=(
-                        "Normalization values, which will be subtracted from image channels for image-input "
-                        "layer during preprocessing"
-                    ),
+                    description="Normalization values, which will be subtracted from image channels for image-input layer during preprocessing",
                 ),
                 "scale_values": ListValue(
                     default_value=[],
@@ -120,8 +118,12 @@ class ImageModel(Model):
                     default_value=False,
                     description="Flag that pre/postprocessing embedded",
                 ),
-                "orig_width": NumericalValue(description="Model input width before embedding processing"),
-                "orig_height": NumericalValue(description="Model input height before embedding processing"),
+                "orig_width": NumericalValue(
+                    description="Model input width before embedding processing"
+                ),
+                "orig_height": NumericalValue(
+                    description="Model input height before embedding processing"
+                ),
             }
         )
         return parameters
@@ -150,9 +152,13 @@ class ImageModel(Model):
             elif len(metadata.shape) == 2:
                 image_info_blob_names.append(name)
             else:
-                self.raise_error("Failed to identify the input for ImageModel: only 2D and 4D input layer supported")
+                self.raise_error(
+                    "Failed to identify the input for ImageModel: only 2D and 4D input layer supported"
+                )
         if not image_blob_names:
-            self.raise_error("Failed to identify the input for the image: no 4D input layer found")
+            self.raise_error(
+                "Failed to identify the input for the image: no 4D input layer found"
+            )
         return image_blob_names, image_info_blob_names
 
     def preprocess(self, inputs):
