@@ -312,7 +312,7 @@ std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(In
         const auto& logits_range = hierarchical_info.head_idx_to_logits_range[i];
         softmax(logitsPtr + logits_range.first, logitsPtr + logits_range.second);
         if (add_raw_scores) {
-            softmax(logitsPtr + logits_range.first, logitsPtr + logits_range.second);
+            softmax(raw_scoresPtr + logits_range.first, raw_scoresPtr + logits_range.second);
         }
         size_t j = fargmax(logitsPtr + logits_range.first, logitsPtr + logits_range.second);
         predicted_labels.push_back(hierarchical_info.all_groups[i][j]);
