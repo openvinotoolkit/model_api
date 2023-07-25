@@ -40,11 +40,11 @@ class ClassificationResult(
     )  # Contan "saliency_map" and "feature_vector" model outputs if such exist
 ):
     def __str__(self):
-        labels = ", ".join(f"{idx} ({label}): {confidence:.3f}" for idx, label, confidence in self.top_labels)
-        return (
-            f"{labels}, [{','.join(str(i) for i in self.saliency_map.shape)}],"
-            f" [{','.join(str(i) for i in self.feature_vector.shape)}]"
+        labels = ", ".join(
+            f"{idx} ({label}): {confidence:.3f}"
+            for idx, label, confidence in self.top_labels
         )
+        return f"{labels}, [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class Detection:
@@ -68,10 +68,7 @@ class DetectionResult(
 ):
     def __str__(self):
         obj_str = "; ".join(str(obj) for obj in self.objects)
-        return (
-            f"{obj_str}; [{','.join(str(i) for i in self.saliency_map.shape)}];"
-            f" [{','.join(str(i) for i in self.feature_vector.shape)}]"
-        )
+        return f"{obj_str}; [{','.join(str(i) for i in self.saliency_map.shape)}]; [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class SegmentedObject(Detection):
@@ -124,7 +121,9 @@ def add_rotated_rects(segmented_objects):
     for segmented_object in segmented_objects:
         objects_with_rects.append(SegmentedObjectWithRects(segmented_object))
         mask = segmented_object.mask.astype(np.uint8)
-        contours, hierarchies = cv2.findContours(mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchies = cv2.findContours(
+            mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE
+        )
         if hierarchies is None:
             continue
         for contour, hierarchy in zip(contours, hierarchies[0]):
@@ -171,10 +170,7 @@ class ImageResultWithSoftPrediction(NamedTuple):
         for i, count in enumerate(outHist):
             if count > 0:
                 hist += f"{i}: {count[0] / self.resultImage.size:.3f}, "
-        return (
-            f"{hist}[{','.join(str(i) for i in self.soft_prediction.shape)}],"
-            f" [{','.join(str(i) for i in self.feature_vector.shape)}]"
-        )
+        return f"{hist}[{','.join(str(i) for i in self.soft_prediction.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class DetectionWithLandmarks(Detection):
@@ -194,7 +190,9 @@ class OutputTransform:
     def compute_resolution(self, input_size):
         self.input_size = input_size
         size = self.input_size[::-1]
-        self.scale_factor = min(self.output_resolution[0] / size[0], self.output_resolution[1] / size[1])
+        self.scale_factor = min(
+            self.output_resolution[0] / size[0], self.output_resolution[1] / size[1]
+        )
         return self.scale(size)
 
     def resize(self, image):
@@ -214,11 +212,21 @@ class OutputTransform:
 
 
 class InputTransform:
-    def __init__(self, reverse_input_channels=False, mean_values=None, scale_values=None):
+    def __init__(
+        self, reverse_input_channels=False, mean_values=None, scale_values=None
+    ):
         self.reverse_input_channels = reverse_input_channels
         self.is_trivial = not (reverse_input_channels or mean_values or scale_values)
-        self.means = np.array(mean_values, dtype=np.float32) if mean_values else np.array([0.0, 0.0, 0.0])
-        self.std_scales = np.array(scale_values, dtype=np.float32) if scale_values else np.array([1.0, 1.0, 1.0])
+        self.means = (
+            np.array(mean_values, dtype=np.float32)
+            if mean_values
+            else np.array([0.0, 0.0, 0.0])
+        )
+        self.std_scales = (
+            np.array(scale_values, dtype=np.float32)
+            if scale_values
+            else np.array([1.0, 1.0, 1.0])
+        )
 
     def __call__(self, inputs):
         if self.is_trivial:
@@ -242,7 +250,9 @@ def resize_image(image, size, keep_aspect_ratio=False, interpolation=cv2.INTER_L
 
 
 def resize_image_with_aspect(image, size, interpolation=cv2.INTER_LINEAR):
-    return resize_image(image, size, keep_aspect_ratio=True, interpolation=interpolation)
+    return resize_image(
+        image, size, keep_aspect_ratio=True, interpolation=interpolation
+    )
 
 
 def resize_image_letterbox(image, size, interpolation=cv2.INTER_LINEAR, pad_value=0):
