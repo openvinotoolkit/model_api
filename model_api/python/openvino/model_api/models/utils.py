@@ -32,7 +32,8 @@ class ClassificationResult(
             f"{idx} ({label}): {confidence:.3f}"
             for idx, label, confidence in self.top_labels
         )
-        return f"{labels}, [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
+        return f"{labels}, [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}], " \
+               f"[{','.join(str(i) for i in self.raw_scores.shape)}]"
 
 
 class Detection:
