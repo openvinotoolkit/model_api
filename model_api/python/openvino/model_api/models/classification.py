@@ -37,12 +37,14 @@ class ClassificationModel(ImageModel):
         if 1 == len(self.outputs):
             self._verify_signle_output()
 
+        self.raw_scores_name = _raw_scores_name
         if self.hierarchical:
             self.embedded_processing = True
             self.out_layer_names = _get_non_xai_names(self.outputs.keys())
             _append_xai_names(self.outputs.keys(), self.out_layer_names)
             if not self.hierarchical_config:
                 self.raise_error("Hierarchical classification config is empty.")
+            self.raw_scores_name = self.out_layer_names[0]
             self.hierarchical_info = json.loads(self.hierarchical_config)
             self.labels_resolver = GreedyLabelsResolver(self.hierarchical_info)
             if preload:
@@ -53,6 +55,7 @@ class ClassificationModel(ImageModel):
             self.embedded_processing = True
             self.out_layer_names = _get_non_xai_names(self.outputs.keys())
             _append_xai_names(self.outputs.keys(), self.out_layer_names)
+            self.raw_scores_name = self.out_layer_names[0]
             if preload:
                 self.load()
             return
@@ -64,7 +67,7 @@ class ClassificationModel(ImageModel):
 
         self.out_layer_names = ["indices", "scores"]
         if self.output_raw_scores:
-            self.out_layer_names.append(_raw_scores_name)
+            self.out_layer_names.append(self.raw_scores_name)
         _append_xai_names(self.outputs.keys(), self.out_layer_names)
         if preload:
             self.load()
@@ -156,7 +159,7 @@ class ClassificationModel(ImageModel):
 
         raw_scores = np.ndarray(0)
         if self.output_raw_scores:
-            raw_scores = self.get_all_probs(outputs[self.out_layer_names[-1]])
+            raw_scores = self.get_all_probs(outputs[self.raw_scores_name])
 
         return ClassificationResult(
             result,
@@ -167,7 +170,7 @@ class ClassificationModel(ImageModel):
 
     def get_all_probs(self, logits: np.ndarray):
         if self.multilabel:
-            probs = sigmoid_numpy(logits)
+            probs = sigmoid_numpy(logits.reshape(-1))
         elif self.hierarchical:
             logits = logits.reshape(-1)
             probs = np.copy(logits)
@@ -184,7 +187,7 @@ class ClassificationModel(ImageModel):
                 logits_begin = cls_heads_info["num_single_label_classes"]
                 probs[logits_begin:] = sigmoid_numpy(logits[logits_begin:])
         else:
-            probs = softmax_numpy(logits)
+            probs = softmax_numpy(logits.reshape(-1))
         return probs
 
     def get_hierarchical_predictions(self, logits: np.ndarray):
