@@ -175,7 +175,7 @@ class ListValue(BaseValue):
             try:
                 ints = [int(i) for i in value.split()]
             except ValueError:
-                ints = [int(float(i)) for i in value.split()]
+                ints = []
             if ints == floats:
                 return ints
             return floats
