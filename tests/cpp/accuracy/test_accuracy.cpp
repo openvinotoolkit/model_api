@@ -21,6 +21,8 @@
 #include <models/results.h>
 #include <models/segmentation_model.h>
 #include <adapters/openvino_adapter.h>
+#include <tilers/detection.h>
+#include <tilers/instance_segmentation.h>
 
 using json = nlohmann::json;
 
@@ -37,6 +39,8 @@ struct ModelData {
     std::string name;
     std::string type;
     std::vector<TestData> testData;
+    std::string tiler;
+    cv::Size input_res = cv::Size(0, 0);
 };
 
 class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
@@ -65,6 +69,17 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
         }
         test.testData.push_back(data);
     }
+    if (j.contains("tiler")) {
+        test.tiler = j.at("tiler").get<std::string>();
+    }
+    if (j.contains("input_res")) {
+        auto res = j.at("input_res").get<std::string>();
+        res.erase(std::remove(res.begin(), res.end(), '('), res.end());
+        res.erase(std::remove(res.begin(), res.end(), ')'), res.end());
+        test.input_res.width = std::stoi(res.substr(0, res.find(',')));
+        res.erase(0, res.find(',') + 1);
+        test.input_res.height = std::stoi(res);
+    }
 }
 
 namespace {
@@ -75,13 +90,46 @@ std::vector<ModelData> GetTestData(const std::string& path)
     input >> j;
     return j;
 }
+
+template <typename Type>
+std::vector<std::shared_ptr<Type>> create_models(const std::string& model_path) {
+    bool preload = true;
+    std::vector<std::shared_ptr<Type>> models{Type::create_model(model_path, {}, preload, "CPU")};
+    if (std::string::npos != model_path.find("/serialized/")) {
+        static ov::Core core;
+        std::shared_ptr<ov::Model> model = core.read_model(model_path);
+        std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>();
+        adapter->loadModel(model, core, "CPU");
+        models.push_back(Type::create_model(adapter));
+    }
+    return models;
+}
+
+template <>
+std::vector<std::shared_ptr<DetectionModel>> create_models(const std::string& model_path) {
+    bool preload = true;
+    std::vector<std::shared_ptr<DetectionModel>> models{DetectionModel::create_model(model_path, {}, "", preload, "CPU")};
+    if (std::string::npos != model_path.find("/serialized/")) {
+        static ov::Core core;
+        std::shared_ptr<ov::Model> model = core.read_model(model_path);
+        std::shared_ptr<InferenceAdapter> adapter = std::make_shared<OpenVINOInferenceAdapter>();
+        adapter->loadModel(model, core, "CPU");
+        models.push_back(DetectionModel::create_model(adapter));
+    }
+    return models;
+}
 }
 
 TEST_P(ModelParameterizedTest, AccuracyTest)
 {
     auto modelData = GetParam();
+
     std::string modelPath;
     const std::string& name = modelData.name;
+    if (name.find(".onnx") != std::string::npos) {
+        GTEST_SKIP() << "ONNX models are not supported in C++ implementation";
+    }
+
     if (name.substr(name.size() - 4) == ".xml") {
         modelPath = DATA_DIR + '/' + name;
     } else {
@@ -90,97 +138,115 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
     for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
         if (modelData.type == "DetectionModel") {
-            bool preload = true;
-            auto model = DetectionModel::create_model(modelXml, {}, "", preload, "CPU");
+            for (const std::shared_ptr<DetectionModel>& model : create_models<DetectionModel>(modelXml)) {
+                for (size_t i = 0; i < modelData.testData.size(); i++) {
+                    ASSERT_EQ(modelData.testData[i].reference.size(), 1);
+                    auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
-            for (size_t i = 0; i < modelData.testData.size(); i++) {
-                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
-                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
+                    cv::Mat image = cv::imread(imagePath);
+                    if (!image.data) {
+                        throw std::runtime_error{"Failed to read the image"};
+                    }
 
-                cv::Mat image = cv::imread(imagePath);
-                if (!image.data) {
-                    throw std::runtime_error{"Failed to read the image"};
+                    std::unique_ptr<ResultBase> result;
+                    if (modelData.tiler == "DetectionTiler") {
+                        auto tiler = DetectionTiler(std::move(model), {});
+                        if (modelData.input_res.height > 0 && modelData.input_res.width > 0) {
+                            cv::resize(image, image, modelData.input_res);
+                        }
+                        result = tiler.run(image);
+                    }
+                    else {
+                        result = model->infer(image);
+                    }
+                    EXPECT_EQ(std::string{*static_cast<DetectionResult*>(result.get())}, modelData.testData[i].reference[0]);
                 }
-
-                auto result = model->infer(image);
-                EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "ClassificationModel") {
-            bool preload = true;
-            auto model = ClassificationModel::create_model(modelXml, {}, preload, "CPU");
+            for (const std::shared_ptr<ClassificationModel>& model : create_models<ClassificationModel>(modelXml)) {
+                for (size_t i = 0; i < modelData.testData.size(); i++) {
+                    ASSERT_EQ(modelData.testData[i].reference.size(), 1);
+                    auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
-            for (size_t i = 0; i < modelData.testData.size(); i++) {
-                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
-                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
-
-                cv::Mat image = cv::imread(imagePath);
-                if (!image.data) {
-                    throw std::runtime_error{"Failed to read the image"};
+                    cv::Mat image = cv::imread(imagePath);
+                    if (!image.data) {
+                        throw std::runtime_error{"Failed to read the image"};
+                    }
+                    auto result = model->infer(image);
+                    EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
                 }
-
-                auto result = model->infer(image);
-                EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
             }
         }
         else if (modelData.type == "SegmentationModel") {
-            bool preload = true;
-            auto model = SegmentationModel::create_model(modelXml, {}, preload, "CPU");
+            for (const std::shared_ptr<SegmentationModel>& model : create_models<SegmentationModel>(modelXml)) {
+                for (size_t i = 0; i < modelData.testData.size(); i++) {
+                    ASSERT_EQ(modelData.testData[i].reference.size(), 1);
+                    auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
-            for (size_t i = 0; i < modelData.testData.size(); i++) {
-                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
-                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
-
-                cv::Mat image = cv::imread(imagePath);
-                if (!image.data) {
-                    throw std::runtime_error{"Failed to read the image"};
-                }
-
-                std::unique_ptr<ImageResult> pred = model->infer(image);
-                ImageResultWithSoftPrediction* soft = dynamic_cast<ImageResultWithSoftPrediction*>(pred.get());
-                if (soft) {
-                    const std::vector<Contour>& contours = model->getContours(*soft);
-                    std::stringstream ss;
-                    ss << *soft << "; ";
-                    for (const Contour& contour : contours) {
-                        ss << contour << ", ";
+                    cv::Mat image = cv::imread(imagePath);
+                    if (!image.data) {
+                        throw std::runtime_error{"Failed to read the image"};
                     }
-                    ASSERT_EQ(ss.str(), modelData.testData[i].reference[0]);
-                } else {
-                    ASSERT_EQ(std::string{*pred}, modelData.testData[i].reference[0]);
+
+                    std::unique_ptr<ImageResult> pred = model->infer(image);
+                    ImageResultWithSoftPrediction* soft = dynamic_cast<ImageResultWithSoftPrediction*>(pred.get());
+                    if (soft) {
+                        const std::vector<Contour>& contours = model->getContours(*soft);
+                        std::stringstream ss;
+                        ss << *soft << "; ";
+                        for (const Contour& contour : contours) {
+                            ss << contour << ", ";
+                        }
+                        ASSERT_EQ(ss.str(), modelData.testData[i].reference[0]);
+                    } else {
+                        ASSERT_EQ(std::string{*pred}, modelData.testData[i].reference[0]);
+                    }
                 }
             }
         }
         else if (modelData.type == "MaskRCNNModel") {
-            bool preload = true;
-            auto model = MaskRCNNModel::create_model(modelXml, {}, preload, "CPU");
-            for (size_t i = 0; i < modelData.testData.size(); i++) {
-                ASSERT_EQ(modelData.testData[i].reference.size(), 1);
-                auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
+            for (const std::shared_ptr<MaskRCNNModel>& model : create_models<MaskRCNNModel>(modelXml)) {
+                for (size_t i = 0; i < modelData.testData.size(); i++) {
+                    ASSERT_EQ(modelData.testData[i].reference.size(), 1);
+                    auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
-                cv::Mat image = cv::imread(imagePath);
-                if (!image.data) {
-                    throw std::runtime_error{"Failed to read the image"};
-                }
-                const std::unique_ptr<InstanceSegmentationResult>& res = model->infer(image);
-                const std::vector<SegmentedObjectWithRects>& withRects = add_rotated_rects(res->segmentedObjects);
-                std::stringstream ss;
-                for (const SegmentedObjectWithRects& obj : withRects) {
-                    ss << obj << "; ";
-                }
-                size_t filled = 0;
-                for (const cv::Mat_<std::uint8_t>& cls_map : res->saliency_map) {
-                    if (cls_map.data) {
-                        ++filled;
+                    cv::Mat image = cv::imread(imagePath);
+                    if (!image.data) {
+                        throw std::runtime_error{"Failed to read the image"};
                     }
+
+                    std::unique_ptr<ResultBase> result;
+                    if (modelData.tiler == "InstanceSegmentationTiler") {
+                        auto tiler = InstanceSegmentationTiler(std::move(model), {});
+                        if (modelData.input_res.height > 0 && modelData.input_res.width > 0) {
+                            cv::resize(image, image, modelData.input_res);
+                        }
+                        result = tiler.run(image);
+                    } else {
+                        result = model->infer(image);
+                    }
+                    auto res = static_cast<InstanceSegmentationResult*>(result.get());
+
+                    const std::vector<SegmentedObjectWithRects>& withRects = add_rotated_rects(res->segmentedObjects);
+                    std::stringstream ss;
+                    for (const SegmentedObjectWithRects& obj : withRects) {
+                        ss << obj << "; ";
+                    }
+                    size_t filled = 0;
+                    for (const cv::Mat_<std::uint8_t>& cls_map : res->saliency_map) {
+                        if (cls_map.data) {
+                            ++filled;
+                        }
+                    }
+                    ss << filled << "; ";
+                    try {
+                        ss << res->feature_vector.get_shape();
+                    } catch (ov::Exception&) {
+                        ss << "[0]";
+                    }
+                    EXPECT_EQ(ss.str(), modelData.testData[i].reference[0]);
                 }
-                ss << filled << "; ";
-                try {
-                    ss << res->feature_vector.get_shape();
-                } catch (ov::Exception&) {
-                    ss << "[0]";
-                }
-                EXPECT_EQ(ss.str(), modelData.testData[i].reference[0]);
             }
         }
         else {

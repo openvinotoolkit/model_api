@@ -40,7 +40,7 @@ class ImageModel(Model):
         input_transform (InputTransform): instance of the `InputTransform` for image normalization
     """
 
-    def __init__(self, inference_adapter, configuration=None, preload=False):
+    def __init__(self, inference_adapter, configuration=dict(), preload=False):
         """Image model constructor
 
         It extends the `Model` constructor.
@@ -119,10 +119,10 @@ class ImageModel(Model):
                     description="Flag that pre/postprocessing embedded",
                 ),
                 "orig_width": NumericalValue(
-                    description="Model input width before embedding processing"
+                    int, description="Model input width before embedding processing"
                 ),
                 "orig_height": NumericalValue(
-                    description="Model input height before embedding processing"
+                    int, description="Model input height before embedding processing"
                 ),
             }
         )
