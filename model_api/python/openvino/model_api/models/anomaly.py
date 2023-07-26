@@ -32,7 +32,7 @@ from .utils import AnomalyResult
 class AnomalyDetection(ImageModel):
     __model__ = "AnomalyDetection"
 
-    def __init__(self, inference_adapter, configuration=None, preload=False):
+    def __init__(self, inference_adapter, configuration=dict(), preload=False):
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 1)
         self.normalization_scale: float
