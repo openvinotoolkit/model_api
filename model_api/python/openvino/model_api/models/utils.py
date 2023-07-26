@@ -14,7 +14,7 @@
  limitations under the License.
 """
 
-from __future__ import annotations # TODO: remove when Python3.9 support is dropped
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
 import math
 from collections import namedtuple
