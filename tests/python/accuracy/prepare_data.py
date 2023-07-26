@@ -4,15 +4,15 @@ from urllib.request import urlopen, urlretrieve
 
 
 def retrieve_otx_model(data_dir, model_name):
-    destenation_folder = os.path.join(data_dir, "otx_models")
-    os.makedirs(destenation_folder, exist_ok=True)
+    destination_folder = os.path.join(data_dir, "otx_models")
+    os.makedirs(destination_folder, exist_ok=True)
     urlretrieve(
         f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
-        f"{destenation_folder}/{model_name}.xml",
+        f"{destination_folder}/{model_name}.xml",
     )
     urlretrieve(
         f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
-        f"{destenation_folder}/{model_name}.bin",
+        f"{destination_folder}/{model_name}.bin",
     )
 
 
@@ -33,7 +33,7 @@ def prepare_data(data_dir="./data"):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Data and model preparate script")
+    parser = argparse.ArgumentParser(description="Data and model prepare script")
     parser.add_argument(
         "-d",
         dest="data_dir",
@@ -62,3 +62,5 @@ if __name__ == "__main__":
     retrieve_otx_model(args.data_dir, "detection_model_with_xai_head")
     retrieve_otx_model(args.data_dir, "segmentation_model_with_xai_head")
     retrieve_otx_model(args.data_dir, "maskrcnn_model_with_xai_head")
+    retrieve_otx_model(args.data_dir, "anomaly_padim_bottle_mvtec")
+    retrieve_otx_model(args.data_dir, "anomaly_stfpm_bottle_mvtec")

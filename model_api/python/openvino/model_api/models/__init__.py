@@ -41,6 +41,7 @@ from .ssd import SSD
 from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
 from .utils import (
     RESIZE_TYPES,
+    AnomalyResult,
     ClassificationResult,
     Contour,
     Detection,
@@ -77,6 +78,7 @@ segmentation_models = [
 
 __all__ = [
     "AnomalyDetection",
+    "AnomalyResult",
     "BertEmbedding",
     "BertNamedEntityRecognition",
     "BertQuestionAnswering",
