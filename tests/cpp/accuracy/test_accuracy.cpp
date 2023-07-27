@@ -249,6 +249,9 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
             }
         }
+        else if (modelData.type == "AnomalyDetection"){
+            // TODO: will be resolved in the C++ PR of the anomaly detection model
+        }
         else {
             throw std::runtime_error("Unknown model type: " + modelData.type);
         }
