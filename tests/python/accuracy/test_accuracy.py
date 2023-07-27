@@ -6,6 +6,8 @@ import cv2
 import pytest
 from openvino.model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 from openvino.model_api.models import (
+    AnomalyDetection,
+    AnomalyResult,
     ClassificationModel,
     ClassificationResult,
     DetectionModel,
@@ -128,6 +130,16 @@ def test_image_models(data, dump, result, model_data):
                         outputs.saliency_map,
                         outputs.feature_vector,
                     )
+                )
+                assert test_data["reference"][0] == output_str
+                image_result = [output_str]
+            elif isinstance(outputs, AnomalyResult):
+                assert 1 == len(test_data["reference"])
+                output_str = (
+                    f"anomaly_map min:{min(outputs.anomaly_map.flatten())} max:{max(outputs.anomaly_map.flatten())};"
+                    f"pred_score:{outputs.pred_score};"
+                    f"pred_label:{outputs.pred_label};"
+                    f"pred_mask min:{min(outputs.pred_mask.flatten())} max:{max(outputs.pred_mask.flatten())};"
                 )
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]

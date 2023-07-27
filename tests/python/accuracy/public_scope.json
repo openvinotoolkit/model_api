@@ -284,5 +284,29 @@
                 "reference": ["336, 2275, 1944, 3114, 1 (person): 0.361; 2523, 862, 2709, 1224, 1 (person): 0.313; [1,2,35,46]; [1,320,1,1]"]
             }
         ]
+    },
+    {
+        "name": "otx_models/anomaly_padim_bottle_mvtec.xml",
+        "type": "AnomalyDetection",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "anomaly_map min:0.5944074988365173 max:1.0;pred_score:1.0;pred_label:Anomalous;pred_mask min:1 max:1;"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/anomaly_stfpm_bottle_mvtec.xml",
+        "type": "AnomalyDetection",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "anomaly_map min:0.49540239572525024 max:1.0;pred_score:1.0;pred_label:Anomalous;pred_mask min:0 max:1;"
+                ]
+            }
+        ]
     }
 ]
