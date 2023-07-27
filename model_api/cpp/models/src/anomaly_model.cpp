@@ -29,132 +29,32 @@
 
 std::string AnomalyModel::ModelType = "AnomalyDetection";
 
+/// @brief Initializes the model from the given configuration
+/// @param top_priority  Uses this as the primary source for setting the parameters
+/// @param mid_priority Fallback source for setting the parameters
+void AnomalyModel::init_from_config(const ov::AnyMap &top_priority, const ov::AnyMap &mid_priority)
+{
+  mean_values = get_from_any_maps("mean_values", top_priority, mid_priority, mean_values);
+  scale_values = get_from_any_maps("scale_values", top_priority, mid_priority, scale_values);
+  imageShape = get_from_any_maps("image_shape", top_priority, mid_priority, imageShape);
+  imageThreshold = get_from_any_maps("image_threshold", top_priority, mid_priority, imageThreshold);
+  pixelThreshold = get_from_any_maps("pixel_threshold", top_priority, mid_priority, pixelThreshold);
+  normalizationScale = get_from_any_maps("normalization_scale", top_priority, mid_priority, normalizationScale);
+  task = get_from_any_maps("task", top_priority, mid_priority, task);
+  labels = get_from_any_maps("labels", top_priority, mid_priority, labels);
+}
+
 AnomalyModel::AnomalyModel(std::shared_ptr<ov::Model> &model,
                            const ov::AnyMap &configuration)
     : ImageModel(model, configuration)
 {
-  auto mean_values_iter = configuration.find("mean_values");
-  if (mean_values_iter == configuration.end())
-  {
-    if (model->has_rt_info("model_info", "mean_values"))
-    {
-      mean_values =
-          model->get_rt_info<std::vector<float>>("model_info", "mean_values");
-    }
-  }
-  else
-  {
-    mean_values = mean_values_iter->second.as<std::vector<float>>();
-  }
-
-  auto imageThreshold_iter = configuration.find("image_threshold");
-  if (imageThreshold_iter == configuration.end())
-  {
-    if (model->has_rt_info("model_info", "image_threshold"))
-    {
-      imageThreshold =
-          model->get_rt_info<float>("model_info", "image_threshold");
-    }
-  }
-  else
-  {
-    imageThreshold = imageThreshold_iter->second.as<float>();
-  }
-
-  auto pixelThreshold_iter = configuration.find("pixel_threshold");
-  if (pixelThreshold_iter == configuration.end())
-  {
-    if (model->has_rt_info("model_info", "pixel_threshold"))
-    {
-      pixelThreshold =
-          model->get_rt_info<float>("model_info", "pixel_threshold");
-    }
-  }
-  else
-  {
-    pixelThreshold = pixelThreshold_iter->second.as<float>();
-  }
-
-  auto max_iter = configuration.find("max");
-  if (max_iter == configuration.end())
-  {
-    if (model->has_rt_info("model_info", "max"))
-    {
-      max = model->get_rt_info<float>("model_info", "max");
-    }
-  }
-  else
-  {
-    max = max_iter->second.as<float>();
-  }
-
-  auto min_iter = configuration.find("min");
-  if (min_iter == configuration.end())
-  {
-    if (model->has_rt_info("model_info", "min"))
-    {
-      min = model->get_rt_info<float>("model_info", "min");
-    }
-  }
-  else
-  {
-    min = min_iter->second.as<float>();
-  }
-
-  auto task_iter = configuration.find("task");
-  if (task_iter == configuration.end())
-  {
-    if (model->has_rt_info("model_info", "task"))
-    {
-      task = model->get_rt_info<std::string>("model_info", "task");
-    }
-  }
-  else
-  {
-    task = task_iter->second.as<std::string>();
-  }
+  init_from_config(configuration, model->get_rt_info<ov::AnyMap>("model_info"));
 }
 
 AnomalyModel::AnomalyModel(std::shared_ptr<InferenceAdapter> &adapter)
     : ImageModel(adapter)
 {
-  const ov::AnyMap &config = adapter->getModelConfig();
-
-  auto mean_values_iter = config.find("mean_values");
-  if (mean_values_iter != config.end())
-  {
-    mean_values = mean_values_iter->second.as<std::vector<float>>();
-  }
-
-  auto imageThreshold_iter = config.find("image_threshold");
-  if (imageThreshold_iter != config.end())
-  {
-    imageThreshold = imageThreshold_iter->second.as<float>();
-  }
-
-  auto pixelThreshold_iter = config.find("pixel_threshold");
-  if (pixelThreshold_iter != config.end())
-  {
-    pixelThreshold = pixelThreshold_iter->second.as<float>();
-  }
-
-  auto max_iter = config.find("max");
-  if (max_iter != config.end())
-  {
-    max = max_iter->second.as<float>();
-  }
-
-  auto min_iter = config.find("min");
-  if (min_iter != config.end())
-  {
-    min = min_iter->second.as<float>();
-  }
-
-  auto task_iter = config.find("task");
-  if (task_iter != config.end())
-  {
-    task = task_iter->second.as<std::string>();
-  }
+  init_from_config(adapter->getModelConfig(), ov::AnyMap{});
 }
 
 std::unique_ptr<AnomalyResult> AnomalyModel::infer(
@@ -194,11 +94,7 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(
   if (task == "segmentation" || task == "detection")
   {
     pred_mask = anomaly_map >= pixelThreshold;
-    pred_mask.convertTo(pred_mask, CV_8UC1, 255);
-    cv::imwrite(
-        "/home/ashwin/projects/model_api/anomaly/build/"
-        "pred_mask_intermiediate.png",
-        pred_mask);
+    pred_mask.convertTo(pred_mask, CV_8UC1, 1/255.);
     anomaly_map = normalize(anomaly_map, pixelThreshold);
   }
   pred_score = normalize(pred_score, imageThreshold);
@@ -228,21 +124,14 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(
 
 cv::Mat AnomalyModel::normalize(cv::Mat &tensor, float threshold)
 {
-  cv::Mat normalized = ((tensor - threshold) / (max - min)) + 0.5f;
-  for (auto row = 0; row < normalized.rows; row++)
-  {
-    for (auto col = 0; col < normalized.cols; col++)
-    {
-      normalized.at<float>(row, col) =
-          std::min(std::max(normalized.at<float>(row, col), 0.f), 1.f);
-    }
-  }
+  cv::Mat normalized = ((tensor - threshold) / normalizationScale) + 0.5f;
+  normalized = cv::min(cv::max(normalized, 0.f), 1.f);
   return normalized;
 }
 
 double AnomalyModel::normalize(double &value, float threshold)
 {
-  double normalized = ((value - threshold) / (max - min)) + 0.5f;
+  double normalized = ((value - threshold) / normalizationScale) + 0.5f;
   return std::min(std::max(normalized, 0.), 1.);
 }
 
@@ -266,38 +155,12 @@ std::vector<std::vector<int>> AnomalyModel::getBoxes(cv::Mat &mask)
 
 std::unique_ptr<AnomalyModel> AnomalyModel::create_model(
     const std::string &modelFile, const ov::AnyMap &configuration,
-    std::string model_type, bool preload, const std::string &device)
+    bool preload, const std::string &device)
 {
   auto core = ov::Core();
   std::shared_ptr<ov::Model> model = core.read_model(modelFile);
-  if (model_type.empty())
-  {
-    try
-    {
-      if (model->has_rt_info("model_info", "model_type"))
-      {
-        model_type =
-            model->get_rt_info<std::string>("model_info", "model_type");
-      }
-    }
-    catch (const std::exception &)
-    {
-      slog::warn << "Model type is not specified in the rt_info, use default "
-                    "model type: "
-                 << model_type << slog::endl;
-    }
-  }
-  model->set_rt_info(std::vector<std::string>{"Normal", "Anomalous"},
-                     "model_info", "labels");
-  std::unique_ptr<AnomalyModel> anomalyModel;
-  if (model_type == AnomalyModel::ModelType)
-    anomalyModel =
-        std::unique_ptr<AnomalyModel>(new AnomalyModel(model, configuration));
-  else
-    throw std::runtime_error(
-        "Incorrect or unsupported model_type is provided "
-        "in the model_info section: " +
-        model_type);
+
+  std::unique_ptr<AnomalyModel> anomalyModel {new AnomalyModel(model, configuration)};
 
   anomalyModel->prepare();
   if (preload)
@@ -323,11 +186,6 @@ std::unique_ptr<AnomalyModel> AnomalyModel::create_model(
     throw std::runtime_error(
         "Incorrect or unsupported model_type is provided: " + model_type);
   }
-  if (model_type != AnomalyModel::ModelType)
-  {
-    throw std::runtime_error(
-        "Incorrect or unsupported model_type is provided: " + model_type);
-  }
   std::unique_ptr<AnomalyModel> anomalyModel{new AnomalyModel(adapter)};
   return anomalyModel;
 }
@@ -338,7 +196,7 @@ std::ostream &operator<<(std::ostream &os,
   os << "AnomalyModel: " << model->task
      << ", Image threshold: " << model->imageThreshold
      << ", Pixel threshold: " << model->pixelThreshold
-     << ", Max: " << model->max << ", Min: " << model->min << std::endl;
+     <<", Normalization scale: " << model->normalizationScale<<std::endl;
   return os;
 }
 
@@ -356,8 +214,7 @@ void AnomalyModel::prepareInputsOutputs(std::shared_ptr<ov::Model> &model)
         model, inputNames[0], inputLayout, resizeMode, interpolationMode,
         ov::Shape{inputShape[ov::layout::width_idx(inputLayout)],
                   inputShape[ov::layout::height_idx(inputLayout)]},
-        pad_value, reverse_input_channels, mean_values, scale_values,
-        typeid(float));
+        pad_value, reverse_input_channels, mean_values, scale_values);
     embedded_processing = true;
   }
 
@@ -368,13 +225,15 @@ void AnomalyModel::prepareInputsOutputs(std::shared_ptr<ov::Model> &model)
   }
 }
 
-void AnomalyModel::updateModelInfo() { ImageModel::updateModelInfo(); }
-
-std::shared_ptr<InternalModelData> AnomalyModel::preprocess(
-    const InputData &inputData, InferenceInput &input)
+void AnomalyModel::updateModelInfo()
 {
-  const auto &origImg = inputData.asRef<ImageInputData>().inputImage;
-  auto img = inputTransform(origImg);
-  input.emplace(inputNames[0], wrapMat2Tensor(img));
-  return std::make_shared<InternalImageModelData>(origImg.cols, origImg.rows);
+  ImageModel::updateModelInfo();
+
+  model->set_rt_info(AnomalyModel::ModelType, "model_info", "model_type");
+  model->set_rt_info(task, "model_info", "task");
+  model->set_rt_info(imageShape, "model_info", "image_shape");
+  model->set_rt_info(imageThreshold, "model_info", "image_threshold");
+  model->set_rt_info(pixelThreshold, "model_info", "pixel_threshold");
+  model->set_rt_info(normalizationScale, "model_info", "normalization_scale");
+  model->set_rt_info(task, "model_info", "task");
 }

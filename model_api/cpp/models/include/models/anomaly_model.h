@@ -32,14 +32,11 @@ public:
   AnomalyModel(std::shared_ptr<InferenceAdapter> &adapter);
 
   static std::unique_ptr<AnomalyModel> create_model(
-      const std::string &modelFile, const ov::AnyMap &configuration = {},
-      std::string model_type = "", bool preload = true,
+      const std::string &modelFile, const ov::AnyMap &configuration = {}, bool preload = true,
       const std::string &device = "AUTO");
   static std::unique_ptr<AnomalyModel> create_model(
       std::shared_ptr<InferenceAdapter> &adapter);
 
-  std::shared_ptr<InternalModelData> preprocess(const InputData &inputData,
-                                                InferenceInput &input) override;
   virtual std::unique_ptr<AnomalyResult> infer(const ImageInputData &inputData);
   std::unique_ptr<ResultBase> postprocess(InferenceResult &infResult) override;
 
@@ -49,16 +46,14 @@ public:
   static std::string ModelType;
 
 protected:
-  int imageShape[2] = {256, 256};
-  float imageThreshold = 0.5;
-  float pixelThreshold = 0.5;
-  float max = 1.0;
-  float min = 0.0;
+  std::vector<int> imageShape = {256, 256};
+  float imageThreshold{0.5f};
+  float pixelThreshold{0.5f};
+  float normalizationScale{1.0f};
+  std::vector<float> mean_values;
   std::string task = "segmentation";
-  std::vector<float> mean_values; // ImageNet mean values
-  // Normalize to [0, 1] range
-  InputTransform inputTransform =
-      InputTransform(false, "0. 0. 0.", "255. 255. 255.");
+
+  void init_from_config(const ov::AnyMap &top_priority, const ov::AnyMap &mid_priority);
 
   void prepareInputsOutputs(std::shared_ptr<ov::Model> &model) override;
   void updateModelInfo() override;

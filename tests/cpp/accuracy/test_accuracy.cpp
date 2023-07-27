@@ -15,6 +15,7 @@
 #include <gtest/gtest.h>
 
 #include <models/classification_model.h>
+#include <models/anomaly_model.h>
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/instance_segmentation.h>
@@ -249,8 +250,24 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
             }
         }
-        else if (modelData.type == "AnomalyDetection"){
-            // TODO: will be resolved in the C++ PR of the anomaly detection model
+        else if (modelData.type == "AnomalyDetection")
+        {
+            for (const std::shared_ptr<AnomalyModel> &model : create_models<AnomalyModel>(modelXml))
+            {
+                for (size_t i = 0; i < modelData.testData.size(); i++)
+                {
+                    ASSERT_EQ(modelData.testData[i].reference.size(), 1);
+                    auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
+
+                    cv::Mat image = cv::imread(imagePath);
+                    if (!image.data)
+                    {
+                        throw std::runtime_error{"Failed to read the image"};
+                    }
+                    auto result = model->infer(image);
+                    EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
+                }
+            }
         }
         else {
             throw std::runtime_error("Unknown model type: " + modelData.type);

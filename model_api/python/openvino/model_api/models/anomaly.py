@@ -39,6 +39,7 @@ class AnomalyDetection(ImageModel):
         self.image_threshold: float
         self.pixel_threshold: float
         self.task: str
+        self.labels: list[str]
 
     def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]):
         """Post-processes the outputs and returns the results.
@@ -62,7 +63,7 @@ class AnomalyDetection(ImageModel):
             anomaly_map = predictions.squeeze()
             pred_score = anomaly_map.reshape(-1).max()
 
-        pred_label = "Anomalous" if pred_score > self.image_threshold else "Normal"
+        pred_label = self.labels[1] if pred_score > self.image_threshold else self.labels[0]
 
         if self.task in ("segmentation", "detection"):
             assert anomaly_map is not None
@@ -112,6 +113,7 @@ class AnomalyDetection(ImageModel):
                 "task": StringValue(
                     description="Task type", default_value="segmentation"
                 ),
+                "labels": ListValue(description="List of class labels"),
             }
         )
         return parameters

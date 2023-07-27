@@ -51,29 +51,30 @@ struct ResultBase {
     }
 };
 
-struct AnomalyResult :public ResultBase{
-    AnomalyResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
+struct AnomalyResult : public ResultBase
+{
+    AnomalyResult(int64_t frameId = -1, const std::shared_ptr<MetaData> &metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     cv::Mat anomaly_map;
-    std::vector<std::vector<int>>pred_boxes;
+    std::vector<std::vector<int>> pred_boxes;
     std::string pred_label;
     cv::Mat pred_mask;
     double pred_score;
 
-    friend std::ostream& operator<< (std::ostream& os, const AnomalyResult& prediction) {
-        os << "frameId: " << prediction.frameId << ", ";
-        os << "pred_label: " << prediction.pred_label << ", ";
-        os << "pred_score: " << prediction.pred_score << ", ";
-        os << "pred_boxes: ";
-        for(auto box : prediction.pred_boxes){
-            for(auto point : box){
-                os << point << ", ";
-            }
-            os<< "; ";
-        }
+    friend std::ostream &operator<<(std::ostream &os, const AnomalyResult &prediction)
+    {
+        double min_anomaly_map, max_anomaly_map;
+        cv::minMaxLoc(prediction.anomaly_map, &min_anomaly_map, &max_anomaly_map);
+        double min_pred_mask, max_pred_mask;
+        cv::minMaxLoc(prediction.pred_mask, &min_pred_mask, &max_pred_mask);
+        os << "anomaly_map min:" << min_anomaly_map << " max:" << std::fixed << std::setprecision(1) << max_anomaly_map << ";";
+        os << "pred_score:" << prediction.pred_score << ";";
+        os << "pred_label:" << prediction.pred_label << ";";
+        os << std::fixed << std::setprecision(0) << "pred_mask min:" << min_pred_mask << " max:" << max_pred_mask << ";";
         return os;
     }
-    explicit operator std::string() {
+    explicit operator std::string()
+    {
         std::stringstream ss;
         ss << *this;
         return ss.str();

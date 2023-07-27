@@ -33,6 +33,15 @@ class AnomalyResult(NamedTuple):
     pred_mask: np.ndarray | None = None
     pred_score: float | None = None
 
+    def __str__(self) -> str:
+        val = lambda x, fun: fun(x.flatten()) if x is not None else None
+        return (
+            f"anomaly_map min:{val(self.anomaly_map, min):.6f} max:{val(self.anomaly_map, max)};"
+            f"pred_score:{self.pred_score};"
+            f"pred_label:{self.pred_label};"
+            f"pred_mask min:{val(self.pred_mask, min)} max:{val(self.pred_mask, max)};"
+        )
+
 
 class ClassificationResult(
     namedtuple(
