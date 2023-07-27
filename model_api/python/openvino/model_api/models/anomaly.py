@@ -65,7 +65,7 @@ class AnomalyDetection(ImageModel):
         pred_label = "Anomalous" if pred_score > self.image_threshold else "Normal"
 
         if self.task in ("segmentation", "detection"):
-            assert anomaly_map is not None  # for mypy
+            assert anomaly_map is not None
             pred_mask = (anomaly_map >= self.pixel_threshold).astype(np.uint8)
             anomaly_map = self._normalize(anomaly_map, self.pixel_threshold)
 
