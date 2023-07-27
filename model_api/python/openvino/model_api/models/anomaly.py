@@ -63,7 +63,9 @@ class AnomalyDetection(ImageModel):
             anomaly_map = predictions.squeeze()
             pred_score = anomaly_map.reshape(-1).max()
 
-        pred_label = self.labels[1] if pred_score > self.image_threshold else self.labels[0]
+        pred_label = (
+            self.labels[1] if pred_score > self.image_threshold else self.labels[0]
+        )
 
         if self.task in ("segmentation", "detection"):
             assert anomaly_map is not None
