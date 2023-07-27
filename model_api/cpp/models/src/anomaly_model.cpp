@@ -213,12 +213,7 @@ void AnomalyModel::prepareInputsOutputs(std::shared_ptr<ov::Model> &model)
         pad_value, reverse_input_channels, mean_values, scale_values);
     embedded_processing = true;
   }
-
-  const auto &outputs = model->outputs();
-  for (const auto &output : model->outputs())
-  {
-    outputNames.push_back(output.get_any_name());
-  }
+    outputNames.push_back(model->output().get_any_name());
 }
 
 void AnomalyModel::updateModelInfo()
