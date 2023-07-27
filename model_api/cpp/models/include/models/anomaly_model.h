@@ -59,5 +59,5 @@ protected:
   void updateModelInfo() override;
   cv::Mat normalize(cv::Mat &tensor, float threshold);
   double normalize(double &tensor, float threshold);
-  std::vector<std::vector<int>> getBoxes(cv::Mat &mask);
+  std::vector<cv::Rect> getBoxes(cv::Mat &mask);
 };

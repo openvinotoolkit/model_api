@@ -56,7 +56,7 @@ struct AnomalyResult : public ResultBase
     AnomalyResult(int64_t frameId = -1, const std::shared_ptr<MetaData> &metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     cv::Mat anomaly_map;
-    std::vector<std::vector<int>> pred_boxes;
+    std::vector<cv::Rect> pred_boxes;
     std::string pred_label;
     cv::Mat pred_mask;
     double pred_score;
@@ -71,6 +71,16 @@ struct AnomalyResult : public ResultBase
         os << "pred_score:" << prediction.pred_score << ";";
         os << "pred_label:" << prediction.pred_label << ";";
         os << std::fixed << std::setprecision(0) << "pred_mask min:" << min_pred_mask << " max:" << max_pred_mask << ";";
+
+        if (!prediction.pred_boxes.empty())
+        {
+            os << "pred_boxes:";
+            for (const cv::Rect &box : prediction.pred_boxes)
+            {
+                os << box << ",";
+            }
+        }
+
         return os;
     }
     explicit operator std::string()

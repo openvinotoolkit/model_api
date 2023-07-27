@@ -77,7 +77,7 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(
   std::string pred_label;
   cv::Mat anomaly_map;
   cv::Mat pred_mask;
-  std::vector<std::vector<int>> pred_boxes;
+  std::vector<cv::Rect> pred_boxes;
   if (predictions.get_shape().size() == 1)
   {
     pred_score = predictions.data<float>()[0];
@@ -135,20 +135,16 @@ double AnomalyModel::normalize(double &value, float threshold)
   return std::min(std::max(normalized, 0.), 1.);
 }
 
-std::vector<std::vector<int>> AnomalyModel::getBoxes(cv::Mat &mask)
+std::vector<cv::Rect> AnomalyModel::getBoxes(cv::Mat &mask)
 {
-  std::vector<std::vector<int>> boxes;
+  std::vector<cv::Rect> boxes;
   std::vector<std::vector<cv::Point>> contours;
   cv::findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
   for (auto &contour : contours)
   {
     std::vector<int> box;
     cv::Rect rect = cv::boundingRect(contour);
-    box.push_back(rect.x);
-    box.push_back(rect.y);
-    box.push_back(rect.x + rect.width);
-    box.push_back(rect.y + rect.height);
-    boxes.push_back(box);
+    boxes.push_back(rect);
   }
   return boxes;
 }
