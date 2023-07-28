@@ -222,11 +222,9 @@ void SegmentationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) 
         ppp.output(out_name).tensor().set_element_type(ov::element::f32);
         if (ov::layout::has_channels(out_layout)) {
             ppp.output().tensor().set_layout("NCHW");
-            outChannels = static_cast<int>(outputShape[ov::layout::channels_idx(out_layout)]);
         } else {
             // deeplabv3
             ppp.output().tensor().set_layout("NHW");
-            outChannels = 1;
         }
         model = ppp.build();
         useAutoResize = true; // temporal solution
@@ -248,8 +246,8 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
     const auto& outTensor = infResult.outputsData[outputNames[0]];
     const ov::Shape& outputShape = outTensor.get_shape();
     const ov::Layout& outputLayout = getLayoutFromShape(outputShape);
-    int outChannels = ov::layout::has_channels(outputLayout) ?
-        static_cast<int>(outputShape[ov::layout::channels_idx(outputLayout)]) : 1;
+    size_t outChannels = ov::layout::has_channels(outputLayout) ?
+        outputShape[ov::layout::channels_idx(outputLayout)] : 1;
     int outHeight = static_cast<int>(outputShape[ov::layout::height_idx(outputLayout)]);
     int outWidth = static_cast<int>(outputShape[ov::layout::width_idx(outputLayout)]);
     cv::Mat soft_prediction;
