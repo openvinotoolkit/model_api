@@ -34,14 +34,10 @@ std::string AnomalyModel::ModelType = "AnomalyDetection";
 /// @param mid_priority Fallback source for setting the parameters
 void AnomalyModel::init_from_config(const ov::AnyMap &top_priority, const ov::AnyMap &mid_priority)
 {
-  mean_values = get_from_any_maps("mean_values", top_priority, mid_priority, mean_values);
-  scale_values = get_from_any_maps("scale_values", top_priority, mid_priority, scale_values);
-  imageShape = get_from_any_maps("image_shape", top_priority, mid_priority, imageShape);
   imageThreshold = get_from_any_maps("image_threshold", top_priority, mid_priority, imageThreshold);
   pixelThreshold = get_from_any_maps("pixel_threshold", top_priority, mid_priority, pixelThreshold);
   normalizationScale = get_from_any_maps("normalization_scale", top_priority, mid_priority, normalizationScale);
   task = get_from_any_maps("task", top_priority, mid_priority, task);
-  labels = get_from_any_maps("labels", top_priority, mid_priority, labels);
 }
 
 AnomalyModel::AnomalyModel(std::shared_ptr<ov::Model> &model,
@@ -84,7 +80,8 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(
   }
   else
   {
-    anomaly_map = cv::Mat(imageShape[0], imageShape[1], CV_32FC1,
+    const ov::Layout& layout = getLayoutFromShape(predictions.get_shape());
+    anomaly_map = cv::Mat(predictions.get_shape()[ov::layout::height_idx(layout)], predictions.get_shape()[ov::layout::width_idx(layout)], CV_32FC1,
                           predictions.data<float>());
     // find the max predicted score
     cv::minMaxLoc(anomaly_map, NULL, &pred_score);
@@ -94,7 +91,7 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(
   if (task == "segmentation" || task == "detection")
   {
     pred_mask = anomaly_map >= pixelThreshold;
-    pred_mask.convertTo(pred_mask, CV_8UC1, 1/255.);
+    pred_mask.convertTo(pred_mask, CV_8UC1, 1 / 255.);
     anomaly_map = normalize(anomaly_map, pixelThreshold);
   }
   pred_score = normalize(pred_score, imageThreshold);
@@ -114,11 +111,11 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(
 
   AnomalyResult *result =
       new AnomalyResult(infResult.frameId, infResult.metaData);
-  result->anomaly_map = anomaly_map;
-  result->pred_score = pred_score;
-  result->pred_label = pred_label;
-  result->pred_mask = pred_mask;
-  result->pred_boxes = pred_boxes;
+  result->anomaly_map = std::move(anomaly_map);
+  result->pred_score = std::move(pred_score);
+  result->pred_label = std::move(pred_label);
+  result->pred_mask = std::move(pred_mask);
+  result->pred_boxes = std::move(pred_boxes);
   return std::unique_ptr<ResultBase>(result);
 }
 
@@ -156,7 +153,7 @@ std::unique_ptr<AnomalyModel> AnomalyModel::create_model(
   auto core = ov::Core();
   std::shared_ptr<ov::Model> model = core.read_model(modelFile);
 
-  std::unique_ptr<AnomalyModel> anomalyModel {new AnomalyModel(model, configuration)};
+  std::unique_ptr<AnomalyModel> anomalyModel{new AnomalyModel(model, configuration)};
 
   anomalyModel->prepare();
   if (preload)
@@ -192,7 +189,7 @@ std::ostream &operator<<(std::ostream &os,
   os << "AnomalyModel: " << model->task
      << ", Image threshold: " << model->imageThreshold
      << ", Pixel threshold: " << model->pixelThreshold
-     <<", Normalization scale: " << model->normalizationScale<<std::endl;
+     << ", Normalization scale: " << model->normalizationScale << std::endl;
   return os;
 }
 
@@ -213,7 +210,7 @@ void AnomalyModel::prepareInputsOutputs(std::shared_ptr<ov::Model> &model)
         pad_value, reverse_input_channels, mean_values, scale_values);
     embedded_processing = true;
   }
-    outputNames.push_back(model->output().get_any_name());
+  outputNames.push_back(model->output().get_any_name());
 }
 
 void AnomalyModel::updateModelInfo()
@@ -222,7 +219,6 @@ void AnomalyModel::updateModelInfo()
 
   model->set_rt_info(AnomalyModel::ModelType, "model_info", "model_type");
   model->set_rt_info(task, "model_info", "task");
-  model->set_rt_info(imageShape, "model_info", "image_shape");
   model->set_rt_info(imageThreshold, "model_info", "image_threshold");
   model->set_rt_info(pixelThreshold, "model_info", "pixel_threshold");
   model->set_rt_info(normalizationScale, "model_info", "normalization_scale");

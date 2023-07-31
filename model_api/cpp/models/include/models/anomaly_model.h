@@ -46,11 +46,9 @@ public:
   static std::string ModelType;
 
 protected:
-  std::vector<int> imageShape = {256, 256};
   float imageThreshold{0.5f};
   float pixelThreshold{0.5f};
   float normalizationScale{1.0f};
-  std::vector<float> mean_values;
   std::string task = "segmentation";
 
   void init_from_config(const ov::AnyMap &top_priority, const ov::AnyMap &mid_priority);

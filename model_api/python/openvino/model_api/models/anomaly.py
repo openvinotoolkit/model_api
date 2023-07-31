@@ -100,9 +100,6 @@ class AnomalyDetection(ImageModel):
         parameters = super().parameters()
         parameters.update(
             {
-                "image_shape": ListValue(
-                    description="Image shape",
-                ),
                 "image_threshold": NumericalValue(
                     description="Image threshold", min=0.0, default_value=0.5
                 ),
