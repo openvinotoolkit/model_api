@@ -308,5 +308,17 @@
                 ]
             }
         ]
+    },
+    {
+        "name": "otx_models/deit-tiny.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000074.jpg",
+                "reference": [
+                    "3 (cat): 0.648, [0], [0], [10]"
+                ]
+            }
+        ]
     }
 ]
