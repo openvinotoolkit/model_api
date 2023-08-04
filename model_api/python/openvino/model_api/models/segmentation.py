@@ -16,6 +16,7 @@
 
 import cv2
 import numpy as np
+from typing import Iterable, Union
 
 from .image_model import ImageModel
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
@@ -149,10 +150,12 @@ class SegmentationModel(ImageModel):
                 0,
                 interpolation=cv2.INTER_NEAREST,
             )
-
             return ImageResultWithSoftPrediction(
                 hard_prediction,
                 soft_prediction,
+                _get_activation_map(soft_prediction)
+                if _feature_vector_name in outputs
+                else np.ndarray(0),
                 outputs.get(_feature_vector_name, np.ndarray(0)),
             )
         return hard_prediction
@@ -214,3 +217,16 @@ class SalientObjectDetectionModel(SegmentationModel):
 
 
 _feature_vector_name = "feature_vector"
+
+
+def _get_activation_map(features: Union[np.ndarray, Iterable, int, float]):
+    """Getter activation_map functions."""
+    min_soft_score = np.min(features)
+    max_soft_score = np.max(features)
+    factor = 255.0 / (max_soft_score - min_soft_score + 1e-12)
+
+    float_act_map = factor * (features - min_soft_score)
+    int_act_map = np.round(float_act_map, out=float_act_map).astype(np.uint8)
+    int_act_map = cv2.applyColorMap(int_act_map, cv2.COLORMAP_JET)
+    int_act_map = cv2.cvtColor(int_act_map, cv2.COLOR_BGR2RGB)
+    return int_act_map
