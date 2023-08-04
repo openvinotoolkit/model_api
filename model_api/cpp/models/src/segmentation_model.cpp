@@ -77,8 +77,6 @@ cv::Mat get_activation_map(const cv::Mat& features) {
 
     cv::Mat int_act_map;
     features.convertTo(int_act_map, CV_8U, factor, -min_soft_score * factor);
-    cv::applyColorMap(int_act_map, int_act_map, cv::COLORMAP_JET);
-    cv::cvtColor(int_act_map, int_act_map, cv::COLOR_BGR2RGB);
     return int_act_map;
 }
 }
