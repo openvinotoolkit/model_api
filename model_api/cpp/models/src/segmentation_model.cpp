@@ -221,10 +221,10 @@ void SegmentationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) 
         ppp.output(out_name).model().set_layout(out_layout);
         ppp.output(out_name).tensor().set_element_type(ov::element::f32);
         if (ov::layout::has_channels(out_layout)) {
-            ppp.output().tensor().set_layout("NCHW");
+            ppp.output(out_name).tensor().set_layout("NCHW");
         } else {
             // deeplabv3
-            ppp.output().tensor().set_layout("NHW");
+            ppp.output(out_name).tensor().set_layout("NHW");
         }
         model = ppp.build();
         useAutoResize = true; // temporal solution
