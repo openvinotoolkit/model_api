@@ -243,9 +243,13 @@ class ClassificationModel(ImageModel):
 def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
     nodes = inference_adapter.model.get_ops()
     softmaxNode = None
+    all_output_names = []
+    for output in inference_adapter.model.outputs:
+        all_output_names.extend(output.names)
     for op in nodes:
         if "Softmax" == op.get_type_name():
-            softmaxNode = op
+            if op.get_friendly_name() in all_output_names:
+                softmaxNode = op
     if softmaxNode is None:
         logitsNode = (
             inference_adapter.model.get_output_op(0)
