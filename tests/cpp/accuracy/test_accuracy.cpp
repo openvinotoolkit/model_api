@@ -245,6 +245,14 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     } catch (ov::Exception&) {
                         ss << "[0]";
                     }
+                    ss << "; ";
+                    try {
+                        // getContours() assumes each instance generates only one contour.
+                        // That doesn't hold for some models
+                        for (const Contour& contour : getContours(res->segmentedObjects)) {
+                            ss << contour << "; ";
+                        }
+                    } catch (const std::runtime_error&) {}
                     EXPECT_EQ(ss.str(), modelData.testData[i].reference[0]);
                 }
             }

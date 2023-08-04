@@ -18,6 +18,7 @@ from openvino.model_api.models import (
     MaskRCNNModel,
     SegmentationModel,
     add_rotated_rects,
+    get_contours,
 )
 from openvino.model_api.tilers import DetectionTiler, InstanceSegmentationTiler
 
@@ -124,13 +125,28 @@ def test_image_models(data, dump, result, model_data):
                 image_result = [output_str]
             elif isinstance(outputs, InstanceSegmentationResult):
                 assert 1 == len(test_data["reference"])
-                output_str = str(
-                    InstanceSegmentationResult(
-                        add_rotated_rects(outputs.segmentedObjects),
-                        outputs.saliency_map,
-                        outputs.feature_vector,
+                output_str = (
+                    str(
+                        InstanceSegmentationResult(
+                            add_rotated_rects(outputs.segmentedObjects),
+                            outputs.saliency_map,
+                            outputs.feature_vector,
+                        )
                     )
+                    + "; "
                 )
+                try:
+                    # getContours() assumes each instance generates only one contour.
+                    # That doesn't hold for some models
+                    output_str += (
+                        "; ".join(
+                            str(contour)
+                            for contour in get_contours(outputs.segmentedObjects)
+                        )
+                        + "; "
+                    )
+                except RuntimeError:
+                    pass
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
             elif isinstance(outputs, AnomalyResult):
