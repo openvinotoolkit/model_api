@@ -14,9 +14,10 @@
  limitations under the License.
 """
 
+from typing import Iterable, Union
+
 import cv2
 import numpy as np
-from typing import Iterable, Union
 
 from .image_model import ImageModel
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
