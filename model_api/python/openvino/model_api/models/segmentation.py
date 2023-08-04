@@ -150,6 +150,7 @@ class SegmentationModel(ImageModel):
                 0,
                 interpolation=cv2.INTER_NEAREST,
             )
+
             return ImageResultWithSoftPrediction(
                 hard_prediction,
                 soft_prediction,
