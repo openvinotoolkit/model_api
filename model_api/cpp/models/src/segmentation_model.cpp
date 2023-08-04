@@ -293,7 +293,6 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
         result->soft_prediction = soft_prediction;
         auto iter = infResult.outputsData.find(feature_vector_name);
         if (infResult.outputsData.end() != iter) {
-            std::cout << "AAAAAAAAAAAAAAa\n";
             result->saliency_map = get_activation_map(soft_prediction);
             result->feature_vector = iter->second;
         }
