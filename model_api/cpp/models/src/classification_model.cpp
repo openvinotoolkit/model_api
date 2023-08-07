@@ -80,10 +80,15 @@ void softmax(float* x_start, float* x_end, float eps = 1e-9) {
 
 void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t topk, bool add_raw_scores) {
     auto nodes = model->get_ops();
-    auto softmaxNodeIt = std::find_if(std::begin(nodes), std::end(nodes), [](const std::shared_ptr<ov::Node>& op) {
-        return std::string(op->get_type_name()) == "Softmax"; // TODO: it will not work for Vision Transformers, for example
+    std::vector<std::string> all_outputs;
+    for (const ov::Output<ov::Node>& output : model->outputs()) {
+        for (const auto& name : output.get_names()) {
+                all_outputs.push_back(name);
+        }
+    }
+    auto softmaxNodeIt = std::find_if(std::begin(nodes), std::end(nodes), [&all_outputs](const std::shared_ptr<ov::Node>& op) {
+        return std::string(op->get_type_name()) == "Softmax" && std::count(std::begin(all_outputs), std::end(all_outputs), op->get_friendly_name());
     });
-
     std::shared_ptr<ov::Node> softmaxNode;
     if (softmaxNodeIt == nodes.end()) {
         auto logitsNode = model->get_output_op(0)->input(0).get_source_output().get_node();
@@ -359,8 +364,7 @@ std::unique_ptr<ResultBase> ClassificationModel::get_multiclass_predictions(Infe
         const ov::Tensor& logitsTensor = infResult.outputsData.find(raw_scores_name)->second;
         result->raw_scores = ov::Tensor(logitsTensor.get_element_type(), logitsTensor.get_shape());
         logitsTensor.copy_to(result->raw_scores);
-        float* raw_scoresPtr = result->raw_scores.data<float>();
-        softmax(raw_scoresPtr, raw_scoresPtr + result->raw_scores.get_size());
+        result->raw_scores.set_shape(ov::Shape({result->raw_scores.get_size()}));
     }
 
     result->topLabels.reserve(scoresTensor.get_size());
@@ -445,7 +449,9 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
         return;
     }
 
-    addOrFindSoftmaxAndTopkOutputs(model, topk, output_raw_scores);
+    if (!embedded_processing) {
+        addOrFindSoftmaxAndTopkOutputs(model, topk, output_raw_scores);
+    }
     embedded_processing = true;
 
     outputNames = {indices_name, scores_name};
