@@ -105,7 +105,7 @@ class SegmentedObjectWithRects(SegmentedObject):
 
 class InstanceSegmentationResult(NamedTuple):
     segmentedObjects: List[Union[SegmentedObject, SegmentedObjectWithRects]]
-    # Contan per class saliency_maps and "feature_vector" model output if feature_vector exists
+    # Contain per class saliency_maps and "feature_vector" model output if feature_vector exists
     saliency_map: List[np.ndarray]
     feature_vector: np.ndarray
 
@@ -132,6 +132,22 @@ def add_rotated_rects(segmented_objects):
     return objects_with_rects
 
 
+def get_contours(
+    segmentedObjects: List[Union[SegmentedObject, SegmentedObjectWithRects]]
+):
+    combined_contours = []
+    for obj in segmentedObjects:
+        contours, _ = cv2.findContours(
+            obj.mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+        )
+        # Assuming one contour output for findContours. Based on OTX this is a safe
+        # assumption
+        if len(contours) != 1:
+            raise RuntimeError("findContours() must have returned only one contour")
+        combined_contours.append(Contour(obj.str_label, obj.score, contours[0]))
+    return combined_contours
+
+
 def clip_detections(detections, size):
     for detection in detections:
         detection.xmin = min(max(round(detection.xmin), 0), size[1])
@@ -153,7 +169,9 @@ class Contour(NamedTuple):
 class ImageResultWithSoftPrediction(NamedTuple):
     resultImage: np.ndarray
     soft_prediction: np.ndarray
-    feature_vector: np.ndarray  # Contans "feature_vector" model output if such exists
+    # Contain per class saliency_maps and "feature_vector" model output if feature_vector exists
+    saliency_map: np.ndarray  # Requires return_soft_prediction==True
+    feature_vector: np.ndarray
 
     def __str__(self):
         outHist = cv2.calcHist(
@@ -167,7 +185,7 @@ class ImageResultWithSoftPrediction(NamedTuple):
         for i, count in enumerate(outHist):
             if count > 0:
                 hist += f"{i}: {count[0] / self.resultImage.size:.3f}, "
-        return f"{hist}[{','.join(str(i) for i in self.soft_prediction.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
+        return f"{hist}[{','.join(str(i) for i in self.soft_prediction.shape)}], [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class DetectionWithLandmarks(Detection):
