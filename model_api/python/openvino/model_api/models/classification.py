@@ -60,10 +60,9 @@ class ClassificationModel(ImageModel):
                 self.load()
             return
 
-        if not self.embedded_processing:
-            addOrFindSoftmaxAndTopkOutputs(
-                self.inference_adapter, self.topk, self.output_raw_scores
-            )
+        addOrFindSoftmaxAndTopkOutputs(
+            self.inference_adapter, self.topk, self.output_raw_scores
+        )
         self.embedded_processing = True
 
         self.out_layer_names = ["indices", "scores"]
@@ -242,15 +241,19 @@ class ClassificationModel(ImageModel):
 
 
 def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
-    nodes = inference_adapter.model.get_ops()
     softmaxNode = None
-    all_output_names = []
-    for output in inference_adapter.model.outputs:
-        all_output_names.extend(output.names)
-    for op in nodes:
-        if "Softmax" == op.get_type_name():
-            if op.get_friendly_name() in all_output_names:
-                softmaxNode = op
+    for i in range(len(inference_adapter.model.outputs)):
+        output_node = (
+            inference_adapter.model.get_output_op(i)
+            .input(0)
+            .get_source_output()
+            .get_node()
+        )
+        if "Softmax" == output_node.get_type_name():
+            softmaxNode = output_node
+        elif "TopK" == output_node.get_type_name():
+            return
+
     if softmaxNode is None:
         logitsNode = (
             inference_adapter.model.get_output_op(0)

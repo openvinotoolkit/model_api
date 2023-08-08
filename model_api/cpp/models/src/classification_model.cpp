@@ -80,22 +80,22 @@ void softmax(float* x_start, float* x_end, float eps = 1e-9) {
 
 void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t topk, bool add_raw_scores) {
     auto nodes = model->get_ops();
-    std::vector<std::string> all_outputs;
-    for (const ov::Output<ov::Node>& output : model->outputs()) {
-        for (const auto& name : output.get_names()) {
-                all_outputs.push_back(name);
+    std::shared_ptr<ov::Node> softmaxNode;
+    for (size_t i = 0; i < model->outputs().size(); ++i) {
+        auto output_node = model->get_output_op(i)->input(0).get_source_output().get_node_shared_ptr();
+        if (std::string(output_node->get_type_name()) == "Softmax") {
+            softmaxNode = output_node;
+        }
+        else if (std::string(output_node->get_type_name()) == "TopK") {
+            return;
         }
     }
-    auto softmaxNodeIt = std::find_if(std::begin(nodes), std::end(nodes), [&all_outputs](const std::shared_ptr<ov::Node>& op) {
-        return std::string(op->get_type_name()) == "Softmax" && std::count(std::begin(all_outputs), std::end(all_outputs), op->get_friendly_name());
-    });
-    std::shared_ptr<ov::Node> softmaxNode;
-    if (softmaxNodeIt == nodes.end()) {
+
+    if (!softmaxNode) {
         auto logitsNode = model->get_output_op(0)->input(0).get_source_output().get_node();
         softmaxNode = std::make_shared<ov::op::v1::Softmax>(logitsNode->output(0), 1);
-    } else {
-        softmaxNode = *softmaxNodeIt;
     }
+
     const auto k = std::make_shared<ov::op::v0::Constant>(ov::element::i32, ov::Shape{}, std::vector<size_t>{topk});
     std::shared_ptr<ov::Node> topkNode = std::make_shared<ov::op::v3::TopK>(softmaxNode,
                                                                             k,
