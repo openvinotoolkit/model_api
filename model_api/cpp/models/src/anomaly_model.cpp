@@ -83,8 +83,8 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(
     const ov::Layout &layout = getLayoutFromShape(predictions.get_shape());
     const ov::Shape &predictionsShape = predictions.get_shape();
     anomaly_map = cv::Mat(
-        predictionsShape[static_cast<size_t>(ov::layout::height_idx(layout))],
-        predictionsShape[static_cast<size_t>(ov::layout::width_idx(layout))],
+        static_cast<int>predictionsShape[ov::layout::height_idx(layout)],
+        static_cast<int>predictionsShape[ov::layout::width_idx(layout)],
         CV_32FC1,
         predictions.data<float>());
     // find the max predicted score
