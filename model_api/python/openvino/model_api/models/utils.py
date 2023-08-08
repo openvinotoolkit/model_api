@@ -33,7 +33,7 @@ class AnomalyResult(NamedTuple):
     pred_mask: np.ndarray | None = None
     pred_score: float | None = None
 
-    def _compute_min_max(self, tensor: np.ndarray)->tuple[np.ndarray, np.ndarray]:
+    def _compute_min_max(self, tensor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Computes min and max values of the tensor."""
         return tensor.min(), tensor.max()
 
