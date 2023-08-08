@@ -18,7 +18,7 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 
 import math
 from collections import namedtuple
-from typing import List, NamedTuple, Tuple, Union
+from typing import List, NamedTuple, Tuple, Union, Callable
 
 import cv2
 import numpy as np
@@ -33,13 +33,20 @@ class AnomalyResult(NamedTuple):
     pred_mask: np.ndarray | None = None
     pred_score: float | None = None
 
+    def _compute_min_max(self, tensor: np.ndarray)->tuple[np.ndarray, np.ndarray]:
+        """Computes min and max values of the tensor."""
+        return tensor.min(), tensor.max()
+
     def __str__(self) -> str:
-        val = lambda x, fun: fun(x.flatten()) if x is not None else None
+        assert self.anomaly_map is not None
+        assert self.pred_mask is not None
+        anomaly_map_min, anomaly_map_max = self._compute_min_max(self.anomaly_map)
+        pred_mask_min, pred_mask_max = self._compute_min_max(self.pred_mask)
         return (
-            f"anomaly_map min:{val(self.anomaly_map, min):.3f} max:{val(self.anomaly_map, max)};"
+            f"anomaly_map min:{anomaly_map_min:.3f} max:{anomaly_map_max};"
             f"pred_score:{self.pred_score};"
             f"pred_label:{self.pred_label};"
-            f"pred_mask min:{val(self.pred_mask, min)} max:{val(self.pred_mask, max)};"
+            f"pred_mask min:{pred_mask_min} max:{pred_mask_max};"
         )
 
 
