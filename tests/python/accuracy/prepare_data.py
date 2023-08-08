@@ -73,3 +73,4 @@ if __name__ == "__main__":
     retrieve_otx_model(args.data_dir, "tile_classifier")
     retrieve_otx_model(args.data_dir, "anomaly_padim_bottle_mvtec")
     retrieve_otx_model(args.data_dir, "anomaly_stfpm_bottle_mvtec")
+    retrieve_otx_model(args.data_dir, "deit-tiny")

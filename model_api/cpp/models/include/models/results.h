@@ -295,13 +295,23 @@ struct ImageResultWithSoftPrediction : public ImageResult {
     ImageResultWithSoftPrediction(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ImageResult(frameId, metaData) {}
     cv::Mat soft_prediction;
-    ov::Tensor feature_vector;  // Contans "feature_vector" model output if such exists
+    // Contain per class saliency_maps and "feature_vector" model output if feature_vector exists
+    cv::Mat saliency_map;  // Requires return_soft_prediction==true
+    ov::Tensor feature_vector;
     friend std::ostream& operator<< (std::ostream& os, const ImageResultWithSoftPrediction& prediction) {
         os << static_cast<const ImageResult&>(prediction) << '[';
         for (int i = 0; i < prediction.soft_prediction.dims; ++i) {
             os << prediction.soft_prediction.size[i] << ',';
         }
-        os << prediction.soft_prediction.channels() << "], ";
+        os << prediction.soft_prediction.channels() << "], [";
+        if (prediction.saliency_map.data) {
+            for (int i = 0; i < prediction.saliency_map.dims; ++i) {
+                os << prediction.saliency_map.size[i] << ',';
+            }
+            os << prediction.saliency_map.channels() << "], ";
+        } else {
+            os << "0], ";
+        }
         try {
             os << prediction.feature_vector.get_shape();
         } catch (ov::Exception&) {
@@ -321,6 +331,21 @@ struct Contour {
     }
 };
 
+static inline std::vector<Contour> getContours(const std::vector<SegmentedObject>& segmentedObjects) {
+    std::vector<Contour> combined_contours;
+    std::vector<std::vector<cv::Point>> contours;
+    for (const SegmentedObject& obj : segmentedObjects) {
+        cv::findContours(obj.mask, contours, cv::RETR_EXTERNAL,
+                        cv::CHAIN_APPROX_NONE);
+        // Assuming one contour output for findContours. Based on OTX this is a safe
+        // assumption
+        if (contours.size() != 1) {
+            throw std::runtime_error("findContours() must have returned only one contour");
+        }
+        combined_contours.push_back({obj.label, obj.confidence, contours[0]});
+    }
+    return combined_contours;
+}
 
 struct HumanPose {
     std::vector<cv::Point2f> keypoints;

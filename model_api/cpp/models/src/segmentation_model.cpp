@@ -69,6 +69,16 @@ cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_predicti
     }
     return hard_prediction;
 }
+
+cv::Mat get_activation_map(const cv::Mat& features) {
+    double min_soft_score, max_soft_score;
+    cv::minMaxLoc(features, &min_soft_score, &max_soft_score);
+    double factor = 255.0 / (max_soft_score - min_soft_score + 1e-12);
+
+    cv::Mat int_act_map;
+    features.convertTo(int_act_map, CV_8U, factor, -min_soft_score * factor);
+    return int_act_map;
+}
 }
 
 std::string SegmentationModel::ModelType = "Segmentation";
@@ -217,8 +227,15 @@ void SegmentationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) 
                                         scale_values);
 
         ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
-        ppp.output(out_name).model().set_layout(getLayoutFromShape(model->output(out_name).get_partial_shape()));
-        ppp.output(out_name).tensor().set_element_type(ov::element::f32).set_layout("NCHW");
+        ov::Layout out_layout = getLayoutFromShape(model->output(out_name).get_partial_shape());
+        ppp.output(out_name).model().set_layout(out_layout);
+        ppp.output(out_name).tensor().set_element_type(ov::element::f32);
+        if (ov::layout::has_channels(out_layout)) {
+            ppp.output(out_name).tensor().set_layout("NCHW");
+        } else {
+            // deeplabv3
+            ppp.output(out_name).tensor().set_layout("NHW");
+        }
         model = ppp.build();
         useAutoResize = true; // temporal solution
         embedded_processing = true;
@@ -239,7 +256,8 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
     const auto& outTensor = infResult.outputsData[outputNames[0]];
     const ov::Shape& outputShape = outTensor.get_shape();
     const ov::Layout& outputLayout = getLayoutFromShape(outputShape);
-    int outChannels = static_cast<int>(outputShape[ov::layout::channels_idx(outputLayout)]);
+    size_t outChannels = ov::layout::has_channels(outputLayout) ?
+        outputShape[ov::layout::channels_idx(outputLayout)] : 1;
     int outHeight = static_cast<int>(outputShape[ov::layout::height_idx(outputLayout)]);
     int outWidth = static_cast<int>(outputShape[ov::layout::width_idx(outputLayout)]);
     cv::Mat soft_prediction;
@@ -271,7 +289,11 @@ std::unique_ptr<ResultBase> SegmentationModel::postprocess(InferenceResult& infR
         result->resultImage = hard_prediction;
         cv::resize(soft_prediction, soft_prediction, {inputImgSize.inputImgWidth, inputImgSize.inputImgHeight}, 0.0, 0.0, cv::INTER_NEAREST);
         result->soft_prediction = soft_prediction;
-        result->feature_vector = infResult.outputsData[feature_vector_name];
+        auto iter = infResult.outputsData.find(feature_vector_name);
+        if (infResult.outputsData.end() != iter) {
+            result->saliency_map = get_activation_map(soft_prediction);
+            result->feature_vector = iter->second;
+        }
         return std::unique_ptr<ResultBase>(result);
     }
 
