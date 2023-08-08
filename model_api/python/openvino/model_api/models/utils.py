@@ -18,7 +18,7 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 
 import math
 from collections import namedtuple
-from typing import List, NamedTuple, Tuple, Union, Callable
+from typing import List, NamedTuple, Tuple, Union
 
 import cv2
 import numpy as np
