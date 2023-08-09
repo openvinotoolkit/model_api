@@ -151,12 +151,7 @@ def test_image_models(data, dump, result, model_data):
                 image_result = [output_str]
             elif isinstance(outputs, AnomalyResult):
                 assert 1 == len(test_data["reference"])
-                output_str = (
-                    f"anomaly_map min:{min(outputs.anomaly_map.flatten()):.3f} max:{max(outputs.anomaly_map.flatten()):.3f};"
-                    f"pred_score:{outputs.pred_score:.3f};"
-                    f"pred_label:{outputs.pred_label};"
-                    f"pred_mask min:{min(outputs.pred_mask.flatten()):.3f} max:{max(outputs.pred_mask.flatten()):.3f};"
-                )
+                output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
             else:
