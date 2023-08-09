@@ -54,6 +54,7 @@ if __name__ == "__main__":
     retrieve_otx_model(args.data_dir, "mlc_efficient_b0_voc")
     retrieve_otx_model(args.data_dir, "mlc_efficient_v2s_voc")
     retrieve_otx_model(args.data_dir, "det_mobilenetv2_atss_bccd")
+    retrieve_otx_model(args.data_dir, "det_mobilenetv2_atss_bccd", "onnx")
     retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars")
     retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars", "onnx")
     retrieve_otx_model(args.data_dir, "cls_efficient_b0_cars")
@@ -61,8 +62,12 @@ if __name__ == "__main__":
     retrieve_otx_model(args.data_dir, "Lite-hrnet-18")
     retrieve_otx_model(args.data_dir, "Lite-hrnet-18_mod2")
     retrieve_otx_model(args.data_dir, "Lite-hrnet-s_mod2")
+    retrieve_otx_model(args.data_dir, "Lite-hrnet-s_mod2", "onnx")
     retrieve_otx_model(args.data_dir, "Lite-hrnet-x-mod3")
     retrieve_otx_model(args.data_dir, "is_efficientnetb2b_maskrcnn_coco_reduced")
+    retrieve_otx_model(
+        args.data_dir, "is_efficientnetb2b_maskrcnn_coco_reduced", "onnx"
+    )
     retrieve_otx_model(args.data_dir, "is_resnet50_maskrcnn_coco_reduced")
     retrieve_otx_model(args.data_dir, "mobilenet_v3_large_hc_cf")
     retrieve_otx_model(args.data_dir, "classification_model_with_xai_head")
