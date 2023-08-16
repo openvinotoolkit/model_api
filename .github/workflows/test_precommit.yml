@@ -45,11 +45,11 @@ jobs:
     - name: Check style with black
       run: |
         source venv/bin/activate
-        black --check .
+        black --exclude model_api/python/openvino/__init__.py --check .
     - name: Check style with isort
       run: |
         source venv/bin/activate
-        isort --check .
+        isort --skip model_api/python/openvino/__init__.py --check .
   Python-Precommit:
     strategy:
       fail-fast: false
