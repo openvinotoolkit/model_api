@@ -45,7 +45,7 @@ jobs:
     - name: Check style with black
       run: |
         source venv/bin/activate
-        black --check .
+        black --extend-exclude model_api/python/openvino/__init__.py --check .
     - name: Check style with isort
       run: |
         source venv/bin/activate
