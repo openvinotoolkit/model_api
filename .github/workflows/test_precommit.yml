@@ -49,7 +49,7 @@ jobs:
     - name: Check style with isort
       run: |
         source venv/bin/activate
-        isort --skip model_api/python/openvino/__init__.py --check .
+        isort --check .
   Python-Precommit:
     strategy:
       fail-fast: false
