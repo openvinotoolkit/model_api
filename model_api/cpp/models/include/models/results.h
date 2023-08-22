@@ -51,6 +51,46 @@ struct ResultBase {
     }
 };
 
+struct AnomalyResult : public ResultBase
+{
+    AnomalyResult(int64_t frameId = -1, const std::shared_ptr<MetaData> &metaData = nullptr)
+        : ResultBase(frameId, metaData) {}
+    cv::Mat anomaly_map;
+    std::vector<cv::Rect> pred_boxes;
+    std::string pred_label;
+    cv::Mat pred_mask;
+    double pred_score;
+
+    friend std::ostream &operator<<(std::ostream &os, const AnomalyResult &prediction)
+    {
+        double min_anomaly_map, max_anomaly_map;
+        cv::minMaxLoc(prediction.anomaly_map, &min_anomaly_map, &max_anomaly_map);
+        double min_pred_mask, max_pred_mask;
+        cv::minMaxLoc(prediction.pred_mask, &min_pred_mask, &max_pred_mask);
+        os << "anomaly_map min:"<< std::fixed << std::setprecision(3) << min_anomaly_map << " max:" << std::fixed << std::setprecision(1) << max_anomaly_map << ";";
+        os << "pred_score:" << prediction.pred_score << ";";
+        os << "pred_label:" << prediction.pred_label << ";";
+        os << std::fixed << std::setprecision(0) << "pred_mask min:" << min_pred_mask << " max:" << max_pred_mask << ";";
+
+        if (!prediction.pred_boxes.empty())
+        {
+            os << "pred_boxes:";
+            for (const cv::Rect &box : prediction.pred_boxes)
+            {
+                os << box << ",";
+            }
+        }
+
+        return os;
+    }
+    explicit operator std::string()
+    {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
+};
+
 struct InferenceResult : public ResultBase {
     std::shared_ptr<InternalModelData> internalModelData;
     std::map<std::string, ov::Tensor> outputsData;
@@ -76,6 +116,34 @@ struct ClassificationResult : public ResultBase {
     ClassificationResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
 
+    friend std::ostream& operator<< (std::ostream& os, const ClassificationResult& prediction) {
+        for (const ClassificationResult::Classification& classification : prediction.topLabels) {
+            os << classification << ", ";
+        }
+        try {
+            os << prediction.saliency_map.get_shape() << ", ";
+        } catch (ov::Exception&) {
+            os << "[0], ";
+        }
+        try {
+            os << prediction.feature_vector.get_shape() << ", ";
+        } catch (ov::Exception&) {
+            os << "[0], ";
+        }
+        try {
+            os << prediction.raw_scores.get_shape();
+        } catch (ov::Exception&) {
+            os << "[0]";
+        }
+        return os;
+    }
+
+    explicit operator std::string() {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
+
     struct Classification {
         unsigned int id;
         std::string label;
@@ -83,16 +151,13 @@ struct ClassificationResult : public ResultBase {
 
         Classification(unsigned int id, const std::string& label, float score) : id(id), label(label), score(score) {}
 
-        friend std::ostream& operator<< (std::ostream& stream, const Classification& prediction)
-        {
-            stream << "(" << prediction.id << ", " << prediction.label << ", ";
-            stream << std::fixed;
-            stream << std::setprecision(3) << prediction.score << ")";
-            return stream;
+        friend std::ostream& operator<< (std::ostream& os, const Classification& prediction) {
+            return os << prediction.id << " (" << prediction.label << "): " << std::fixed << std::setprecision(3) << prediction.score;
         }
     };
 
     std::vector<Classification> topLabels;
+    ov::Tensor saliency_map, feature_vector, raw_scores;  // Contains "raw_scores", "saliency_map" and "feature_vector" model outputs if such exist
 };
 
 struct DetectedObject : public cv::Rect2f {
@@ -100,14 +165,10 @@ struct DetectedObject : public cv::Rect2f {
     std::string label;
     float confidence;
 
-    friend std::ostream& operator<< (std::ostream& stream, const DetectedObject& detection)
-    {
-        stream << "(" << int(detection.x) << ", " << int(detection.y) << ", " << int(detection.x + detection.width)
-            << ", " << int(detection.y + detection.height) << ", ";
-        stream << std::fixed;
-        stream << std::setprecision(3) << detection.confidence << ", ";
-        stream << std::setprecision(-1) << detection.labelID << ", " << detection.label << ")";
-        return stream;
+    friend std::ostream& operator<< (std::ostream& os, const DetectedObject& detection) {
+        return os << int(detection.x) << ", " << int(detection.y) << ", " << int(detection.x + detection.width)
+            << ", " << int(detection.y + detection.height) << ", "
+            << detection.labelID << " (" << detection.label << "): " << std::fixed << std::setprecision(3) << detection.confidence;
     }
 };
 
@@ -115,6 +176,30 @@ struct DetectionResult : public ResultBase {
     DetectionResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     std::vector<DetectedObject> objects;
+    ov::Tensor saliency_map, feature_vector;  // Contan "saliency_map" and "feature_vector" model outputs if such exist
+
+    friend std::ostream& operator<< (std::ostream& os, const DetectionResult& prediction) {
+        for (const DetectedObject& obj : prediction.objects) {
+            os << obj << "; ";
+        }
+        try {
+            os << prediction.saliency_map.get_shape() << "; ";
+        } catch (ov::Exception&) {
+            os << "[0]; ";
+        }
+        try {
+            os << prediction.feature_vector.get_shape();
+        } catch (ov::Exception&) {
+            os << "[0]";
+        }
+        return os;
+    }
+
+    explicit operator std::string() {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
 };
 
 struct RetinaFaceDetectionResult : public DetectionResult {
@@ -126,34 +211,21 @@ struct RetinaFaceDetectionResult : public DetectionResult {
 struct SegmentedObject : DetectedObject {
     cv::Mat mask;
 
-    friend std::ostream& operator<< (std::ostream& stream, const SegmentedObject& segmentation)
-    {
-        stream << "(" << int(segmentation.x) << ", " << int(segmentation.y) << ", " << int(segmentation.x + segmentation.width)
-            << ", " << int(segmentation.y + segmentation.height) << ", ";
-        stream << std::fixed;
-        stream << std::setprecision(3) << segmentation.confidence << ", ";
-        stream << std::setprecision(-1) << segmentation.labelID << ", " << segmentation.label << ", " << cv::countNonZero(segmentation.mask > 0.5) << ")";
-        return stream;
+    friend std::ostream& operator<< (std::ostream& os, const SegmentedObject& prediction) {
+        return os << static_cast<const DetectedObject&>(prediction) << ", " << cv::countNonZero(prediction.mask > 0.5);
     }
 };
 
 struct SegmentedObjectWithRects : SegmentedObject {
-    std::vector<cv::RotatedRect> rotated_rects;
+    cv::RotatedRect rotated_rect;
 
     SegmentedObjectWithRects(const SegmentedObject& segmented_object) : SegmentedObject(segmented_object) {}
 
-    friend std::ostream& operator<< (std::ostream& stream, const SegmentedObjectWithRects& segmentation)
-    {
-        stream << "(" << int(segmentation.x) << ", " << int(segmentation.y) << ", " << int(segmentation.x + segmentation.width)
-            << ", " << int(segmentation.y + segmentation.height) << ", ";
-        stream << std::fixed;
-        stream << std::setprecision(3) << segmentation.confidence << ", ";
-        stream << segmentation.labelID << ", " << segmentation.label << ", " << cv::countNonZero(segmentation.mask > 0.5);
-        for (const cv::RotatedRect& rect : segmentation.rotated_rects) {
-            stream << ", RotatedRect: " << rect.center.x << ' ' << rect.center.y << ' ' <<  rect.size.width << ' ' << rect.size.height << ' ' << rect.angle;
-        }
-        stream << ")";
-        return stream;
+    friend std::ostream& operator<< (std::ostream& os, const SegmentedObjectWithRects& prediction) {
+        os << static_cast<const SegmentedObject&>(prediction) << std::fixed << std::setprecision(3);
+        auto rect = prediction.rotated_rect;
+        os << ", RotatedRect: " << rect.center.x << ' ' << rect.center.y << ' ' <<  rect.size.width << ' ' << rect.size.height << ' ' << rect.angle;
+        return os;
     }
 };
 
@@ -165,20 +237,15 @@ static inline std::vector<SegmentedObjectWithRects> add_rotated_rects(std::vecto
         cv::Mat mask;
         segmented_object.mask.convertTo(mask, CV_8UC1);
         std::vector<std::vector<cv::Point>> contours;
-        std::vector<cv::Vec4i> hierarchies;
-        cv::findContours(mask, contours, hierarchies, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE);
-        if (hierarchies.empty()) {
-            continue;
+        cv::findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+        std::vector<cv::Point> contour = {};
+        for (size_t i = 0; i < contours.size(); i++) {
+            contour.insert(contour.end(), contours[i].begin(), contours[i].end());
         }
-        for (size_t i = 0; i < contours.size(); ++i) {
-            if (hierarchies[i][3] != -1) {
-                continue;
-            }
-            if (contours[i].size() <= 2 || cv::contourArea(contours[i]) < 1.0) {
-                continue;
-            }
-            objects_with_rects.back().rotated_rects.push_back(cv::minAreaRect(contours[i]));
-        }
+        std::vector<cv::Point> hull;
+        cv::convexHull(contour, hull);
+        objects_with_rects.back().rotated_rect = cv::minAreaRect(hull);
     }
     return objects_with_rects;
 }
@@ -187,19 +254,98 @@ struct InstanceSegmentationResult : ResultBase {
     InstanceSegmentationResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     std::vector<SegmentedObject> segmentedObjects;
+    // Contan per class saliency_maps and "feature_vector" model output if feature_vector exists
+    std::vector<cv::Mat_<std::uint8_t>> saliency_map;
+    ov::Tensor feature_vector;
 };
 
 struct ImageResult : public ResultBase {
     ImageResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
     cv::Mat resultImage;
+    friend std::ostream& operator<< (std::ostream& os, const ImageResult& prediction) {
+        cv::Mat predicted_mask[] = {prediction.resultImage};
+        int nimages = 1;
+        int *channels = nullptr;
+        cv::Mat mask;
+        cv::Mat outHist;
+        int dims = 1;
+        int histSize[] = {256};
+        float range[] = {0, 256};
+        const float *ranges[] = {range};
+        cv::calcHist(predicted_mask, nimages, channels, mask, outHist, dims, histSize, ranges);
+
+        os << std::fixed << std::setprecision(3);
+        for (int i = 0; i < range[1]; ++i) {
+            const float count = outHist.at<float>(i);
+            if (count > 0) {
+                os << i << ": " << count / prediction.resultImage.total() << ", ";
+            }
+        }
+        return os;
+    }
+    explicit operator std::string() {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
 };
 
 struct ImageResultWithSoftPrediction : public ImageResult {
     ImageResultWithSoftPrediction(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ImageResult(frameId, metaData) {}
     cv::Mat soft_prediction;
+    // Contain per class saliency_maps and "feature_vector" model output if feature_vector exists
+    cv::Mat saliency_map;  // Requires return_soft_prediction==true
+    ov::Tensor feature_vector;
+    friend std::ostream& operator<< (std::ostream& os, const ImageResultWithSoftPrediction& prediction) {
+        os << static_cast<const ImageResult&>(prediction) << '[';
+        for (int i = 0; i < prediction.soft_prediction.dims; ++i) {
+            os << prediction.soft_prediction.size[i] << ',';
+        }
+        os << prediction.soft_prediction.channels() << "], [";
+        if (prediction.saliency_map.data) {
+            for (int i = 0; i < prediction.saliency_map.dims; ++i) {
+                os << prediction.saliency_map.size[i] << ',';
+            }
+            os << prediction.saliency_map.channels() << "], ";
+        } else {
+            os << "0], ";
+        }
+        try {
+            os << prediction.feature_vector.get_shape();
+        } catch (ov::Exception&) {
+            os << "[0]";
+        }
+        return os;
+    }
 };
+
+struct Contour {
+    std::string label;
+    float probability;
+    std::vector<cv::Point> shape;
+
+    friend std::ostream& operator<< (std::ostream& os, const Contour& contour) {
+        return os << contour.label << ": " << std::fixed << std::setprecision(3) << contour.probability << ", " << contour.shape.size();
+    }
+};
+
+static inline std::vector<Contour> getContours(const std::vector<SegmentedObject>& segmentedObjects) {
+    std::vector<Contour> combined_contours;
+    std::vector<std::vector<cv::Point>> contours;
+    for (const SegmentedObject& obj : segmentedObjects) {
+        cv::findContours(obj.mask, contours, cv::RETR_EXTERNAL,
+                        cv::CHAIN_APPROX_NONE);
+        // Assuming one contour output for findContours. Based on OTX this is a safe
+        // assumption
+        if (contours.size() != 1) {
+            throw std::runtime_error("findContours() must have returned only one contour");
+        }
+        combined_contours.push_back({obj.label, obj.confidence, contours[0]});
+    }
+    return combined_contours;
+}
 
 struct HumanPose {
     std::vector<cv::Point2f> keypoints;

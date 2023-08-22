@@ -95,7 +95,7 @@ TEST_P(ClassificationModelParameterizedTest, TestClassificationCustomConfig) {
     }
     ov::AnyMap configuration = {
         {"layout", "data:HWC"},
-        {"resize_type", "standard"}, //fit_to_window
+        {"resize_type", "fit_to_window"},
         {"labels", mock_labels}
     };
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);

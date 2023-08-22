@@ -39,6 +39,12 @@
 std::string ClassificationModel::ModelType = "Classification";
 
 namespace {
+constexpr char indices_name[]{"indices"};
+constexpr char scores_name[]{"scores"};
+constexpr char saliency_map_name[]{"saliency_map"};
+constexpr char feature_vector_name[]{"feature_vector"};
+constexpr char raw_scores_name[]{"raw_scores"};
+
 float sigmoid(float x) noexcept {
     return 1.0f / (1.0f + std::exp(-x));
 }
@@ -72,34 +78,24 @@ void softmax(float* x_start, float* x_end, float eps = 1e-9) {
     }
 }
 
-bool get_bool_config_value(std::string field_name, std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration) {
-    auto value_iter = configuration.find(field_name);
-    if (value_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", field_name)) {
-            std::string val = model->get_rt_info<std::string>("model_info", field_name);
-            return val == "True" || val == "YES";
-        }
-    }
-    else {
-        std::string val = value_iter->second.as<std::string>();
-        return val == "True" || val == "YES";
-    }
-    return false;
-}
-
 void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t topk, bool add_raw_scores) {
     auto nodes = model->get_ops();
-    auto softmaxNodeIt = std::find_if(std::begin(nodes), std::end(nodes), [](const std::shared_ptr<ov::Node>& op) {
-        return std::string(op->get_type_name()) == "Softmax"; // TODO: it will not work for Vision Transformers, for example
-    });
-
     std::shared_ptr<ov::Node> softmaxNode;
-    if (softmaxNodeIt == nodes.end()) {
+    for (size_t i = 0; i < model->outputs().size(); ++i) {
+        auto output_node = model->get_output_op(i)->input(0).get_source_output().get_node_shared_ptr();
+        if (std::string(output_node->get_type_name()) == "Softmax") {
+            softmaxNode = output_node;
+        }
+        else if (std::string(output_node->get_type_name()) == "TopK") {
+            return;
+        }
+    }
+
+    if (!softmaxNode) {
         auto logitsNode = model->get_output_op(0)->input(0).get_source_output().get_node();
         softmaxNode = std::make_shared<ov::op::v1::Softmax>(logitsNode->output(0), 1);
-    } else {
-        softmaxNode = *softmaxNodeIt;
     }
+
     const auto k = std::make_shared<ov::op::v0::Constant>(ov::element::i32, ov::Shape{}, std::vector<size_t>{topk});
     std::shared_ptr<ov::Node> topkNode = std::make_shared<ov::op::v3::TopK>(softmaxNode,
                                                                             k,
@@ -107,89 +103,89 @@ void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t to
                                                                             ov::op::v3::TopK::Mode::MAX,
                                                                             ov::op::v3::TopK::SortType::SORT_VALUES);
 
-    auto indices = std::make_shared<ov::op::v0::Result>(topkNode->output(0));
-    auto scores = std::make_shared<ov::op::v0::Result>(topkNode->output(1));
-    ov::ResultVector results_vector;
+    auto indices = topkNode->output(0);
+    auto scores = topkNode->output(1);
+    ov::OutputVector outputs_vector;
     if (add_raw_scores) {
-        auto raw_scores = std::make_shared<ov::op::v0::Result>(softmaxNode->output(0));
-        results_vector = {scores, indices, raw_scores};
+        auto raw_scores = softmaxNode->output(0);
+        outputs_vector = {scores, indices, raw_scores};
     }
     else {
-        results_vector = {scores, indices};
+        outputs_vector = {scores, indices};
     }
-    model = std::make_shared<ov::Model>(results_vector, model->get_parameters(), "classification");
+    for (const ov::Output<ov::Node>& output : model->outputs()) {
+        if (output.get_names().count(saliency_map_name) > 0 || output.get_names().count(feature_vector_name) > 0) {
+            outputs_vector.push_back(output);
+        }
+    }
+    model = std::make_shared<ov::Model>(outputs_vector, model->get_parameters(), "classification");
 
     // manually set output tensors name for created topK node
-    model->outputs()[0].set_names({"indices"});
-    model->outputs()[1].set_names({"scores"});
+    model->outputs()[0].set_names({indices_name});
+    model->outputs()[1].set_names({scores_name});
     if (add_raw_scores) {
-        model->outputs()[2].set_names({"raw_scores"});
+        model->outputs()[2].set_names({raw_scores_name});
     }
 
     // set output precisions
     ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
-    ppp.output("indices").tensor().set_element_type(ov::element::i32);
-    ppp.output("scores").tensor().set_element_type(ov::element::f32);
+    ppp.output(indices_name).tensor().set_element_type(ov::element::i32);
+    ppp.output(scores_name).tensor().set_element_type(ov::element::f32);
     if (add_raw_scores) {
-        ppp.output("raw_scores").tensor().set_element_type(ov::element::f32);
+        ppp.output(raw_scores_name).tensor().set_element_type(ov::element::f32);
     }
     model = ppp.build();
 }
+
+std::vector<std::string> get_non_xai_names(const std::vector<ov::Output<ov::Node>>& outputs) {
+    std::vector<std::string> outputNames;
+    outputNames.reserve(std::max(1, int(outputs.size()) - 2));
+    for (const ov::Output<ov::Node>& output : outputs) {
+        if (output.get_names().count(saliency_map_name) > 0) {
+            continue;
+        } if (output.get_names().count(feature_vector_name) > 0) {
+            continue;
+        }
+        outputNames.push_back(output.get_any_name());
+    }
+    return outputNames;
+}
+
+void append_xai_names(const std::vector<ov::Output<ov::Node>>& outputs, std::vector<std::string>& outputNames) {
+    for (const ov::Output<ov::Node>& output : outputs) {
+        if (output.get_names().count(saliency_map_name) > 0) {
+            outputNames.emplace_back(saliency_map_name);
+        } else if (output.get_names().count(feature_vector_name) > 0) {
+            outputNames.push_back(feature_vector_name);
+        }
+    }
+}
+}
+
+void ClassificationModel::init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority) {
+    topk = get_from_any_maps("topk", top_priority, mid_priority, topk);
+    confidence_threshold = get_from_any_maps("confidence_threshold", top_priority, mid_priority, confidence_threshold);
+    multilabel = get_from_any_maps("multilabel", top_priority, mid_priority, multilabel);
+    output_raw_scores = get_from_any_maps("output_raw_scores", top_priority, mid_priority, output_raw_scores);
+    hierarchical = get_from_any_maps("hierarchical", top_priority, mid_priority, hierarchical);
+    hierarchical_config = get_from_any_maps("hierarchical_config", top_priority, mid_priority, hierarchical_config);
+    if (hierarchical) {
+        if (hierarchical_config.empty()) {
+            throw std::runtime_error("Error: empty hierarchical classification config");
+        }
+        hierarchical_info = HierarchicalConfig(hierarchical_config);
+        resolver = GreedyLabelsResolver(hierarchical_info);
+    }
 }
 
 ClassificationModel::ClassificationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
-    : ImageModel(model, configuration) {
-    auto topk_iter = configuration.find("topk");
-    if (topk_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "topk")) {
-            topk = model->get_rt_info<size_t>("model_info", "topk");
-        }
-    } else {
-        topk = topk_iter->second.as<size_t>();
-    }
-
-    auto thresh_iter = configuration.find("confidence_threshold");
-    if (thresh_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "confidence_threshold")) {
-            confidence_threshold = model->get_rt_info<float>("model_info", "confidence_threshold");
-        }
-    } else {
-        confidence_threshold = thresh_iter->second.as<float>();
-    }
-
-    multilabel = get_bool_config_value("multilabel", model, configuration);
-    hierarchical = get_bool_config_value("hierarchical", model, configuration);
-    output_raw_scores = get_bool_config_value("output_raw_scores", model, configuration);
-
-    auto config_iter = configuration.find("hierarchical_config");
-    if (config_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "hierarchical_config")) {
-            hierarchical_json_config = model->get_rt_info<std::string>("model_info", "hierarchical_config");
-        }
-    } else {
-        hierarchical_json_config = thresh_iter->second.as<std::string>();
-    }
-    if (hierarchical)  {
-        if (hierarchical_json_config.empty()) {
-            throw std::runtime_error("Error: empty hierarchical classification config");
-        }
-        hierarchical_config = HierarchicalConfig(hierarchical_json_config);
-        resolver = GreedyLabelsResolver(hierarchical_config);
-    }
+        : ImageModel(model, configuration) {
+    init_from_config(configuration, model->has_rt_info("model_info") ? model->get_rt_info<ov::AnyMap>("model_info") : ov::AnyMap{});
 }
 
 ClassificationModel::ClassificationModel(std::shared_ptr<InferenceAdapter>& adapter)
-    : ImageModel(adapter) {
-    const ov::AnyMap& configuration = adapter->getModelConfig();
-    auto topk_iter = configuration.find("topk");
-    if (topk_iter != configuration.end()) {
-        topk = topk_iter->second.as<size_t>();
-    }
-    auto multilabel_iter = configuration.find("multilabel");
-    if (multilabel_iter != configuration.end()) {
-        std::string val = multilabel_iter->second.as<std::string>();
-        multilabel = val == "True" || val == "YES";
-    }
+        : ImageModel(adapter) {
+    init_from_config(adapter->getModelConfig(), ov::AnyMap{});
 }
 
 void ClassificationModel::updateModelInfo() {
@@ -201,6 +197,7 @@ void ClassificationModel::updateModelInfo() {
     model->set_rt_info(hierarchical, "model_info", "hierarchical");
     model->set_rt_info(output_raw_scores, "model_info", "output_raw_scores");
     model->set_rt_info(confidence_threshold, "model_info", "confidence_threshold");
+    model->set_rt_info(hierarchical_config, "model_info", "hierarchical_config");
 }
 
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload, const std::string& device) {
@@ -246,21 +243,41 @@ std::unique_ptr<ClassificationModel> ClassificationModel::create_model(std::shar
 }
 
 std::unique_ptr<ResultBase> ClassificationModel::postprocess(InferenceResult& infResult) {
+    std::unique_ptr<ResultBase> result;
     if (multilabel) {
-        return get_multilabel_predictions(infResult);
+        result = get_multilabel_predictions(infResult, output_raw_scores);
+    } else if (hierarchical) {
+        result = get_hierarchical_predictions(infResult, output_raw_scores);
+    } else {
+        result = get_multiclass_predictions(infResult, output_raw_scores);
     }
-    else if (hierarchical) {
-        return get_hierarchical_predictions(infResult);
+
+    ClassificationResult* cls_res = static_cast<ClassificationResult*>(result.get());
+    auto saliency_map_iter = infResult.outputsData.find(saliency_map_name);
+    if (saliency_map_iter != infResult.outputsData.end()) {
+        cls_res->saliency_map = std::move(saliency_map_iter->second);
     }
-    return get_multiclass_predictions(infResult);
+    auto feature_vector_iter = infResult.outputsData.find(feature_vector_name);
+    if (feature_vector_iter != infResult.outputsData.end()) {
+        cls_res->feature_vector = std::move(feature_vector_iter->second);
+    }
+    return result;
 }
 
-std::unique_ptr<ResultBase> ClassificationModel::get_multilabel_predictions(InferenceResult& infResult) {
+std::unique_ptr<ResultBase> ClassificationModel::get_multilabel_predictions(InferenceResult& infResult, bool add_raw_scores) {
     const ov::Tensor& logitsTensor = infResult.outputsData.find(outputNames[0])->second;
     const float* logitsPtr = logitsTensor.data<float>();
 
     ClassificationResult* result = new ClassificationResult(infResult.frameId, infResult.metaData);
     auto retVal = std::unique_ptr<ResultBase>(result);
+
+    auto raw_scores = ov::Tensor();
+    float* raw_scoresPtr = nullptr;
+    if (add_raw_scores) {
+        raw_scores = ov::Tensor(logitsTensor.get_element_type(), logitsTensor.get_shape());
+        raw_scoresPtr = raw_scores.data<float>();
+        result->raw_scores = raw_scores;
+    }
 
     result->topLabels.reserve(labels.size());
     for (size_t i = 0; i < labels.size(); ++i) {
@@ -268,61 +285,87 @@ std::unique_ptr<ResultBase> ClassificationModel::get_multilabel_predictions(Infe
         if (score > confidence_threshold) {
             result->topLabels.emplace_back(i, labels[i], score);
         }
+        if (add_raw_scores) {
+            raw_scoresPtr[i] = score;
+        }
     }
 
     return retVal;
 }
 
-std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(InferenceResult& infResult) {
+std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(InferenceResult& infResult, bool add_raw_scores) {
+    ClassificationResult* result = new ClassificationResult(infResult.frameId, infResult.metaData);
+
     const ov::Tensor& logitsTensor = infResult.outputsData.find(outputNames[0])->second;
     float* logitsPtr = logitsTensor.data<float>();
+
+    auto raw_scores = ov::Tensor();
+    float* raw_scoresPtr = nullptr;
+    if (add_raw_scores) {
+        raw_scores = ov::Tensor(logitsTensor.get_element_type(), logitsTensor.get_shape());
+        logitsTensor.copy_to(raw_scores);
+        raw_scoresPtr = raw_scores.data<float>();
+        result->raw_scores = raw_scores;
+    }
 
     std::vector<std::reference_wrapper<std::string>> predicted_labels;
     std::vector<float> predicted_scores;
 
-    predicted_labels.reserve(hierarchical_config.num_multiclass_heads + hierarchical_config.num_multilabel_heads);
-    predicted_scores.reserve(hierarchical_config.num_multiclass_heads + hierarchical_config.num_multilabel_heads);
+    predicted_labels.reserve(hierarchical_info.num_multiclass_heads + hierarchical_info.num_multilabel_heads);
+    predicted_scores.reserve(hierarchical_info.num_multiclass_heads + hierarchical_info.num_multilabel_heads);
 
-    for (size_t i = 0; i < hierarchical_config.num_multiclass_heads; ++i) {
-        const auto& logits_range = hierarchical_config.head_idx_to_logits_range[i];
+    for (size_t i = 0; i < hierarchical_info.num_multiclass_heads; ++i) {
+        const auto& logits_range = hierarchical_info.head_idx_to_logits_range[i];
         softmax(logitsPtr + logits_range.first, logitsPtr + logits_range.second);
+        if (add_raw_scores) {
+            softmax(raw_scoresPtr + logits_range.first, raw_scoresPtr + logits_range.second);
+        }
         size_t j = fargmax(logitsPtr + logits_range.first, logitsPtr + logits_range.second);
-        predicted_labels.push_back(hierarchical_config.all_groups[i][j]);
+        predicted_labels.push_back(hierarchical_info.all_groups[i][j]);
         predicted_scores.push_back(logitsPtr[logits_range.first + j]);
     }
 
-    if (hierarchical_config.num_multilabel_heads) {
-        const float* mlc_logitsPtr = logitsPtr + hierarchical_config.num_single_label_classes;
+    if (hierarchical_info.num_multilabel_heads) {
+        const float* mlc_logitsPtr = logitsPtr + hierarchical_info.num_single_label_classes;
 
-        for (size_t i = 0; i < hierarchical_config.num_multilabel_heads; ++i) {
+        for (size_t i = 0; i < hierarchical_info.num_multilabel_heads; ++i) {
             float score = sigmoid(mlc_logitsPtr[i]);
             if (score > confidence_threshold) {
                 predicted_scores.push_back(score);
-                predicted_labels.push_back(hierarchical_config.all_groups[hierarchical_config.num_multiclass_heads + i][0]);
+                predicted_labels.push_back(hierarchical_info.all_groups[hierarchical_info.num_multiclass_heads + i][0]);
+            }
+            if (add_raw_scores) {
+                raw_scoresPtr[hierarchical_info.num_single_label_classes + i] = score;
             }
         }
     }
 
     auto resolved_labels = resolver.resolve_labels(predicted_labels, predicted_scores);
 
-    ClassificationResult* result = new ClassificationResult(infResult.frameId, infResult.metaData);
     auto retVal = std::unique_ptr<ResultBase>(result);
     result->topLabels.reserve(resolved_labels.first.size());
     for (size_t i = 0; i < resolved_labels.first.size(); ++i) {
-        result->topLabels.emplace_back(hierarchical_config.label_to_idx[resolved_labels.first[i]], resolved_labels.first[i], resolved_labels.second[i]);
+        result->topLabels.emplace_back(hierarchical_info.label_to_idx[resolved_labels.first[i]], resolved_labels.first[i], resolved_labels.second[i]);
     }
 
     return retVal;
 }
 
-std::unique_ptr<ResultBase> ClassificationModel::get_multiclass_predictions(InferenceResult& infResult) {
-    const ov::Tensor& indicesTensor = infResult.outputsData.find(outputNames[0])->second;
+std::unique_ptr<ResultBase> ClassificationModel::get_multiclass_predictions(InferenceResult& infResult, bool add_raw_scores) {
+    const ov::Tensor& indicesTensor = infResult.outputsData.find(indices_name)->second;
     const int* indicesPtr = indicesTensor.data<int>();
-    const ov::Tensor& scoresTensor = infResult.outputsData.find(outputNames[1])->second;
+    const ov::Tensor& scoresTensor = infResult.outputsData.find(scores_name)->second;
     const float* scoresPtr = scoresTensor.data<float>();
 
     ClassificationResult* result = new ClassificationResult(infResult.frameId, infResult.metaData);
     auto retVal = std::unique_ptr<ResultBase>(result);
+
+    if (add_raw_scores) {
+        const ov::Tensor& logitsTensor = infResult.outputsData.find(raw_scores_name)->second;
+        result->raw_scores = ov::Tensor(logitsTensor.get_element_type(), logitsTensor.get_shape());
+        logitsTensor.copy_to(result->raw_scores);
+        result->raw_scores.set_shape(ov::Shape({result->raw_scores.get_size()}));
+    }
 
     result->topLabels.reserve(scoresTensor.get_size());
     for (size_t i = 0; i < scoresTensor.get_size(); ++i) {
@@ -362,14 +405,13 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
                                         scale_values);
 
         ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
-        ppp.output().tensor().set_element_type(ov::element::f32);
         model = ppp.build();
         useAutoResize = true; // temporal solution for classification
     }
 
     // --------------------------- Prepare output  -----------------------------------------------------
-    if (model->outputs().size() != 1 && model->outputs().size() != 2) {
-        throw std::logic_error("Classification model wrapper supports topologies with 1 or 2 outputs");
+    if (model->outputs().size() > 5) {
+        throw std::logic_error("Classification model wrapper supports topologies with up to 4 outputs");
     }
 
     if (model->outputs().size() == 1) {
@@ -401,25 +443,28 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
     }
 
     if (multilabel || hierarchical) {
-        outputNames = {model->output().get_any_name()};
         embedded_processing = true;
+        outputNames = get_non_xai_names(model->outputs());
+        append_xai_names(model->outputs(), outputNames);
         return;
     }
 
-    addOrFindSoftmaxAndTopkOutputs(model, topk, output_raw_scores);
+    if (!embedded_processing) {
+        addOrFindSoftmaxAndTopkOutputs(model, topk, output_raw_scores);
+    }
     embedded_processing = true;
 
-    outputNames = {"indices", "scores"};
+    outputNames = {indices_name, scores_name};
     if (output_raw_scores) {
         outputNames.emplace_back("raw_scores");
     }
+    append_xai_names(model->outputs(), outputNames);
 }
 
 std::unique_ptr<ClassificationResult> ClassificationModel::infer(const ImageInputData& inputData) {
     auto result = ModelBase::infer(static_cast<const InputData&>(inputData));
     return std::unique_ptr<ClassificationResult>(static_cast<ClassificationResult*>(result.release()));
 }
-
 
 HierarchicalConfig::HierarchicalConfig(const std::string& json_repr)  {
     nlohmann::json data = nlohmann::json::parse(json_repr);

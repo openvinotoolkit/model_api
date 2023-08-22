@@ -16,6 +16,7 @@
 
 #include <models/classification_model.h>
 #include <models/detection_model.h>
+#include <models/segmentation_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
 
@@ -31,7 +32,7 @@ struct ModelData {
     std::string type;
 };
 
-class ClassificationModelParameterizedTest : public testing::TestWithParam<ModelData> {
+class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
 };
 
 template<typename... Args>
@@ -58,8 +59,7 @@ std::vector<ModelData> GetTestData(const std::string& path)
     input >> j;
     return j;
 }
-
-TEST_P(ClassificationModelParameterizedTest, SynchronousInference)
+TEST_P(ModelParameterizedTest, SynchronousInference)
 {
     cv::Mat image = cv::imread(DATA_DIR + "/" + IMAGE_PATH);
     if (!image.data) {
@@ -83,10 +83,14 @@ TEST_P(ClassificationModelParameterizedTest, SynchronousInference)
         std::unique_ptr<ClassificationResult> result = model->infer(image);
         ASSERT_GT(result->topLabels.size(), 0);
         EXPECT_GT(result->topLabels.front().score, 0.0f);
+    } else if ("SegmentationModel" == GetParam().type) {
+        auto model = SegmentationModel::create_model(DATA_DIR + "/" + model_path);
+        auto result = model->infer(image)->asRef<ImageResultWithSoftPrediction>();
+        ASSERT_GT(model->getContours(result).size(), 0);
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ClassificationModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
+INSTANTIATE_TEST_SUITE_P(TestSanityPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
 
 class InputParser{
     public:

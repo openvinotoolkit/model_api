@@ -16,13 +16,13 @@
 import numpy as np
 
 from .detection_model import DetectionModel
-from .utils import Detection
+from .utils import Detection, DetectionResult
 
 
 class SSD(DetectionModel):
     __model__ = "SSD"
 
-    def __init__(self, inference_adapter, configuration=None, preload=False):
+    def __init__(self, inference_adapter, configuration=dict(), preload=False):
         super().__init__(inference_adapter, configuration, preload)
         self.image_info_blob_name = (
             self.image_info_blob_names[0]
@@ -41,7 +41,11 @@ class SSD(DetectionModel):
         detections = self._parse_outputs(outputs)
         detections = self._resize_detections(detections, meta)
         detections = self._add_label_names(detections)
-        return detections
+        return DetectionResult(
+            detections,
+            outputs.get(_saliency_map_name, np.ndarray(0)),
+            outputs.get(_feature_vector_name, np.ndarray(0)),
+        )
 
     def _get_output_parser(
         self, image_blob_name, bboxes="bboxes", labels="labels", scores="scores"
@@ -171,3 +175,7 @@ class BoxesLabelsParser:
             for label, score, bbox in zip(labels, scores, bboxes)
         ]
         return detections
+
+
+_saliency_map_name = "saliency_map"
+_feature_vector_name = "feature_vector"
