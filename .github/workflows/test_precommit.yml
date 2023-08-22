@@ -1,21 +1,11 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 name: Precommit - Test
-
-on:
-  pull_request:
-
+on: pull_request
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
   Python-Code-Quality:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -27,7 +17,7 @@ jobs:
       run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
     - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
         cache: pip
     - name: Create and start a virtual environment
       run: |
@@ -47,17 +37,12 @@ jobs:
         source venv/bin/activate
         isort --check .
   Python-Precommit:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
         cache: pip
     - name: Create and start a virtual environment
       run: |
@@ -84,17 +69,12 @@ jobs:
           # missingInclude: cppcheck can't find stl, openvino, opencv
           other_options: --suppress=missingInclude -Imodel_api/cpp/models/include -Imodel_api/cpp/utils/include -Imodel_api/cpp/pipelines/include --check-config
   CPP-Precommit:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
         cache: pip
     - name: Create and start a virtual environment
       run: |
@@ -120,17 +100,12 @@ jobs:
       run: |
         build/test_sanity -d data -p tests/cpp/precommit/public_scope.json && build/test_model_config -d data
   CPP-Windows-Precommit:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
         cache: pip
     - name: Create and start a virtual environment
       shell: bash
@@ -183,7 +158,6 @@ jobs:
             python-version: 3.9
           - os: macos-12
             python-version: '3.10'
-
     runs-on: ${{ matrix.os }}
     steps:
     - name: Set up docker for macOS
