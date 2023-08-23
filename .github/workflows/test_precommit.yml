@@ -3,7 +3,6 @@ on: pull_request
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
-
 jobs:
   Python-Code-Quality:
     runs-on: ubuntu-latest
@@ -164,6 +163,7 @@ jobs:
       if: startsWith(matrix.os, 'macos-1')
       run: |
         brew install docker
+        brew install qemu
         colima start
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
