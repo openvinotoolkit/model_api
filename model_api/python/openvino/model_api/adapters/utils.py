@@ -19,7 +19,7 @@ from typing import Optional
 
 import numpy as np
 import openvino.runtime as ov
-from openvino.runtime import Output, Type, layout_helpers
+from openvino.runtime import Output, Type, layout_helpers, OVAny
 from openvino.runtime import opset10 as opset
 from openvino.runtime.utils.decorators import custom_preprocess_function
 
@@ -378,3 +378,34 @@ def resize_image_letterbox(size, interpolation, pad_value):
             pad_value=pad_value,
         )
     )
+
+
+def load_parameters_from_onnx(onnx_model):
+    parameters = {}
+    def insert_hiararchical(keys, val, root_dict):
+        if len(keys) == 1:
+            root_dict[keys[0]] = val
+            return
+        if keys[0] not in root_dict:
+            root_dict[keys[0]] = {}
+        insert_hiararchical(keys[1:], val, root_dict[keys[0]])
+
+    for prop in onnx_model.metadata_props:
+        keys = prop.key.split()
+        if "model_info" in keys:
+            insert_hiararchical(keys, prop.value, parameters)
+
+    return parameters
+
+
+def get_rt_info_from_dict(rt_info_dict, path):
+    value = rt_info_dict
+    try:
+        value = rt_info_dict
+        for item in path:
+            value = value[item]
+        return OVAny(value)
+    except KeyError:
+        raise RuntimeError(
+            "Cannot get runtime attribute. Path to runtime attribute is incorrect."
+        )
