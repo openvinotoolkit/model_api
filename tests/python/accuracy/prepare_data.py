@@ -70,7 +70,9 @@ async def main():
             download_otx_model(client, otx_models_dir, "mlc_efficient_v2s_voc"),
             download_otx_model(client, otx_models_dir, "det_mobilenetv2_atss_bccd"),
             download_otx_model(client, otx_models_dir, "cls_mobilenetv3_large_cars"),
-            download_otx_model(client, otx_models_dir, "cls_mobilenetv3_large_cars", "onnx"),
+            download_otx_model(
+                client, otx_models_dir, "cls_mobilenetv3_large_cars", "onnx"
+            ),
             download_otx_model(client, otx_models_dir, "cls_efficient_b0_cars"),
             download_otx_model(client, otx_models_dir, "cls_efficient_v2s_cars"),
             download_otx_model(client, otx_models_dir, "Lite-hrnet-18"),
