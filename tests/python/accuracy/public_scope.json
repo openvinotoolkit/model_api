@@ -100,7 +100,7 @@
         ]
     },
     {
-        "name": "otx_models/det_mobilenetv2_atss_bccd.onnx",
+        "name": "otx_models/det_mobilenetv2_atss_bccd_onnx.onnx",
         "type": "DetectionModel",
         "test_data": [
             {
@@ -220,7 +220,7 @@
         ]
     },
     {
-        "name": "otx_models/is_efficientnetb2b_maskrcnn_coco_reduced.onnx",
+        "name": "otx_models/is_efficientnetb2b_maskrcnn_coco_reduced_onnx.onnx",
         "type": "MaskRCNNModel",
         "test_data": [
             {
