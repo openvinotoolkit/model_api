@@ -79,6 +79,7 @@ async def main():
             download_otx_model(client, otx_models_dir, "Lite-hrnet-18"),
             download_otx_model(client, otx_models_dir, "Lite-hrnet-18_mod2"),
             download_otx_model(client, otx_models_dir, "Lite-hrnet-s_mod2"),
+            download_otx_model(client, otx_models_dir, "Lite-hrnet-s_mod2", "onnx"),
             download_otx_model(client, otx_models_dir, "Lite-hrnet-x-mod3"),
             download_otx_model(
                 client, otx_models_dir, "is_efficientnetb2b_maskrcnn_coco_reduced"
@@ -97,12 +98,12 @@ async def main():
             download_otx_model(
                 client, otx_models_dir, "segmentation_model_with_xai_head"
             ),
-            download_otx_model(client, args.data_dir, "maskrcnn_model_with_xai_head"),
-            download_otx_model(client, args.data_dir, "maskrcnn_xai_tiling"),
-            download_otx_model(client, args.data_dir, "tile_classifier"),
-            download_otx_model(client, args.data_dir, "anomaly_padim_bottle_mvtec"),
-            download_otx_model(client, args.data_dir, "anomaly_stfpm_bottle_mvtec"),
-            download_otx_model(client, args.data_dir, "deit-tiny"),
+            download_otx_model(client, otx_models_dir, "maskrcnn_model_with_xai_head"),
+            download_otx_model(client, otx_models_dir, "maskrcnn_xai_tiling"),
+            download_otx_model(client, otx_models_dir, "tile_classifier"),
+            download_otx_model(client, otx_models_dir, "anomaly_padim_bottle_mvtec"),
+            download_otx_model(client, otx_models_dir, "anomaly_stfpm_bottle_mvtec"),
+            download_otx_model(client, otx_models_dir, "deit-tiny"),
         )
 
 
