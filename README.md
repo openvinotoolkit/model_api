@@ -24,22 +24,22 @@ Model API searches for additional information required for model inference, data
   ```
 
 - Build library:
-   - Create `build` folder and navigate into it:
-   ```
-   mkdir build && cd build
-   ```
-   - Run cmake:
-   ```
-   cmake ../model_api/cpp -DOpenCV_DIR=<OpenCV cmake dir> -DOpenVINO_DIR=<OpenVINO cmake dir>
-   ```
-   - Build:
-   ```
-   cmake --build . -j
-   ```
-   - To build a `.tar.gz` package with the library, run:
-   ```
-    make package
-    ```
+  - Create `build` folder and navigate into it:
+  ```
+  mkdir build && cd build
+  ```
+  - Run cmake:
+  ```
+  cmake ../model_api/cpp -DOpenCV_DIR=<OpenCV cmake dir> -DOpenVINO_DIR=<OpenVINO cmake dir>
+  ```
+  - Build:
+  ```
+  cmake --build . -j
+  ```
+  - To build a `.tar.gz` package with the library, run:
+  ```
+  cmake --build . --target package -j
+  ```
 
 ## Usage
 ### Python

@@ -29,7 +29,7 @@ from .utils import ClassificationResult
 class ClassificationModel(ImageModel):
     __model__ = "Classification"
 
-    def __init__(self, inference_adapter, configuration=None, preload=False):
+    def __init__(self, inference_adapter, configuration=dict(), preload=False):
         super().__init__(inference_adapter, configuration, preload=False)
         self._check_io_number(1, (1, 2, 3, 4, 5))
         if self.path_to_labels:
@@ -37,12 +37,14 @@ class ClassificationModel(ImageModel):
         if 1 == len(self.outputs):
             self._verify_signle_output()
 
+        self.raw_scores_name = _raw_scores_name
         if self.hierarchical:
             self.embedded_processing = True
             self.out_layer_names = _get_non_xai_names(self.outputs.keys())
             _append_xai_names(self.outputs.keys(), self.out_layer_names)
             if not self.hierarchical_config:
                 self.raise_error("Hierarchical classification config is empty.")
+            self.raw_scores_name = self.out_layer_names[0]
             self.hierarchical_info = json.loads(self.hierarchical_config)
             self.labels_resolver = GreedyLabelsResolver(self.hierarchical_info)
             if preload:
@@ -53,6 +55,7 @@ class ClassificationModel(ImageModel):
             self.embedded_processing = True
             self.out_layer_names = _get_non_xai_names(self.outputs.keys())
             _append_xai_names(self.outputs.keys(), self.out_layer_names)
+            self.raw_scores_name = self.out_layer_names[0]
             if preload:
                 self.load()
             return
@@ -64,7 +67,7 @@ class ClassificationModel(ImageModel):
 
         self.out_layer_names = ["indices", "scores"]
         if self.output_raw_scores:
-            self.out_layer_names.append("raw_scores")
+            self.out_layer_names.append(self.raw_scores_name)
         _append_xai_names(self.outputs.keys(), self.out_layer_names)
         if preload:
             self.load()
@@ -154,11 +157,38 @@ class ClassificationModel(ImageModel):
         else:
             result = self.get_multiclass_predictions(outputs)
 
+        raw_scores = np.ndarray(0)
+        if self.output_raw_scores:
+            raw_scores = self.get_all_probs(outputs[self.raw_scores_name])
+
         return ClassificationResult(
             result,
             outputs.get(_saliency_map_name, np.ndarray(0)),
             outputs.get(_feature_vector_name, np.ndarray(0)),
+            raw_scores,
         )
+
+    def get_all_probs(self, logits: np.ndarray):
+        if self.multilabel:
+            probs = sigmoid_numpy(logits.reshape(-1))
+        elif self.hierarchical:
+            logits = logits.reshape(-1)
+            probs = np.copy(logits)
+            cls_heads_info = self.hierarchical_info["cls_heads_info"]
+            for i in range(cls_heads_info["num_multiclass_heads"]):
+                logits_begin, logits_end = cls_heads_info["head_idx_to_logits_range"][
+                    str(i)
+                ]
+                probs[logits_begin:logits_end] = softmax_numpy(
+                    logits[logits_begin:logits_end]
+                )
+
+            if cls_heads_info["num_multilabel_classes"]:
+                logits_begin = cls_heads_info["num_single_label_classes"]
+                probs[logits_begin:] = sigmoid_numpy(logits[logits_begin:])
+        else:
+            probs = logits.reshape(-1)
+        return probs
 
     def get_hierarchical_predictions(self, logits: np.ndarray):
         predicted_labels = []
@@ -211,11 +241,19 @@ class ClassificationModel(ImageModel):
 
 
 def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
-    nodes = inference_adapter.model.get_ops()
     softmaxNode = None
-    for op in nodes:
-        if "Softmax" == op.get_type_name():
-            softmaxNode = op
+    for i in range(len(inference_adapter.model.outputs)):
+        output_node = (
+            inference_adapter.model.get_output_op(i)
+            .input(0)
+            .get_source_output()
+            .get_node()
+        )
+        if "Softmax" == output_node.get_type_name():
+            softmaxNode = output_node
+        elif "TopK" == output_node.get_type_name():
+            return
+
     if softmaxNode is None:
         logitsNode = (
             inference_adapter.model.get_output_op(0)
@@ -249,14 +287,14 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
     inference_adapter.model.outputs[0].tensor.set_names({"scores"})
     inference_adapter.model.outputs[1].tensor.set_names({"indices"})
     if output_raw_scores:
-        inference_adapter.model.outputs[2].tensor.set_names({"raw_scores"})
+        inference_adapter.model.outputs[2].tensor.set_names({_raw_scores_name})
 
     # set output precisions
     ppp = PrePostProcessor(inference_adapter.model)
     ppp.output("indices").tensor().set_element_type(Type.i32)
     ppp.output("scores").tensor().set_element_type(Type.f32)
     if output_raw_scores:
-        ppp.output("raw_scores").tensor().set_element_type(Type.f32)
+        ppp.output(_raw_scores_name).tensor().set_element_type(Type.f32)
     inference_adapter.model = ppp.build()
 
 
@@ -341,6 +379,7 @@ class GreedyLabelsResolver:
 
 _saliency_map_name = "saliency_map"
 _feature_vector_name = "feature_vector"
+_raw_scores_name = "raw_scores"
 
 
 def _get_non_xai_names(output_names):

@@ -80,13 +80,14 @@ protected:
     bool hierarchical = false;
     bool output_raw_scores = false;
     float confidence_threshold = 0.5f;
-    std::string hierarchical_json_config;
-    HierarchicalConfig hierarchical_config;
+    std::string hierarchical_config;
+    HierarchicalConfig hierarchical_info;
     GreedyLabelsResolver resolver;
 
+    void init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority);
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void updateModelInfo() override;
-    std::unique_ptr<ResultBase> get_multilabel_predictions(InferenceResult& infResult);
-    std::unique_ptr<ResultBase> get_multiclass_predictions(InferenceResult& infResult);
-    std::unique_ptr<ResultBase> get_hierarchical_predictions(InferenceResult& infResult);
+    std::unique_ptr<ResultBase> get_multilabel_predictions(InferenceResult& infResult, bool add_raw_scores);
+    std::unique_ptr<ResultBase> get_multiclass_predictions(InferenceResult& infResult, bool add_raw_scores);
+    std::unique_ptr<ResultBase> get_hierarchical_predictions(InferenceResult& infResult, bool add_raw_scores);
 };

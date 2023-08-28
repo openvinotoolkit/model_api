@@ -14,22 +14,56 @@
  limitations under the License.
 """
 
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
+
 import math
 from collections import namedtuple
+from typing import List, NamedTuple, Tuple, Union
 
 import cv2
 import numpy as np
 
 
+class AnomalyResult(NamedTuple):
+    """Results for anomaly models."""
+
+    anomaly_map: np.ndarray | None = None
+    pred_boxes: np.ndarray | None = None
+    pred_label: str | None = None
+    pred_mask: np.ndarray | None = None
+    pred_score: float | None = None
+
+    def _compute_min_max(self, tensor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        """Computes min and max values of the tensor."""
+        return tensor.min(), tensor.max()
+
+    def __str__(self) -> str:
+        assert self.anomaly_map is not None
+        assert self.pred_mask is not None
+        anomaly_map_min, anomaly_map_max = self._compute_min_max(self.anomaly_map)
+        pred_mask_min, pred_mask_max = self._compute_min_max(self.pred_mask)
+        return (
+            f"anomaly_map min:{anomaly_map_min:.3f} max:{anomaly_map_max};"
+            f"pred_score:{self.pred_score};"
+            f"pred_label:{self.pred_label};"
+            f"pred_mask min:{pred_mask_min} max:{pred_mask_max};"
+        )
+
+
 class ClassificationResult(
-    namedtuple("ClassificationResult", "top_labels saliency_map feature_vector")
+    namedtuple(
+        "ClassificationResult", "top_labels saliency_map feature_vector raw_scores"
+    )  # Contains "raw_scores", "saliency_map" and "feature_vector" model outputs if such exist
 ):
     def __str__(self):
         labels = ", ".join(
             f"{idx} ({label}): {confidence:.3f}"
             for idx, label, confidence in self.top_labels
         )
-        return f"{labels}, [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
+        return (
+            f"{labels}, [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}], "
+            f"[{','.join(str(i) for i in self.raw_scores.shape)}]"
+        )
 
 
 class Detection:
@@ -42,17 +76,18 @@ class Detection:
         self.id = int(id)
         self.str_label = str_label
 
-    def get_coords(self):
-        return self.xmin, self.ymin, self.xmax, self.ymax
-
-    def __to_str(self):
-        return f"({self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.score:.3f}, {self.id}, {self.str_label})"
-
     def __str__(self):
-        return self.__to_str()
+        return f"{self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.id} ({self.str_label}): {self.score:.3f}"
 
-    def __repr__(self):
-        return self.__to_str()
+
+class DetectionResult(
+    namedtuple(
+        "DetectionResult", "objects saliency_map feature_vector"
+    )  # Contan "saliency_map" and "feature_vector" model outputs if such exist
+):
+    def __str__(self):
+        obj_str = "; ".join(str(obj) for obj in self.objects)
+        return f"{obj_str}; [{','.join(str(i) for i in self.saliency_map.shape)}]; [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class SegmentedObject(Detection):
@@ -60,14 +95,8 @@ class SegmentedObject(Detection):
         super().__init__(xmin, ymin, xmax, ymax, score, id, str_label)
         self.mask = mask
 
-    def __to_str(self):
-        return f"({self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.score:.3f}, {self.id}, {self.str_label}, {(self.mask > 0.5).sum()})"
-
     def __str__(self):
-        return self.__to_str()
-
-    def __repr__(self):
-        return self.__to_str()
+        return f"{super().__str__()}, {(self.mask > 0.5).sum()}"
 
 
 class SegmentedObjectWithRects(SegmentedObject):
@@ -82,19 +111,27 @@ class SegmentedObjectWithRects(SegmentedObject):
             segmented_object.str_label,
             segmented_object.mask,
         )
-        self.rotated_rects = []
-
-    def __to_str(self):
-        res = f"({self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.score:.3f}, {self.id}, {self.str_label}, {(self.mask > 0.5).sum()}"
-        for rect in self.rotated_rects:
-            res += f", RotatedRect: {rect[0][0]:.3f} {rect[0][1]:.3f} {rect[1][0]:.3f} {rect[1][1]:.3f} {rect[2]:.3f}"
-        return res + ")"
 
     def __str__(self):
-        return self.__to_str()
+        res = super().__str__()
+        rect = self.rotated_rect
+        res += f", RotatedRect: {rect[0][0]:.3f} {rect[0][1]:.3f} {rect[1][0]:.3f} {rect[1][1]:.3f} {rect[2]:.3f}"
+        return res
 
-    def __repr__(self):
-        return self.__to_str()
+
+class InstanceSegmentationResult(NamedTuple):
+    segmentedObjects: List[Union[SegmentedObject, SegmentedObjectWithRects]]
+    # Contain per class saliency_maps and "feature_vector" model output if feature_vector exists
+    saliency_map: List[np.ndarray]
+    feature_vector: np.ndarray
+
+    def __str__(self):
+        obj_str = "; ".join(str(obj) for obj in self.segmentedObjects)
+        filled = 0
+        for cls_map in self.saliency_map:
+            if cls_map.size:
+                filled += 1
+        return f"{obj_str}; {filled}; [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 def add_rotated_rects(segmented_objects):
@@ -103,17 +140,28 @@ def add_rotated_rects(segmented_objects):
         objects_with_rects.append(SegmentedObjectWithRects(segmented_object))
         mask = segmented_object.mask.astype(np.uint8)
         contours, hierarchies = cv2.findContours(
-            mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE
+            mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
-        if hierarchies is None:
-            continue
-        for contour, hierarchy in zip(contours, hierarchies[0]):
-            if hierarchy[3] != -1:
-                continue
-            if len(contour) <= 2 or cv2.contourArea(contour) < 1.0:
-                continue
-            objects_with_rects[-1].rotated_rects.append(cv2.minAreaRect(contour))
+
+        contour = np.vstack(contours)
+        objects_with_rects[-1].rotated_rect = cv2.minAreaRect(contour)
     return objects_with_rects
+
+
+def get_contours(
+    segmentedObjects: List[Union[SegmentedObject, SegmentedObjectWithRects]]
+):
+    combined_contours = []
+    for obj in segmentedObjects:
+        contours, _ = cv2.findContours(
+            obj.mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+        )
+        # Assuming one contour output for findContours. Based on OTX this is a safe
+        # assumption
+        if len(contours) != 1:
+            raise RuntimeError("findContours() must have returned only one contour")
+        combined_contours.append(Contour(obj.str_label, obj.score, contours[0]))
+    return combined_contours
 
 
 def clip_detections(detections, size):
@@ -123,6 +171,37 @@ def clip_detections(detections, size):
         detection.xmax = min(max(round(detection.xmax), 0), size[1])
         detection.ymax = min(max(round(detection.ymax), 0), size[0])
     return detections
+
+
+class Contour(NamedTuple):
+    label: str
+    probability: float
+    shape: List[Tuple[int, int]]
+
+    def __str__(self):
+        return f"{self.label}: {self.probability:.3f}, {len(self.shape)}"
+
+
+class ImageResultWithSoftPrediction(NamedTuple):
+    resultImage: np.ndarray
+    soft_prediction: np.ndarray
+    # Contain per class saliency_maps and "feature_vector" model output if feature_vector exists
+    saliency_map: np.ndarray  # Requires return_soft_prediction==True
+    feature_vector: np.ndarray
+
+    def __str__(self):
+        outHist = cv2.calcHist(
+            [self.resultImage.astype(np.uint8)],
+            channels=None,
+            mask=None,
+            histSize=[256],
+            ranges=[0, 255],
+        )
+        hist = ""
+        for i, count in enumerate(outHist):
+            if count > 0:
+                hist += f"{i}: {count[0] / self.resultImage.size:.3f}, "
+        return f"{hist}[{','.join(str(i) for i in self.soft_prediction.shape)}], [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class DetectionWithLandmarks(Detection):

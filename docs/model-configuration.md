@@ -12,6 +12,15 @@ The list features only model wrappers which intoduce new configuration values in
 1. `resize_type`: str - crop, standard, fit_to_window or fit_to_window_letterbox
 1. `embedded_processing`: bool - flag that pre/postprocessing embedded
 1. `pad_value`: int - pad value for resize_image_letterbox embedded into a model
+
+#### `AnomalyDetection`
+
+1. `image_shape`: List - Input shape of the model
+1. `image_threshold`: float - Image threshold that is used for classifying an image as anomalous
+1. `pixel_threshold`: float - Pixel level threshold used to segment anomalous regions in the image
+1. `normalization_scale`: float - Scale by which the outputs are divided. Used to apply min-max normalization
+1. `task`: str - Outputs segmentation masks, bounding boxes, or anomaly score based on the task type
+
 #### `ClassificationModel`
 1. `topk`: int - number of most likely labels
 1. `labels`: List - list of class labels

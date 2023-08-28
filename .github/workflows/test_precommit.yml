@@ -1,37 +1,23 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-name: Precommit - Test
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+name: test_precommit
+on: pull_request
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
-
 jobs:
   Python-Code-Quality:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: git --no-pager diff --check $(git hash-object -t tree /dev/null)
       run: git --no-pager diff --check $(git hash-object -t tree /dev/null)
     - name: Prohibit non ASCII chars in file names
       run: test $(git diff --name-only --diff-filter=A -z $(git hash-object -t tree /dev/null) | LC_ALL=C tr -d '[ -~]\0' | wc -c) == 0
     - name: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
       run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
+        cache: pip
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
@@ -40,29 +26,23 @@ jobs:
       run: |
         source venv/bin/activate
         pip install --upgrade pip
-        pip install isort
-        pip install black
+        pip install isort black
     - name: Check style with black
       run: |
         source venv/bin/activate
-        black --check .
+        black --extend-exclude model_api/python/openvino/__init__.py --check .
     - name: Check style with isort
       run: |
         source venv/bin/activate
         isort --check .
   Python-Precommit:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
+        cache: pip
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
@@ -80,8 +60,7 @@ jobs:
     name: CPP-Code-Quality
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
       - name: cppcheck
         uses: chmorgan/cppcheck-action@main
         with:
@@ -89,18 +68,13 @@ jobs:
           # missingInclude: cppcheck can't find stl, openvino, opencv
           other_options: --suppress=missingInclude -Imodel_api/cpp/models/include -Imodel_api/cpp/utils/include -Imodel_api/cpp/pipelines/include --check-config
   CPP-Precommit:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
+        cache: pip
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
@@ -125,18 +99,13 @@ jobs:
       run: |
         build/test_sanity -d data -p tests/cpp/precommit/public_scope.json && build/test_model_config -d data
   CPP-Windows-Precommit:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
+        cache: pip
     - name: Create and start a virtual environment
       shell: bash
       run: |
@@ -172,24 +141,44 @@ jobs:
         .\build\Release\test_sanity.exe -d data -p tests\cpp\precommit\public_scope.json
         .\build\Release\test_model_config -d data
   serving_api:
-      strategy:
-        fail-fast: false
-        matrix:
-          python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
-          os: [ubuntu-20.04, ubuntu-latest]
-
-      runs-on: ${{ matrix.os }}
-      steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: serving_api
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install model_api/python/[ovms,tests]
-          python -c "from openvino.model_api.models import DetectionModel; DetectionModel.create_model('ssd_mobilenet_v1_fpn_coco').save('ovms_models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml')"
-          docker run -d --rm -v $GITHUB_WORKSPACE/ovms_models/:/models -p 9000:9000 -p 8000:8000 openvino/model_server:latest --model_path /models/ssd_mobilenet_v1_fpn_coco/ --model_name ssd_mobilenet_v1_fpn_coco --port 9000 --rest_port 8000 --log_level DEBUG --target_device CPU
-          python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
-          python examples/python/serving_api/run.py data/coco128/images/train2017/000000000009.jpg  # detects 4 objects
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, macos-11, macos-12]
+        python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
+        exclude:
+          # Maximum concurrent macOS jobs is 5
+          - os: macos-11
+            python-version: 3.8
+          - os: macos-11
+            python-version: 3.9
+          - os: macos-11
+            python-version: '3.10'
+          - os: macos-12
+            python-version: 3.9
+          - os: macos-12
+            python-version: '3.10'
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Set up docker for macOS
+      if: startsWith(matrix.os, 'macos-1')
+      run: |
+        brew install docker
+        # TODO: remove qemu reinstallation after https://github.com/actions/runner-images/issues/8104 is resolved
+        brew remove --ignore-dependencies qemu
+        curl -o qemu.rb https://raw.githubusercontent.com/Homebrew/homebrew-core/f88e30b3a23ef3735580f9b05535ce5a0a03c9e3/Formula/qemu.rb
+        brew install qemu.rb
+        colima start
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: pip
+    - name: serving_api
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install model_api/python/[ovms,tests]
+        python -c "from openvino.model_api.models import DetectionModel; DetectionModel.create_model('ssd_mobilenet_v1_fpn_coco').save('ovms_models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml')"
+        docker run -d --rm -v $GITHUB_WORKSPACE/ovms_models/:/models -p 9000:9000 -p 8000:8000 openvino/model_server:latest --model_path /models/ssd_mobilenet_v1_fpn_coco/ --model_name ssd_mobilenet_v1_fpn_coco --port 9000 --rest_port 8000 --log_level DEBUG --target_device CPU
+        python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
+        python examples/python/serving_api/run.py data/coco128/images/train2017/000000000009.jpg  # detects 4 objects

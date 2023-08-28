@@ -14,7 +14,7 @@
  limitations under the License.
 """
 
-
+from .anomaly import AnomalyDetection
 from .background_matting import (
     ImageMattingWithBackground,
     PortraitBackgroundMatting,
@@ -41,14 +41,20 @@ from .ssd import SSD
 from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
 from .utils import (
     RESIZE_TYPES,
+    AnomalyResult,
     ClassificationResult,
+    Contour,
     Detection,
+    DetectionResult,
     DetectionWithLandmarks,
+    ImageResultWithSoftPrediction,
     InputTransform,
+    InstanceSegmentationResult,
     OutputTransform,
     SegmentedObject,
     SegmentedObjectWithRects,
     add_rotated_rects,
+    get_contours,
 )
 from .yolo import YOLO, YOLOF, YOLOX, YoloV3ONNX, YoloV4
 
@@ -72,11 +78,14 @@ segmentation_models = [
 
 
 __all__ = [
+    "AnomalyDetection",
+    "AnomalyResult",
     "BertEmbedding",
     "BertNamedEntityRecognition",
     "BertQuestionAnswering",
     "CenterNet",
     "ClassificationModel",
+    "Contour",
     "CTPN",
     "Deblurring",
     "DetectionModel",
@@ -86,7 +95,9 @@ __all__ = [
     "HpeAssociativeEmbedding",
     "ImageMattingWithBackground",
     "ImageModel",
+    "ImageResultWithSoftPrediction",
     "InputTransform",
+    "InstanceSegmentationResult",
     "MaskRCNNModel",
     "Model",
     "MonoDepthModel",
@@ -111,10 +122,13 @@ __all__ = [
     "YOLOX",
     "ClassificationResult",
     "Detection",
+    "DetectionResult",
     "DetectionWithLandmarks",
-    "classification_models" "detection_models",
+    "classification_models",
+    "detection_models",
     "segmentation_models",
     "SegmentedObject",
     "SegmentedObjectWithRects",
     "add_rotated_rects",
+    "get_contours",
 ]

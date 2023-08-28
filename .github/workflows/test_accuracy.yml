@@ -1,31 +1,17 @@
-name: Test - Accuracy
-
-on:
-  workflow_dispatch:
-  schedule:
-    - cron:  '11 1 * * *'  # run every day at 1:11
-  pull_request:
-    branches: [ master ]
-
+name: test_accuracy
+on: pull_request
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
-
 jobs:
   test_accuracy:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [3.8]
-        os: [ubuntu-latest]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
+        cache: pip
     - name: Create and start a virtual environment
       run: |
         python -m venv venv

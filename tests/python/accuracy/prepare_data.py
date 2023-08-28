@@ -3,17 +3,23 @@ import os
 from urllib.request import urlopen, urlretrieve
 
 
-def retrieve_otx_model(data_dir, model_name):
-    destenation_folder = os.path.join(data_dir, "otx_models")
-    os.makedirs(destenation_folder, exist_ok=True)
-    urlretrieve(
-        f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
-        f"{destenation_folder}/{model_name}.xml",
-    )
-    urlretrieve(
-        f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
-        f"{destenation_folder}/{model_name}.bin",
-    )
+def retrieve_otx_model(data_dir, model_name, format="xml"):
+    destination_folder = os.path.join(data_dir, "otx_models")
+    os.makedirs(destination_folder, exist_ok=True)
+    if format == "onnx":
+        urlretrieve(
+            f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/model.onnx",
+            f"{destination_folder}/{model_name}.onnx",
+        )
+    else:
+        urlretrieve(
+            f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
+            f"{destination_folder}/{model_name}.xml",
+        )
+        urlretrieve(
+            f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
+            f"{destination_folder}/{model_name}.bin",
+        )
 
 
 def prepare_data(data_dir="./data"):
@@ -33,7 +39,7 @@ def prepare_data(data_dir="./data"):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Data and model preparate script")
+    parser = argparse.ArgumentParser(description="Data and model prepare script")
     parser.add_argument(
         "-d",
         dest="data_dir",
@@ -48,16 +54,28 @@ if __name__ == "__main__":
     retrieve_otx_model(args.data_dir, "mlc_efficient_b0_voc")
     retrieve_otx_model(args.data_dir, "mlc_efficient_v2s_voc")
     retrieve_otx_model(args.data_dir, "det_mobilenetv2_atss_bccd")
+    retrieve_otx_model(args.data_dir, "det_mobilenetv2_atss_bccd_onnx", "onnx")
     retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars")
+    retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars", "onnx")
     retrieve_otx_model(args.data_dir, "cls_efficient_b0_cars")
     retrieve_otx_model(args.data_dir, "cls_efficient_v2s_cars")
     retrieve_otx_model(args.data_dir, "Lite-hrnet-18")
     retrieve_otx_model(args.data_dir, "Lite-hrnet-18_mod2")
     retrieve_otx_model(args.data_dir, "Lite-hrnet-s_mod2")
+    retrieve_otx_model(args.data_dir, "Lite-hrnet-s_mod2", "onnx")
     retrieve_otx_model(args.data_dir, "Lite-hrnet-x-mod3")
     retrieve_otx_model(args.data_dir, "is_efficientnetb2b_maskrcnn_coco_reduced")
+    retrieve_otx_model(
+        args.data_dir, "is_efficientnetb2b_maskrcnn_coco_reduced_onnx", "onnx"
+    )
     retrieve_otx_model(args.data_dir, "is_resnet50_maskrcnn_coco_reduced")
     retrieve_otx_model(args.data_dir, "mobilenet_v3_large_hc_cf")
     retrieve_otx_model(args.data_dir, "classification_model_with_xai_head")
     retrieve_otx_model(args.data_dir, "detection_model_with_xai_head")
     retrieve_otx_model(args.data_dir, "segmentation_model_with_xai_head")
+    retrieve_otx_model(args.data_dir, "maskrcnn_model_with_xai_head")
+    retrieve_otx_model(args.data_dir, "maskrcnn_xai_tiling")
+    retrieve_otx_model(args.data_dir, "tile_classifier")
+    retrieve_otx_model(args.data_dir, "anomaly_padim_bottle_mvtec")
+    retrieve_otx_model(args.data_dir, "anomaly_stfpm_bottle_mvtec")
+    retrieve_otx_model(args.data_dir, "deit-tiny")
