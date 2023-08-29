@@ -1,81 +1,116 @@
 import argparse
-import os
-from urllib.request import urlopen, urlretrieve
+import asyncio
+from io import BytesIO
+from pathlib import Path
+from zipfile import ZipFile
+
+import httpx
 
 
-def retrieve_otx_model(data_dir, model_name, format="xml"):
-    destination_folder = os.path.join(data_dir, "otx_models")
-    os.makedirs(destination_folder, exist_ok=True)
+async def download_images(data_dir):
+    async with httpx.AsyncClient(timeout=20.0) as client:
+        COCO128_URL = "https://ultralytics.com/assets/coco128.zip"
+        archive = await client.get(COCO128_URL, follow_redirects=True)
+        with ZipFile(BytesIO(archive.content)) as zfile:
+            zfile.extractall(data_dir)
+        image = await client.get(
+            "https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/BCCD/JPEGImages/BloodImage_00007.jpg"
+        )
+        with data_dir / "BloodImage_00007.jpg" as im:
+            im.write_bytes(image.content)
+
+
+async def stream_file(client, url, filename):
+    async with client.stream("GET", url) as stream:
+        with open(filename, "wb") as file:
+            async for data in stream.aiter_bytes():
+                file.write(data)
+
+
+async def download_otx_model(client, otx_models_dir, model_name, format="xml"):
     if format == "onnx":
-        urlretrieve(
+        await stream_file(
+            client,
             f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/model.onnx",
-            f"{destination_folder}/{model_name}.onnx",
+            f"{otx_models_dir}/{model_name}.onnx",
         )
     else:
-        urlretrieve(
-            f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
-            f"{destination_folder}/{model_name}.xml",
+        await asyncio.gather(
+            stream_file(
+                client,
+                f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
+                f"{otx_models_dir}/{model_name}.xml",
+            ),
+            stream_file(
+                client,
+                f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
+                f"{otx_models_dir}/{model_name}.bin",
+            ),
         )
-        urlretrieve(
-            f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
-            f"{destination_folder}/{model_name}.bin",
-        )
 
 
-def prepare_data(data_dir="./data"):
-    from io import BytesIO
-    from zipfile import ZipFile
-
-    COCO128_URL = "https://ultralytics.com/assets/coco128.zip"
-
-    with urlopen(COCO128_URL) as zipresp:
-        with ZipFile(BytesIO(zipresp.read())) as zfile:
-            zfile.extractall(data_dir)
-
-    urlretrieve(
-        "https://raw.githubusercontent.com/Shenggan/BCCD_Dataset/master/BCCD/JPEGImages/BloodImage_00007.jpg",
-        os.path.join(data_dir, "BloodImage_00007.jpg"),
+async def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-d",
+        "--data_dir",
+        type=Path,
+        required=True,
+        help="Directory to store downloaded models and datasets",
     )
+    args = parser.parse_args()
+
+    otx_models_dir = args.data_dir / "otx_models"
+    otx_models_dir.mkdir(parents=True, exist_ok=True)
+    async with httpx.AsyncClient(timeout=20.0) as client:
+        await asyncio.gather(
+            download_images(args.data_dir),
+            download_otx_model(client, otx_models_dir, "mlc_mobilenetv3_large_voc"),
+            download_otx_model(client, otx_models_dir, "mlc_efficient_b0_voc"),
+            download_otx_model(client, otx_models_dir, "mlc_efficient_v2s_voc"),
+            download_otx_model(client, otx_models_dir, "det_mobilenetv2_atss_bccd"),
+            download_otx_model(
+                client, otx_models_dir, "det_mobilenetv2_atss_bccd_onnx", "onnx"
+            ),
+            download_otx_model(client, otx_models_dir, "cls_mobilenetv3_large_cars"),
+            download_otx_model(
+                client, otx_models_dir, "cls_mobilenetv3_large_cars", "onnx"
+            ),
+            download_otx_model(client, otx_models_dir, "cls_efficient_b0_cars"),
+            download_otx_model(client, otx_models_dir, "cls_efficient_v2s_cars"),
+            download_otx_model(client, otx_models_dir, "Lite-hrnet-18"),
+            download_otx_model(client, otx_models_dir, "Lite-hrnet-18_mod2"),
+            download_otx_model(client, otx_models_dir, "Lite-hrnet-s_mod2"),
+            download_otx_model(client, otx_models_dir, "Lite-hrnet-s_mod2", "onnx"),
+            download_otx_model(client, otx_models_dir, "Lite-hrnet-x-mod3"),
+            download_otx_model(
+                client, otx_models_dir, "is_efficientnetb2b_maskrcnn_coco_reduced"
+            ),
+            download_otx_model(
+                client,
+                otx_models_dir,
+                "is_efficientnetb2b_maskrcnn_coco_reduced_onnx",
+                "onnx",
+            ),
+            download_otx_model(
+                client, otx_models_dir, "is_resnet50_maskrcnn_coco_reduced"
+            ),
+            download_otx_model(client, otx_models_dir, "mobilenet_v3_large_hc_cf"),
+            download_otx_model(
+                client, otx_models_dir, "classification_model_with_xai_head"
+            ),
+            download_otx_model(client, otx_models_dir, "detection_model_with_xai_head"),
+            download_otx_model(
+                client, otx_models_dir, "segmentation_model_with_xai_head"
+            ),
+            download_otx_model(client, otx_models_dir, "maskrcnn_model_with_xai_head"),
+            download_otx_model(client, otx_models_dir, "maskrcnn_xai_tiling"),
+            download_otx_model(client, otx_models_dir, "tile_classifier"),
+            download_otx_model(client, otx_models_dir, "anomaly_padim_bottle_mvtec"),
+            download_otx_model(client, otx_models_dir, "anomaly_stfpm_bottle_mvtec"),
+            download_otx_model(client, otx_models_dir, "deit-tiny"),
+        )
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Data and model prepare script")
-    parser.add_argument(
-        "-d",
-        dest="data_dir",
-        default="./data",
-        help="Directory to store downloaded models and datasets",
-    )
-
-    args = parser.parse_args()
-
-    prepare_data(args.data_dir)
-    retrieve_otx_model(args.data_dir, "mlc_mobilenetv3_large_voc")
-    retrieve_otx_model(args.data_dir, "mlc_efficient_b0_voc")
-    retrieve_otx_model(args.data_dir, "mlc_efficient_v2s_voc")
-    retrieve_otx_model(args.data_dir, "det_mobilenetv2_atss_bccd")
-    retrieve_otx_model(args.data_dir, "det_mobilenetv2_atss_bccd_onnx", "onnx")
-    retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars")
-    retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars", "onnx")
-    retrieve_otx_model(args.data_dir, "cls_efficient_b0_cars")
-    retrieve_otx_model(args.data_dir, "cls_efficient_v2s_cars")
-    retrieve_otx_model(args.data_dir, "Lite-hrnet-18")
-    retrieve_otx_model(args.data_dir, "Lite-hrnet-18_mod2")
-    retrieve_otx_model(args.data_dir, "Lite-hrnet-s_mod2")
-    retrieve_otx_model(args.data_dir, "Lite-hrnet-s_mod2", "onnx")
-    retrieve_otx_model(args.data_dir, "Lite-hrnet-x-mod3")
-    retrieve_otx_model(args.data_dir, "is_efficientnetb2b_maskrcnn_coco_reduced")
-    retrieve_otx_model(
-        args.data_dir, "is_efficientnetb2b_maskrcnn_coco_reduced_onnx", "onnx"
-    )
-    retrieve_otx_model(args.data_dir, "is_resnet50_maskrcnn_coco_reduced")
-    retrieve_otx_model(args.data_dir, "mobilenet_v3_large_hc_cf")
-    retrieve_otx_model(args.data_dir, "classification_model_with_xai_head")
-    retrieve_otx_model(args.data_dir, "detection_model_with_xai_head")
-    retrieve_otx_model(args.data_dir, "segmentation_model_with_xai_head")
-    retrieve_otx_model(args.data_dir, "maskrcnn_model_with_xai_head")
-    retrieve_otx_model(args.data_dir, "maskrcnn_xai_tiling")
-    retrieve_otx_model(args.data_dir, "tile_classifier")
-    retrieve_otx_model(args.data_dir, "anomaly_padim_bottle_mvtec")
-    retrieve_otx_model(args.data_dir, "anomaly_stfpm_bottle_mvtec")
-    retrieve_otx_model(args.data_dir, "deit-tiny")
+    asyncio.run(main())
