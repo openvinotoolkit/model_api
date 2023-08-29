@@ -14,8 +14,6 @@
  limitations under the License.
 """
 
-import numpy as np
-
 from .model import Model
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
 from .utils import RESIZE_TYPES, InputTransform
@@ -42,7 +40,7 @@ class ImageModel(Model):
         input_transform (InputTransform): instance of the `InputTransform` for image normalization
     """
 
-    def __init__(self, inference_adapter, configuration=None, preload=False):
+    def __init__(self, inference_adapter, configuration=dict(), preload=False):
         """Image model constructor
 
         It extends the `Model` constructor.
@@ -121,14 +119,21 @@ class ImageModel(Model):
                     description="Flag that pre/postprocessing embedded",
                 ),
                 "orig_width": NumericalValue(
-                    description="Model input width before embedding processing"
+                    int, description="Model input width before embedding processing"
                 ),
                 "orig_height": NumericalValue(
-                    description="Model input height before embedding processing"
+                    int, description="Model input height before embedding processing"
                 ),
             }
         )
         return parameters
+
+    def get_label_name(self, label_id):
+        if self.labels is None:
+            return f"#{label_id}"
+        if label_id >= len(self.labels):
+            return f"#{label_id}"
+        return self.labels[label_id]
 
     def _get_inputs(self):
         """Defines the model inputs for images and additional info.

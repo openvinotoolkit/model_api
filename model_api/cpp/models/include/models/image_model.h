@@ -62,6 +62,10 @@ protected:
     RESIZE_MODE selectResizeMode(const std::string& resize_type);
     void updateModelInfo() override;
 
+    std::string getLabelName(size_t labelID) {
+        return labelID < labels.size() ? labels[labelID] : std::string("Label #") + std::to_string(labelID);
+    }
+
     std::vector<std::string> labels = {};
     bool useAutoResize = false;
     bool embedded_processing = false; // flag in model_info that pre/postprocessing embedded
@@ -73,4 +77,5 @@ protected:
     uint8_t pad_value = 0;
     bool reverse_input_channels = false;
     std::vector<float> scale_values;
+    std::vector<float> mean_values;
 };

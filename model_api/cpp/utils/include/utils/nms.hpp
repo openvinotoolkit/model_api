@@ -26,6 +26,10 @@ struct Anchor {
     float right;
     float bottom;
 
+    Anchor() = default;
+    Anchor(float _left, float _top, float _right, float _bottom) :
+        left(_left), top(_top), right(_right), bottom(_bottom) {}
+
     float getWidth() const {
         return (right - left) + 1.0f;
     }
@@ -40,9 +44,17 @@ struct Anchor {
     }
 };
 
+struct AnchorLabeled : public Anchor {
+    int labelID = -1;
+
+    AnchorLabeled() = default;
+    AnchorLabeled(float _left, float _top, float _right, float _bottom, int _labelID) :
+        Anchor(_left, _top, _right, _bottom), labelID(_labelID) {}
+};
+
 template <typename Anchor>
 std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<float>& scores,
-                     const float thresh, bool includeBoundaries=false, size_t keep_top_k=std::numeric_limits<size_t>::max()) {
+                     const float thresh, bool includeBoundaries=false, size_t maxNum=std::numeric_limits<size_t>::max()) {
     std::vector<float> areas(boxes.size());
     for (size_t i = 0; i < boxes.size(); ++i) {
         areas[i] = (boxes[i].right - boxes[i].left + includeBoundaries) * (boxes[i].bottom - boxes[i].top + includeBoundaries);
@@ -52,7 +64,7 @@ std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<floa
     std::sort(order.begin(), order.end(), [&scores](int o1, int o2) { return scores[o1] > scores[o2]; });
 
     size_t ordersNum = 0;
-    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0 && ordersNum < keep_top_k; ordersNum++);
+    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0  && ordersNum < maxNum; ordersNum++);
 
     std::vector<size_t> keep;
     bool shouldContinue = true;
@@ -79,3 +91,6 @@ std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<floa
     }
     return keep;
 }
+
+std::vector<int> multiclass_nms(const std::vector<AnchorLabeled>& boxes, const std::vector<float>& scores,
+                     const float iou_threshold=0.45f, bool includeBoundaries=false, size_t maxNum=200);
