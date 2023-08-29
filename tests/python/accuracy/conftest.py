@@ -1,6 +1,7 @@
-from pathlib import Path
-import pytest
 import json
+from pathlib import Path
+
+import pytest
 
 
 def pytest_addoption(parser):

@@ -1,4 +1,7 @@
+import functools
 import os
+from distutils.dir_util import copy_tree
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -11,9 +14,6 @@ from openvino.model_api.models.utils import resize_image_letterbox
 from ultralytics import YOLO
 from ultralytics.yolo.engine.results import Results
 from ultralytics.yolo.utils import ops
-from distutils.dir_util import copy_tree
-from pathlib import Path
-import functools
 
 
 # TODO: update docs
