@@ -340,7 +340,7 @@ INTERPOLATION_TYPES = {
 }
 
 
-def nms(x1, y1, x2, y2, scores, thresh, include_boundaries=False, keep_top_k=None):
+def nms(x1, y1, x2, y2, scores, thresh, include_boundaries=False, keep_top_k=0):
     b = 1 if include_boundaries else 0
     areas = (x2 - x1 + b) * (y2 - y1 + b)
     order = scores.argsort()[::-1]
@@ -363,11 +363,10 @@ def nms(x1, y1, x2, y2, scores, thresh, include_boundaries=False, keep_top_k=Non
         intersection = w * h
 
         union = areas[i] + areas[order[1:]] - intersection
-        overlap = np.zeros_like(intersection, dtype=float)
         overlap = np.divide(
             intersection,
             union,
-            out=overlap,
+            out=np.zeros_like(intersection, dtype=float),
             where=union != 0,
         )
 

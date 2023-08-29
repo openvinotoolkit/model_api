@@ -544,7 +544,7 @@ void YoloV8::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
         throw std::runtime_error("YoloV8 wrapper requires the output to be of rank 3");
     }
     if (!labels.empty() && labels.size() + 4 != out_shape[1]) {
-        throw std::runtime_error("YoloV8 wrapper number of labes must be smaller than output.shape[1] by 4");
+        throw std::runtime_error("YoloV8 wrapper number of labels must be smaller than output.shape[1] by 4");
     }
 }
 

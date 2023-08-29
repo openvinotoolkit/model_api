@@ -15,11 +15,14 @@ from distutils.dir_util import copy_tree
 from pathlib import Path
 import functools
 
+
 # TODO: update docs
 def patch_export(yolo):
     # TODO: move to https://github.com/ultralytics/ultralytics/
     if yolo.predictor is None:
-        yolo.predict(np.zeros([1, 1, 3], np.uint8))  # YOLO.predictor is initialized by predict
+        yolo.predict(
+            np.zeros([1, 1, 3], np.uint8)
+        )  # YOLO.predictor is initialized by predict
     export_dir = Path(yolo.export(format="openvino"))
     xml = [path for path in export_dir.iterdir() if path.suffix == ".xml"]
     if 1 != len(xml):
@@ -154,13 +157,17 @@ def cached_models(folder, pt):
     pt = Path(pt)
     yolo_folder = folder / "YOLOv8"
     yolo_folder.mkdir(exist_ok=True)  # TODO: maybe remove
-    export_dir = patch_export(YOLO(yolo_folder / pt))  # If there is no file it is downloaded
+    export_dir = patch_export(
+        YOLO(yolo_folder / pt)
+    )  # If there is no file it is downloaded
     copy_path = folder / "YOLOv8/detector" / pt.stem
     copy_tree(str(export_dir), str(copy_path))  # C++ tests expect a model here
-    xml = (copy_path / (pt.stem + ".xml"))
+    xml = copy_path / (pt.stem + ".xml")
     ref_dir = copy_path / "ref"
     ref_dir.mkdir(exist_ok=True)
-    impl_wrapper = YOLOv5.create_model(xml, device="CPU", model_type="YOLOv5")  # TODO: YOLOv5 vs v8
+    impl_wrapper = YOLOv5.create_model(
+        xml, device="CPU", model_type="YOLOv5"
+    )  # TODO: YOLOv5 vs v8
     ref_wrapper = YOLO(export_dir)
     ref_wrapper.overrides["imgsz"] = (impl_wrapper.w, impl_wrapper.h)
     compiled_model = ov.Core().compile_model(xml, "CPU")
@@ -243,10 +250,11 @@ def test_detector(impath, data, pt):
     )
     ref_preprocessed = ref_wrapper.predictor.preprocess([im]).numpy()
 
-    processed = resize_image_letterbox(im, (impl_wrapper.w, impl_wrapper.h), cv2.INTER_LINEAR, 114)
+    processed = resize_image_letterbox(
+        im, (impl_wrapper.w, impl_wrapper.h), cv2.INTER_LINEAR, 114
+    )
     processed = (
-        processed[None][..., ::-1].transpose((0, 3, 1, 2)).astype(np.float32)
-        / 255.0
+        processed[None][..., ::-1].transpose((0, 3, 1, 2)).astype(np.float32) / 255.0
     )
     assert (processed == ref_preprocessed).all()
     preds = next(iter(compiled_model({0: processed}).values()))

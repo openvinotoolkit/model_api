@@ -54,7 +54,10 @@ struct AnchorLabeled : public Anchor {
 
 template <typename Anchor>
 std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<float>& scores,
-                     const float thresh, bool includeBoundaries=false, size_t maxNum=std::numeric_limits<size_t>::max()) {
+                     const float thresh, bool includeBoundaries=false, size_t keep_top_k=0) {
+    if (keep_top_k == 0) {
+        keep_top_k = boxes.size();
+    }
     std::vector<float> areas(boxes.size());
     for (size_t i = 0; i < boxes.size(); ++i) {
         areas[i] = (boxes[i].right - boxes[i].left + includeBoundaries) * (boxes[i].bottom - boxes[i].top + includeBoundaries);
@@ -64,7 +67,7 @@ std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<floa
     std::sort(order.begin(), order.end(), [&scores](int o1, int o2) { return scores[o1] > scores[o2]; });
 
     size_t ordersNum = 0;
-    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0  && ordersNum < maxNum; ordersNum++);
+    for (; ordersNum < order.size() && scores[order[ordersNum]] >= 0  && ordersNum < keep_top_k; ordersNum++);
 
     std::vector<size_t> keep;
     bool shouldContinue = true;

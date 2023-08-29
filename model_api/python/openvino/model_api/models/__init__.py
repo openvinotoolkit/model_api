@@ -118,7 +118,7 @@ __all__ = [
     "YOLO",
     "YoloV3ONNX",
     "YoloV4",
-    "YOLOv5"
+    "YOLOv5",
     "YOLOv8",
     "YOLOF",
     "YOLOX",

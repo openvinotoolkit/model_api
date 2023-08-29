@@ -574,7 +574,6 @@ class YOLOX(DetectionModel):
         self.expanded_strides = np.concatenate(expanded_strides, 1)
 
 
-
 class YoloV3ONNX(DetectionModel):
     __model__ = "YOLOv3-ONNX"
 
@@ -766,7 +765,9 @@ def non_max_suppression(
 
     # Detections matrix nx6 (xyxy, conf, cls)
     box, cls, mask = x[:, :4], x[:, 4 : nc + 4], x[:, nc + 4 :]
-    box = xywh2xyxy(box)  # center_x, center_y, width, height) to (x1, y1, x2, y2)  # TODO: first cut by conf_thres
+    box = xywh2xyxy(
+        box
+    )  # center_x, center_y, width, height) to (x1, y1, x2, y2)  # TODO: first cut by conf_thres
     if multi_label:
         i, j = (cls > conf_thres).nonzero(as_tuple=False).T
         x = torch.cat((box[i], x[i, 4 + j, None], j[:, None].float(), mask[i]), 1)
@@ -808,13 +809,9 @@ class YOLOv5(DetectionModel):
             self.raise_error("the output must be of precision f32")
         out_shape = output.shape
         if 3 != len(out_shape):
-            self.raise_error(
-                "the output must be of rank 3"
-            )
+            self.raise_error("the output must be of rank 3")
         if self.labels and len(self.labels) + 4 != out_shape[1]:
-            self.raise_error(
-                "number of labes must be smaller than out_shape[1] by 4"
-            )
+            self.raise_error("number of labels must be smaller than out_shape[1] by 4")
 
     @classmethod
     def parameters(cls):
@@ -841,7 +838,9 @@ class YOLOv5(DetectionModel):
     def postprocess(self, outputs, meta):
         if 1 != len(outputs):
             raise RuntimeError("YoloV8 wrapper expects 1 output")
-        boxes = non_max_suppression(next(iter(outputs.values())), self.confidence_threshold, self.iou_threshold)
+        boxes = non_max_suppression(
+            next(iter(outputs.values())), self.confidence_threshold, self.iou_threshold
+        )
 
         inputImgWidth, inputImgHeight = (
             meta["original_shape"][1],
@@ -884,4 +883,5 @@ class YOLOv5(DetectionModel):
 
 class YOLOv8(YOLOv5):
     """YOLOv5 and YOLOv8 are identical in terms of inference"""
+
     __model__ = "YOLOv8"

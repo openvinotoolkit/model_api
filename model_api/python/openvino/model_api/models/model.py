@@ -126,7 +126,7 @@ class Model:
         core=None,
         weights_path="",
         adaptor_parameters={},
-        device="CPU",
+        device="AUTO",
         nstreams="1",
         nthreads=None,
         max_num_requests=0,
