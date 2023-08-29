@@ -95,5 +95,5 @@ std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<floa
     return keep;
 }
 
-std::vector<int> multiclass_nms(const std::vector<AnchorLabeled>& boxes, const std::vector<float>& scores,
+std::vector<size_t> multiclass_nms(const std::vector<AnchorLabeled>& boxes, const std::vector<float>& scores,
                      const float iou_threshold=0.45f, bool includeBoundaries=false, size_t maxNum=200);

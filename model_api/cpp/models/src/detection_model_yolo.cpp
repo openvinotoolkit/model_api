@@ -620,7 +620,7 @@ std::unique_ptr<ResultBase> YoloV8::postprocess(InferenceResult& infResult) {
     bool agnostic = false;
     float max_wh = 7680;
     std::vector<Anchor> boxes_with_class{boxes};  // TODO: update
-    for (int i = 0; i < boxes_with_class.size(); ++i) {
+    for (size_t i = 0; i < boxes_with_class.size(); ++i) {
         boxes_with_class[i].left += max_wh * labelIDs[i];
         boxes_with_class[i].top += max_wh * labelIDs[i];
         boxes_with_class[i].right += max_wh * labelIDs[i];
