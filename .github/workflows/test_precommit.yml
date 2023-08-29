@@ -138,7 +138,8 @@ jobs:
       # .\w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\setupvars.bat exits with 0 code without moving to a next command. Set PATH manually
       run: |
         set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\3rdparty\tbb\bin;%PATH%
-        .\build\Release\test_sanity.exe -d data -p tests\cpp\precommit\public_scope.json && .\build\Release\test_model_config -d data
+        .\build\Release\test_sanity.exe -d data -p tests\cpp\precommit\public_scope.json
+        .\build\Release\test_model_config -d data
   serving_api:
     strategy:
       fail-fast: false

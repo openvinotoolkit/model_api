@@ -42,7 +42,7 @@ class MockAdapter : public OpenVINOInferenceAdapter {
             : OpenVINOInferenceAdapter() {
             auto core = ov::Core();
             auto model = core.read_model(modelPath);
-            loadModel(model, core, "AUTO");
+            loadModel(model, core, "CPU");
         }
 };
 
@@ -76,7 +76,8 @@ std::string string_format(const std::string &fmt, Args... args) {
 
 TEST_P(ClassificationModelParameterizedTest, TestClassificationDefaultConfig) {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
-    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+    bool preload = true;
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, {}, preload, "CPU");
 
     auto ov_model = model->getModel();
 
@@ -98,7 +99,8 @@ TEST_P(ClassificationModelParameterizedTest, TestClassificationCustomConfig) {
         {"resize_type", "fit_to_window"},
         {"labels", mock_labels}
     };
-    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration);
+    bool preload = true;
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, configuration, preload, "CPU");
 
     auto ov_model = model->getModel();
 
@@ -121,14 +123,15 @@ TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectne
     }
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
-    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+    bool preload = true;
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, {}, preload, "CPU");
 
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
 
     auto result = model->infer(image)->topLabels;
 
-    auto model_restored = ClassificationModel::create_model(TMP_MODEL_FILE);
+    auto model_restored = ClassificationModel::create_model(TMP_MODEL_FILE, {}, preload, "CPU");
     auto result_data = model_restored->infer(image);
     auto result_restored = result_data->topLabels;
 
@@ -143,7 +146,8 @@ TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectne
     }
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
-    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path);
+    bool preload = true;
+    auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, {}, preload, "CPU");
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
     auto result = model->infer(image)->topLabels;
@@ -159,7 +163,8 @@ TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectne
 
 TEST_P(SSDModelParameterizedTest, TestDetectionDefaultConfig) {
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
-    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
+    bool preload = true;
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path, {}, "", preload, "CPU");
 
     auto ov_model = model->getModel();
 
@@ -181,7 +186,8 @@ TEST_P(SSDModelParameterizedTest, TestDetectionCustomConfig) {
         {"resize_type", "fit_to_window"},
         {"labels", mock_labels}
     };
-    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path, configuration);
+    bool preload = true;
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path, configuration, "", preload, "CPU");
 
     auto ov_model = model->getModel();
 
@@ -204,7 +210,8 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     }
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
-    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
+    bool preload = true;
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path, {}, "", preload, "CPU");
 
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
@@ -215,7 +222,7 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     if (!image.data) {
         throw std::runtime_error{"Failed to read the image"};
     }
-    auto model_restored = DetectionModel::create_model(TMP_MODEL_FILE);
+    auto model_restored = DetectionModel::create_model(TMP_MODEL_FILE, {}, "", preload, "CPU");
     auto result_data = model_restored->infer(image);
     auto result_restored = result_data->objects;
 
@@ -227,8 +234,6 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
         ASSERT_EQ(result[i].width, result_restored[i].width);
         ASSERT_EQ(result[i].height, result_restored[i].height);
     }
-
-    SUCCEED();
 }
 
 TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSaveLoadWithAdapter) {
@@ -238,7 +243,8 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
     }
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
-    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path);
+    bool preload = true;
+    auto model = DetectionModel::create_model(DATA_DIR + "/" + model_path, {}, "", preload, "CPU");
     auto ov_model = model->getModel();
     ov::serialize(ov_model, TMP_MODEL_FILE);
     auto result = model->infer(image)->objects;
@@ -261,8 +267,6 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
         ASSERT_EQ(result[i].width, result_restored[i].width);
         ASSERT_EQ(result[i].height, result_restored[i].height);
     }
-
-    SUCCEED();
 }
 
 
