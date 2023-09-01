@@ -124,7 +124,7 @@ class SegmentationModel(ImageModel):
         input_image_width = meta["original_shape"][1]
         predictions = outputs[self.output_blob_name].squeeze()
 
-        if 0 < self.out_channels < 2 and self.out_channels:  # assume the output is already ArgMax'ed
+        if self.out_channels < 2:  # assume the output is already ArgMax'ed
             soft_prediction = predictions.astype(np.uint8)
         else:
             soft_prediction = np.transpose(predictions, axes=(1, 2, 0))
