@@ -14,12 +14,15 @@
  limitations under the License.
 """
 
+import sys
+
 from functools import partial, reduce
 import numpy as np
 from openvino.model_api.models.utils import INTERPOLATION_TYPES, RESIZE_TYPES, InputTransform
 
 try:
     import onnxruntime as ort
+    from onnxruntime.tools.symbolic_shape_infer import SymbolicShapeInference
     import onnx
     onnxrt_absent = False
 except ImportError:
@@ -38,7 +41,13 @@ class ONNXRuntimeAdapter(InferenceAdapter):
 
     def __init__(self, model_path: str):
         """"""
-        self.session = ort.InferenceSession(model_path)
+        model = onnx.load(model_path)
+
+        inferred_model = SymbolicShapeInference.infer_shapes(
+            model, int(sys.maxsize / 2), False, False, False
+        )
+
+        self.session = ort.InferenceSession(inferred_model.SerializeToString())
         self.output_names = [o.name for o in self.session.get_outputs()]
         self.onnx_metadata = load_parameters_from_onnx(onnx.load(model_path))
         self.preprocessor = lambda arg: arg
