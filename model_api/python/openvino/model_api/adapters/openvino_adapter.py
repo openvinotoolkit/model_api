@@ -166,8 +166,11 @@ class OpenvinoAdapter(InferenceAdapter):
                 )
             if Path(self.model_path).suffix == ".onnx" and not weights_path:
                 import onnx
+
                 self.is_onnx_file = True
-                self.onnx_metadata = load_parameters_from_onnx(onnx.load(self.model_path))
+                self.onnx_metadata = load_parameters_from_onnx(
+                    onnx.load(self.model_path)
+                )
 
         self.model_from_buffer = isinstance(self.model_path, bytes) and isinstance(
             weights_path, bytes

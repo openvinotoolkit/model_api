@@ -19,7 +19,7 @@ from typing import Optional
 
 import numpy as np
 import openvino.runtime as ov
-from openvino.runtime import Output, Type, layout_helpers, OVAny
+from openvino.runtime import Output, OVAny, Type, layout_helpers
 from openvino.runtime import opset10 as opset
 from openvino.runtime.utils.decorators import custom_preprocess_function
 
@@ -382,6 +382,7 @@ def resize_image_letterbox(size, interpolation, pad_value):
 
 def load_parameters_from_onnx(onnx_model):
     parameters = {}
+
     def insert_hiararchical(keys, val, root_dict):
         if len(keys) == 1:
             root_dict[keys[0]] = val

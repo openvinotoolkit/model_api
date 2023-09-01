@@ -15,15 +15,20 @@
 """
 
 import sys
-
 from functools import partial, reduce
+
 import numpy as np
-from openvino.model_api.models.utils import INTERPOLATION_TYPES, RESIZE_TYPES, InputTransform
+from openvino.model_api.models.utils import (
+    INTERPOLATION_TYPES,
+    RESIZE_TYPES,
+    InputTransform,
+)
 
 try:
+    import onnx
     import onnxruntime as ort
     from onnxruntime.tools.symbolic_shape_infer import SymbolicShapeInference
-    import onnx
+
     onnxrt_absent = False
 except ImportError:
     onnxrt_absent = True
@@ -61,7 +66,8 @@ class ONNXRuntimeAdapter(InferenceAdapter):
                 {input.name},
                 shape,
                 Layout.from_shape(shape),
-                _onnx2ov_precision.get(input.type, input.type))
+                _onnx2ov_precision.get(input.type, input.type),
+            )
 
         return inputs
 
@@ -72,7 +78,8 @@ class ONNXRuntimeAdapter(InferenceAdapter):
             outputs[output.name] = Metadata(
                 {output.name},
                 shape=shape,
-                precision=_onnx2ov_precision.get(output.type, output.type))
+                precision=_onnx2ov_precision.get(output.type, output.type),
+            )
 
         return outputs
 
@@ -82,11 +89,14 @@ class ONNXRuntimeAdapter(InferenceAdapter):
             if len(input.shape) == 4:
                 preprocessed_input = self.preprocessor(dict_data[input.name])
             if dict_data[input.name].dtype != _onnx2np_precision[input.type]:
-                inputs[input.name] = ort.OrtValue.ortvalue_from_numpy(preprocessed_input.astype(_onnx2np_precision[input.type]))
+                inputs[input.name] = ort.OrtValue.ortvalue_from_numpy(
+                    preprocessed_input.astype(_onnx2np_precision[input.type])
+                )
             else:
-                inputs[input.name] = ort.OrtValue.ortvalue_from_numpy(preprocessed_input)
-        raw_result = self.session.run(
-            self.output_names, inputs)
+                inputs[input.name] = ort.OrtValue.ortvalue_from_numpy(
+                    preprocessed_input
+                )
+        raw_result = self.session.run(self.output_names, inputs)
 
         named_raw_result = {}
         for i, data in enumerate(raw_result):
@@ -128,21 +138,28 @@ class ONNXRuntimeAdapter(InferenceAdapter):
         preproc_funcs = [np.squeeze]
         if resize_mode != "crop":
             if resize_mode == "fit_to_window_letterbox":
-                resize_fn = partial(RESIZE_TYPES[resize_mode], size=target_shape,
-                                    interpolation=INTERPOLATION_TYPES[interpolation_mode],
-                                    pad_value=pad_value)
+                resize_fn = partial(
+                    RESIZE_TYPES[resize_mode],
+                    size=target_shape,
+                    interpolation=INTERPOLATION_TYPES[interpolation_mode],
+                    pad_value=pad_value,
+                )
             else:
-                resize_fn = partial(RESIZE_TYPES[resize_mode], size=target_shape, interpolation=INTERPOLATION_TYPES[interpolation_mode])
+                resize_fn = partial(
+                    RESIZE_TYPES[resize_mode],
+                    size=target_shape,
+                    interpolation=INTERPOLATION_TYPES[interpolation_mode],
+                )
         else:
             resize_fn = partial(RESIZE_TYPES[resize_mode], size=target_shape)
         preproc_funcs.append(resize_fn)
-        input_transform = InputTransform(
-            brg2rgb, mean, scale
-        )
+        input_transform = InputTransform(brg2rgb, mean, scale)
         preproc_funcs.append(input_transform.__call__)
         preproc_funcs.append(partial(change_layout, layout=layout))
 
-        self.preprocessor = reduce(lambda f, g: lambda x: f(g(x)), reversed(preproc_funcs))
+        self.preprocessor = reduce(
+            lambda f, g: lambda x: f(g(x)), reversed(preproc_funcs)
+        )
 
     def reshape_model(self, new_shape):
         raise NotImplementedError

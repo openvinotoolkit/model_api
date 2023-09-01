@@ -15,9 +15,9 @@
 """
 
 
+from .onnx_adapter import ONNXRuntimeAdapter
 from .openvino_adapter import OpenvinoAdapter, create_core, get_user_config
 from .ovms_adapter import OVMSAdapter
-from .onnx_adapter import ONNXRuntimeAdapter
 from .utils import Layout
 
 __all__ = [
