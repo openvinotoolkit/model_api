@@ -748,11 +748,6 @@ def non_max_suppression(
             shape (num_boxes, 6 + num_masks) containing the kept boxes, with columns
             (x1, y1, x2, y2, confidence, class, mask1, mask2, ...).
     """
-    out_shape = prediction.shape
-    if 3 != len(out_shape):
-        raise RuntimeError("YoloV8 wrapper expects the output of rank 3")
-    if 1 != out_shape[0]:
-        raise RuntimeError("YoloV8 wrapper expects 1 as the first dim of the output")
     nc = nc or (prediction.shape[1] - 4)  # number of classes
     mi = 4 + nc  # mask start index
     xc = np.amax(prediction[:, 4:mi], 1) > conf_thres  # candidates
@@ -837,15 +832,19 @@ class YOLOv5(DetectionModel):
 
     def postprocess(self, outputs, meta):
         if 1 != len(outputs):
-            raise RuntimeError("YoloV8 wrapper expects 1 output")
+            self.raise_error("expect 1 output")
+        prediction = next(iter(outputs.values()))
+        out_shape = prediction.shape
+        if 3 != len(out_shape):
+            raise RuntimeError("expect the output of rank 3")
+        if 1 != out_shape[0]:
+            raise RuntimeError("expect 1 as the first dim of the output")
         boxes = non_max_suppression(
-            next(iter(outputs.values())), self.confidence_threshold, self.iou_threshold
+            prediction, self.confidence_threshold, self.iou_threshold
         )
 
-        inputImgWidth, inputImgHeight = (
-            meta["original_shape"][1],
-            meta["original_shape"][0],
-        )
+        inputImgWidth = meta["original_shape"][1]
+        inputImgHeight = meta["original_shape"][0]
         invertedScaleX, invertedScaleY = (
             inputImgWidth / self.orig_width,
             inputImgHeight / self.orig_height,
@@ -865,7 +864,7 @@ class YOLOv5(DetectionModel):
         boxes[:, :4] -= (padLeft, padTop, padLeft, padTop)
         boxes[:, :4] *= (invertedScaleX, invertedScaleY, invertedScaleX, invertedScaleY)
 
-        intboxes = np.rint(boxes[:, :4]).astype(np.int32)
+        intboxes = np.rint(boxes[:, :4]).astype(np.int32)  # TODO: np.round(float_act_map, out=float_act_map).astype()
         np.clip(
             intboxes,
             0,

@@ -186,20 +186,6 @@ class ImageModel(Model):
                 }
             - the input metadata, which might be used in `postprocess` method
         """
-        # import cv2
-        # image = inputs
-        # ih, iw = image.shape[0:2]
-        # w, h = (640, 640)
-        # scale = min(w / iw, h / ih)
-        # nw = round(iw * scale)
-        # nh = round(ih * scale)
-        # image = cv2.resize(image, (nw, nh), interpolation=cv2.INTER_LINEAR)
-
-        # from openvino.model_api.models.utils import resize_image_letterbox
-        # processed = resize_image_letterbox(inputs, (self.w, self.h), cv2.INTER_LINEAR, 114)
-        # processed = (
-        #     processed[None][..., ::-1].transpose((0, 3, 1, 2)).astype(np.float32)
-        # )
         return {self.image_blob_name: inputs[None]}, {
             "original_shape": inputs.shape,
             "resized_shape": (self.w, self.h, self.c),

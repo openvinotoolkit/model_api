@@ -611,7 +611,7 @@ std::unique_ptr<ResultBase> YoloV8::postprocess(InferenceResult& infResult) {
                 detections[0 * num_proposals + i] - detections[2 * num_proposals + i] / 2.0f,
                 detections[1 * num_proposals + i] - detections[3 * num_proposals + i] / 2.0f,
                 detections[0 * num_proposals + i] + detections[2 * num_proposals + i] / 2.0f,
-                detections[1 * num_proposals + i] + detections[3 * num_proposals + i] / 2.0f
+                detections[1 * num_proposals + i] + detections[3 * num_proposals + i] / 2.0f,
             });
             confidences.push_back(confidence);
             labelIDs.push_back(max_id - 4);  // TODO: move 4 to const

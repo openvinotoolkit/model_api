@@ -170,7 +170,13 @@ def cached_models(folder, pt):
     )  # TODO: YOLOv5 vs v8
     ref_wrapper = YOLO(export_dir)
     ref_wrapper.overrides["imgsz"] = (impl_wrapper.w, impl_wrapper.h)
-    compiled_model = ov.Core().compile_model(xml, "CPU")
+    if ref_wrapper.predictor is None:
+        ref_wrapper.predict(
+            np.zeros([1, 1, 3], np.uint8)
+        )  # YOLO.predictor is initialized by predict
+    core = ov.Core()
+    ref_wrapper.predictor.model.ov_compiled_model = core.compile_model(ref_wrapper.predictor.model.ov_model, "CPU")
+    compiled_model = core.compile_model(xml, "CPU")
     return impl_wrapper, ref_wrapper, compiled_model
 
 
@@ -290,7 +296,7 @@ def test_detector(impath, data, pt):
     assert (result.boxes.data == ref_predictions.boxes.data).all()
     assert result.boxes.orig_shape == ref_predictions.boxes.orig_shape
     assert result.keypoints == ref_predictions.keypoints
-    assert result.keys == ref_predictions.keys
+    assert result._keys == ref_predictions._keys
     assert result.masks == ref_predictions.masks
     assert result.names == ref_predictions.names
     assert (result.orig_img == ref_predictions.orig_img).all()
@@ -308,7 +314,7 @@ def test_classifier(data):
     ref_wrapper = YOLO(export_path)
     ref_wrapper.overrides["imgsz"] = 224
     im = cv2.imread(data + "/coco128/images/train2017/000000000074.jpg")
-    ref_predictions = ref_wrapper(im)
+    ref_predictions = ref_wrapper.predict(im)
 
     model = ov.Core().compile_model(f"{export_path}/{xmls[0]}")
     orig_imgs = [im]

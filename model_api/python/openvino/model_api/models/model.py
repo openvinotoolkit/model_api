@@ -27,7 +27,7 @@ from openvino.model_api.adapters.ovms_adapter import OVMSAdapter
 
 
 class WrapperError(Exception):
-    """Class for errors occurred in Model API wrappers"""
+    """The class for errors occurred in Model API wrappers"""
 
     def __init__(self, wrapper_name, message):
         super().__init__(f"{wrapper_name}: {message}")
