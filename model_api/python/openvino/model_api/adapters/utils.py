@@ -383,18 +383,18 @@ def resize_image_letterbox(size, interpolation, pad_value):
 def load_parameters_from_onnx(onnx_model):
     parameters = {}
 
-    def insert_hiararchical(keys, val, root_dict):
+    def insert_hierarchical(keys, val, root_dict):
         if len(keys) == 1:
             root_dict[keys[0]] = val
             return
         if keys[0] not in root_dict:
             root_dict[keys[0]] = {}
-        insert_hiararchical(keys[1:], val, root_dict[keys[0]])
+        insert_hierarchical(keys[1:], val, root_dict[keys[0]])
 
     for prop in onnx_model.metadata_props:
         keys = prop.key.split()
         if "model_info" in keys:
-            insert_hiararchical(keys, prop.value, parameters)
+            insert_hierarchical(keys, prop.value, parameters)
 
     return parameters
 
