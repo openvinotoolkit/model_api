@@ -834,11 +834,13 @@ class YOLOv5(DetectionModel):
         if 1 != len(outputs):
             self.raise_error("expect 1 output")
         prediction = next(iter(outputs.values()))
+        if np.float32 != prediction.dtype:
+            self.raise_error("the output must be of precision f32")
         out_shape = prediction.shape
         if 3 != len(out_shape):
-            raise RuntimeError("expect the output of rank 3")
+            raise RuntimeError("the output must be of rank 3")
         if 1 != out_shape[0]:
-            raise RuntimeError("expect 1 as the first dim of the output")
+            raise RuntimeError("the first dim of the output must be 1")
         boxes = non_max_suppression(
             prediction, self.confidence_threshold, self.iou_threshold
         )
@@ -882,5 +884,4 @@ class YOLOv5(DetectionModel):
 
 class YOLOv8(YOLOv5):
     """YOLOv5 and YOLOv8 are identical in terms of inference"""
-
     __model__ = "YOLOv8"
