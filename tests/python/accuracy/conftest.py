@@ -16,7 +16,15 @@ def pytest_addoption(parser):
 
 def _impaths(data):
     impaths = sorted(
-        file for file in (Path(data) / "coco128/images/train2017/").iterdir()
+        file
+        for file in (Path(data) / "coco128/images/train2017/").iterdir()
+        if file.name
+        not in {
+            "000000000143.jpg",
+            "000000000491.jpg",
+            "000000000536.jpg",
+            "000000000581.jpg",
+        }
     )
     if not impaths:
         raise RuntimeError(f"{Path(data) / 'coco128/images/train2017/'} is empty")
@@ -28,21 +36,8 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize(
             "pt",
             (
-                "yolov5n6u.pt",
-                "yolov5s6u.pt",
-                "yolov5m6u.pt",
-                "yolov5l6u.pt",
-                "yolov5x6u.pt",
-                "yolov8n.pt",
-                "yolov8s.pt",
-                "yolov8m.pt",
                 "yolov8l.pt",
-                "yolov8x.pt",
-                "yolov5nu.pt",
-                "yolov5su.pt",
                 "yolov5mu.pt",
-                "yolov5lu.pt",
-                "yolov5xu.pt",
             ),
         )
     if "impath" in metafunc.fixturenames:

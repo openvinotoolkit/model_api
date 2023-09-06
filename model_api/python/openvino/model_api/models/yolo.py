@@ -860,11 +860,11 @@ class YOLOv5(DetectionModel):
                 padTop = (
                     self.orig_height - round(inputImgHeight / invertedScaleY)
                 ) // 2
+        coords = boxes[:, :4]
+        coords -= (padLeft, padTop, padLeft, padTop)
+        coords *= (invertedScaleX, invertedScaleY, invertedScaleX, invertedScaleY)
 
-        boxes[:, :4] -= (padLeft, padTop, padLeft, padTop)
-        boxes[:, :4] *= (invertedScaleX, invertedScaleY, invertedScaleX, invertedScaleY)
-
-        intboxes = np.rint(boxes[:, :4]).astype(np.int32)  # TODO: np.round(float_act_map, out=float_act_map).astype()
+        intboxes = np.round(coords, out=coords).astype(np.int32)
         np.clip(
             intboxes,
             0,
