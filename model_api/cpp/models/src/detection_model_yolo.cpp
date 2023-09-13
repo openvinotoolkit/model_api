@@ -506,9 +506,9 @@ ModelYolo::Region::Region(size_t classes,
     }
 }
 
-std::string YoloV8::ModelType = "YOLOv8";
+std::string YOLOv5::ModelType = "YOLOv5";
 
-void YoloV8::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
+void YOLOv5::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     const ov::Output<ov::Node>& input = model->input();
     const ov::Shape& in_shape = input.get_partial_shape().get_max_shape();
     if (in_shape.size() != 4) {
@@ -537,18 +537,18 @@ void YoloV8::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
 
     const ov::Output<const ov::Node>& output = model->output();
     if (ov::element::Type_t::f32 != output.get_element_type()) {
-        throw std::runtime_error("YoloV8 wrapper requires the output to be of precision f32");
+        throw std::runtime_error("YOLOv5 wrapper requires the output to be of precision f32");
     }
     const ov::Shape& out_shape = output.get_partial_shape().get_max_shape();
     if (3 != out_shape.size()) {
-        throw std::runtime_error("YoloV8 wrapper requires the output to be of rank 3");
+        throw std::runtime_error("YOLOv5 wrapper requires the output to be of rank 3");
     }
     if (!labels.empty() && labels.size() + 4 != out_shape[1]) {
-        throw std::runtime_error("YoloV8 wrapper number of labels must be smaller than output.shape[1] by 4");
+        throw std::runtime_error("YOLOv5 wrapper number of labels must be smaller than output.shape[1] by 4");  // TODO: align error messages with py, but take into account that v5v8 diff
     }
 }
 
-void YoloV8::initDefaultParameters(const ov::AnyMap& configuration) {
+void YOLOv5::initDefaultParameters(const ov::AnyMap& configuration) {
     if (configuration.find("iou_threshold") == configuration.end() && !model->has_rt_info("model_info", "iou_threshold")) {
         iou_threshold = 0.7f;
     }
@@ -570,27 +570,27 @@ void YoloV8::initDefaultParameters(const ov::AnyMap& configuration) {
     }
 }
 
-YoloV8::YoloV8(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+YOLOv5::YOLOv5(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
         : DetectionModelExt(model, configuration) {
     initDefaultParameters(configuration);
 }
 
-YoloV8::YoloV8(std::shared_ptr<InferenceAdapter>& adapter)
+YOLOv5::YOLOv5(std::shared_ptr<InferenceAdapter>& adapter)
         : DetectionModelExt(adapter) {
     initDefaultParameters(adapter->getModelConfig());
 }
 
-std::unique_ptr<ResultBase> YoloV8::postprocess(InferenceResult& infResult) {
+std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
     if (1 != infResult.outputsData.size()) {
-        throw std::runtime_error("YoloV8 wrapper expects 1 output");
+        throw std::runtime_error("YOLOv5 wrapper expects 1 output");
     }
     const ov::Tensor& detectionsTensor = infResult.getFirstOutputTensor();
     const ov::Shape& out_shape = detectionsTensor.get_shape();
     if (3 != out_shape.size()) {
-        throw std::runtime_error("YoloV8 wrapper expects the output of rank 3");
+        throw std::runtime_error("YOLOv5 wrapper expects the output of rank 3");
     }
     if (1 != out_shape[0]) {
-        throw std::runtime_error("YoloV8 wrapper expects 1 as the first dim of the output");
+        throw std::runtime_error("YOLOv5 wrapper expects 1 as the first dim of the output");
     }
     size_t num_proposals = out_shape[2];
     std::vector<Anchor> boxes;
@@ -669,3 +669,5 @@ std::unique_ptr<ResultBase> YoloV8::postprocess(InferenceResult& infResult) {
     }
     return retVal;
 }
+
+std::string YOLOv8::ModelType = "YOLOv8";

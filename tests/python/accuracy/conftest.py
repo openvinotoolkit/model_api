@@ -36,8 +36,8 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize(
             "pt",
             (
-                "yolov8l.pt",
                 "yolov5mu.pt",
+                "yolov8l.pt",
             ),
         )
     if "impath" in metafunc.fixturenames:

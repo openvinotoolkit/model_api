@@ -16,8 +16,15 @@ from collections import namedtuple
 import numpy as np
 
 from .detection_model import DetectionModel
-from .types import ListValue, NumericalValue
-from .utils import INTERPOLATION_TYPES, Detection, clip_detections, nms, resize_image
+from .types import BooleanValue, ListValue, NumericalValue
+from .utils import (
+    INTERPOLATION_TYPES,
+    Detection,
+    DetectionResult,
+    clip_detections,
+    nms,
+    resize_image,
+)
 
 DetectionBox = namedtuple("DetectionBox", ["x", "y", "w", "h"])
 
@@ -713,82 +720,27 @@ class YoloV3ONNX(DetectionModel):
         return detections
 
 
-def non_max_suppression(
-    prediction,
-    conf_thres=0.25,
-    iou_thres=0.7,
-    classes=None,
-    agnostic=False,
-    multi_label=False,
-    nc=0,  # number of classes (optional)
-    max_nms=30000,
-    max_wh=7680,
-):
-    """
-    Perform non-maximum suppression (NMS) on a set of boxes, with support for masks and multiple labels per box.
-
-    Arguments:
-        prediction (torch.Tensor): A tensor of shape (batch_size, num_classes + 4 + num_masks, num_boxes)
-            containing the predicted boxes, classes, and masks. The tensor should be in the format
-            output by a model, such as YOLO.
-        conf_thres (float): The confidence threshold below which boxes will be filtered out.
-            Valid values are between 0.0 and 1.0.
-        iou_thres (float): The IoU threshold below which boxes will be filtered out during NMS.
-            Valid values are between 0.0 and 1.0.
-        classes (List[int]): A list of class indices to consider. If None, all classes will be considered.
-        agnostic (bool): If True, the model is agnostic to the number of classes, and all
-            classes will be considered as one.
-        multi_label (bool): If True, each box may have multiple labels.
-        nc (int): (optional) The number of classes output by the model. Any indices after this will be considered masks.
-        max_nms (int): The maximum number of boxes into torchvision.ops.nms().
-        max_wh (int): The maximum box width and height in pixels
-
-    Returns:
-        (List[torch.Tensor]): A list of length batch_size, where each element is a tensor of
-            shape (num_boxes, 6 + num_masks) containing the kept boxes, with columns
-            (x1, y1, x2, y2, confidence, class, mask1, mask2, ...).
-    """
-    nc = nc or (prediction.shape[1] - 4)  # number of classes
-    mi = 4 + nc  # mask start index
-    xc = np.amax(prediction[:, 4:mi], 1) > conf_thres  # candidates
-
-    # Settings
-    multi_label &= nc > 1  # multiple labels per box (adds 0.5ms/img)
-
+def non_max_suppression(prediction, confidence_threshold, iou_threshold, agnostic_nms):
+    xc = np.amax(prediction[:, 4:], 1) > confidence_threshold  # candidates
     x = prediction[0]
-    x = x.transpose(1, 0)[xc[0]]  # confidence
-
-    # Detections matrix nx6 (xyxy, conf, cls)
-    box, cls, mask = x[:, :4], x[:, 4 : nc + 4], x[:, nc + 4 :]
-    box = xywh2xyxy(
-        box
-    )  # center_x, center_y, width, height) to (x1, y1, x2, y2)  # TODO: first cut by conf_thres
-    if multi_label:
-        i, j = (cls > conf_thres).nonzero(as_tuple=False).T
-        x = torch.cat((box[i], x[i, 4 + j, None], j[:, None].float(), mask[i]), 1)
-    else:  # best class only
-        j = cls.argmax(1, keepdims=True)
-        conf = np.take_along_axis(cls, j, 1)
-        x = np.concatenate((box, conf, j.astype(np.float32), mask), 1)[
-            conf.flatten() > conf_thres
-        ]
-
-    # Filter by class
-    if classes is not None:
-        x = x[(x[:, 5:6] == torch.tensor(classes, device=x.device)).any(1)]
-
-    # Batched NMS
-    c = x[:, 5:6] * (0 if agnostic else max_wh)  # classes
-    boxes, scores = x[:, :4] + c, x[:, 4]  # boxes (offset by class), scores
+    x = x.transpose(1, 0)[xc[0]]
+    box, cls = x[:, :4], x[:, 4:]
+    box = xywh2xyxy(box)
+    j = cls.argmax(1, keepdims=True)
+    conf = np.take_along_axis(cls, j, 1)
+    x = np.concatenate((box, conf, j.astype(np.float32)), 1)
+    max_wh = 0 if agnostic_nms else 7680
+    c = x[:, 5:6] * max_wh
+    boxes = x[:, :4] + c
     return x[
         nms(
             boxes[:, 0],
             boxes[:, 1],
             boxes[:, 2],
             boxes[:, 3],
-            scores,
-            iou_thres,
-            keep_top_k=max_nms,
+            x[:, 4],
+            iou_threshold,
+            keep_top_k=30000,
         )
     ]
 
@@ -820,7 +772,10 @@ class YOLOv5(DetectionModel):
                     default_value=0.7,
                     description="Threshold for non-maximum suppression (NMS) intersection over union (IOU) filtering",
                 ),
-                # TODO: "agnostic_nms", "max_det", ref_wrapper.predictor.args.classes?
+                "agnostic_nms": BooleanValue(
+                    description="If True, the model is agnostic to the number of classes, and all classes are considered as one",
+                    default_value=False,
+                ),
             }
         )
         parameters["resize_type"].update_default_value("fit_to_window_letterbox")
@@ -842,7 +797,7 @@ class YOLOv5(DetectionModel):
         if 1 != out_shape[0]:
             raise RuntimeError("the first dim of the output must be 1")
         boxes = non_max_suppression(
-            prediction, self.confidence_threshold, self.iou_threshold
+            prediction, self.confidence_threshold, self.iou_threshold, self.agnostic_nms
         )
 
         inputImgWidth = meta["original_shape"][1]
@@ -874,14 +829,19 @@ class YOLOv5(DetectionModel):
             intboxes,
         )
         intid = boxes[:, 5].astype(np.int32)
-        return [
-            Detection(
-                *intboxes[i], boxes[i, 4], intid[i], self.get_label_name(intid[i])
-            )
-            for i in range(len(boxes))
-        ]
+        return DetectionResult(
+            [
+                Detection(
+                    *intboxes[i], boxes[i, 4], intid[i], self.get_label_name(intid[i])
+                )
+                for i in range(len(boxes))
+            ],
+            np.ndarray(0),
+            np.ndarray(0),
+        )
 
 
 class YOLOv8(YOLOv5):
     """YOLOv5 and YOLOv8 are identical in terms of inference"""
+
     __model__ = "YOLOv8"

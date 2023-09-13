@@ -18,13 +18,14 @@ from contextlib import contextmanager
 
 import cv2 as cv
 import numpy as np
+from models.utils import multiclass_nms
 from openvino.model_api.models.instance_segmentation import (
     MaskRCNNModel,
     _segm_postprocess,
 )
 from openvino.model_api.models.utils import InstanceSegmentationResult, SegmentedObject
 
-from .detection import DetectionTiler, _multiclass_nms
+from .detection import DetectionTiler
 
 
 class InstanceSegmentationTiler(DetectionTiler):

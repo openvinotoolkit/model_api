@@ -84,12 +84,20 @@ protected:
     ov::Layout yoloRegionLayout = "NCHW";
 };
 
-class YoloV8 : public DetectionModelExt {
+class YOLOv5 : public DetectionModelExt {
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void initDefaultParameters(const ov::AnyMap& configuration);
 public:
-    YoloV8(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
-    YoloV8(std::shared_ptr<InferenceAdapter>& adapter);
+    YOLOv5(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    YOLOv5(std::shared_ptr<InferenceAdapter>& adapter);
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
+    static std::string ModelType;
+};
+
+class YOLOv8 : public YOLOv5 {
+public:
+    // YOLOv5 and YOLOv8 are identical in terms of inference
+    YOLOv8(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration) : YOLOv5{model, configuration} {}
+    YOLOv8(std::shared_ptr<InferenceAdapter>& adapter) : YOLOv5{adapter} {}
     static std::string ModelType;
 };

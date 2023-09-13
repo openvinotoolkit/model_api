@@ -87,7 +87,9 @@ class DetectionResult(
 ):
     def __str__(self):
         obj_str = "; ".join(str(obj) for obj in self.objects)
-        return f"{obj_str}; [{','.join(str(i) for i in self.saliency_map.shape)}]; [{','.join(str(i) for i in self.feature_vector.shape)}]"
+        if obj_str:
+            obj_str += "; "
+        return f"{obj_str}[{','.join(str(i) for i in self.saliency_map.shape)}]; [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
 class SegmentedObject(Detection):
