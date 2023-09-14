@@ -49,17 +49,21 @@ class ONNXRuntimeAdapter(InferenceAdapter):
     comprechensive list of models available.
     """
 
-    def __init__(self, model_path: str):
-        """"""
-        model = onnx.load(model_path)
+    def __init__(self, model: str, ort_options: dict = {}):
+        """
+        Args:
+            model (str): Filename or serialized ONNX model in a byte string.
+            ort_options (dict): parameters that will be forwarded to onnxruntime.InferenceSession
+        """
+        loaded_model = onnx.load(model)
 
         inferred_model = SymbolicShapeInference.infer_shapes(
-            model, int(sys.maxsize / 2), False, False, False
+            loaded_model, int(sys.maxsize / 2), False, False, False
         )
 
-        self.session = ort.InferenceSession(inferred_model.SerializeToString())
+        self.session = ort.InferenceSession(inferred_model.SerializeToString(), **ort_options)
         self.output_names = [o.name for o in self.session.get_outputs()]
-        self.onnx_metadata = load_parameters_from_onnx(onnx.load(model_path))
+        self.onnx_metadata = load_parameters_from_onnx(inferred_model)
         self.preprocessor = lambda arg: arg
 
     def get_input_layers(self):
