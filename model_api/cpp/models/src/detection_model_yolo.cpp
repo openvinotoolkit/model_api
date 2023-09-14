@@ -512,7 +512,7 @@ void YOLOv5::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
     const ov::Output<ov::Node>& input = model->input();
     const ov::Shape& in_shape = input.get_partial_shape().get_max_shape();
     if (in_shape.size() != 4) {
-        throw std::runtime_error("The rank of the input must be 4");
+        throw std::runtime_error("YOLO: the rank of the input must be 4");
     }
     inputNames.push_back(input.get_any_name());
     const ov::Layout& inputLayout = getInputLayout(input);
@@ -537,60 +537,58 @@ void YOLOv5::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
 
     const ov::Output<const ov::Node>& output = model->output();
     if (ov::element::Type_t::f32 != output.get_element_type()) {
-        throw std::runtime_error("YOLOv5 wrapper requires the output to be of precision f32");
+        throw std::runtime_error("YOLO: the output must be of precision f32");
     }
     const ov::Shape& out_shape = output.get_partial_shape().get_max_shape();
     if (3 != out_shape.size()) {
-        throw std::runtime_error("YOLOv5 wrapper requires the output to be of rank 3");
+        throw std::runtime_error("YOLO: the output must be of rank 3");
     }
     if (!labels.empty() && labels.size() + 4 != out_shape[1]) {
-        throw std::runtime_error("YOLOv5 wrapper number of labels must be smaller than output.shape[1] by 4");  // TODO: align error messages with py, but take into account that v5v8 diff
+        throw std::runtime_error("YOLO: number of labels must be smaller than out_shape[1] by 4");
     }
 }
 
-void YOLOv5::initDefaultParameters(const ov::AnyMap& configuration) {
-    if (configuration.find("iou_threshold") == configuration.end() && !model->has_rt_info("model_info", "iou_threshold")) {
-        iou_threshold = 0.7f;
-    }
-    if (configuration.find("resize_type") == configuration.end() && !model->has_rt_info("model_info", "resize_type")) {
+void YOLOv5::updateModelInfo() {
+    DetectionModelExt::updateModelInfo();
+    model->set_rt_info(YOLOv5::ModelType, "model_info", "model_type");
+    model->set_rt_info(agnostic_nms, "model_info", "agnostic_nms");
+    model->set_rt_info(iou_threshold, "model_info", "iou_threshold");
+}
+
+void YOLOv5::init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority) {
+    pad_value = get_from_any_maps("pad_value", top_priority, mid_priority, 114);
+    if (top_priority.find("resize_type") == top_priority.end() && mid_priority.find("resize_type") == mid_priority.end()) {
         interpolationMode = cv::INTER_LINEAR;
         resizeMode = RESIZE_KEEP_ASPECT_LETTERBOX;
     }
-    if (configuration.find("confidence_threshold") == configuration.end() && !model->has_rt_info("model_info", "confidence_threshold")) {
-        confidence_threshold = 0.25f;
-    }
-    if (configuration.find("reverse_input_channels") == configuration.end() && !model->has_rt_info("model_info", "reverse_input_channels")) {
-        reverse_input_channels = true;
-    }
-    if (configuration.find("pad_value") == configuration.end() && !model->has_rt_info("model_info", "pad_value")) {
-        pad_value = 114;
-    }
-    if (configuration.find("scale_values") == configuration.end() && !model->has_rt_info("model_info", "scale_values")) {
-        scale_values = {255.0f};
-    }
+    reverse_input_channels = get_from_any_maps("reverse_input_channels", top_priority, mid_priority, true);
+    scale_values = get_from_any_maps("scale_values", top_priority, mid_priority, std::vector<float>{255.0f});
+    confidence_threshold = get_from_any_maps("confidence_threshold", top_priority, mid_priority, 0.25f);
+    agnostic_nms = get_from_any_maps("agnostic_nms", top_priority, mid_priority, agnostic_nms);
+    iou_threshold = get_from_any_maps("iou_threshold", top_priority, mid_priority, 0.7f);
 }
 
 YOLOv5::YOLOv5(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
         : DetectionModelExt(model, configuration) {
-    initDefaultParameters(configuration);
+    init_from_config(configuration, model->get_rt_info<ov::AnyMap>("model_info"));
 }
 
 YOLOv5::YOLOv5(std::shared_ptr<InferenceAdapter>& adapter)
         : DetectionModelExt(adapter) {
-    initDefaultParameters(adapter->getModelConfig());
+    init_from_config(adapter->getModelConfig(), ov::AnyMap{});
 }
 
 std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
     if (1 != infResult.outputsData.size()) {
-        throw std::runtime_error("YOLOv5 wrapper expects 1 output");
+        throw std::runtime_error("YOLO: expect 1 output");
     }
     const ov::Tensor& detectionsTensor = infResult.getFirstOutputTensor();
     const ov::Shape& out_shape = detectionsTensor.get_shape();
     if (3 != out_shape.size()) {
-        throw std::runtime_error("YOLOv5 wrapper expects the output of rank 3");
+        throw std::runtime_error("YOLO: the output must be of rank 3");
     }
     if (1 != out_shape[0]) {
-        throw std::runtime_error("YOLOv5 wrapper expects 1 as the first dim of the output");
+        throw std::runtime_error("YOLO: the first dim of the output must be 1");
     }
     size_t num_proposals = out_shape[2];
     std::vector<Anchor> boxes;

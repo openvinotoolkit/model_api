@@ -24,7 +24,7 @@ TEST(YOLOv8, Detector) {
             }
         }
         bool preload = true;
-        unique_ptr<DetectionModel> yoloV8 = DetectionModel::create_model(xml, {}, "", preload, "CPU");
+        unique_ptr<DetectionModel> yoloV8 = DetectionModel::create_model(xml.string(), {}, "", preload, "CPU");
         vector<filesystem::path> refpaths;  // TODO: prohibit empty ref folder
         for (auto const& dir_entry : filesystem::directory_iterator{DATA + "/ultralytics/detectors/" + model_name + "/ref/"}) {
             refpaths.push_back(dir_entry.path());

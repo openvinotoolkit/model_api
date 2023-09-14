@@ -763,8 +763,17 @@ class YOLOv5(DetectionModel):
     @classmethod
     def parameters(cls):
         parameters = super().parameters()
+        parameters["pad_value"].update_default_value(114)
+        parameters["resize_type"].update_default_value("fit_to_window_letterbox")
+        parameters["reverse_input_channels"].update_default_value(True)
+        parameters["scale_values"].update_default_value([255.0])
+        parameters["confidence_threshold"].update_default_value(0.25)
         parameters.update(
             {
+                "agnostic_nms": BooleanValue(
+                    description="If True, the model is agnostic to the number of classes, and all classes are considered as one",
+                    default_value=False,
+                ),
                 "iou_threshold": NumericalValue(
                     float,
                     min=0.0,
@@ -772,17 +781,8 @@ class YOLOv5(DetectionModel):
                     default_value=0.7,
                     description="Threshold for non-maximum suppression (NMS) intersection over union (IOU) filtering",
                 ),
-                "agnostic_nms": BooleanValue(
-                    description="If True, the model is agnostic to the number of classes, and all classes are considered as one",
-                    default_value=False,
-                ),
             }
         )
-        parameters["resize_type"].update_default_value("fit_to_window_letterbox")
-        parameters["confidence_threshold"].update_default_value(0.25)
-        parameters["reverse_input_channels"].update_default_value(True)
-        parameters["pad_value"].update_default_value(114)
-        parameters["scale_values"].update_default_value([255.0])
         return parameters
 
     def postprocess(self, outputs, meta):

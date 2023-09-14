@@ -86,7 +86,9 @@ protected:
 
 class YOLOv5 : public DetectionModelExt {
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
-    void initDefaultParameters(const ov::AnyMap& configuration);
+    void updateModelInfo() override;
+    void init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority);
+    bool agnostic_nms = false;
 public:
     YOLOv5(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
     YOLOv5(std::shared_ptr<InferenceAdapter>& adapter);
