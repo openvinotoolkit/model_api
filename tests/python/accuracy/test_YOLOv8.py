@@ -99,7 +99,7 @@ def test_detector(impath, data, pt):
     assert 1 == len(ref_predictions)
     ref_boxes = ref_predictions[0].boxes.data.numpy()
     with open(ref_dir / impath.with_suffix(".txt").name, "w") as file:
-        print(impl_preds, file=file)
+        print(impl_preds, end="", file=file)
     if 0 == pred_boxes.size == ref_boxes.size:
         return  # np.isclose() doesn't work for empty arrays
     ref_boxes[:, :4] = np.round(ref_boxes[:, :4], out=ref_boxes[:, :4])

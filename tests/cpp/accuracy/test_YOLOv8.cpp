@@ -32,21 +32,11 @@ TEST(YOLOv8, Detector) {
         sort(refpaths.begin(), refpaths.end());
         for (filesystem::path refpath : refpaths) {
             const cv::Mat& im = cv::imread(DATA + "/coco128/images/train2017/" + refpath.stem().string() + ".jpg");
+            ASSERT_NE(nullptr, im.data);
             ifstream file{refpath};
             stringstream ss;
             ss << file.rdbuf();
-            EXPECT_EQ(ss.str(), std::string{*yoloV8->infer(im)} + '\n');
-            // std::cout << ss.str() << '\n';
-            // string line;
-            // size_t i = 0;
-            // while (getline(file, line)) {
-            //     ASSERT_LT(i, objects.size()) << refpath;
-            //     stringstream prediction_buffer;
-            //     prediction_buffer << objects[i];
-            //     EXPECT_EQ(prediction_buffer.str(), line) << refpath;
-            //     // TODO: compare whole file content at onece vs objects
-            //     ++i;
-            // }
+            EXPECT_EQ(ss.str(), std::string{*yoloV8->infer(im)});
         }
     }
 }
