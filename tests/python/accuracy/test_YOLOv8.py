@@ -58,7 +58,7 @@ def _impaths():
 
 @pytest.mark.parametrize("impath", _impaths())
 @pytest.mark.parametrize("pt", [Path("yolov5mu.pt"), Path("yolov8l.pt")])
-def test_detector(impath, data, pt):
+def test_detector(impath, pt):
     impl_wrapper, ref_wrapper, ref_dir = _cached_models(os.environ["DATA"], pt)
     im = cv2.imread(str(impath))
     assert im is not None
