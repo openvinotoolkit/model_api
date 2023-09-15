@@ -24,7 +24,7 @@ jobs:
     - name: Prepare test data
       run: |
         source venv/bin/activate
-        python tests/python/accuracy/prepare_data.py
+        python tests/python/accuracy/prepare_data.py -d data
     - name: Run Python Test
       run: |
         source venv/bin/activate

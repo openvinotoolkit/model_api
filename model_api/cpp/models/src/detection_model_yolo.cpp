@@ -522,8 +522,10 @@ void YOLOv5::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) {
                                 inputLayout,
                                 resizeMode,
                                 interpolationMode,
-                                ov::Shape{in_shape[ov::layout::width_idx(inputLayout)],
-                                            in_shape[ov::layout::height_idx(inputLayout)]},
+                                ov::Shape{
+                                    in_shape[ov::layout::width_idx(inputLayout)],
+                                    in_shape[ov::layout::height_idx(inputLayout)]
+                                },
                                 pad_value,
                                 reverse_input_channels,
                                 {},
