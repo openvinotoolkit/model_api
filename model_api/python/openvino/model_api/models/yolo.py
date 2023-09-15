@@ -721,6 +721,9 @@ class YoloV3ONNX(DetectionModel):
 
 
 class YOLOv5(DetectionModel):
+    """
+    Reimplementation of ultralytics.YOLO
+    """
     __model__ = "YOLOv5"
 
     def __init__(self, inference_adapter, configuration, preload=False):

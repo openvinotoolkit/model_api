@@ -622,14 +622,14 @@ std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
     constexpr size_t keep_top_k = 30000;
     std::vector<size_t> keep;
     if (agnostic_nms) {
+        keep = nms(boxes, confidences, iou_threshold, includeBoundaries, keep_top_k);
+    } else {
         std::vector<AnchorLabeled> boxes_with_class;
         boxes_with_class.reserve(boxes.size());
         for (size_t i = 0; i < boxes.size(); ++i) {
             boxes_with_class.emplace_back(boxes[i], int(labelIDs[i]));
         }
         keep = multiclass_nms(boxes_with_class, confidences, iou_threshold, includeBoundaries, keep_top_k);
-    } else {
-        keep = nms(boxes, confidences, iou_threshold, includeBoundaries, keep_top_k);
     }
     DetectionResult* result = new DetectionResult(infResult.frameId, infResult.metaData);
     auto base = std::unique_ptr<ResultBase>(result);
