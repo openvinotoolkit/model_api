@@ -51,8 +51,6 @@ class ClassificationModel(ImageModel):
                 self.load()
             return
 
-        self.multilabel = False
-        self.output_raw_scores = True
         if self.multilabel:
             self.embedded_processing = True
             self.out_layer_names = _get_non_xai_names(self.outputs.keys())

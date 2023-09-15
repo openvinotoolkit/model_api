@@ -61,7 +61,9 @@ class ONNXRuntimeAdapter(InferenceAdapter):
             loaded_model, int(sys.maxsize / 2), False, False, False
         )
 
-        self.session = ort.InferenceSession(inferred_model.SerializeToString(), **ort_options)
+        self.session = ort.InferenceSession(
+            inferred_model.SerializeToString(), **ort_options
+        )
         self.output_names = [o.name for o in self.session.get_outputs()]
         self.onnx_metadata = load_parameters_from_onnx(inferred_model)
         self.preprocessor = lambda arg: arg
