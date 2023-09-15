@@ -73,7 +73,10 @@ def _cached_models(folder, pt):
 
 def _impaths():
     """
-    It's impossible to pass fixture as argument for @pytest.mark.parametrize, so I can't take cmd arg. Use env var instead. Another solution was to define pytest_generate_tests(metafunc) in conftest.py.
+    It's impossible to pass fixture as argument for
+    @pytest.mark.parametrize, so I can't take cmd arg. Use env var
+    instead. Another solution was to define
+    pytest_generate_tests(metafunc) in conftest.py.
     """
     impaths = sorted(
         file
@@ -87,7 +90,9 @@ def _impaths():
         }
     )
     if not impaths:
-        raise RuntimeError(f"{Path(os.environ['DATA']) / 'coco128/images/train2017/'} is empty")
+        raise RuntimeError(
+            f"{Path(os.environ['DATA']) / 'coco128/images/train2017/'} is empty"
+        )
     return impaths
 
 
@@ -125,50 +130,3 @@ def test_detector(impath, data, pt):
     ).all()  # Allow one pixel deviation because image preprocessing is imbedded into the model
     assert np.isclose(pred_boxes[:, 4], ref_boxes[:, 4], 0.0, 0.02).all()
     assert (pred_boxes[:, 5] == ref_boxes[:, 5]).all()
-
-
-def test_classifier(data):
-    # export_path = YOLO("https://github.com/ultralytics/assets/releases/download/v0.0.0/YOLOv8n-cls.pt").export(format="openvino")
-    export_path = YOLO(
-        "/home/wov/r/ultralytics/examples/YOLOv8-CPP-Inference/build/YOLOv8n-cls.pt"
-    ).export(format="openvino")
-    xmls = [file for file in os.listdir(export_path) if file.endswith(".xml")]
-    if 1 != len(xmls):
-        raise RuntimeError(f"{export_path} must contain one .xml file")
-    ref_wrapper = YOLO(export_path)
-    ref_wrapper.overrides["imgsz"] = 224
-    im = cv2.imread(data + "/coco128/images/train2017/000000000074.jpg")
-    ref_predictions = ref_wrapper.predict(im)
-
-    model = ov.Core().compile_model(f"{export_path}/{xmls[0]}")
-    orig_imgs = [im]
-
-    transforms = T.Compose([CenterCrop(224), ToTensor()])
-
-    img = torch.stack([transforms(im) for im in orig_imgs], dim=0)
-    img = img if isinstance(img, torch.Tensor) else torch.from_numpy(img)
-    img.float()  # uint8 to fp16/32
-
-    preds = next(iter(model({0: img}).values()))
-    preds = torch.from_numpy(preds)
-
-    results = []
-    for i, pred in enumerate(preds):
-        orig_img = orig_imgs[i] if isinstance(orig_imgs, list) else orig_imgs
-        results.append(
-            Results(
-                orig_img=orig_img,
-                path=None,
-                names=ref_wrapper.predictor.model.names,
-                probs=pred,
-            )
-        )
-
-    for i in range(len(results)):
-        assert result.boxes == ref_predictions.boxes
-        assert result.keypoints == ref_predictions.keypoints
-        assert result.keys == ref_predictions.keys
-        assert result.masks == ref_predictions.masks
-        assert result.names == ref_predictions.names
-        assert (result.orig_img == ref_predictions.orig_img).all()
-        assert (result.probs == ref_predictions.probs).all()

@@ -772,7 +772,9 @@ class YOLOv5(DetectionModel):
         if 1 != out_shape[0]:
             raise RuntimeError("the first dim of the output must be 1")
         LABELS_START = 4
-        xc = np.amax(prediction[:, LABELS_START:], 1) > self.confidence_threshold  # Candidates
+        xc = (
+            np.amax(prediction[:, LABELS_START:], 1) > self.confidence_threshold
+        )  # Candidates
         x = prediction[0]
         x = x.transpose(1, 0)[xc[0]]
         box, cls = x[:, :LABELS_START], x[:, LABELS_START:]
