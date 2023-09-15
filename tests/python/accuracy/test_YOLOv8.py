@@ -16,7 +16,6 @@ def _init_predictor(yolo):
 
 @functools.lru_cache(maxsize=1)
 def _cached_models(folder, pt):
-    pt = Path(pt)
     export_dir = Path(
         YOLO(folder / "ultralytics/detectors" / pt, "detect").export(format="openvino")
     )
@@ -37,7 +36,7 @@ def _impaths():
     It's impossible to pass fixture as argument for
     @pytest.mark.parametrize, so I can't take cmd arg. Use env var
     instead. Another solution was to define
-    pytest_generate_tests(metafunc) in conftest.py.
+    pytest_generate_tests(metafunc) in conftest.py
     """
     impaths = sorted(
         file
@@ -58,9 +57,9 @@ def _impaths():
 
 
 @pytest.mark.parametrize("impath", _impaths())
-@pytest.mark.parametrize("pt", ["yolov5mu.pt", "yolov8l.pt"])
+@pytest.mark.parametrize("pt", [Path("yolov5mu.pt"), Path("yolov8l.pt")])
 def test_detector(impath, data, pt):
-    impl_wrapper, ref_wrapper, ref_dir = _cached_models(data, pt)
+    impl_wrapper, ref_wrapper, ref_dir = _cached_models(os.environ["DATA"], pt)
     im = cv2.imread(str(impath))
     assert im is not None
     impl_preds = impl_wrapper(im)

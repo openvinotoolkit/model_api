@@ -622,7 +622,6 @@ std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
     constexpr size_t keep_top_k = 30000;
     std::vector<size_t> keep;
     if (agnostic_nms) {
-        constexpr float max_wh = 7680.0f;
         std::vector<AnchorLabeled> boxes_with_class;
         boxes_with_class.reserve(boxes.size());
         for (size_t i = 0; i < boxes.size(); ++i) {

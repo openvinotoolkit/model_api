@@ -85,6 +85,7 @@ protected:
 };
 
 class YOLOv5 : public DetectionModelExt {
+    // Reimplementation of ultralytics.YOLO
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void updateModelInfo() override;
     void init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority);

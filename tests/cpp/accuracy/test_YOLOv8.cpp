@@ -10,10 +10,11 @@
 using namespace std;
 
 namespace {
-string DATA;
-
 TEST(YOLOv8, Detector) {
-    const string& exported_path = DATA + "/ultralytics/detectors/";
+    // Get data from env var, not form cmd arg to stay aligned with Python version
+    const char* const data = getenv("DATA");
+    ASSERT_NE(data, nullptr);
+    const string& exported_path = string{data} + "/ultralytics/detectors/";
     for (const string model_name : {"yolov5mu_openvino_model", "yolov8l_openvino_model"}) {
         filesystem::path xml;
         for (auto const& dir_entry : filesystem::directory_iterator{exported_path + model_name}) {
@@ -26,7 +27,7 @@ TEST(YOLOv8, Detector) {
         bool preload = true;
         unique_ptr<DetectionModel> yoloV8 = DetectionModel::create_model(xml.string(), {}, "", preload, "CPU");
         vector<filesystem::path> refpaths;
-        for (auto const& dir_entry : filesystem::directory_iterator{DATA + "/ultralytics/detectors/" + model_name + "/ref/"}) {
+        for (auto const& dir_entry : filesystem::directory_iterator{exported_path + model_name + "/ref/"}) {
             refpaths.push_back(dir_entry.path());
         }
         ASSERT_GT(refpaths.size(), 0);
@@ -35,18 +36,8 @@ TEST(YOLOv8, Detector) {
             ifstream file{refpath};
             stringstream ss;
             ss << file.rdbuf();
-            EXPECT_EQ(ss.str(), std::string{*yoloV8->infer(cv::imread(DATA + "/coco128/images/train2017/" + refpath.stem().string() + ".jpg"))});
+            EXPECT_EQ(ss.str(), std::string{*yoloV8->infer(cv::imread(string{data} + "/coco128/images/train2017/" + refpath.stem().string() + ".jpg"))});
         }
     }
 }
-}
-
-int main(int argc, char *argv[]) {
-    testing::InitGoogleTest(&argc, argv);
-    if (2 != argc) {
-        cerr << "Usage: " << argv[0] << " <path_to_data>\n";
-        return 1;
-    }
-    DATA = argv[1];
-    return RUN_ALL_TESTS();
 }
