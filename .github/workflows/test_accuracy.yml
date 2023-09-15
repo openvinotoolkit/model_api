@@ -41,4 +41,4 @@ jobs:
     - name: Run CPP Test
       run: |
         build/test_accuracy -d data -p tests/python/accuracy/public_scope.json
-        build/test_YOLOv8 data
+        DATA=data build/test_YOLOv8
