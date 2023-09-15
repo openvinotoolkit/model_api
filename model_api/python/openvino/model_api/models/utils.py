@@ -364,12 +364,12 @@ def nms(x1, y1, x2, y2, scores, thresh, include_boundaries=False, keep_top_k=0):
         h = np.maximum(0.0, yy2 - yy1 + b)
         intersection = w * h
 
-        union = areas[i] + areas[order[1:]] - intersection
+        union_areas = areas[i] + areas[order[1:]] - intersection
         overlap = np.divide(
             intersection,
-            union,
+            union_areas,
             out=np.zeros_like(intersection, dtype=float),
-            where=union != 0,
+            where=union_areas != 0,
         )
 
         order = order[np.where(overlap <= thresh)[0] + 1]

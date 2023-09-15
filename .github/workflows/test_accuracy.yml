@@ -24,12 +24,12 @@ jobs:
     - name: Prepare test data
       run: |
         source venv/bin/activate
-        DATA=data python tests/python/accuracy/prepare_data.py
+        python tests/python/accuracy/prepare_data.py
     - name: Run Python Test
       run: |
         source venv/bin/activate
         pytest --data=./data tests/python/accuracy/test_accuracy.py
-        pytest --data=./data tests/python/accuracy/test_YOLOv8.py
+        DATA=data pytest --data=./data tests/python/accuracy/test_YOLOv8.py
     - name: Install CPP ependencies
       run: |
         sudo bash model_api/cpp/install_dependencies.sh

@@ -1,52 +1,13 @@
 import functools
 import os
-from distutils.dir_util import copy_tree
 from pathlib import Path
 
 import cv2
 import numpy as np
 import openvino.runtime as ov
 import pytest
-import torch
-import torchvision.transforms as T
 from openvino.model_api.models import YOLOv5
 from ultralytics import YOLO
-from ultralytics.yolo.engine.results import Results
-
-
-class CenterCrop:
-    # YOLOv8 CenterCrop class for image preprocessing, i.e. T.Compose([CenterCrop(size), ToTensor()])
-    def __init__(self, size=640):
-        """Converts an image from numpy array to PyTorch tensor."""
-        super().__init__()
-        self.h, self.w = (size, size) if isinstance(size, int) else size
-
-    def __call__(self, im):  # im = np.array HWC
-        imh, imw = im.shape[:2]
-        m = min(imh, imw)  # min dimension
-        top, left = (imh - m) // 2, (imw - m) // 2
-        return cv2.resize(
-            im[top : top + m, left : left + m],
-            (self.w, self.h),
-            interpolation=cv2.INTER_LINEAR,
-        )
-
-
-class ToTensor:
-    # YOLOv8 ToTensor class for image preprocessing, i.e. T.Compose([LetterBox(size), ToTensor()])
-    def __init__(self, half=False):
-        """Initialize YOLOv8 ToTensor object with optional half-precision support."""
-        super().__init__()
-        self.half = half
-
-    def __call__(self, im):  # im = np.array HWC in BGR order
-        im = np.ascontiguousarray(
-            im.transpose((2, 0, 1))[::-1]
-        )  # HWC to CHW -> BGR to RGB -> contiguous
-        im = torch.from_numpy(im)  # to torch
-        im = im.half() if self.half else im.float()  # uint8 to fp16/32
-        im /= 255.0  # 0-255 to 0.0-1.0
-        return im
 
 
 def _init_predictor(yolo):

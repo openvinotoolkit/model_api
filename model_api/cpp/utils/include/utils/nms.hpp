@@ -50,6 +50,7 @@ struct AnchorLabeled : public Anchor {
     AnchorLabeled() = default;
     AnchorLabeled(float _left, float _top, float _right, float _bottom, int _labelID) :
         Anchor(_left, _top, _right, _bottom), labelID(_labelID) {}
+    AnchorLabeled(const Anchor& coords, int labelID) : Anchor{coords}, labelID{labelID} {}
 };
 
 template <typename Anchor>
@@ -76,15 +77,14 @@ std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<floa
             keep.push_back(idx1);
             shouldContinue = false;
             for (size_t j = i + 1; j < ordersNum; ++j) {
-                auto idx2 = order[j];
+                int idx2 = order[j];
                 if (idx2 >= 0) {
                     shouldContinue = true;
-                    auto overlappingWidth = std::fminf(boxes[idx1].right, boxes[idx2].right) - std::fmaxf(boxes[idx1].left, boxes[idx2].left);
-                    auto overlappingHeight = std::fminf(boxes[idx1].bottom, boxes[idx2].bottom) - std::fmaxf(boxes[idx1].top, boxes[idx2].top);
-                    auto intersection = overlappingWidth > 0 && overlappingHeight > 0 ? overlappingWidth * overlappingHeight : 0;
-                    auto overlap = intersection / (areas[idx1] + areas[idx2] - intersection);  // TODO: 0.0 / 0.0 and non_zero / 0.0 same for python
-
-                    if (overlap > thresh) {
+                    float overlappingWidth = std::fminf(boxes[idx1].right, boxes[idx2].right) - std::fmaxf(boxes[idx1].left, boxes[idx2].left);
+                    float overlappingHeight = std::fminf(boxes[idx1].bottom, boxes[idx2].bottom) - std::fmaxf(boxes[idx1].top, boxes[idx2].top);
+                    float intersection = overlappingWidth > 0 && overlappingHeight > 0 ? overlappingWidth * overlappingHeight : 0;
+                    float union_area = areas[idx1] + areas[idx2] - intersection;
+                    if (0.0f == union_area || intersection / union_area > thresh) {
                         order[j] = -1;
                     }
                 }

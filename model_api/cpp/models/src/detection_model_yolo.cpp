@@ -616,23 +616,22 @@ std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
             labelIDs.push_back(max_id - LABELS_START);
         }
     }
-    const std::vector<size_t> keep;
+    constexpr bool includeBoundaries = false;
+    constexpr size_t keep_top_k = 30000;
+    std::vector<size_t> keep;
     if (agnostic_nms) {
         constexpr float max_wh = 7680.0f;
-        std::vector<Anchor> boxes_with_class{boxes};
-        for (size_t i = 0; i < boxes_with_class.size(); ++i) {
-            boxes_with_class[i].left += max_wh * labelIDs[i];
-            boxes_with_class[i].top += max_wh * labelIDs[i];
-            boxes_with_class[i].right += max_wh * labelIDs[i];
-            boxes_with_class[i].bottom += max_wh * labelIDs[i];
+        std::vector<AnchorLabeled> boxes_with_class;
+        boxes_with_class.reserve(boxes.size());
+        for (size_t i = 0; i < boxes.size(); ++i) {
+            boxes_with_class.emplace_back(boxes[i], int(labelIDs[i]));
         }
-        keep = nms(boxes_with_class, confidences, iou_threshold, false, 30000);
+        keep = multiclass_nms(boxes_with_class, confidences, iou_threshold, includeBoundaries, keep_top_k);
     } else {
-        kepp = nms(boxes, confidences, iou_threshold, false, 30000);
+        keep = nms(boxes, confidences, iou_threshold, includeBoundaries, keep_top_k);
     }
     DetectionResult* result = new DetectionResult(infResult.frameId, infResult.metaData);
-    auto retVal = std::unique_ptr<ResultBase>(result);
-
+    auto base = std::unique_ptr<ResultBase>(result);
     const auto& internalData = infResult.internalModelData->asRef<InternalImageModelData>();
     float floatInputImgWidth = float(internalData.inputImgWidth),
          floatInputImgHeight = float(internalData.inputImgHeight);
@@ -669,7 +668,7 @@ std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
         desc.label = getLabelName(desc.labelID);
         result->objects.push_back(desc);
     }
-    return retVal;
+    return base;
 }
 
 std::string YOLOv8::ModelType = "YOLOv8";
