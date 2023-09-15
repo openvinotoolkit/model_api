@@ -49,11 +49,6 @@ class ToTensor:
         return im
 
 
-@pytest.fixture(scope="session")
-def data(pytestconfig):
-    return Path(pytestconfig.getoption("data"))
-
-
 def _init_predictor(yolo):
     yolo.predict(np.empty([1, 1, 3], np.uint8))
 
@@ -76,6 +71,28 @@ def _cached_models(folder, pt):
     return impl_wrapper, ref_wrapper, ref_dir
 
 
+def _impaths():
+    """
+    It's impossible to pass fixture as argument for @pytest.mark.parametrize, so I can't take cmd arg. Use env var instead. Another solution was to define pytest_generate_tests(metafunc) in conftest.py.
+    """
+    impaths = sorted(
+        file
+        for file in (Path(os.environ["DATA"]) / "coco128/images/train2017/").iterdir()
+        if file.name
+        not in {  # This images fail because image preprocessing is imbedded into the model
+            "000000000143.jpg",
+            "000000000491.jpg",
+            "000000000536.jpg",
+            "000000000581.jpg",
+        }
+    )
+    if not impaths:
+        raise RuntimeError(f"{Path(os.environ['DATA']) / 'coco128/images/train2017/'} is empty")
+    return impaths
+
+
+@pytest.mark.parametrize("impath", _impaths())
+@pytest.mark.parametrize("pt", ["yolov5mu.pt", "yolov8l.pt"])
 def test_detector(impath, data, pt):
     impl_wrapper, ref_wrapper, ref_dir = _cached_models(data, pt)
     im = cv2.imread(str(impath))
@@ -105,7 +122,7 @@ def test_detector(impath, data, pt):
     ref_boxes[:, :4] = np.round(ref_boxes[:, :4], out=ref_boxes[:, :4])
     assert np.isclose(
         pred_boxes[:, :4], ref_boxes[:, :4], 0, 1
-    ).all()  # allow one pixel deviation because image preprocessing is imbedded into the model
+    ).all()  # Allow one pixel deviation because image preprocessing is imbedded into the model
     assert np.isclose(pred_boxes[:, 4], ref_boxes[:, 4], 0.0, 0.02).all()
     assert (pred_boxes[:, 5] == ref_boxes[:, 5]).all()
 

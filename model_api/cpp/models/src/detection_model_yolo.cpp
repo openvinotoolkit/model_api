@@ -598,7 +598,8 @@ std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
     for (size_t i = 0; i < num_proposals; ++i) {
         float confidence = 0.0f;
         size_t max_id = 0;
-        for (size_t j = 4; j < out_shape[1]; ++j) {
+        constexpr size_t LABELS_START = 4;
+        for (size_t j = LABELS_START; j < out_shape[1]; ++j) {
             if (detections[j * num_proposals + i] > confidence) {
                 confidence = detections[j * num_proposals + i];
                 max_id = j;
@@ -612,20 +613,23 @@ std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
                 detections[1 * num_proposals + i] + detections[3 * num_proposals + i] / 2.0f,
             });
             confidences.push_back(confidence);
-            labelIDs.push_back(max_id - 4);  // TODO: move 4 to const
+            labelIDs.push_back(max_id - LABELS_START);
         }
     }
-    bool agnostic = false;
-    float max_wh = 7680;
-    std::vector<Anchor> boxes_with_class{boxes};  // TODO: update
-    for (size_t i = 0; i < boxes_with_class.size(); ++i) {
-        boxes_with_class[i].left += max_wh * labelIDs[i];
-        boxes_with_class[i].top += max_wh * labelIDs[i];
-        boxes_with_class[i].right += max_wh * labelIDs[i];
-        boxes_with_class[i].bottom += max_wh * labelIDs[i];
+    const std::vector<size_t> keep;
+    if (agnostic_nms) {
+        constexpr float max_wh = 7680.0f;
+        std::vector<Anchor> boxes_with_class{boxes};
+        for (size_t i = 0; i < boxes_with_class.size(); ++i) {
+            boxes_with_class[i].left += max_wh * labelIDs[i];
+            boxes_with_class[i].top += max_wh * labelIDs[i];
+            boxes_with_class[i].right += max_wh * labelIDs[i];
+            boxes_with_class[i].bottom += max_wh * labelIDs[i];
+        }
+        keep = nms(boxes_with_class, confidences, iou_threshold, false, 30000);
+    } else {
+        kepp = nms(boxes, confidences, iou_threshold, false, 30000);
     }
-    const std::vector<size_t>& keep = nms(boxes_with_class, confidences, iou_threshold, false, 30000);
-
     DetectionResult* result = new DetectionResult(infResult.frameId, infResult.metaData);
     auto retVal = std::unique_ptr<ResultBase>(result);
 

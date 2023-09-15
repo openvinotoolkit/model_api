@@ -53,8 +53,7 @@ struct AnchorLabeled : public Anchor {
 };
 
 template <typename Anchor>
-std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<float>& scores,
-                     const float thresh, bool includeBoundaries=false, size_t keep_top_k=0) {
+std::vector<size_t> nms(const std::vector<Anchor>& boxes, const std::vector<float>& scores, const float thresh, bool includeBoundaries=false, size_t keep_top_k=0) {
     if (keep_top_k == 0) {
         keep_top_k = boxes.size();
     }

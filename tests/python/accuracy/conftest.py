@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 import pytest
 
@@ -12,36 +11,6 @@ def pytest_addoption(parser):
         default=False,
         help="whether to dump results into json file",
     )
-
-
-def _impaths(data):
-    impaths = sorted(
-        file
-        for file in (Path(data) / "coco128/images/train2017/").iterdir()
-        if file.name
-        not in {
-            "000000000143.jpg",
-            "000000000491.jpg",
-            "000000000536.jpg",
-            "000000000581.jpg",
-        }
-    )
-    if not impaths:
-        raise RuntimeError(f"{Path(data) / 'coco128/images/train2017/'} is empty")
-    return impaths
-
-
-def pytest_generate_tests(metafunc):
-    if "pt" in metafunc.fixturenames:
-        metafunc.parametrize(
-            "pt",
-            (
-                "yolov5mu.pt",
-                "yolov8l.pt",
-            ),
-        )
-    if "impath" in metafunc.fixturenames:
-        metafunc.parametrize("impath", _impaths(metafunc.config.getoption("data")))
 
 
 def pytest_configure(config):

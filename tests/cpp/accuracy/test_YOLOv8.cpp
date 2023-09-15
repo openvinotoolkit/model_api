@@ -25,18 +25,17 @@ TEST(YOLOv8, Detector) {
         }
         bool preload = true;
         unique_ptr<DetectionModel> yoloV8 = DetectionModel::create_model(xml.string(), {}, "", preload, "CPU");
-        vector<filesystem::path> refpaths;  // TODO: prohibit empty ref folder
+        vector<filesystem::path> refpaths;
         for (auto const& dir_entry : filesystem::directory_iterator{DATA + "/ultralytics/detectors/" + model_name + "/ref/"}) {
             refpaths.push_back(dir_entry.path());
         }
+        ASSERT_GT(refpaths.size(), 0);
         sort(refpaths.begin(), refpaths.end());
         for (filesystem::path refpath : refpaths) {
-            const cv::Mat& im = cv::imread(DATA + "/coco128/images/train2017/" + refpath.stem().string() + ".jpg");
-            ASSERT_NE(nullptr, im.data);
             ifstream file{refpath};
             stringstream ss;
             ss << file.rdbuf();
-            EXPECT_EQ(ss.str(), std::string{*yoloV8->infer(im)});
+            EXPECT_EQ(ss.str(), std::string{*yoloV8->infer(cv::imread(DATA + "/coco128/images/train2017/" + refpath.stem().string() + ".jpg"))});
         }
     }
 }

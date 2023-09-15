@@ -720,31 +720,6 @@ class YoloV3ONNX(DetectionModel):
         return detections
 
 
-def non_max_suppression(prediction, confidence_threshold, iou_threshold, agnostic_nms):
-    xc = np.amax(prediction[:, 4:], 1) > confidence_threshold  # candidates
-    x = prediction[0]
-    x = x.transpose(1, 0)[xc[0]]
-    box, cls = x[:, :4], x[:, 4:]
-    box = xywh2xyxy(box)
-    j = cls.argmax(1, keepdims=True)
-    conf = np.take_along_axis(cls, j, 1)
-    x = np.concatenate((box, conf, j.astype(np.float32)), 1)
-    max_wh = 0 if agnostic_nms else 7680
-    c = x[:, 5:6] * max_wh
-    boxes = x[:, :4] + c
-    return x[
-        nms(
-            boxes[:, 0],
-            boxes[:, 1],
-            boxes[:, 2],
-            boxes[:, 3],
-            x[:, 4],
-            iou_threshold,
-            keep_top_k=30000,
-        )
-    ]
-
-
 class YOLOv5(DetectionModel):
     __model__ = "YOLOv5"
 
@@ -796,10 +771,29 @@ class YOLOv5(DetectionModel):
             raise RuntimeError("the output must be of rank 3")
         if 1 != out_shape[0]:
             raise RuntimeError("the first dim of the output must be 1")
-        boxes = non_max_suppression(
-            prediction, self.confidence_threshold, self.iou_threshold, self.agnostic_nms
-        )
-
+        LABELS_START = 4
+        xc = np.amax(prediction[:, LABELS_START:], 1) > self.confidence_threshold  # Candidates
+        x = prediction[0]
+        x = x.transpose(1, 0)[xc[0]]
+        box, cls = x[:, :LABELS_START], x[:, LABELS_START:]
+        box = xywh2xyxy(box)
+        j = cls.argmax(1, keepdims=True)
+        conf = np.take_along_axis(cls, j, 1)
+        x = np.concatenate((box, conf, j.astype(np.float32)), 1)
+        max_wh = 0 if self.agnostic_nms else 7680
+        c = x[:, 5:6] * max_wh
+        boxes = x[:, :LABELS_START] + c
+        boxes = x[
+            nms(
+                boxes[:, 0],
+                boxes[:, 1],
+                boxes[:, 2],
+                boxes[:, 3],
+                x[:, LABELS_START],
+                self.iou_threshold,
+                keep_top_k=30000,
+            )
+        ]
         inputImgWidth = meta["original_shape"][1]
         inputImgHeight = meta["original_shape"][0]
         invertedScaleX, invertedScaleY = (
@@ -817,7 +811,7 @@ class YOLOv5(DetectionModel):
                 padTop = (
                     self.orig_height - round(inputImgHeight / invertedScaleY)
                 ) // 2
-        coords = boxes[:, :4]
+        coords = boxes[:, :LABELS_START]
         coords -= (padLeft, padTop, padLeft, padTop)
         coords *= (invertedScaleX, invertedScaleY, invertedScaleX, invertedScaleY)
 
