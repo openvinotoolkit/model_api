@@ -1,13 +1,13 @@
 import json
 import os
 from pathlib import Path
-import onnx
 
 import cv2
-from openvino.model_api.adapters.utils import load_parameters_from_onnx
+import onnx
 import pytest
-from openvino.model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 from openvino.model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
+from openvino.model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
+from openvino.model_api.adapters.utils import load_parameters_from_onnx
 from openvino.model_api.models import (
     AnomalyDetection,
     AnomalyResult,
