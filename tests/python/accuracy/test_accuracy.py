@@ -1,10 +1,13 @@
 import json
 import os
 from pathlib import Path
+import onnx
 
 import cv2
+from openvino.model_api.adapters.utils import load_parameters_from_onnx
 import pytest
 from openvino.model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
+from openvino.model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
 from openvino.model_api.models import (
     AnomalyDetection,
     AnomalyResult,
@@ -28,7 +31,19 @@ def read_config(path: Path):
         return json.load(f)
 
 
-def create_models(model_type, model_path, download_dir):
+def create_models(model_type, model_path, download_dir, force_onnx_adapter=False):
+    if model_path.endswith(".onnx") and force_onnx_adapter:
+        wrapper_type = model_type.get_model_class(
+            load_parameters_from_onnx(onnx.load(model_path))["model_info"]["model_type"]
+        )
+        model = wrapper_type(
+            ONNXRuntimeAdapter(
+                model_path, ort_options={"providers": ["CPUExecutionProvider"]}
+            )
+        )
+        model.load()
+        return [model]
+
     models = [
         model_type.create_model(model_path, device="CPU", download_dir=download_dir)
     ]
@@ -72,7 +87,9 @@ def test_image_models(data, dump, result, model_data):
     if name.endswith(".xml") or name.endswith(".onnx"):
         name = f"{data}/{name}"
 
-    for model in create_models(eval(model_data["type"]), name, data):
+    for model in create_models(
+        eval(model_data["type"]), name, data, model_data.get("force_ort", False)
+    ):
         if "tiler" in model_data:
             if "extra_model" in model_data:
                 extra_adapter = OpenvinoAdapter(
@@ -165,10 +182,11 @@ def test_image_models(data, dump, result, model_data):
     else:
         save_name = name + ".xml"
 
-    if "tiler" in model_data:
-        model.get_model().save(data + "/serialized/" + save_name)
-    else:
-        model.save(data + "/serialized/" + save_name)
+    if not model_data.get("force_ort", False):
+        if "tiler" in model_data:
+            model.get_model().save(data + "/serialized/" + save_name)
+        else:
+            model.save(data + "/serialized/" + save_name)
 
     if dump:
         result[-1]["test_data"] = inference_results
