@@ -49,6 +49,9 @@ The list features only model wrappers which intoduce new configuration values in
 ###### `YoloV4`
 1. `anchors`: List - list of custom anchor values
 1. `masks`: List - list of mask, applied to anchors for each output layer
+###### `YOLOv5`, `YOLOv8`
+1. `agnostic_nms`: bool - if True, the model is agnostic to the number of classes, and all classes are considered as one
+1. `iou_threshold`: float - threshold for non-maximum suppression (NMS) intersection over union (IOU) filtering
 ###### `YOLOX`
 1. `iou_threshold`: float - threshold for non-maximum suppression (NMS) intersection over union (IOU) filtering
 #### `HpeAssociativeEmbedding`
