@@ -34,7 +34,7 @@ def _cached_models(folder, pt):
 def _impaths():
     """
     It's impossible to pass fixture as argument for
-    @pytest.mark.parametrize, so I can't take cmd arg. Use env var
+    @pytest.mark.parametrize, so it can't take a cmd arg. Use env var
     instead. Another solution was to define
     pytest_generate_tests(metafunc) in conftest.py
     """
@@ -80,8 +80,6 @@ def test_detector(impath, pt):
     ref_predictions = ref_wrapper.predict(im)
     assert 1 == len(ref_predictions)
     ref_boxes = ref_predictions[0].boxes.data.numpy()
-    with open(ref_dir / impath.with_suffix(".txt").name, "w") as file:
-        print(impl_preds, end="", file=file)
     if 0 == pred_boxes.size == ref_boxes.size:
         return  # np.isclose() doesn't work for empty arrays
     ref_boxes[:, :4] = np.round(ref_boxes[:, :4], out=ref_boxes[:, :4])
@@ -90,3 +88,5 @@ def test_detector(impath, pt):
     ).all()  # Allow one pixel deviation because image preprocessing is imbedded into the model
     assert np.isclose(pred_boxes[:, 4], ref_boxes[:, 4], 0.0, 0.02).all()
     assert (pred_boxes[:, 5] == ref_boxes[:, 5]).all()
+    with open(ref_dir / impath.with_suffix(".txt").name, "w") as file:
+        print(impl_preds, end="", file=file)
