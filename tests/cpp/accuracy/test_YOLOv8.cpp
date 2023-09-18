@@ -10,34 +10,66 @@
 using namespace std;
 
 namespace {
-TEST(YOLOv8, Detector) {
+string data() {
     // Get data from env var, not form cmd arg to stay aligned with Python version
-    const char* const data = getenv("DATA");
-    ASSERT_NE(data, nullptr);
-    const string& exported_path = string{data} + "/ultralytics/detectors/";
-    for (const string model_name : {"yolov5mu_openvino_model", "yolov8l_openvino_model"}) {
+    static const char* const data = getenv("DATA");
+    EXPECT_NE(data, nullptr);
+    return data;
+}
+
+string model_path(const char model_name[]) {
+    return data() + "/ultralytics/detectors/" + model_name;
+}
+
+shared_ptr<DetectionModel> cached_model(const char model_name[]) {
+    static const char* prev_arg;
+    static shared_ptr<DetectionModel> prev_model;
+    if (model_name == prev_arg) {
+        return prev_model;
+    } else {
+        prev_arg = model_name;
         filesystem::path xml;
-        for (auto const& dir_entry : filesystem::directory_iterator{exported_path + model_name}) {
+        for (auto const& dir_entry : filesystem::directory_iterator{model_path(model_name)}) {
             const filesystem::path& path = dir_entry.path();
             if (".xml" == path.extension()) {
-                ASSERT_TRUE(xml.empty());
+                EXPECT_TRUE(xml.empty());
                 xml = path;
             }
         }
         bool preload = true;
-        unique_ptr<DetectionModel> yoloV8 = DetectionModel::create_model(xml.string(), {}, "", preload, "CPU");
-        vector<filesystem::path> refpaths;
-        for (auto const& dir_entry : filesystem::directory_iterator{exported_path + model_name + "/ref/"}) {
-            refpaths.push_back(dir_entry.path());
-        }
-        ASSERT_GT(refpaths.size(), 0);
-        sort(refpaths.begin(), refpaths.end());
-        for (filesystem::path refpath : refpaths) {
-            ifstream file{refpath};
-            stringstream ss;
-            ss << file.rdbuf();
-            EXPECT_EQ(ss.str(), std::string{*yoloV8->infer(cv::imread(string{data} + "/coco128/images/train2017/" + refpath.stem().string() + ".jpg"))});
-        }
+        prev_model = DetectionModel::create_model(xml.string(), {}, "", preload, "CPU");
+        return prev_model;
     }
 }
+
+struct Param {
+    const char* model_name;
+    filesystem::path refpath;
+};
+
+class AccuracySuit : public testing::TestWithParam<Param> {};
+
+TEST_P(AccuracySuit, TestDetector) {
+    Param param = GetParam();
+    ifstream file{param.refpath};
+    stringstream ss;
+    ss << file.rdbuf();
+    EXPECT_EQ(ss.str(), string{*cached_model(param.model_name)->infer(cv::imread(data() + "/coco128/images/train2017/" + param.refpath.stem().string() + ".jpg"))});
+}
+
+INSTANTIATE_TEST_SUITE_P(YOLOv8, AccuracySuit, testing::ValuesIn([]{
+    std::vector<Param> params;
+    for (const char* model_name : {"yolov5mu_openvino_model", "yolov8l_openvino_model"}) {
+        vector<filesystem::path> refpaths;
+        for (auto const& dir_entry : filesystem::directory_iterator{model_path(model_name) + "/ref/"}) {
+            refpaths.push_back(dir_entry.path());
+        }
+        EXPECT_GT(refpaths.size(), 0);
+        sort(refpaths.begin(), refpaths.end());
+        for (const filesystem::path& refpath : refpaths) {
+            params.push_back({model_name, refpath});
+        }
+    }
+    return params;
+}()));
 }
