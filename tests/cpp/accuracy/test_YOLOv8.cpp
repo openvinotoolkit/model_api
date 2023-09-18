@@ -7,9 +7,9 @@
 #include <filesystem>
 #include <fstream>
 
-namespace {
 using namespace std;
 
+namespace {
 string data() {
     // Get data from env var, not form cmd arg to stay aligned with Python version
     static const char* const data = getenv("DATA");
@@ -47,10 +47,9 @@ struct Param {
     filesystem::path refpath;
 };
 
-class AccurasySuit : public testing::TestWithParam<Param> {
-};
+class AccuracySuit : public testing::TestWithParam<Param> {};
 
-TEST_P(AccurasySuit, TestDetector) {
+TEST_P(AccuracySuit, TestDetector) {
     Param param = GetParam();
     ifstream file{param.refpath};
     stringstream ss;
@@ -58,7 +57,7 @@ TEST_P(AccurasySuit, TestDetector) {
     EXPECT_EQ(ss.str(), string{*cached_model(param.model_name)->infer(cv::imread(data() + "/coco128/images/train2017/" + param.refpath.stem().string() + ".jpg"))});
 }
 
-INSTANTIATE_TEST_SUITE_P(YOLOv8, AccurasySuit, testing::ValuesIn([]{
+INSTANTIATE_TEST_SUITE_P(YOLOv8, AccuracySuit, testing::ValuesIn([]{
     std::vector<Param> params;
     for (const char* model_name : {"yolov5mu_openvino_model", "yolov8l_openvino_model"}) {
         vector<filesystem::path> refpaths;

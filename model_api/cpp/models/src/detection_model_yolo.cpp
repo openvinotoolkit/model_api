@@ -640,7 +640,7 @@ std::unique_ptr<ResultBase> YOLOv5::postprocess(InferenceResult& infResult) {
             padTop = (netInputHeight - int(std::round(floatInputImgHeight / invertedScaleY))) / 2;
         }
     }
-    for (size_t idx : keep)  {
+    for (size_t idx : keep) {
         DetectedObject desc;
         desc.x = clamp(
             round((boxes_with_class[idx].left - padLeft) * invertedScaleX),
