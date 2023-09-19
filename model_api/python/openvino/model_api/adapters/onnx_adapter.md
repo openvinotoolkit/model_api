@@ -18,7 +18,7 @@ ModelAPI-specific parameters as metadata keys with exactly the same names as in 
 
 ## Limitations
 
-- Although `ONNXRuntimeAdapter` doesn't use OpenVINO directly, OV should be installed, because Model API depends on ot at the low level.
+- Although `ONNXRuntimeAdapter` doesn't use OpenVINO directly, OV should be installed, because Model API depends on it at the low level.
 - Model reshape is not supported, and input shape should be define in the model (excluding batch dimension) to perform shape inference and
 parse model outputs successfully.
 - `model.load()` method does nothing, model is loaded in the constructor of `ONNXRuntimeAdapter`.
