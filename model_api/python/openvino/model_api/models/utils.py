@@ -146,7 +146,9 @@ def add_rotated_rects(segmented_objects):
         )
 
         contour = np.vstack(contours)
-        objects_with_rects.append(SegmentedObjectWithRects(segmented_object, cv2.minAreaRect(contour)))
+        objects_with_rects.append(
+            SegmentedObjectWithRects(segmented_object, cv2.minAreaRect(contour))
+        )
     return objects_with_rects
 
 
