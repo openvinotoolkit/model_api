@@ -78,15 +78,14 @@ class Model:
         self.inference_adapter = inference_adapter
         if not isinstance(
             self.inference_adapter, (OpenvinoAdapter, OVMSAdapter)
-        ) and self.__model__ not in [
+        ) and self.__model__ not in {
             "Classification",
             "MaskRCNN",
             "SSD",
             "Segmentation",
-        ]:
-            raise WrapperError(
-                f"{self.__model__}",
-                "this type of wrapper only supports OpenVINO and OVMS inference adapters",
+        }:
+            self.raise_error(
+                "this type of wrapper only supports OpenVINO and OVMS inference adapters"
             )
 
         self.inputs = self.inference_adapter.get_input_layers()
