@@ -18,7 +18,7 @@ string data() {
 }
 
 string model_path(const char model_name[]) {
-    return data() + "/ultralytics/detectors/" + model_name;
+    return data() + "/ultralytics/" + model_name;
 }
 
 shared_ptr<DetectionModel> cached_model(const char model_name[]) {
