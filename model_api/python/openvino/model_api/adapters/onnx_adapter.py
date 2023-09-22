@@ -18,11 +18,8 @@ import sys
 from functools import partial, reduce
 
 import numpy as np
-from openvino.model_api.models.utils import (
-    INTERPOLATION_TYPES,
-    RESIZE_TYPES,
-    InputTransform,
-)
+
+from .utils import INTERPOLATION_TYPES, RESIZE_TYPES, InputTransform
 
 try:
     import onnx

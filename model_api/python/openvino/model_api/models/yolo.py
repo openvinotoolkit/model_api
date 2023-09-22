@@ -14,18 +14,11 @@
 from collections import namedtuple
 
 import numpy as np
+from openvino.model_api.adapters.utils import INTERPOLATION_TYPES, resize_image
 
 from .detection_model import DetectionModel
 from .types import BooleanValue, ListValue, NumericalValue
-from .utils import (
-    INTERPOLATION_TYPES,
-    Detection,
-    DetectionResult,
-    clip_detections,
-    multiclass_nms,
-    nms,
-    resize_image,
-)
+from .utils import Detection, DetectionResult, clip_detections, multiclass_nms, nms
 
 DetectionBox = namedtuple("DetectionBox", ["x", "y", "w", "h"])
 
