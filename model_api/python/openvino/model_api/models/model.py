@@ -18,6 +18,7 @@ import logging as log
 import re
 
 from openvino.model_api.adapters.inference_adapter import InferenceAdapter
+from openvino.model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
 from openvino.model_api.adapters.openvino_adapter import (
     OpenvinoAdapter,
     create_core,
@@ -76,8 +77,8 @@ class Model:
         """
         self.logger = log.getLogger()
         self.inference_adapter = inference_adapter
-        if not isinstance(
-            self.inference_adapter, (OpenvinoAdapter, OVMSAdapter)
+        if isinstance(
+            self.inference_adapter, ONNXRuntimeAdapter
         ) and self.__model__ not in {
             "Classification",
             "MaskRCNN",

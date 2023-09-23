@@ -15,11 +15,11 @@
 """
 
 import numpy as np
+from openvino.model_api.adapters.utils import resize_image
 from scipy.optimize import linear_sum_assignment
 
 from .image_model import ImageModel
 from .types import NumericalValue, StringValue
-from .utils import resize_image
 
 
 class HpeAssociativeEmbedding(ImageModel):

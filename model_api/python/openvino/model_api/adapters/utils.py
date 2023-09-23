@@ -414,7 +414,9 @@ def get_rt_info_from_dict(rt_info_dict, path):
         )
 
 
-def resize_image(image, size, keep_aspect_ratio=False, interpolation=cv2.INTER_LINEAR):
+def resize_image_ocv(
+    image, size, keep_aspect_ratio=False, interpolation=cv2.INTER_LINEAR
+):
     if keep_aspect_ratio:
         h, w = image.shape[:2]
         scale = min(size[1] / h, size[0] / w)
@@ -422,13 +424,15 @@ def resize_image(image, size, keep_aspect_ratio=False, interpolation=cv2.INTER_L
     return cv2.resize(image, size, interpolation=interpolation)
 
 
-def resize_image_with_aspect(image, size, interpolation=cv2.INTER_LINEAR):
-    return resize_image(
+def resize_image_with_aspect_ocv(image, size, interpolation=cv2.INTER_LINEAR):
+    return resize_image_ocv(
         image, size, keep_aspect_ratio=True, interpolation=interpolation
     )
 
 
-def resize_image_letterbox(image, size, interpolation=cv2.INTER_LINEAR, pad_value=0):
+def resize_image_letterbox_ocv(
+    image, size, interpolation=cv2.INTER_LINEAR, pad_value=0
+):
     ih, iw = image.shape[0:2]
     w, h = size
     scale = min(w / iw, h / ih)
@@ -445,7 +449,7 @@ def resize_image_letterbox(image, size, interpolation=cv2.INTER_LINEAR, pad_valu
     )
 
 
-def crop_resize(image, size):
+def crop_resize_ocv(image, size):
     desired_aspect_ratio = size[1] / size[0]  # width / height
     if desired_aspect_ratio == 1:
         if image.shape[0] > image.shape[1]:
@@ -467,10 +471,10 @@ def crop_resize(image, size):
 
 
 RESIZE_TYPES = {
-    "crop": crop_resize,
-    "standard": resize_image,
-    "fit_to_window": resize_image_with_aspect,
-    "fit_to_window_letterbox": resize_image_letterbox,
+    "crop": crop_resize_ocv,
+    "standard": resize_image_ocv,
+    "fit_to_window": resize_image_with_aspect_ocv,
+    "fit_to_window_letterbox": resize_image_letterbox_ocv,
 }
 
 
