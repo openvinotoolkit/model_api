@@ -144,30 +144,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04, macos-11, macos-12]
+        os: [ubuntu-20.04, ubuntu-22.04, macos-12]
         python-version: [3.7, 3.8, 3.9, '3.10', '3.11']
         exclude:
-          # Maximum concurrent macOS jobs is 5
-          - os: macos-11
-            python-version: 3.8
-          - os: macos-11
-            python-version: 3.9
-          - os: macos-11
-            python-version: '3.10'
+          - os: macos-12
+            python-version: 3.7
           - os: macos-12
             python-version: 3.9
           - os: macos-12
             python-version: '3.10'
+          - os: macos-12
+            python-version: '3.11'
     runs-on: ${{ matrix.os }}
     steps:
     - name: Set up docker for macOS
       if: startsWith(matrix.os, 'macos-1')
       run: |
         brew install docker
-        # TODO: remove qemu reinstallation after https://github.com/actions/runner-images/issues/8104 is resolved
-        brew remove --ignore-dependencies qemu
-        curl -o qemu.rb https://raw.githubusercontent.com/Homebrew/homebrew-core/f88e30b3a23ef3735580f9b05535ce5a0a03c9e3/Formula/qemu.rb
-        brew install qemu.rb
         colima start
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
