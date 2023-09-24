@@ -822,15 +822,15 @@ class YOLOv5(DetectionModel):
                 ) // 2
         coords = boxes[:, 2:]
         coords -= (padLeft, padTop, padLeft, padTop)
-        # coords *= (invertedScaleX, invertedScaleY, invertedScaleX, invertedScaleY)
+        coords *= (invertedScaleX, invertedScaleY, invertedScaleX, invertedScaleY)
 
         intboxes = np.round(coords, out=coords).astype(np.int32)
-        # np.clip(
-        #     intboxes,
-        #     0,
-        #     [inputImgWidth, inputImgHeight, inputImgWidth, inputImgHeight],
-        #     intboxes,
-        # )
+        np.clip(
+            intboxes,
+            0,
+            [inputImgWidth, inputImgHeight, inputImgWidth, inputImgHeight],
+            intboxes,
+        )
         intid = boxes[:, 0].astype(np.int32)
         return DetectionResult(
             [
