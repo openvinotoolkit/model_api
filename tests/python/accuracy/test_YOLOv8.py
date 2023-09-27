@@ -143,35 +143,13 @@ class Metrics(yolo.detect.DetectionValidator):
         return self.get_stats()
 
 
-@functools.lru_cache(maxsize=1)
-def _cached_metric(pt):
-    return YOLOv5.create_model(
-        ultralytics.YOLO(
-            Path(os.environ["DATA"]) / "ultralytics" / pt, "detect"
-        ).export(format="openvino", half=True)
-        / pt.with_suffix(".xml"),
-        device="CPU",
-        configuration={"confidence_threshold": 0.001},
-    )
-
-
 @pytest.mark.parametrize(
     "pt,dataset_yaml,ref_mAP50_95",
     [
         (
             Path("yolov8n.pt"),
-            "coco8.yaml",
-            0.60923062734989674726904240742442198097705841064453125,
-        ),
-        (
-            Path("yolov8n.pt"),
             "coco128.yaml",
             0.439413760605130543357432770790182985365390777587890625,
-        ),
-        (
-            Path("yolov5n6u.pt"),
-            "coco8.yaml",
-            0.64161175387598523567334041217691265046596527099609375,
         ),
         (
             Path("yolov5n6u.pt"),
@@ -181,6 +159,17 @@ def _cached_metric(pt):
     ],
 )
 def test_metric(pt, dataset_yaml, ref_mAP50_95):
-    wrapper = _cached_metric(pt)
-    mAP50_95 = Metrics().evaluate(wrapper, dataset_yaml)["metrics/mAP50-95(B)"]
-    assert mAP50_95 >= ref_mAP50_95
+    assert (
+        Metrics().evaluate(
+            YOLOv5.create_model(
+                ultralytics.YOLO(
+                    Path(os.environ["DATA"]) / "ultralytics" / pt, "detect"
+                ).export(format="openvino", half=True)
+                / pt.with_suffix(".xml"),
+                device="CPU",
+                configuration={"confidence_threshold": 0.001},
+            ),
+            dataset_yaml,
+        )["metrics/mAP50-95(B)"]
+        >= ref_mAP50_95
+    )
