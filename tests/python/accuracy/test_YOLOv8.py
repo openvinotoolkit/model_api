@@ -136,7 +136,7 @@ class Metrics(yolo.detect.DetectionValidator):
                 dtype=torch.float32,
             )[None]
             if not pred.numel():
-                pred = pred.view(0, 0, 6)
+                pred = pred.view(1, 0, 6)
             self.update_metrics(pred, batch)
         return self.get_stats()
 
