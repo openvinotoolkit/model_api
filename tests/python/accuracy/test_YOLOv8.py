@@ -123,22 +123,20 @@ class Metrics(yolo.detect.DetectionValidator):
             im = cv2.imread(batch["im_file"][0])
             pred = torch.tensor(
                 [
-                    [
-                        (
-                            impl_pred.xmin / im.shape[1],
-                            impl_pred.ymin / im.shape[0],
-                            impl_pred.xmax / im.shape[1],
-                            impl_pred.ymax / im.shape[0],
-                            impl_pred.score,
-                            impl_pred.id,
-                        )
-                        for impl_pred in wrapper(im).objects
-                    ]
+                    (
+                        impl_pred.xmin / im.shape[1],
+                        impl_pred.ymin / im.shape[0],
+                        impl_pred.xmax / im.shape[1],
+                        impl_pred.ymax / im.shape[0],
+                        impl_pred.score,
+                        impl_pred.id,
+                    )
+                    for impl_pred in wrapper(im).objects
                 ],
                 dtype=torch.float32,
-            )
+            )[None]
             if not pred.numel():
-                pred = torch.empty(1, 0, 6)
+                pred = pred.view(0, 0, 6)
             self.update_metrics(pred, batch)
         return self.get_stats()
 
@@ -156,7 +154,7 @@ class Metrics(yolo.detect.DetectionValidator):
         ),
     ],
 )
-def test_metric(pt, dataset_yaml, ref_mAP50_95):
+def test_metric(pt, ref_mAP50_95):
     assert (
         Metrics().evaluate(
             YOLOv5.create_model(
@@ -166,8 +164,7 @@ def test_metric(pt, dataset_yaml, ref_mAP50_95):
                 / pt.with_suffix(".xml"),
                 device="CPU",
                 configuration={"confidence_threshold": 0.001},
-            ),
-            dataset_yaml,
+            )
         )["metrics/mAP50-95(B)"]
         >= ref_mAP50_95
     )
