@@ -100,8 +100,8 @@ def test_alignment(impath, pt):
 
 class Metrics(yolo.detect.DetectionValidator):
     @torch.inference_mode()
-    def evaluate(self, wrapper, dataset_yaml):
-        self.data = utils.check_det_dataset(dataset_yaml)
+    def evaluate(self, wrapper):
+        self.data = utils.check_det_dataset("coco128.yaml")
         dataloader = self.get_dataloader(self.data[self.args.split], batch_size=1)
         dataloader.dataset.transforms.transforms = (
             lambda di: {
@@ -144,16 +144,14 @@ class Metrics(yolo.detect.DetectionValidator):
 
 
 @pytest.mark.parametrize(
-    "pt,dataset_yaml,ref_mAP50_95",
+    "pt,ref_mAP50_95",
     [
         (
             Path("yolov8n.pt"),
-            "coco128.yaml",
             0.439413760605130543357432770790182985365390777587890625,
         ),
         (
             Path("yolov5n6u.pt"),
-            "coco128.yaml",
             0.48720141594764942993833756190724670886993408203125,
         ),
     ],
