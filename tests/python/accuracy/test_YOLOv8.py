@@ -1,13 +1,17 @@
 import functools
 import os
+import types
 from pathlib import Path
 
 import cv2
 import numpy as np
 import openvino.runtime as ov
 import pytest
+import torch
+import ultralytics
 from openvino.model_api.models import YOLOv5
-from ultralytics import YOLO
+from ultralytics.data import utils
+from ultralytics.models import yolo
 
 
 def _init_predictor(yolo):
@@ -15,12 +19,14 @@ def _init_predictor(yolo):
 
 
 @functools.lru_cache(maxsize=1)
-def _cached_models(folder, pt):
+def _cached_alignment(pt):
     export_dir = Path(
-        YOLO(folder / "ultralytics/detectors" / pt, "detect").export(format="openvino")
+        ultralytics.YOLO(
+            Path(os.environ["DATA"]) / "ultralytics" / pt, "detect"
+        ).export(format="openvino", half=True)
     )
     impl_wrapper = YOLOv5.create_model(export_dir / (pt.stem + ".xml"), device="CPU")
-    ref_wrapper = YOLO(export_dir, "detect")
+    ref_wrapper = ultralytics.YOLO(export_dir, "detect")
     ref_wrapper.overrides["imgsz"] = (impl_wrapper.w, impl_wrapper.h)
     _init_predictor(ref_wrapper)
     ref_wrapper.predictor.model.ov_compiled_model = ov.Core().compile_model(
@@ -58,21 +64,21 @@ def _impaths():
 
 @pytest.mark.parametrize("impath", _impaths())
 @pytest.mark.parametrize("pt", [Path("yolov5mu.pt"), Path("yolov8l.pt")])
-def test_detector(impath, pt):
-    impl_wrapper, ref_wrapper, ref_dir = _cached_models(Path(os.environ["DATA"]), pt)
+def test_alignment(impath, pt):
+    impl_wrapper, ref_wrapper, ref_dir = _cached_alignment(pt)
     im = cv2.imread(str(impath))
     assert im is not None
     impl_preds = impl_wrapper(im)
     pred_boxes = np.array(
         [
-            [
+            (
                 impl_pred.xmin,
                 impl_pred.ymin,
                 impl_pred.xmax,
                 impl_pred.ymax,
                 impl_pred.score,
                 impl_pred.id,
-            ]
+            )
             for impl_pred in impl_preds.objects
         ],
         dtype=np.float32,
@@ -90,3 +96,75 @@ def test_detector(impath, pt):
     assert (pred_boxes[:, 5] == ref_boxes[:, 5]).all()
     with open(ref_dir / impath.with_suffix(".txt").name, "w") as file:
         print(impl_preds, end="", file=file)
+
+
+class Metrics(yolo.detect.DetectionValidator):
+    @torch.inference_mode()
+    def evaluate(self, wrapper):
+        self.data = utils.check_det_dataset("coco128.yaml")
+        dataloader = self.get_dataloader(self.data[self.args.split], batch_size=1)
+        dataloader.dataset.transforms.transforms = (
+            lambda di: {
+                "batch_idx": torch.zeros(len(di["instances"])),
+                "bboxes": torch.from_numpy(di["instances"].bboxes),
+                "cls": torch.from_numpy(di["cls"]),
+                "img": torch.empty(1, 1, 1),
+                "im_file": di["im_file"],
+                "ori_shape": di["ori_shape"],
+                "ratio_pad": [(1.0, 1.0), (0, 0)],
+            },
+        )
+        self.init_metrics(
+            types.SimpleNamespace(
+                names={idx: label for idx, label in enumerate(wrapper.labels)}
+            )
+        )
+        for batch in dataloader:
+            im = cv2.imread(batch["im_file"][0])
+            pred = torch.tensor(
+                [
+                    (
+                        impl_pred.xmin / im.shape[1],
+                        impl_pred.ymin / im.shape[0],
+                        impl_pred.xmax / im.shape[1],
+                        impl_pred.ymax / im.shape[0],
+                        impl_pred.score,
+                        impl_pred.id,
+                    )
+                    for impl_pred in wrapper(im).objects
+                ],
+                dtype=torch.float32,
+            )[None]
+            if not pred.numel():
+                pred = pred.view(1, 0, 6)
+            self.update_metrics(pred, batch)
+        return self.get_stats()
+
+
+@pytest.mark.parametrize(
+    "pt,ref_mAP50_95",
+    [
+        (
+            Path("yolov8n.pt"),
+            0.439413760605130543357432770790182985365390777587890625,
+        ),
+        (
+            Path("yolov5n6u.pt"),
+            0.48720141594764942993833756190724670886993408203125,
+        ),
+    ],
+)
+def test_metric(pt, ref_mAP50_95):
+    assert (
+        Metrics().evaluate(
+            YOLOv5.create_model(
+                ultralytics.YOLO(
+                    Path(os.environ["DATA"]) / "ultralytics" / pt, "detect"
+                ).export(format="openvino", half=True)
+                / pt.with_suffix(".xml"),
+                device="CPU",
+                configuration={"confidence_threshold": 0.001},
+            )
+        )["metrics/mAP50-95(B)"]
+        >= ref_mAP50_95
+    )
