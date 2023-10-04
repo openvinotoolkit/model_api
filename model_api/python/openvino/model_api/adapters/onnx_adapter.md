@@ -18,8 +18,9 @@ ModelAPI-specific parameters as metadata keys with exactly the same names as in 
 
 ## Limitations
 
+- `ONNXRuntimeAdapter` is available in Python version of ModelAPI only.
 - Although `ONNXRuntimeAdapter` doesn't use OpenVINO directly, OV should be installed, because Model API depends on it at the low level.
-- Model reshape is not supported, and input shape should be define in the model (excluding batch dimension) to perform shape inference and
+- Model reshape is not supported, and input shape should be defined in the model (excluding batch dimension) to perform shape inference and
 parse model outputs successfully.
 - `model.load()` method does nothing, model is loaded in the constructor of `ONNXRuntimeAdapter`.
 - `ONNXRuntimeAdapter` supports only python-based preprocessing, and sometimes it gives slightly different results, than
