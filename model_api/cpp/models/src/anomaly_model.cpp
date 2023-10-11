@@ -85,6 +85,8 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(InferenceResult& infResult
     pred_score = normalize(pred_score, imageThreshold);
     if (!anomaly_map.empty()) {
         cv::resize(anomaly_map, anomaly_map, cv::Size{inputImgSize.inputImgWidth, inputImgSize.inputImgHeight});
+    }
+    if (!pred_mask.empty()) {
         cv::resize(pred_mask, pred_mask, cv::Size{inputImgSize.inputImgWidth, inputImgSize.inputImgHeight});
     }
     if (task == "detection") {
