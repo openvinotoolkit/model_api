@@ -80,14 +80,12 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(InferenceResult& infResult
     if (task == "segmentation" || task == "detection") {
         pred_mask = anomaly_map >= pixelThreshold;
         pred_mask.convertTo(pred_mask, CV_8UC1, 1 / 255.);
+        cv::resize(pred_mask, pred_mask, cv::Size{inputImgSize.inputImgWidth, inputImgSize.inputImgHeight});
         anomaly_map = normalize(anomaly_map, pixelThreshold);
     }
     pred_score = normalize(pred_score, imageThreshold);
     if (!anomaly_map.empty()) {
         cv::resize(anomaly_map, anomaly_map, cv::Size{inputImgSize.inputImgWidth, inputImgSize.inputImgHeight});
-    }
-    if (!pred_mask.empty()) {
-        cv::resize(pred_mask, pred_mask, cv::Size{inputImgSize.inputImgWidth, inputImgSize.inputImgHeight});
     }
     if (task == "detection") {
         pred_boxes = getBoxes(pred_mask);
