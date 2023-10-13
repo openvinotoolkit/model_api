@@ -240,11 +240,13 @@ class ClassificationModel(ImageModel):
 
     def get_multiclass_predictions(self, outputs):
         if not self.embedded_softmax:
-            scoresTensor = softmax_numpy(outputs[self.out_layer_names[0]][0].reshape(-1))
+            scoresTensor = softmax_numpy(
+                outputs[self.out_layer_names[0]][0].reshape(-1)
+            )
         else:
             scoresTensor = outputs[self.out_layer_names[0]][0].reshape(-1)
 
-        indicesTensor = np.argpartition(scoresTensor, -self.topk)[-self.topk:]
+        indicesTensor = np.argpartition(scoresTensor, -self.topk)[-self.topk :]
         scoresTensor = np.array([scoresTensor[i] for i in indicesTensor])
         sortedIndices = np.argsort(scoresTensor)[::-1]
 
@@ -265,6 +267,7 @@ def findSoftmaxOutputs(inference_adapter):
         if "Softmax" == output_node.get_type_name():
             return True
     return False
+
 
 def sigmoid_numpy(x: np.ndarray):
     return 1.0 / (1.0 + np.exp(-x))
