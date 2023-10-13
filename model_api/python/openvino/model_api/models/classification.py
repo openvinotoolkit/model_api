@@ -61,17 +61,12 @@ class ClassificationModel(ImageModel):
             return
 
         try:
-            addOrFindSoftmaxAndTopkOutputs(
-                self.inference_adapter, self.topk, self.output_raw_scores
-            )
-            self.embedded_topk = True
-            self.out_layer_names = ["indices", "scores"]
-            if self.output_raw_scores:
-                self.out_layer_names.append(self.raw_scores_name)
+            self.embedded_softmax = findSoftmaxOutputs(self.inference_adapter)
         except (RuntimeError, AttributeError):
-            self.embedded_topk = False
-            self.out_layer_names = _get_non_xai_names(self.outputs.keys())
-            self.raw_scores_name = self.out_layer_names[0]
+            self.embedded_softmax = False
+
+        self.out_layer_names = _get_non_xai_names(self.outputs.keys())
+        self.raw_scores_name = self.out_layer_names[0]
 
         self.embedded_processing = True
 
@@ -194,7 +189,7 @@ class ClassificationModel(ImageModel):
                 logits_begin = cls_heads_info["num_single_label_classes"]
                 probs[logits_begin:] = sigmoid_numpy(logits[logits_begin:])
         else:
-            if self.embedded_topk:
+            if self.embedded_softmax:
                 probs = logits.reshape(-1)
             else:
                 probs = softmax_numpy(logits.reshape(-1))
@@ -244,19 +239,22 @@ class ClassificationModel(ImageModel):
         return list(zip(indices, labels, scores))
 
     def get_multiclass_predictions(self, outputs):
-        if self.embedded_topk:
-            indicesTensor = outputs[self.out_layer_names[0]][0]
-            scoresTensor = outputs[self.out_layer_names[1]][0]
-            labels = [self.labels[i] if self.labels else "" for i in indicesTensor]
+        if not self.embedded_softmax:
+            scoresTensor = softmax_numpy(outputs[self.out_layer_names[0]][0].reshape(-1))
         else:
-            scoresTensor = softmax_numpy(outputs[self.out_layer_names[0]][0])
-            indicesTensor = [np.argmax(scoresTensor)]
-            labels = [self.labels[i] if self.labels else "" for i in indicesTensor]
+            scoresTensor = outputs[self.out_layer_names[0]][0].reshape(-1)
+
+        indicesTensor = np.argpartition(scoresTensor, -self.topk)[-self.topk:]
+        scoresTensor = np.array([scoresTensor[i] for i in indicesTensor])
+        sortedIndices = np.argsort(scoresTensor)[::-1]
+
+        scoresTensor = scoresTensor[sortedIndices]
+        indicesTensor = indicesTensor[sortedIndices]
+        labels = [self.labels[i] if self.labels else "" for i in indicesTensor]
         return list(zip(indicesTensor, labels, scoresTensor))
 
 
-def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
-    softmaxNode = None
+def findSoftmaxOutputs(inference_adapter):
     for i in range(len(inference_adapter.model.outputs)):
         output_node = (
             inference_adapter.model.get_output_op(i)
@@ -265,53 +263,8 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):
             .get_node()
         )
         if "Softmax" == output_node.get_type_name():
-            softmaxNode = output_node
-        elif "TopK" == output_node.get_type_name():
-            return
-
-    if softmaxNode is None:
-        logitsNode = (
-            inference_adapter.model.get_output_op(0)
-            .input(0)
-            .get_source_output()
-            .get_node()
-        )
-        softmaxNode = opset.softmax(logitsNode.output(0), 1)
-    k = opset.constant(topk, np.int32)
-    topkNode = opset.topk(softmaxNode, k, 1, "max", "value")
-
-    indices = topkNode.output(0)
-    scores = topkNode.output(1)
-    results_descr = [indices, scores]
-    if output_raw_scores:
-        raw_scores = softmaxNode.output(0)
-        results_descr.append(raw_scores)
-    for output in inference_adapter.model.outputs:
-        if (
-            _saliency_map_name in output.get_names()
-            or _feature_vector_name in output.get_names()
-        ):
-            results_descr.append(output)
-    inference_adapter.model = Model(
-        results_descr,
-        inference_adapter.model.get_parameters(),
-        "classification",
-    )
-
-    # manually set output tensors name for created topK node
-    inference_adapter.model.outputs[0].tensor.set_names({"scores"})
-    inference_adapter.model.outputs[1].tensor.set_names({"indices"})
-    if output_raw_scores:
-        inference_adapter.model.outputs[2].tensor.set_names({_raw_scores_name})
-
-    # set output precisions
-    ppp = PrePostProcessor(inference_adapter.model)
-    ppp.output("indices").tensor().set_element_type(Type.i32)
-    ppp.output("scores").tensor().set_element_type(Type.f32)
-    if output_raw_scores:
-        ppp.output(_raw_scores_name).tensor().set_element_type(Type.f32)
-    inference_adapter.model = ppp.build()
-
+            return True
+    return False
 
 def sigmoid_numpy(x: np.ndarray):
     return 1.0 / (1.0 + np.exp(-x))
