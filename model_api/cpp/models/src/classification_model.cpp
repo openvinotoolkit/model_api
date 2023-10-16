@@ -24,6 +24,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <queue>
 
 #include <openvino/op/softmax.hpp>
 #include <openvino/op/topk.hpp>
@@ -78,63 +79,38 @@ void softmax(float* x_start, float* x_end, float eps = 1e-9) {
     }
 }
 
-void addOrFindSoftmaxAndTopkOutputs(std::shared_ptr<ov::Model>& model, size_t topk, bool add_raw_scores) {
+bool findSoftmaxOutputs(std::shared_ptr<ov::Model>& model) {
     auto nodes = model->get_ops();
     std::shared_ptr<ov::Node> softmaxNode;
     for (size_t i = 0; i < model->outputs().size(); ++i) {
         auto output_node = model->get_output_op(i)->input(0).get_source_output().get_node_shared_ptr();
         if (std::string(output_node->get_type_name()) == "Softmax") {
-            softmaxNode = output_node;
-        }
-        else if (std::string(output_node->get_type_name()) == "TopK") {
-            return;
+            return true;
         }
     }
+    return false;
+}
 
-    if (!softmaxNode) {
-        auto logitsNode = model->get_output_op(0)->input(0).get_source_output().get_node();
-        softmaxNode = std::make_shared<ov::op::v1::Softmax>(logitsNode->output(0), 1);
-    }
-
-    const auto k = std::make_shared<ov::op::v0::Constant>(ov::element::i32, ov::Shape{}, std::vector<size_t>{topk});
-    std::shared_ptr<ov::Node> topkNode = std::make_shared<ov::op::v3::TopK>(softmaxNode,
-                                                                            k,
-                                                                            1,
-                                                                            ov::op::v3::TopK::Mode::MAX,
-                                                                            ov::op::v3::TopK::SortType::SORT_VALUES);
-
-    auto indices = topkNode->output(0);
-    auto scores = topkNode->output(1);
-    ov::OutputVector outputs_vector;
-    if (add_raw_scores) {
-        auto raw_scores = softmaxNode->output(0);
-        outputs_vector = {scores, indices, raw_scores};
-    }
-    else {
-        outputs_vector = {scores, indices};
-    }
-    for (const ov::Output<ov::Node>& output : model->outputs()) {
-        if (output.get_names().count(saliency_map_name) > 0 || output.get_names().count(feature_vector_name) > 0) {
-            outputs_vector.push_back(output);
+std::vector<size_t> get_topk_indices(const float* x, size_t num_elements, size_t k) {
+    using float_idx_pair = std::pair<float, size_t>;
+    std::priority_queue<float_idx_pair, std::vector<float_idx_pair>, std::greater<float_idx_pair>> top_elements;
+    for (size_t i = 0; i < num_elements; ++i) {
+        if (top_elements.size() < k) {
+            top_elements.push({x[i], i});
+        }
+        else if (top_elements.top().first < x[i]) {
+            top_elements.pop();
+            top_elements.push({x[i], i});
         }
     }
-    model = std::make_shared<ov::Model>(outputs_vector, model->get_parameters(), "classification");
 
-    // manually set output tensors name for created topK node
-    model->outputs()[0].set_names({indices_name});
-    model->outputs()[1].set_names({scores_name});
-    if (add_raw_scores) {
-        model->outputs()[2].set_names({raw_scores_name});
+    std::vector<size_t> top_idx(k);
+    for (size_t i = 0; i < k; ++i) {
+        top_idx[k - i - 1] = top_elements.top().second;
+        top_elements.pop();
     }
 
-    // set output precisions
-    ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
-    ppp.output(indices_name).tensor().set_element_type(ov::element::i32);
-    ppp.output(scores_name).tensor().set_element_type(ov::element::f32);
-    if (add_raw_scores) {
-        ppp.output(raw_scores_name).tensor().set_element_type(ov::element::f32);
-    }
-    model = ppp.build();
+    return top_idx;
 }
 
 std::vector<std::string> get_non_xai_names(const std::vector<ov::Output<ov::Node>>& outputs) {
@@ -352,28 +328,30 @@ std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(In
 }
 
 std::unique_ptr<ResultBase> ClassificationModel::get_multiclass_predictions(InferenceResult& infResult, bool add_raw_scores) {
-    const ov::Tensor& indicesTensor = infResult.outputsData.find(indices_name)->second;
-    const int* indicesPtr = indicesTensor.data<int>();
-    const ov::Tensor& scoresTensor = infResult.outputsData.find(scores_name)->second;
-    const float* scoresPtr = scoresTensor.data<float>();
+    const ov::Tensor& logitsTensor = infResult.outputsData.find(outputNames[0])->second;
+    float* logitsPtr = logitsTensor.data<float>();
+
+    if (!embedded_softmax) {
+        softmax(logitsPtr, logitsPtr + logitsTensor.get_size());
+    }
 
     ClassificationResult* result = new ClassificationResult(infResult.frameId, infResult.metaData);
     auto retVal = std::unique_ptr<ResultBase>(result);
 
     if (add_raw_scores) {
-        const ov::Tensor& logitsTensor = infResult.outputsData.find(raw_scores_name)->second;
         result->raw_scores = ov::Tensor(logitsTensor.get_element_type(), logitsTensor.get_shape());
         logitsTensor.copy_to(result->raw_scores);
-        result->raw_scores.set_shape(ov::Shape({result->raw_scores.get_size()}));
     }
 
-    result->topLabels.reserve(scoresTensor.get_size());
-    for (size_t i = 0; i < scoresTensor.get_size(); ++i) {
-        int ind = indicesPtr[i];
-        if (ind < 0 || ind >= static_cast<int>(labels.size())) {
+    auto topk_indices = get_topk_indices(logitsPtr, logitsTensor.get_size(), topk);
+
+    result->topLabels.reserve(topk_indices.size());
+    for (size_t i = 0; i < topk_indices.size(); ++i) {
+        size_t ind = topk_indices[i];
+        if (ind >= labels.size()) {
             throw std::runtime_error("Invalid index for the class label is found during postprocessing");
         }
-        result->topLabels.emplace_back(ind, labels[ind], scoresPtr[i]);
+        result->topLabels.emplace_back(ind, labels[ind], logitsPtr[ind]);
     }
 
     return retVal;
@@ -449,15 +427,13 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
         return;
     }
 
+    embedded_softmax = false;
     if (!embedded_processing) {
-        addOrFindSoftmaxAndTopkOutputs(model, topk, output_raw_scores);
+        embedded_softmax = findSoftmaxOutputs(model);
     }
     embedded_processing = true;
 
-    outputNames = {indices_name, scores_name};
-    if (output_raw_scores) {
-        outputNames.emplace_back("raw_scores");
-    }
+    outputNames = get_non_xai_names(model->outputs());
     append_xai_names(model->outputs(), outputNames);
 }
 

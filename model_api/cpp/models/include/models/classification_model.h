@@ -79,6 +79,7 @@ protected:
     bool multilabel = false;
     bool hierarchical = false;
     bool output_raw_scores = false;
+    bool embedded_softmax = false;
     float confidence_threshold = 0.5f;
     std::string hierarchical_config;
     HierarchicalConfig hierarchical_info;
