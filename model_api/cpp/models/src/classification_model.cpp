@@ -428,10 +428,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
         return;
     }
 
-    embedded_softmax = false;
-    if (!embedded_processing) {
-        embedded_softmax = findSoftmaxOutputs(model);
-    }
+    embedded_softmax = findSoftmaxOutputs(model);
     embedded_processing = true;
 
     outputNames = get_non_xai_names(model->outputs());
