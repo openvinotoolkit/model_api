@@ -341,6 +341,7 @@ std::unique_ptr<ResultBase> ClassificationModel::get_multiclass_predictions(Infe
     if (add_raw_scores) {
         result->raw_scores = ov::Tensor(logitsTensor.get_element_type(), logitsTensor.get_shape());
         logitsTensor.copy_to(result->raw_scores);
+        result->raw_scores.set_shape(ov::Shape({result->raw_scores.get_size()}));
     }
 
     auto topk_indices = get_topk_indices(logitsPtr, logitsTensor.get_size(), topk);
