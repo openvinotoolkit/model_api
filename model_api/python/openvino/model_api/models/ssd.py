@@ -65,9 +65,7 @@ class SSD(DetectionModel):
             pass
 
         try:
-            parser = BoxesLabelsParser(
-                self.outputs, (self.w, self.h)
-            )
+            parser = BoxesLabelsParser(self.outputs, (self.w, self.h))
             self.logger.debug('\tUsing SSD model with "boxes-labels" output parser')
             return parser
         except ValueError:
