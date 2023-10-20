@@ -66,7 +66,7 @@ class SSD(DetectionModel):
 
         try:
             parser = BoxesLabelsParser(
-                self.outputs, self.inputs[image_blob_name].shape[2:][::-1]
+                self.outputs, (self.w, self.h)
             )
             self.logger.debug('\tUsing SSD model with "boxes-labels" output parser')
             return parser
