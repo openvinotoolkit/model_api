@@ -187,6 +187,12 @@ def test_image_models(data, dump, result, model_data):
             model.get_model().save(data + "/serialized/" + save_name)
         else:
             model.save(data + "/serialized/" + save_name)
+            if model_data.get("check_extra_rt_info", False):
+                assert (
+                    create_models.core.read_model(data + "/serialized/" + save_name)
+                    .get_rt_info(["model_info", "label_ids"])
+                    .astype(str)
+                )
 
     if dump:
         result[-1]["test_data"] = inference_results
