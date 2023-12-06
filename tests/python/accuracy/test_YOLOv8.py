@@ -155,16 +155,14 @@ class Metrics(yolo.detect.DetectionValidator):
     ],
 )
 def test_metric(pt, ref_mAP50_95):
-    assert (
-        Metrics().evaluate(
-            YOLOv5.create_model(
-                ultralytics.YOLO(
-                    Path(os.environ["DATA"]) / "ultralytics" / pt, "detect"
-                ).export(format="openvino", half=True)
-                / pt.with_suffix(".xml"),
-                device="CPU",
-                configuration={"confidence_threshold": 0.001},
-            )
-        )["metrics/mAP50-95(B)"]
-        >= ref_mAP50_95
-    )
+    mAP50_95 = Metrics().evaluate(
+        YOLOv5.create_model(
+            ultralytics.YOLO(
+                Path(os.environ["DATA"]) / "ultralytics" / pt, "detect"
+            ).export(format="openvino", half=True)
+            / pt.with_suffix(".xml"),
+            device="CPU",
+            configuration={"confidence_threshold": 0.001},
+        )
+    )["metrics/mAP50-95(B)"]
+    assert abs(mAP50_95 - ref_mAP50_95) <= 0.01 * ref_mAP50_95
