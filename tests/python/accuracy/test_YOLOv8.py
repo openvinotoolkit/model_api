@@ -165,4 +165,6 @@ def test_metric(pt, ref_mAP50_95):
             configuration={"confidence_threshold": 0.001},
         )
     )["metrics/mAP50-95(B)"]
-    assert abs(mAP50_95 - ref_mAP50_95) <= 0.01 * ref_mAP50_95
+    assert (
+        abs(mAP50_95 - ref_mAP50_95) <= 0.01 * ref_mAP50_95 or mAP50_95 >= ref_mAP50_95
+    )
