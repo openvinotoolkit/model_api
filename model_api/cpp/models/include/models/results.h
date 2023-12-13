@@ -68,7 +68,7 @@ struct AnomalyResult : public ResultBase
         double min_pred_mask, max_pred_mask;
         cv::minMaxLoc(prediction.pred_mask, &min_pred_mask, &max_pred_mask);
         os << "anomaly_map min:" << min_anomaly_map << " max:" << max_anomaly_map << ";";
-        os << "pred_score:" << prediction.pred_score << ";";
+        os << "pred_score:" << std::fixed << std::setprecision(1) << prediction.pred_score << ";";
         os << "pred_label:" << prediction.pred_label << ";";
         os << std::fixed << std::setprecision(0) << "pred_mask min:" << min_pred_mask << " max:" << max_pred_mask << ";";
 
