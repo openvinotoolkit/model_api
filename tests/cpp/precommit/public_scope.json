@@ -22,5 +22,9 @@
     {
         "name": "hrnet-v2-c1-segmentation",
         "type": "SegmentationModel"
+    },
+    {
+        "name": "otx_models/tinynet_test.xml",
+        "type": "ClassificationModel"
     }
 ]
