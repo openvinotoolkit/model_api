@@ -24,7 +24,7 @@
         "type": "SegmentationModel"
     },
     {
-        "name": "otx_models/tinynet_test.xml",
+        "name": "otx_models/tinynet_imagenet.xml",
         "type": "ClassificationModel"
     }
 ]
