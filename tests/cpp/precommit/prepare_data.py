@@ -18,7 +18,7 @@ def retrieve_otx_model(data_dir, model_name):
     )
 
 
-def parepare_model(
+def prepare_model(
     data_dir="./data",
     public_scope=Path(__file__).resolve().parent / "public_scope.json",
 ):
@@ -70,6 +70,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    parepare_model(args.data_dir, args.public_scope)
+    prepare_model(args.data_dir, args.public_scope)
     prepare_data(args.data_dir)
     retrieve_otx_model(args.data_dir, "mlc_mobilenetv3_large_voc")
+    retrieve_otx_model(args.data_dir, "tinynet_imagenet")

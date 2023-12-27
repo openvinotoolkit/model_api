@@ -52,6 +52,10 @@ jobs:
         source venv/bin/activate
         python -m pip install --upgrade pip
         pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
+    - name: Prepare test data
+      run: |
+        source venv/bin/activate
+        python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
     - name: Run test
       run: |
         source venv/bin/activate
