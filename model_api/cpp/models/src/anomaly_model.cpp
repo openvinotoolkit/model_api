@@ -84,10 +84,9 @@ std::unique_ptr<ResultBase> AnomalyModel::postprocess(InferenceResult& infResult
     anomaly_map.convertTo(anomaly_map, CV_8UC1, 255);
 
     pred_score = normalize(pred_score, imageThreshold);
-    if (pred_label == labels[0]){ // normal label
-        pred_score = 1 - pred_score; // Score of normal is 1 - score of anomaly
+    if (pred_label == labels[0]) {    // normal label
+        pred_score = 1 - pred_score;  // Score of normal is 1 - score of anomaly
     }
-
 
     if (!anomaly_map.empty()) {
         cv::resize(anomaly_map, anomaly_map, cv::Size{inputImgSize.inputImgWidth, inputImgSize.inputImgHeight});
