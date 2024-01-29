@@ -79,8 +79,8 @@ class AnomalyDetection(ImageModel):
         # normalize
         pred_score = self._normalize(pred_score, self.image_threshold)
 
-        if pred_label == self.labels[0]: # normal
-            pred_score = 1 - pred_score # Score of normal is 1 - score of anomaly
+        if pred_label == self.labels[0]:  # normal
+            pred_score = 1 - pred_score  # Score of normal is 1 - score of anomaly
 
         # resize outputs
         if anomaly_map is not None:
