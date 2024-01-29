@@ -117,7 +117,7 @@ cv::Mat AnomalyModel::normalize(cv::Mat& tensor, float threshold) {
 /// @return value between 0 and 1.
 double AnomalyModel::normalize(double& value, float threshold) {
     double normalized = ((value - threshold) / normalizationScale) + 0.5f;
-   return std::min(std::max(normalized, 0.), 1.);
+    return std::min(std::max(normalized, 0.), 1.);
 }
 
 std::vector<cv::Rect> AnomalyModel::getBoxes(cv::Mat& mask) {
