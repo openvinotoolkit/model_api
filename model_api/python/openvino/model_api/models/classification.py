@@ -1,5 +1,5 @@
 """
- Copyright (c) 2021-2023 Intel Corporation
+ Copyright (c) 2021-2024 Intel Corporation
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
 """
 
 import json
+from typing import Dict
 
 import numpy as np
+
 from openvino.preprocess import PrePostProcessor
 from openvino.runtime import Model, Type
 from openvino.runtime import opset10 as opset
@@ -170,10 +172,22 @@ class ClassificationModel(ImageModel):
 
         return ClassificationResult(
             result,
-            outputs.get(_saliency_map_name, np.ndarray(0)),
+            self.get_saliency_maps(outputs),
             outputs.get(_feature_vector_name, np.ndarray(0)),
             raw_scores,
         )
+
+    def get_saliency_maps(self, outputs: Dict) -> np.ndarray:
+        saliency_maps = outputs.get(_saliency_map_name, np.ndarray(0))
+        if not self.hierarchical:
+            return saliency_maps
+        # In hierarchical case reorder saliency maps to match the order of labels in .XML meta
+        reordered_saliency_maps = [[] for _ in range(len(saliency_maps))]
+        for batch in range(len(saliency_maps)):
+            for label in self.labels:
+                idx = self.hierarchical_info['cls_heads_info']['label_to_idx'][label]
+                reordered_saliency_maps[batch].append(saliency_maps[batch][idx])
+        return np.array(reordered_saliency_maps)
 
     def get_all_probs(self, logits: np.ndarray):
         if self.multilabel:
