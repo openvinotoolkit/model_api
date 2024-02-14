@@ -185,7 +185,7 @@ class ClassificationModel(ImageModel):
         reordered_saliency_maps = [[] for _ in range(len(saliency_maps))]
         for batch in range(len(saliency_maps)):
             for label in self.labels:
-                idx = self.hierarchical_info['cls_heads_info']['label_to_idx'][label]
+                idx = self.hierarchical_info["cls_heads_info"]["label_to_idx"][label]
                 reordered_saliency_maps[batch].append(saliency_maps[batch][idx])
         return np.array(reordered_saliency_maps)
 
