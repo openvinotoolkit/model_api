@@ -177,10 +177,13 @@ class ClassificationModel(ImageModel):
         )
 
     def get_saliency_maps(self, outputs: Dict) -> np.ndarray:
+        """
+        Returns saliency map model output. In hierarchical case reorder saliency maps
+        to match the order of labels in .XML meta.
+        """
         saliency_maps = outputs.get(_saliency_map_name, np.ndarray(0))
         if not self.hierarchical:
             return saliency_maps
-        # In hierarchical case reorder saliency maps to match the order of labels in .XML meta
         reordered_saliency_maps = [[] for _ in range(len(saliency_maps))]
         for batch in range(len(saliency_maps)):
             for label in self.labels:
