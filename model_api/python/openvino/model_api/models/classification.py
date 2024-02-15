@@ -184,10 +184,13 @@ class ClassificationModel(ImageModel):
         saliency_maps = outputs.get(_saliency_map_name, np.ndarray(0))
         if not self.hierarchical:
             return saliency_maps
+
         reordered_saliency_maps = [[] for _ in range(len(saliency_maps))]
+        model_classes = self.hierarchical_info["cls_heads_info"]["class_to_group_idx"]
+        label_to_model_out_idx = {lbl: i for i, lbl in enumerate(model_classes.keys())}
         for batch in range(len(saliency_maps)):
             for label in self.labels:
-                idx = self.hierarchical_info["cls_heads_info"]["label_to_idx"][label]
+                idx = label_to_model_out_idx[label]
                 reordered_saliency_maps[batch].append(saliency_maps[batch][idx])
         return np.array(reordered_saliency_maps)
 
