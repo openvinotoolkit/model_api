@@ -3,7 +3,8 @@ from openvino.model_api.models import Model
 
 def test_detector_save(tmp_path):
     downloaded = Model.create_model(
-        "ssd_mobilenet_v1_fpn_coco", configuration={"mean_values": [0, 0, 0], "confidence_threshold": 0.6}
+        "ssd_mobilenet_v1_fpn_coco",
+        configuration={"mean_values": [0, 0, 0], "confidence_threshold": 0.6},
     )
     assert True == downloaded.get_model().get_rt_info(
         ["model_info", "embedded_processing"]
