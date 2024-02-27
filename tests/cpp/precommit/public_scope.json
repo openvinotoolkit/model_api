@@ -1,6 +1,6 @@
 [
     {
-        "name": "ssd300",
+        "name": "mobilenet-v3-large-1.0-224-tf",
         "type": "DetectionModel"
     },
     {
@@ -12,7 +12,7 @@
         "type": "DetectionModel"
     },
     {
-        "name": "efficientnet-b0-pytorch",
+        "name": "e  fficientnet-b0-pytorch",
         "type": "ClassificationModel"
     },
     {

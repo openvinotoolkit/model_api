@@ -71,7 +71,7 @@
         ]
     },
     {
-        "name": "ssd300",
+        "name": "mobilenet-v3-large-1.0-224-tf",
         "type": "DetectionModel",
         "test_data": [
             {
