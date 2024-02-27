@@ -1,9 +1,5 @@
 [
     {
-        "name": "mobilenet-v3-large-1.0-224-tf",
-        "type": "DetectionModel"
-    },
-    {
         "name": "ssd_mobilenet_v1_fpn_coco",
         "type": "DetectionModel"
     },

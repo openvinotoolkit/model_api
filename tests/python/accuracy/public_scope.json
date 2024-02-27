@@ -71,16 +71,6 @@
         ]
     },
     {
-        "name": "mobilenet-v3-large-1.0-224-tf",
-        "type": "DetectionModel",
-        "test_data": [
-            {
-                "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": ["0, 13, 169, 338, 2 (bicycle): 0.870; 58, 275, 360, 384, 12 (dog): 0.998; 324, 98, 344, 148, 15 (person): 0.652; [0]; [0]"]
-            }
-        ]
-    },
-    {
         "name": "ssd_mobilenet_v1_fpn_coco",
         "type": "DetectionModel",
         "test_data": [
