@@ -112,7 +112,7 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
         pad_value = pad_value_iter->second.as<uint8_t>();
     }
 
-    reverse_input_channels = get_from_any_maps("hierarchical", configuration,
+    reverse_input_channels = get_from_any_maps("reverse_input_channels", configuration,
                                                model->has_rt_info("model_info") ? model->get_rt_info<ov::AnyMap>("model_info") : ov::AnyMap{},
                                                reverse_input_channels);
 
