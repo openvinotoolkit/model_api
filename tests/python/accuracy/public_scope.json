@@ -132,7 +132,7 @@
         ]
     },
     {
-        "name": "se-resnext-50",
+        "name": "mobilenet-v3-large-1.0-224-tf",
         "type": "ClassificationModel",
         "test_data": [
             {

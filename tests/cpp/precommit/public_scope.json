@@ -8,7 +8,7 @@
         "type": "DetectionModel"
     },
     {
-        "name": "e  fficientnet-b0-pytorch",
+        "name": "efficientnet-b0-pytorch",
         "type": "ClassificationModel"
     },
     {
