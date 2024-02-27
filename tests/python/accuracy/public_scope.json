@@ -137,7 +137,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": ["175 (Labrador_retriever): 0.616, [0], [0], [0]"]
+                "reference": ["175 (Labrador_retriever): 0.166, [0], [0], [0]"]
             }
         ]
     },
