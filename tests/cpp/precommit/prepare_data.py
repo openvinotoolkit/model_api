@@ -22,7 +22,7 @@ def prepare_model(
     data_dir="./data",
     public_scope=Path(__file__).resolve().parent / "public_scope.json",
 ):
-    from openvino.model_api.models import (
+    from model_api.models import (
         ClassificationModel,
         DetectionModel,
         SegmentationModel,

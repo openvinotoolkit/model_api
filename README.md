@@ -44,7 +44,7 @@ Model API searches for additional information required for model inference, data
 ## Usage
 ### Python
 ```python
-from openvino.model_api.models import DetectionModel
+from model_api.models import DetectionModel
 
 # Create a model (downloaded and cached automatically for OpenVINO Model Zoo models)
 # Use URL to work with served model, e.g. "localhost:9000/models/ssdlite_mobilenet_v2"
