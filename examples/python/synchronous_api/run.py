@@ -18,7 +18,6 @@
 import sys
 
 import cv2
-import openvino.runtime as ov
 from openvino.model_api.models import (
     ClassificationModel,
     DetectionModel,
