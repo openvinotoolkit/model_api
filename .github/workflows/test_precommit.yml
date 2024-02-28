@@ -12,8 +12,7 @@ jobs:
       run: git --no-pager diff --check $(git hash-object -t tree /dev/null)
     - name: Prohibit non ASCII chars in file names
       run: test $(git diff --name-only --diff-filter=A -z $(git hash-object -t tree /dev/null) | LC_ALL=C tr -d '[ -~]\0' | wc -c) == 0
-    - name: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
-      run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/openvino/model_api/README.md'"
+    - run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/README.md'"
     - uses: actions/setup-python@v4
       with:
         python-version: 3.8
@@ -30,7 +29,7 @@ jobs:
     - name: Check style with black
       run: |
         source venv/bin/activate
-        black --extend-exclude model_api/python/openvino/__init__.py --check .
+        black --check .
     - name: Check style with isort
       run: |
         source venv/bin/activate
@@ -173,7 +172,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install model_api/python/[ovms,tests]
-        python -c "from openvino.model_api.models import DetectionModel; DetectionModel.create_model('ssd_mobilenet_v1_fpn_coco').save('ovms_models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml')"
+        python -c "from model_api.models import DetectionModel; DetectionModel.create_model('ssd_mobilenet_v1_fpn_coco').save('ovms_models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml')"
         docker run -d --rm -v $GITHUB_WORKSPACE/ovms_models/:/models -p 9000:9000 -p 8000:8000 openvino/model_server:latest --model_path /models/ssd_mobilenet_v1_fpn_coco/ --model_name ssd_mobilenet_v1_fpn_coco --port 9000 --rest_port 8000 --log_level DEBUG --target_device CPU
         python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
         python examples/python/serving_api/run.py data/coco128/images/train2017/000000000009.jpg  # detects 4 objects

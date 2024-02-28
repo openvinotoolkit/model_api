@@ -1,4 +1,4 @@
-from openvino.model_api.models import Model
+from model_api.models import Model
 
 
 def test_model_with_unnamed_output_load():

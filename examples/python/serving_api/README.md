@@ -14,7 +14,7 @@ This example demonstrates how to use a Python API of OpenVINO Model API for a re
     ```
 - Download a model by running a Python code with Model API, see Python [exaple](../../python/synchronous_api/README.md) and resave a configured model at OVMS friendly folder layout:
     ```python
-    from openvino.model_api.models import DetectionModel
+    from model_api.models import DetectionModel
 
     DetectionModel.create_model("ssd_mobilenet_v1_fpn_coco").save("/home/user/models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml")
     ```

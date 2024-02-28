@@ -1,4 +1,4 @@
-from openvino.model_api.models import Model
+from model_api.models import Model
 
 
 def test_detector_save(tmp_path):

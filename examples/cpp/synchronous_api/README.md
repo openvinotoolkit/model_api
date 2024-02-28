@@ -25,7 +25,7 @@ This example demonstrates how to use a C++ API of OpenVINO Model API for synchro
    ```
 - Download a model by running a Python code with Model API, see Python [exaple](../../python/synchronous_api/README.md):
     ```python
-    from openvino.model_api.models import DetectionModel
+    from model_api.models import DetectionModel
 
     model = DetectionModel.create_model("ssd_mobilenet_v1_fpn_coco",
                                     download_dir="tmp")

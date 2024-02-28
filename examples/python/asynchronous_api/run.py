@@ -18,7 +18,7 @@
 import sys
 
 import cv2
-from openvino.model_api.models import DetectionModel
+from model_api.models import DetectionModel
 
 
 def main():

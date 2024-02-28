@@ -5,10 +5,10 @@ from pathlib import Path
 import cv2
 import onnx
 import pytest
-from openvino.model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
-from openvino.model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
-from openvino.model_api.adapters.utils import load_parameters_from_onnx
-from openvino.model_api.models import (
+from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
+from model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
+from model_api.adapters.utils import load_parameters_from_onnx
+from model_api.models import (
     AnomalyDetection,
     AnomalyResult,
     ClassificationModel,
@@ -23,7 +23,7 @@ from openvino.model_api.models import (
     add_rotated_rects,
     get_contours,
 )
-from openvino.model_api.tilers import DetectionTiler, InstanceSegmentationTiler
+from model_api.tilers import DetectionTiler, InstanceSegmentationTiler
 
 
 def read_config(path: Path):
