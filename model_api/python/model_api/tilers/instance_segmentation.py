@@ -18,10 +18,7 @@ from contextlib import contextmanager
 
 import cv2 as cv
 import numpy as np
-from model_api.models.instance_segmentation import (
-    MaskRCNNModel,
-    _segm_postprocess,
-)
+from model_api.models.instance_segmentation import MaskRCNNModel, _segm_postprocess
 from model_api.models.utils import (
     InstanceSegmentationResult,
     SegmentedObject,
