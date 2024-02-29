@@ -224,6 +224,16 @@
         ]
     },
     {
+        "name": "otx_models/cls_efficient_b0_shuffled_outputs.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": ["3 (Non-Rigid): 0.503, 4 (Circle): 0.943, 5 (Lion): 0.969, 6 (Panda): 0.988, [1,7,7,7], [1,7], [0]"]
+            }
+        ]
+    },
+    {
         "name": "otx_models/cls_efficient_v2s_cars.xml",
         "type": "ClassificationModel",
         "test_data": [
