@@ -109,6 +109,7 @@ async def main():
             download_otx_model(client, otx_models_dir, "anomaly_padim_bottle_mvtec"),
             download_otx_model(client, otx_models_dir, "anomaly_stfpm_bottle_mvtec"),
             download_otx_model(client, otx_models_dir, "deit-tiny"),
+            download_otx_model(client, otx_models_dir, "cls_efficient_b0_shuffled_outputs"),
         )
 
 
