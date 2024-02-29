@@ -20,7 +20,7 @@ from typing import Optional
 
 import cv2
 import numpy as np
-from openvino import Model, OVAny, Type, layout_helpers
+from openvino import Model, Output, OVAny, Type, layout_helpers
 from openvino.runtime import opset10 as opset
 from openvino.runtime.utils.decorators import custom_preprocess_function
 
