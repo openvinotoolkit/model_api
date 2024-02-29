@@ -19,12 +19,11 @@ from pathlib import Path
 from typing import Dict, Set, Tuple
 
 try:
-    import openvino as ov
+    import openvino.runtime as ov
     from openvino import (
         AsyncInferQueue,
         Core,
         Dimension,
-        Layout,
         PartialShape,
         Type,
         get_version,
@@ -376,7 +375,7 @@ class OpenvinoAdapter(InferenceAdapter):
         elif dtype == float:
             ppp.input(input_idx).tensor().set_element_type(Type.f32)
 
-        ppp.input(input_idx).tensor().set_layout(Layout("NHWC")).set_color_format(
+        ppp.input(input_idx).tensor().set_layout(ov.Layout("NHWC")).set_color_format(
             ColorFormat.BGR
         )
 
@@ -414,7 +413,7 @@ class OpenvinoAdapter(InferenceAdapter):
                 )
 
         # Handle layout
-        ppp.input(input_idx).model().set_layout(Layout(layout))
+        ppp.input(input_idx).model().set_layout(ov.Layout(layout))
 
         # Handle color format
         if brg2rgb:
