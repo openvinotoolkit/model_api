@@ -434,7 +434,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
                                                   inputShape[ov::layout::height_idx(inputLayout)]},
                                         pad_value,
                                         reverse_input_channels,
-                                        {},
+                                        mean_values,
                                         scale_values);
 
         ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
