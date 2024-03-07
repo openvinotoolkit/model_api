@@ -103,8 +103,6 @@ def get_user_config(
             if flags_nthreads:
                 config["CPU_THREADS_NUM"] = str(flags_nthreads)
 
-            config["CPU_BIND_THREAD"] = "NO"
-
             # for CPU execution, more throughput-oriented execution via streams
             config["CPU_THROUGHPUT_STREAMS"] = (
                 str(device_nstreams[device])
