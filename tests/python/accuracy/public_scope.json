@@ -71,16 +71,6 @@
         ]
     },
     {
-        "name": "ssd300",
-        "type": "DetectionModel",
-        "test_data": [
-            {
-                "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": ["0, 13, 169, 338, 2 (bicycle): 0.870; 58, 275, 360, 384, 12 (dog): 0.998; 324, 98, 344, 148, 15 (person): 0.652; [0]; [0]"]
-            }
-        ]
-    },
-    {
         "name": "ssd_mobilenet_v1_fpn_coco",
         "type": "DetectionModel",
         "test_data": [
@@ -142,12 +132,12 @@
         ]
     },
     {
-        "name": "se-resnext-50",
+        "name": "mobilenet-v3-large-1.0-224-tf",
         "type": "ClassificationModel",
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": ["175 (Labrador_retriever): 0.616, [0], [0], [0]"]
+                "reference": ["208 (Labrador_retriever): 0.166, [0], [0], [0]"]
             }
         ]
     },
@@ -230,6 +220,16 @@
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
                 "reference": ["0 (1): 0.838, [0], [0], [0]"]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/cls_efficient_b0_shuffled_outputs.xml",
+        "type": "ClassificationModel",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": ["3 (Non-Rigid): 0.503, 4 (Circle): 0.943, 5 (Lion): 0.969, 6 (Panda): 0.988, [1,7,7,7], [1,7], [0]"]
             }
         ]
     },

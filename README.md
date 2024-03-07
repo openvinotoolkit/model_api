@@ -44,11 +44,11 @@ Model API searches for additional information required for model inference, data
 ## Usage
 ### Python
 ```python
-from openvino.model_api.models import DetectionModel
+from model_api.models import DetectionModel
 
 # Create a model (downloaded and cached automatically for OpenVINO Model Zoo models)
-# Use URL to work with served model, e.g. "localhost:9000/models/ssd300"
-ssd = DetectionModel.create_model("ssd300")
+# Use URL to work with served model, e.g. "localhost:9000/models/ssdlite_mobilenet_v2"
+ssd = DetectionModel.create_model("ssdlite_mobilenet_v2")
 
 # Run synchronous inference locally
 detections = ssd(image)  # image is numpy.ndarray
@@ -63,7 +63,7 @@ print(f"Detection results: {detections}")
 #include <models/results.h>
 
 // Load the model fetched using Python API
-auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
+auto model = DetectionModel::create_model("~/.cache/omz/public/ssdlite_mobilenet_v2/FP16/ssdlite_mobilenet_v2.xml");
 
 // Run synchronous inference locally
 auto result = model->infer(image); // image is cv::Mat
@@ -81,13 +81,13 @@ Model's static method `create_model()` has two overloads. One constructs the mod
 There are usecases when it is not possible to modify an internal `ov::Model` and it is hidden behind `InferenceAdapter`. For example the model can be served using [OVMS](https://github.com/openvinotoolkit/model_server). `create_model()` can construct a model from a given `InferenceAdapter`. That approach assumes that the model in `InferenceAdapter` was already configured by `create_model()` called with a string (a path or a model name). It is possible to prepare such model using C++ or Python:
 C++
 ```Cpp
-auto model = DetectionModel::create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml");
+auto model = DetectionModel::create_model("~/.cache/omz/public/ssdlite_mobilenet_v2/FP16/ssdlite_mobilenet_v2.xml");
 const std::shared_ptr<ov::Model>& ov_model = model->getModel();
 ov::serialize(ov_model, "serialized.xml");
 ```
 Python
 ```python
-model = DetectionModel.create_model("~/.cache/omz/public/ssd300/FP16/ssd300.xml")
+model = DetectionModel.create_model("~/.cache/omz/public/ssdlite_mobilenet_v2/FP16/ssdlite_mobilenet_v2.xml")
 model.save("serialized.xml")
 ```
 After that the model can be constructed from `InferenceAdapter`:
@@ -107,7 +107,7 @@ For more details please refer to the [examples](https://github.com/openvinotoolk
   - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#classification-models)
 - Object Detection:
   - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#object-detection-models):
-    - SSD-based models (e.g. "ssd300", "ssdlite_mobilenet_v2", etc.)
+    - SSD-based models (e.g. "ssdlite_mobilenet_v2", etc.)
     - YOLO-based models (e.g. "yolov3", "yolov4", etc.)
     - CTPN: "ctpn"
     - DETR: "detr-resnet50"
@@ -127,7 +127,7 @@ For more details please refer to the [examples](https://github.com/openvinotoolk
 - Image Classification:
   - [OpenVINO Model Zoo models](https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/public/index.md#classification-models)
 - Object Detection:
-  - SSD-based models (e.g. "ssd300", "ssdlite_mobilenet_v2", etc.)
+  - SSD-based models (e.g. "ssdlite_mobilenet_v2", etc.)
     - YOLO-based models (e.g. "yolov3", "yolov4", etc.)
     - CenterNet: "ctdet_coco_dlav0_512"
     - FaceBoxes: "faceboxes-pytorch"

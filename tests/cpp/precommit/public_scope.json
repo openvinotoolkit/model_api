@@ -1,9 +1,5 @@
 [
     {
-        "name": "ssd300",
-        "type": "DetectionModel"
-    },
-    {
         "name": "ssd_mobilenet_v1_fpn_coco",
         "type": "DetectionModel"
     },

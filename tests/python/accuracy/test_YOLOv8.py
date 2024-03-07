@@ -5,11 +5,11 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-import openvino.runtime as ov
+import openvino as ov
 import pytest
 import torch
 import ultralytics
-from openvino.model_api.models import YOLOv5
+from model_api.models import YOLOv5
 from ultralytics.data import utils
 from ultralytics.models import yolo
 
