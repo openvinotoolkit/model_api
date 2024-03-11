@@ -428,7 +428,7 @@ def resize_image_ocv(
         image = cv2.resize(image, None, fx=scale, fy=scale, interpolation=interpolation)
         if is_pad:
             nh, nw = image.shape[:2]
-            ph, pw = size[1] - nh, size[0] - nw
+            ph, pw = max(0, size[1] - nh), max(0, size[0] - nw)
             image = np.pad(
                 image,
                 ((0, ph), (0, pw), (0, 0)),
