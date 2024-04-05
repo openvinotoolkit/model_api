@@ -134,58 +134,24 @@ ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& conf
     }
 }
 
-ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter)
-    : ModelBase(adapter) {
-    const ov::AnyMap& configuration = adapter->getModelConfig();
-    auto auto_resize_iter = configuration.find("auto_resize");
-    if (auto_resize_iter != configuration.end()) {
-        useAutoResize = auto_resize_iter->second.as<bool>();
-    }
+ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter, const ov::AnyMap& configuration)
+    : ModelBase(adapter, configuration) {
+    const ov::AnyMap& adapter_configuration = adapter->getModelConfig();
 
-    auto resize_type_iter = configuration.find("resize_type");
+    useAutoResize = get_from_any_maps("auto_resize", configuration, adapter_configuration, useAutoResize);
+
     std::string resize_type = "standard";
-    if (resize_type_iter != configuration.end()) {
-        resize_type = resize_type_iter->second.as<std::string>();
-    }
+    resize_type = get_from_any_maps("resize_type", configuration, adapter_configuration, resize_type);
     resizeMode = selectResizeMode(resize_type);
 
-    auto labels_iter = configuration.find("labels");
-    if (labels_iter != configuration.end()) {
-        labels = labels_iter->second.as<std::vector<std::string>>();
-    }
-
-    auto embedded_processing_iter = configuration.find("embedded_processing");
-    if (embedded_processing_iter != configuration.end()) {
-        embedded_processing = embedded_processing_iter->second.as<bool>();
-    }
-
-    auto netInputWidth_iter = configuration.find("orig_width");
-    if (netInputWidth_iter != configuration.end()) {
-        netInputWidth = netInputWidth_iter->second.as<size_t>();
-    }
-    auto netInputHeight_iter = configuration.find("orig_height");
-    if (netInputHeight_iter != configuration.end()) {
-        netInputHeight = netInputHeight_iter->second.as<size_t>();
-    }
-
-    auto pad_value_iter = configuration.find("pad_value");
-    if (pad_value_iter != configuration.end()) {
-        pad_value = pad_value_iter->second.as<uint8_t>();
-    }
-
-    auto reverse_input_channels_iter = configuration.find("reverse_input_channels");
-    if (reverse_input_channels_iter != configuration.end()) {
-        reverse_input_channels = reverse_input_channels_iter->second.as<bool>();
-    }
-
-    auto scale_values_iter = configuration.find("scale_values");
-    if (scale_values_iter != configuration.end()) {
-        scale_values = scale_values_iter->second.as<std::vector<float>>();
-    }
-    auto mean_values_iter = configuration.find("mean_values");
-    if (mean_values_iter != configuration.end()) {
-        mean_values = mean_values_iter->second.as<std::vector<float>>();
-    }
+    labels = get_from_any_maps("labels", configuration, adapter_configuration, labels);
+    embedded_processing = get_from_any_maps("embedded_processing", configuration, adapter_configuration, embedded_processing);
+    netInputWidth = get_from_any_maps("orig_width", configuration, adapter_configuration, netInputWidth);
+    netInputHeight = get_from_any_maps("orig_height", configuration, adapter_configuration, netInputHeight);
+    pad_value = get_from_any_maps("pad_value", configuration, adapter_configuration, pad_value);
+    reverse_input_channels = get_from_any_maps("reverse_input_channels", configuration, adapter_configuration, reverse_input_channels);
+    scale_values = get_from_any_maps("scale_values", configuration, adapter_configuration, scale_values);
+    mean_values = get_from_any_maps("mean_values", configuration, adapter_configuration, mean_values);
 }
 
 void ImageModel::updateModelInfo() {

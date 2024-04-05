@@ -42,7 +42,7 @@ public:
                const std::string& layout = "");
 
     ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
-    ImageModel(std::shared_ptr<InferenceAdapter>& adapter);
+    ImageModel(std::shared_ptr<InferenceAdapter>& adapter, const ov::AnyMap& configuration = {});
     using ModelBase::ModelBase;
 
     std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) override;
