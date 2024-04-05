@@ -55,103 +55,31 @@ RESIZE_MODE ImageModel::selectResizeMode(const std::string& resize_type) {
     return resize;
 }
 
-ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
-    : ModelBase(model, configuration) {
-    auto auto_resize_iter = configuration.find("auto_resize");
-    if (auto_resize_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "auto_resize")) {
-            useAutoResize = model->get_rt_info<bool>("model_info", "auto_resize");
-        }
-    } else {
-        useAutoResize = auto_resize_iter->second.as<bool>();
-    }
+void ImageModel::init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority) {
+    useAutoResize = get_from_any_maps("auto_resize", top_priority, mid_priority, useAutoResize);
 
-    auto resize_type_iter = configuration.find("resize_type");
     std::string resize_type = "standard";
-    if (resize_type_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "resize_type")) {
-            resize_type = model->get_rt_info<std::string>("model_info", "resize_type");
-        }
-    } else {
-        resize_type = resize_type_iter->second.as<std::string>();
-    }
+    resize_type = get_from_any_maps("resize_type", top_priority, mid_priority, resize_type);
     resizeMode = selectResizeMode(resize_type);
 
-    auto labels_iter = configuration.find("labels");
-    if (labels_iter == configuration.end()) {
-        if (!model->has_rt_info<std::string>("model_info", "labels")) {
-            throw std::runtime_error("Configuration or model rt_info should contain labels"); //TODO
-        }
-        labels = split(model->get_rt_info<std::string>("model_info", "labels"), ' ');
-    } else {
-        labels = labels_iter->second.as<std::vector<std::string>>();
-    }
+    labels = get_from_any_maps("labels", top_priority, mid_priority, labels);
+    embedded_processing = get_from_any_maps("embedded_processing", top_priority, mid_priority, embedded_processing);
+    netInputWidth = get_from_any_maps("orig_width", top_priority, mid_priority, netInputWidth);
+    netInputHeight = get_from_any_maps("orig_height", top_priority, mid_priority, netInputHeight);
+    pad_value = get_from_any_maps("pad_value", top_priority, mid_priority, pad_value);
+    reverse_input_channels = get_from_any_maps("reverse_input_channels", top_priority, mid_priority, reverse_input_channels);
+    scale_values = get_from_any_maps("scale_values", top_priority, mid_priority, scale_values);
+    mean_values = get_from_any_maps("mean_values", top_priority, mid_priority, mean_values);
+}
 
-    if (model->has_rt_info("model_info", "embedded_processing")) {
-        embedded_processing = model->get_rt_info<bool>("model_info", "embedded_processing");
-    }
-
-    if (model->has_rt_info("model_info", "orig_width")) {
-        netInputWidth = model->get_rt_info<size_t>("model_info", "orig_width");
-    }
-    if (model->has_rt_info("model_info", "orig_height")) {
-        netInputHeight = model->get_rt_info<size_t>("model_info", "orig_height");
-    }
-
-    auto pad_value_iter = configuration.find("pad_value");
-    if (pad_value_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "pad_value")) {
-            // get_rt_info() incorrectly casts to uint8_t. Cast through int
-            int decoded = model->get_rt_info<int>("model_info", "pad_value");
-            if (0 > decoded || 255 < decoded) {
-                throw std::runtime_error("pad_value must be in range [0, 255]");
-            }
-            pad_value = decoded;
-        }
-    } else {
-        pad_value = pad_value_iter->second.as<uint8_t>();
-    }
-
-    reverse_input_channels = get_from_any_maps("reverse_input_channels", configuration,
-                                               model->has_rt_info("model_info") ? model->get_rt_info<ov::AnyMap>("model_info") : ov::AnyMap{},
-                                               reverse_input_channels);
-
-    auto scale_values_iter = configuration.find("scale_values");
-    if (scale_values_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "scale_values")) {
-            scale_values = model->get_rt_info<std::vector<float>>("model_info", "scale_values");
-        }
-    } else {
-        scale_values = labels_iter->second.as<std::vector<float>>();
-    }
-    auto mean_values_iter = configuration.find("mean_values");
-    if (mean_values_iter == configuration.end()) {
-        if (model->has_rt_info("model_info", "mean_values")) {
-            mean_values = model->get_rt_info<std::vector<float>>("model_info", "mean_values");
-        }
-    } else {
-        mean_values = labels_iter->second.as<std::vector<float>>();
-    }
+ImageModel::ImageModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
+    : ModelBase(model, configuration) {
+    init_from_config(configuration, model->has_rt_info("model_info") ? model->get_rt_info<ov::AnyMap>("model_info") : ov::AnyMap{});
 }
 
 ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter, const ov::AnyMap& configuration)
     : ModelBase(adapter, configuration) {
-    const ov::AnyMap& adapter_configuration = adapter->getModelConfig();
-
-    useAutoResize = get_from_any_maps("auto_resize", configuration, adapter_configuration, useAutoResize);
-
-    std::string resize_type = "standard";
-    resize_type = get_from_any_maps("resize_type", configuration, adapter_configuration, resize_type);
-    resizeMode = selectResizeMode(resize_type);
-
-    labels = get_from_any_maps("labels", configuration, adapter_configuration, labels);
-    embedded_processing = get_from_any_maps("embedded_processing", configuration, adapter_configuration, embedded_processing);
-    netInputWidth = get_from_any_maps("orig_width", configuration, adapter_configuration, netInputWidth);
-    netInputHeight = get_from_any_maps("orig_height", configuration, adapter_configuration, netInputHeight);
-    pad_value = get_from_any_maps("pad_value", configuration, adapter_configuration, pad_value);
-    reverse_input_channels = get_from_any_maps("reverse_input_channels", configuration, adapter_configuration, reverse_input_channels);
-    scale_values = get_from_any_maps("scale_values", configuration, adapter_configuration, scale_values);
-    mean_values = get_from_any_maps("mean_values", configuration, adapter_configuration, mean_values);
+    init_from_config(configuration, adapter->getModelConfig());
 }
 
 void ImageModel::updateModelInfo() {

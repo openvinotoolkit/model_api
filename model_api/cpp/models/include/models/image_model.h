@@ -62,6 +62,7 @@ public:
 protected:
     RESIZE_MODE selectResizeMode(const std::string& resize_type);
     void updateModelInfo() override;
+    void init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority);
 
     std::string getLabelName(size_t labelID) {
         return labelID < labels.size() ? labels[labelID] : std::string("Label #") + std::to_string(labelID);
