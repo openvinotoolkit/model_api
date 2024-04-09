@@ -66,7 +66,12 @@ void ImageModel::init_from_config(const ov::AnyMap& top_priority, const ov::AnyM
     embedded_processing = get_from_any_maps("embedded_processing", top_priority, mid_priority, embedded_processing);
     netInputWidth = get_from_any_maps("orig_width", top_priority, mid_priority, netInputWidth);
     netInputHeight = get_from_any_maps("orig_height", top_priority, mid_priority, netInputHeight);
-    pad_value = get_from_any_maps("pad_value", top_priority, mid_priority, pad_value);
+    int pad_value_int = 0;
+    pad_value_int = get_from_any_maps("pad_value", top_priority, mid_priority, pad_value_int);
+    if (0 > pad_value_int || 255 < pad_value_int) {
+        throw std::runtime_error("pad_value must be in range [0, 255]");
+    }
+    pad_value = static_cast<uint8_t>(pad_value_int);
     reverse_input_channels = get_from_any_maps("reverse_input_channels", top_priority, mid_priority, reverse_input_channels);
     scale_values = get_from_any_maps("scale_values", top_priority, mid_priority, scale_values);
     mean_values = get_from_any_maps("mean_values", top_priority, mid_priority, mean_values);
