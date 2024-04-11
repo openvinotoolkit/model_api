@@ -130,7 +130,9 @@ class InstanceSegmentationTiler(DetectionTiler):
         keep_idxs = []
         if np.prod(detections_array.shape):
             detections_array, keep_idxs = multiclass_nms(
-                detections_array, max_num=self.max_pred_number, iou_threshold=self.iou_threshold
+                detections_array,
+                max_num=self.max_pred_number,
+                iou_threshold=self.iou_threshold,
             )
         masks = [masks[keep_idx] for keep_idx in keep_idxs]
 

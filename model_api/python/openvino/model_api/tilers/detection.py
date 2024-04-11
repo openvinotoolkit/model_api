@@ -118,7 +118,9 @@ class DetectionTiler(Tiler):
 
         if np.prod(detections_array.shape):
             detections_array, _ = multiclass_nms(
-                detections_array, max_num=self.max_pred_number, iou_threshold=self.iou_threshold
+                detections_array,
+                max_num=self.max_pred_number,
+                iou_threshold=self.iou_threshold,
             )
 
         merged_vector = (
