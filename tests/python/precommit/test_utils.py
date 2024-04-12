@@ -1,11 +1,10 @@
 import numpy as np
 import openvino.runtime as ov
-from openvino.preprocess import PrePostProcessor
-
 from model_api.adapters.utils import (
     resize_image_with_aspect,
     resize_image_with_aspect_ocv,
 )
+from openvino.preprocess import PrePostProcessor
 
 
 def test_resize_image_with_aspect_ocv():
