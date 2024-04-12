@@ -1,31 +1,32 @@
 import numpy as np
+import openvino.runtime as ov
+from openvino.preprocess import PrePostProcessor
 
-from model_api.adapters import OpenvinoAdapter, create_core
-from model_api.adapters.utils import resize_image_with_aspect_ocv
+from model_api.adapters.utils import (
+    resize_image_with_aspect,
+    resize_image_with_aspect_ocv,
+)
 
 
 def test_resize_image_with_aspect_ocv():
-    model_adapter = OpenvinoAdapter(
-        core=create_core(),
-        model="data/otx_models/tinynet_imagenet.xml",  # refer test_load.py
-        weights_path="data/otx_models/tinynet_imagenet.bin",  # refer test_load.py
-        device="CPU",
-        max_num_requests=1,
-        plugin_config={"PERFORMANCE_HINT": "THROUGHPUT"},
+    param_node = ov.op.Parameter(ov.Type.f32, ov.Shape([1, 8, 8, 3]))
+    model = ov.Model(param_node, [param_node])
+    ppp = PrePostProcessor(model)
+    ppp.input().tensor().set_element_type(ov.Type.u8)
+    ppp.input().tensor().set_layout(ov.Layout("NHWC"))
+    ppp.input().tensor().set_shape([1, -1, -1, 3])
+    ppp.input().preprocess().custom(
+        resize_image_with_aspect(
+            (8, 8),
+            "linear",
+            0,
+        )
     )
+    ppp.input().preprocess().convert_element_type(ov.Type.f32)
+    ov_resize_image_with_aspect = ov.Core().compile_model(ppp.build(), "CPU")
 
-    model_adapter.embed_preprocessing(
-        layout="NCHW",
-        resize_mode="fit_to_window",
-        interpolation_mode="LINEAR",
-        target_shape=(1024, 1024),
-        pad_value=0,
-        brg2rgb=False,
-    )
+    img = np.ones((2, 4, 3), dtype=np.uint8)
+    ov_results = ov_resize_image_with_aspect(img[None])
+    np_results = resize_image_with_aspect_ocv(img, (8, 8))
 
-    img = np.ones((256, 512, 3), dtype=np.uint8)
-    ov_results = model_adapter.compiled_model(img[None])
-    ov_results = list(ov_results.values())[0][0].transpose(1, 2, 0).astype(np.uint8)
-    np_results = resize_image_with_aspect_ocv(img, (1024, 1024))
-
-    assert np.sum(np.abs(ov_results - np_results)) < 1e-05
+    assert np.sum(np.abs(list(ov_results.values())[0][0] - np_results)) < 1e-05
