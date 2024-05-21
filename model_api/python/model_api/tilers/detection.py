@@ -125,7 +125,9 @@ class DetectionTiler(Tiler):
 
         start_idx = 1 if self.tile_with_full_img else 0
         merged_vector = (
-            np.mean(feature_vectors[start_idx:], axis=0) if feature_vectors else np.ndarray(0)
+            np.mean(feature_vectors[start_idx:], axis=0)
+            if feature_vectors
+            else np.ndarray(0)
         )
         saliency_map = (
             self._merge_saliency_maps(saliency_maps, shape, tiles_coords)
@@ -185,7 +187,9 @@ class DetectionTiler(Tiler):
         image_map_w = int(image_w * ratio[1])
         merged_map = np.zeros((num_classes, image_map_h, image_map_w))
 
-        saliency_maps, start_idx = (saliency_maps[1:], 1) if self.tile_with_full_img else (saliency_maps, 0)
+        saliency_maps, start_idx = (
+            (saliency_maps[1:], 1) if self.tile_with_full_img else (saliency_maps, 0)
+        )
         for i, saliency_map in enumerate(saliency_maps, start_idx):
             for class_idx in range(num_classes):
                 if len(saliency_map.shape) == 4:

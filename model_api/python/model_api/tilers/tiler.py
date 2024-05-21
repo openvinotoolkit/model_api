@@ -96,7 +96,7 @@ class Tiler(metaclass=abc.ABCMeta):
                 "tile_with_full_img": BooleanValue(
                     default_value=False,
                     description="Whether to include full image as a tile",
-                )
+                ),
             }
         )
         return parameters
