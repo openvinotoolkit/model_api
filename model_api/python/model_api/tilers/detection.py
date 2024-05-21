@@ -185,8 +185,8 @@ class DetectionTiler(Tiler):
         image_map_w = int(image_w * ratio[1])
         merged_map = np.zeros((num_classes, image_map_h, image_map_w))
 
-        saliency_maps, start_idx = (saliency_maps[1:], 1) if self.tile_with_full_img else (saliency_maps, 0)
-        for i, saliency_map in enumerate(saliency_maps, start_idx):
+        start_idx = 1 if self.tile_with_full_img else 0
+        for i, saliency_map in enumerate(saliency_maps[start_idx:]):
             for class_idx in range(num_classes):
                 if len(saliency_map.shape) == 4:
                     saliency_map = saliency_map.squeeze(0)
