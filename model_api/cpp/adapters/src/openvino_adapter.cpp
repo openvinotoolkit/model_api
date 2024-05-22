@@ -17,14 +17,17 @@
 #include "adapters/openvino_adapter.h"
 #include <openvino/openvino.hpp>
 #include <utils/slog.hpp>
+#include <stdexcept>
 #include <vector>
+
+OpenVINOInferenceAdapter::OpenVINOInferenceAdapter(size_t max_num_requests) : maxNumRequests(max_num_requests) {}
 
 void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
                                                             const std::string& device, const ov::AnyMap& compilationConfig) {
     slog::info << "Loading model to the plugin" << slog::endl;
 
     compiledModel = core.compile_model(model, device, compilationConfig);
-    inferRequest = compiledModel.create_infer_request();
+    asyncQueue = std::make_unique<AsyncInferQueue>(compiledModel, maxNumRequests);
 
     initInputsOutputs();
 
@@ -34,21 +37,42 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
 }
 
 InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {
+    auto request = (*asyncQueue)[asyncQueue->get_idle_request_id()];
     // Fill input blobs
     for (const auto& item : input) {
-        inferRequest.set_tensor(item.first, item.second);
+        request.set_tensor(item.first, item.second);
     }
 
     // Do inference
-    inferRequest.infer();
+    request.infer();
 
     // Processing output blobs
     InferenceOutput output;
     for (const auto& item : outputNames) {
-        output.emplace(item, inferRequest.get_tensor(item));
+        output.emplace(item, request.get_tensor(item));
     }
 
     return output;
+}
+
+void OpenVINOInferenceAdapter::inferAsync(const InferenceInput& input, const ov::AnyMap& callback_args) {
+    asyncQueue->start_async(input, std::make_shared<ov::AnyMap>());
+}
+
+void OpenVINOInferenceAdapter::setCallback(std::function<void(const ov::AnyMap& callback_args)> callback) {
+    asyncQueue->set_custom_callbacks(callback);
+}
+
+bool OpenVINOInferenceAdapter::isReady() {
+    return asyncQueue->is_ready();
+}
+
+void OpenVINOInferenceAdapter::awaitAll() {
+    asyncQueue->wait_all();
+}
+
+void OpenVINOInferenceAdapter::awaitAny() {
+    asyncQueue->get_idle_request_id();
 }
 
 ov::PartialShape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {

@@ -36,6 +36,10 @@ public:
     virtual ~InferenceAdapter() = default;
 
     virtual InferenceOutput infer(const InferenceInput& input) = 0;
+    virtual void inferAsync(const InferenceInput& input, const ov::AnyMap& callback_args) = 0;
+    virtual bool isReady() = 0;
+    virtual void awaitAll() = 0;
+    virtual void awaitAny() = 0;
     virtual void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
                            const std::string& device = "", const ov::AnyMap& compilationConfig = {}) = 0;
     virtual ov::PartialShape getInputShape(const std::string& inputName) const = 0;
