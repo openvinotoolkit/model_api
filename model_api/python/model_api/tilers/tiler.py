@@ -94,7 +94,7 @@ class Tiler(metaclass=abc.ABCMeta):
                     description="Overlap of tiles",
                 ),
                 "tile_with_full_img": BooleanValue(
-                    default_value=False,
+                    default_value=True,
                     description="Whether to include full image as a tile",
                 ),
             }
