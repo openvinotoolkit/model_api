@@ -133,11 +133,8 @@ class InstanceSegmentationTiler(DetectionTiler):
             )
         masks = [masks[keep_idx] for keep_idx in keep_idxs]
 
-        start_idx = 1 if self.tile_with_full_img else 0
         merged_vector = (
-            np.mean(feature_vectors[start_idx:], axis=0)
-            if feature_vectors
-            else np.ndarray(0)
+            np.mean(feature_vectors, axis=0) if feature_vectors else np.ndarray(0)
         )
         saliency_map = (
             self._merge_saliency_maps(saliency_maps, shape, tiles_coords)
