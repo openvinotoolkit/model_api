@@ -29,10 +29,12 @@
 struct ImageInputData;
 struct ResultBase;
 
+enum class ExecutionMode { sync, async };
 
 class TilerBase {
 public:
-    TilerBase(const std::shared_ptr<ModelBase>& model, const ov::AnyMap& configuration);
+    TilerBase(const std::shared_ptr<ModelBase>& model, const ov::AnyMap& configuration,
+              ExecutionMode exec_mode = ExecutionMode::async);
 
     virtual ~TilerBase() = default;
 
@@ -43,6 +45,7 @@ protected:
     std::vector<cv::Rect> tile(const cv::Size&);
     std::vector<cv::Rect> filter_tiles(const cv::Mat&, const std::vector<cv::Rect>&);
     std::unique_ptr<ResultBase> predict_sync(const cv::Mat&, const std::vector<cv::Rect>&);
+    std::unique_ptr<ResultBase> predict_async(const cv::Mat&, const std::vector<cv::Rect>&);
     cv::Mat crop_tile(const cv::Mat&, const cv::Rect&);
     virtual std::unique_ptr<ResultBase> postprocess_tile(std::unique_ptr<ResultBase>, const cv::Rect&) = 0;
     virtual std::unique_ptr<ResultBase> merge_results(const std::vector<std::unique_ptr<ResultBase>>&, const cv::Size&, const std::vector<cv::Rect>&) = 0;
@@ -51,4 +54,5 @@ protected:
     size_t tile_size = 400;
     float tiles_overlap = 0.5f;
     float iou_threshold = 0.45f;
+    ExecutionMode run_mode = ExecutionMode::async;
 };
