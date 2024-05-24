@@ -16,7 +16,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import numpy as np
 
@@ -24,6 +24,9 @@ from model_api.adapters.utils import RESIZE_TYPES, InputTransform
 from .model import Model
 from .utils import ClassificationResult
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
+
+if TYPE_CHECKING:
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class ActionClassificationModel(Model):
@@ -46,7 +49,12 @@ class ActionClassificationModel(Model):
 
     __model__ = "Action Classification"
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(
+        self,
+        inference_adapter: InferenceAdapter,
+        configuration: dict[str, Any] =dict(),
+        preload: bool =False
+    ) -> None:
         """Action classaification model constructor
 
         Args:
@@ -73,7 +81,7 @@ class ActionClassificationModel(Model):
         )
 
     @classmethod
-    def parameters(cls):
+    def parameters(cls) -> dict[str, Any]:
         parameters = super().parameters()
         parameters.update(
             {
@@ -130,7 +138,7 @@ class ActionClassificationModel(Model):
             )
         return image_blob_names, image_info_blob_names
 
-    def preprocess(self, inputs):
+    def preprocess(self, inputs: np.ndarray) -> tuple[dict[str, np.ndarray], dict[str, tuple[int, ...]]]:
         """Data preprocess method
 
         It performs basic preprocessing of a single image:
