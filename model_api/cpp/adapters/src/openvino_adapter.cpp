@@ -25,8 +25,13 @@ OpenVINOInferenceAdapter::OpenVINOInferenceAdapter(size_t max_num_requests) : ma
 void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
                                                             const std::string& device, const ov::AnyMap& compilationConfig) {
     slog::info << "Loading model to the plugin" << slog::endl;
-
-    compiledModel = core.compile_model(model, device, compilationConfig);
+    ov::AnyMap customCompilationConfig(compilationConfig);
+    if (maxNumRequests > 1) {
+        if (customCompilationConfig.find("PERFORMANCE_HINT") == customCompilationConfig.end()) {
+            customCompilationConfig["PERFORMANCE_HINT"] = "THROUGHPUT";
+        }
+    }
+    compiledModel = core.compile_model(model, device, customCompilationConfig);
     asyncQueue = std::make_unique<AsyncInferQueue>(compiledModel, maxNumRequests);
 
     initInputsOutputs();
