@@ -62,7 +62,11 @@ class ActionClassificationModel(Model):
         super().__init__(inference_adapter, configuration, preload)
         self.image_blob_names, self.image_info_blob_names = self._get_inputs()
         self.image_blob_name = self.image_blob_names[0]
-        _, self.n, self.c, self.t, self.h, self.w = self.inputs[self.image_blob_name].shape
+        self.ncthw_layout = "NCTHW" in self.inputs[self.image_blob_name].layout
+        if self.ncthw_layout:
+            _, self.n, self.c, self.t, self.h, self.w = self.inputs[self.image_blob_name].shape
+        else:
+            _, self.n, self.t, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
         self.input_transform = InputTransform(
             self.reverse_input_channels, self.mean_values, self.scale_values
@@ -151,18 +155,19 @@ class ActionClassificationModel(Model):
                 }
             - the input metadata, which might be used in `postprocess` method
         """
-        meta = {"original_shape": inputs[0].shape, "resized_shape": (self.n, self.c, self.t, self.h, self.w)}
+        meta = {"original_shape": inputs.shape, "resized_shape": (1, self.n, self.c, self.t, self.h, self.w)}
         resized_inputs = [self.resize(frame, (self.w, self.h), pad_value=self.pad_value) for frame in inputs]
         frames = self.input_transform(np.array(resized_inputs))
-        np_frames = self._reshape(frames)
+        np_frames = self._change_layout(frames)
         dict_inputs = {self.image_blob_name: np_frames}
         return dict_inputs, meta
 
-    @staticmethod
-    def _reshape(inputs: list[np.ndarray]) -> np.ndarray:
+    def _change_layout(self, inputs: list[np.ndarray]) -> np.ndarray:
         """Reshape(expand, transpose, permute) the input np.ndarray."""
         np_inputs = np.expand_dims(inputs, axis=(0, 1))  # [1, 1, T, H, W, C]
-        return np_inputs.transpose(0, 1, -1, 2, 3, 4)  # [1, 1, C, T, H, W]
+        if self.ncthw_layout:
+            return np_inputs.transpose(0, 1, -1, 2, 3, 4)  # [1, 1, C, T, H, W]
+        return np_inputs
 
     def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]) -> np.ndarray:
         """Post-process."""
