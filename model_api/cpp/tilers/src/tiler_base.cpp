@@ -23,7 +23,7 @@
 #include <models/image_model.h>
 
 
-TilerBase::TilerBase(const std::shared_ptr<ModelBase>& _model, const ov::AnyMap& configuration, ExecutionMode exec_mode) :
+TilerBase::TilerBase(const std::shared_ptr<ImageModel>& _model, const ov::AnyMap& configuration, ExecutionMode exec_mode) :
     model(_model), run_mode(exec_mode) {
 
     ov::AnyMap extra_config;
@@ -112,7 +112,7 @@ std::unique_ptr<ResultBase> TilerBase::predict_async(const cv::Mat& image, const
     }
 
     std::vector<std::unique_ptr<ResultBase>> tile_results;
-    auto tile_predictions = static_cast<ImageModel*>(model.get())->inferBatch(input_data);
+    auto tile_predictions = model->inferBatch(input_data);
     for (size_t i = 0; i < tile_predictions.size(); ++i) {
         auto tile_result = postprocess_tile(std::move(tile_predictions[i]), tile_coords[i]);
         tile_results.push_back(std::move(tile_result));

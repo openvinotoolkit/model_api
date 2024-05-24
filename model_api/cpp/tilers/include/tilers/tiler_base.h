@@ -24,16 +24,15 @@
 
 #include <utils/args_helper.hpp>
 #include <utils/ocv_common.hpp>
-#include <models/model_base.h>
+#include <models/image_model.h>
 
-struct ImageInputData;
 struct ResultBase;
 
 enum class ExecutionMode { sync, async };
 
 class TilerBase {
 public:
-    TilerBase(const std::shared_ptr<ModelBase>& model, const ov::AnyMap& configuration,
+    TilerBase(const std::shared_ptr<ImageModel>& model, const ov::AnyMap& configuration,
               ExecutionMode exec_mode = ExecutionMode::async);
 
     virtual ~TilerBase() = default;
@@ -50,7 +49,7 @@ protected:
     virtual std::unique_ptr<ResultBase> postprocess_tile(std::unique_ptr<ResultBase>, const cv::Rect&) = 0;
     virtual std::unique_ptr<ResultBase> merge_results(const std::vector<std::unique_ptr<ResultBase>>&, const cv::Size&, const std::vector<cv::Rect>&) = 0;
 
-    std::shared_ptr<ModelBase> model;
+    std::shared_ptr<ImageModel> model;
     size_t tile_size = 400;
     float tiles_overlap = 0.5f;
     float iou_threshold = 0.45f;
