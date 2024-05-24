@@ -97,13 +97,13 @@ void AsyncInferQueue::set_default_callbacks() {
     }
 }
 
-void AsyncInferQueue::set_custom_callbacks(std::function<void(ov::InferRequest, const ov::AnyMap&)> f_callback) {
+void AsyncInferQueue::set_custom_callbacks(std::function<void(ov::InferRequest, std::shared_ptr<ov::AnyMap>)> f_callback) {
     for (size_t handle = 0; handle < m_requests.size(); handle++) {
         m_requests[handle].set_callback([this, f_callback, handle](std::exception_ptr exception_ptr) {
             if (exception_ptr == nullptr) {
                 try {
-                    f_callback(m_requests[handle], m_user_ids[handle] ? *m_user_ids[handle] : ov::AnyMap({}));
-                } catch (std::exception ex) {
+                    f_callback(m_requests[handle], m_user_ids[handle]);
+                } catch (std::exception& ex) {
                     // acquire the mutex to access m_errors
                     std::lock_guard<std::mutex> lock(m_mutex);
                     m_errors.push(std::make_shared<std::exception>(ex));
@@ -134,7 +134,7 @@ size_t AsyncInferQueue::size() const {
     return m_requests.size();
 }
 
-void AsyncInferQueue::start_async(const ov::Tensor& input, std::shared_ptr<ov::AnyMap>& userdata) {
+void AsyncInferQueue::start_async(const ov::Tensor& input, std::shared_ptr<ov::AnyMap> userdata) {
     // getIdleRequestId function has an intention to block InferQueue
     // until there is at least one idle (free to use) InferRequest
     auto handle = get_idle_request_id();
@@ -147,7 +147,7 @@ void AsyncInferQueue::start_async(const ov::Tensor& input, std::shared_ptr<ov::A
     m_requests[handle].start_async();
 }
 
-void AsyncInferQueue::start_async(const std::map<std::string, ov::Tensor>& input, std::shared_ptr<ov::AnyMap>& userdata) {
+void AsyncInferQueue::start_async(const std::map<std::string, ov::Tensor>& input, std::shared_ptr<ov::AnyMap> userdata) {
     // getIdleRequestId function has an intention to block InferQueue
     // until there is at least one idle (free to use) InferRequest
     auto handle = get_idle_request_id();

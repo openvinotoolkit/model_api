@@ -56,10 +56,10 @@ InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {
 }
 
 void OpenVINOInferenceAdapter::inferAsync(const InferenceInput& input, const ov::AnyMap& callback_args) {
-    asyncQueue->start_async(input, std::make_shared<ov::AnyMap>());
+    asyncQueue->start_async(input, callback_args);
 }
 
-void OpenVINOInferenceAdapter::setCallback(std::function<void(const ov::AnyMap& callback_args)> callback) {
+void OpenVINOInferenceAdapter::setCallback(std::function<void(ov::InferRequest, const ov::AnyMap& callback_args)> callback) {
     asyncQueue->set_custom_callbacks(callback);
 }
 

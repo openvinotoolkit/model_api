@@ -31,10 +31,10 @@ public:
     size_t get_idle_request_id();
     void wait_all();
     void set_default_callbacks();
-    void set_custom_callbacks(std::function<void(ov::InferRequest, const ov::AnyMap& callback_args)> f_callback);
+    void set_custom_callbacks(std::function<void(ov::InferRequest, std::shared_ptr<ov::AnyMap> callback_args)> f_callback);
     size_t size() const;
-    void start_async(const ov::Tensor& input, std::shared_ptr<ov::AnyMap>& userdata);
-    void start_async(const std::map<std::string, ov::Tensor>& input, std::shared_ptr<ov::AnyMap>& userdata);
+    void start_async(const ov::Tensor& input, std::shared_ptr<ov::AnyMap> userdata = nullptr);
+    void start_async(const std::map<std::string, ov::Tensor>& input, std::shared_ptr<ov::AnyMap> userdata = nullptr);
     ov::InferRequest operator[](size_t i);
 
     // AsyncInferQueue is the owner of all requests. When AsyncInferQueue is destroyed,

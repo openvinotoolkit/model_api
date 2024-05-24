@@ -30,7 +30,7 @@ class OpenVINOInferenceAdapter :public InferenceAdapter
 
 public:
     OpenVINOInferenceAdapter() = default;
-    explicit OpenVINOInferenceAdapter(size_t max_num_requests=0);
+    explicit OpenVINOInferenceAdapter(size_t max_num_requests);
 
     virtual InferenceOutput infer(const InferenceInput& input) override;
     virtual void inferAsync(const InferenceInput& input, const ov::AnyMap& callback_args) override;
