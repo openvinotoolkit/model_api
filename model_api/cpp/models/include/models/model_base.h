@@ -16,6 +16,7 @@
 
 #pragma once
 #include <map>
+#include <functional>
 #include <memory>
 #include <string>
 #include <vector>
@@ -48,6 +49,12 @@ public:
     virtual std::shared_ptr<InternalModelData> preprocess(const InputData& inputData, InferenceInput& input) = 0;
     virtual std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) = 0;
     virtual std::unique_ptr<ResultBase> infer(const InputData& inputData);
+    virtual void inferAsync(const InputData& inputData, const ov::AnyMap& callback_args = {});
+
+    virtual bool isReady();
+    virtual void awaitAll();
+    virtual void awaitAny();
+    virtual void setCallback(std::function<void(std::unique_ptr<ResultBase>, const ov::AnyMap& callback_args)> callback);
 
     const std::vector<std::string>& getoutputNames() const {
         return outputNames;

@@ -29,12 +29,11 @@ class OpenVINOInferenceAdapter :public InferenceAdapter
 {
 
 public:
-    OpenVINOInferenceAdapter() = default;
-    explicit OpenVINOInferenceAdapter(size_t max_num_requests);
+    explicit OpenVINOInferenceAdapter(size_t max_num_requests=0);
 
     virtual InferenceOutput infer(const InferenceInput& input) override;
-    virtual void inferAsync(const InferenceInput& input, const ov::AnyMap& callback_args) override;
-    virtual void setCallback(std::function<void(ov::InferRequest, const ov::AnyMap& callback_args)> callback);
+    virtual void inferAsync(const InferenceInput& input, const CallbackData callback_args) override;
+    virtual void setCallback(std::function<void(ov::InferRequest, const CallbackData)> callback);
     virtual bool isReady();
     virtual void awaitAll();
     virtual void awaitAny();

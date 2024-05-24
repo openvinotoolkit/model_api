@@ -16,6 +16,7 @@
 
 #pragma once
 #include <string>
+#include <functional>
 #include <vector>
 #include <map>
 #include <memory>
@@ -27,6 +28,7 @@ struct InferenceResult;
 
 using InferenceOutput = std::map<std::string, ov::Tensor>;
 using InferenceInput = std::map<std::string, ov::Tensor>;
+using CallbackData = std::shared_ptr<ov::AnyMap>;
 
 // The interface doesn't have implementation
 class InferenceAdapter
@@ -36,7 +38,8 @@ public:
     virtual ~InferenceAdapter() = default;
 
     virtual InferenceOutput infer(const InferenceInput& input) = 0;
-    virtual void inferAsync(const InferenceInput& input, const ov::AnyMap& callback_args) = 0;
+    virtual void setCallback(std::function<void(ov::InferRequest, CallbackData)> callback) = 0;
+    virtual void inferAsync(const InferenceInput& input, CallbackData callback_args) = 0;
     virtual bool isReady() = 0;
     virtual void awaitAll() = 0;
     virtual void awaitAny() = 0;

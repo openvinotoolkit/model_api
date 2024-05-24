@@ -121,6 +121,43 @@ std::unique_ptr<ResultBase> ModelBase::infer(const InputData& inputData) {
     return retVal;
 }
 
+void ModelBase::inferAsync(const InputData& inputData, const ov::AnyMap& callback_args) {
+    InferenceInput inputs;
+    auto internalModelData = this->preprocess(inputData, inputs);
+    auto callback_args_ptr = std::make_shared<ov::AnyMap>(callback_args);
+    (*callback_args_ptr)["internalModelData"] = std::move(internalModelData);
+    inferenceAdapter->inferAsync(inputs, callback_args_ptr);
+}
+
+bool ModelBase::isReady() {
+    return inferenceAdapter->isReady();
+}
+void ModelBase::awaitAll() {
+    inferenceAdapter->awaitAll();
+}
+void ModelBase::awaitAny() {
+    inferenceAdapter->awaitAny();
+}
+void ModelBase::setCallback(std::function<void(std::unique_ptr<ResultBase>, const ov::AnyMap& callback_args)> callback) {
+    inferenceAdapter->setCallback([this, callback](ov::InferRequest request, CallbackData args) {
+        InferenceResult result;
+
+        InferenceOutput output;
+        for (const auto& item : this->getoutputNames()) {
+            output.emplace(item, request.get_tensor(item));
+        }
+
+        result.outputsData = output;
+        auto model_data_iter = args->find("internalModelData");
+        if (model_data_iter != args->end()) {
+            result.internalModelData = std::move(model_data_iter->second.as<std::shared_ptr<InternalModelData>>());
+        }
+        auto retVal = this->postprocess(result);
+        *retVal = static_cast<ResultBase&>(result);
+        callback(std::move(retVal), args ? *args : ov::AnyMap());
+    });
+}
+
 std::shared_ptr<ov::Model> ModelBase::getModel() {
     if (!model) {
         throw std::runtime_error(std::string("ov::Model is not accessible for the current model adapter: ") + typeid(inferenceAdapter).name());
