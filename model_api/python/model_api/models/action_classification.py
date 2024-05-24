@@ -52,8 +52,8 @@ class ActionClassificationModel(Model):
     def __init__(
         self,
         inference_adapter: InferenceAdapter,
-        configuration: dict[str, Any] =dict(),
-        preload: bool =False
+        configuration: dict[str, Any] = dict(),
+        preload: bool = False
     ) -> None:
         """Action classaification model constructor
 
@@ -76,9 +76,7 @@ class ActionClassificationModel(Model):
         else:
             _, self.n, self.t, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
-        self.input_transform = InputTransform(
-            self.reverse_input_channels, self.mean_values, self.scale_values
-        )
+        self.input_transform = InputTransform(self.reverse_input_channels, self.mean_values, self.scale_values)
 
     @classmethod
     def parameters(cls) -> dict[str, Any]:
@@ -112,7 +110,7 @@ class ActionClassificationModel(Model):
         )
         return parameters
 
-    def _get_inputs(self) -> tuple[list, list]:
+    def _get_inputs(self) -> tuple[list[str], list[str]]:
         """Defines the model inputs for images and additional info.
 
         Raises:
@@ -171,13 +169,20 @@ class ActionClassificationModel(Model):
         return dict_inputs, meta
 
     def _change_layout(self, inputs: list[np.ndarray]) -> np.ndarray:
-        """Reshape(expand, transpose, permute) the input np.ndarray."""
+        """Changes the input frame layout to fit the layout of the model input layer.
+
+        Args:
+            inputs (ndarray): a single frame as 4D array in HWC layout
+
+        Returns:
+            - the frame with layout aligned with the model layout
+        """
         np_inputs = np.expand_dims(inputs, axis=(0, 1))  # [1, 1, T, H, W, C]
         if self.ncthw_layout:
             return np_inputs.transpose(0, 1, -1, 2, 3, 4)  # [1, 1, C, T, H, W]
         return np_inputs
 
-    def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]) -> np.ndarray:
+    def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]) -> ClassificationResult:
         """Post-process."""
         logits = next(iter(outputs.values())).squeeze()
         return get_multiclass_predictions(logits)
