@@ -17,6 +17,7 @@
 #include "models/model_base.h"
 #include <models/results.h>
 #include "utils/args_helper.hpp"
+#include "models/input_data.h"
 #include <adapters/openvino_adapter.h>
 
 #include <utility>
@@ -72,7 +73,7 @@ void ModelBase::updateModelInfo() {
     }
 }
 
-void ModelBase::load(ov::Core& core, const std::string& device) {
+void ModelBase::load(ov::Core& core, const std::string& device, size_t num_infer_requests) {
     if (!inferenceAdapter) {
         inferenceAdapter = std::make_shared<OpenVINOInferenceAdapter>();
     }
@@ -80,7 +81,7 @@ void ModelBase::load(ov::Core& core, const std::string& device) {
     // Update model_info erased by pre/postprocessing
     updateModelInfo();
 
-    inferenceAdapter->loadModel(model, core, device);
+    inferenceAdapter->loadModel(model, core, device, {}, num_infer_requests);
 }
 
 std::shared_ptr<ov::Model> ModelBase::prepare() {
@@ -120,6 +121,30 @@ std::unique_ptr<ResultBase> ModelBase::infer(const InputData& inputData) {
     *retVal = static_cast<ResultBase&>(result);
     return retVal;
 }
+
+std::vector<std::unique_ptr<ResultBase>> ModelBase::inferBatch(const std::vector<std::reference_wrapper<const InputData>>& inputData) {
+    auto results = std::vector<std::unique_ptr<ResultBase>>(inputData.size());
+    setCallback([&](std::unique_ptr<ResultBase> result, const ov::AnyMap& callback_args){
+        size_t id = callback_args.find("id")->second.as<size_t>();
+        results[id] = std::move(result);
+    });
+    size_t req_id = 0;
+    for (const auto& data : inputData) {
+        inferAsync(data, {{"id", req_id++}});
+    }
+    awaitAll();
+    return results;
+}
+
+std::vector<std::unique_ptr<ResultBase>> ModelBase::inferBatch(const std::vector<InputData>& inputData) {
+    std::vector<std::reference_wrapper<const InputData>> inputRefData;
+    inputRefData.reserve(inputData.size());
+    for (const auto& item : inputData) {
+        inputRefData.push_back(item);
+    }
+    return inferBatch(inputRefData);
+}
+
 
 void ModelBase::inferAsync(const InputData& inputData, const ov::AnyMap& callback_args) {
     InferenceInput inputs;

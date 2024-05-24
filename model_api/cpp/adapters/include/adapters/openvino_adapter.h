@@ -29,7 +29,7 @@ class OpenVINOInferenceAdapter :public InferenceAdapter
 {
 
 public:
-    explicit OpenVINOInferenceAdapter(size_t max_num_requests=0);
+    OpenVINOInferenceAdapter() = default;
 
     virtual InferenceOutput infer(const InferenceInput& input) override;
     virtual void inferAsync(const InferenceInput& input, const CallbackData callback_args) override;
@@ -38,7 +38,8 @@ public:
     virtual void awaitAll();
     virtual void awaitAny();
     virtual void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
-                                                    const std::string& device = "", const ov::AnyMap& compilationConfig = {}) override;
+                                                    const std::string& device = "", const ov::AnyMap& compilationConfig = {},
+                                                    size_t max_num_requests = 0) override;
     virtual ov::PartialShape getInputShape(const std::string& inputName) const override;
     virtual std::vector<std::string> getInputNames() const override;
     virtual std::vector<std::string> getOutputNames() const override;
@@ -54,5 +55,4 @@ protected:
     ov::CompiledModel compiledModel;
     std::unique_ptr<AsyncInferQueue> asyncQueue;
     ov::AnyMap modelConfig; // the content of model_info section of rt_info
-    size_t maxNumRequests = 1;
 };

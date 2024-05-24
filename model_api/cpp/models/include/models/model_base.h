@@ -41,7 +41,7 @@ public:
     virtual ~ModelBase() = default;
 
     std::shared_ptr<ov::Model> prepare();
-    void load(ov::Core& core, const std::string& device);
+    void load(ov::Core& core, const std::string& device, size_t num_infer_requests = 1);
     // Modifying ov::Model doesn't affect the model wrapper
     std::shared_ptr<ov::Model> getModel();
     std::shared_ptr<InferenceAdapter> getInferenceAdapter();
@@ -50,6 +50,8 @@ public:
     virtual std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) = 0;
     virtual std::unique_ptr<ResultBase> infer(const InputData& inputData);
     virtual void inferAsync(const InputData& inputData, const ov::AnyMap& callback_args = {});
+    virtual std::vector<std::unique_ptr<ResultBase>> inferBatch(const std::vector<std::reference_wrapper<const InputData>>& inputData);
+    virtual std::vector<std::unique_ptr<ResultBase>> inferBatch(const std::vector<InputData>& inputData);
 
     virtual bool isReady();
     virtual void awaitAll();

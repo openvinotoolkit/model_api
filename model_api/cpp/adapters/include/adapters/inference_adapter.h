@@ -44,7 +44,8 @@ public:
     virtual void awaitAll() = 0;
     virtual void awaitAny() = 0;
     virtual void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
-                           const std::string& device = "", const ov::AnyMap& compilationConfig = {}) = 0;
+                           const std::string& device = "", const ov::AnyMap& compilationConfig = {},
+                           size_t max_num_requests = 0) = 0;
     virtual ov::PartialShape getInputShape(const std::string& inputName) const = 0;
     virtual std::vector<std::string> getInputNames() const = 0;
     virtual std::vector<std::string> getOutputNames() const = 0;

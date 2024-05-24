@@ -60,6 +60,7 @@ public:
                                                     const std::vector<float>& scale,
                                                     const std::type_info& dtype = typeid(int));
     std::unique_ptr<ResultBase> infer(const ImageInputData& inputData);
+    std::vector<std::unique_ptr<ResultBase>> inferBatch(const std::vector<ImageInputData>& inputData);
     void inferAsync(const ImageInputData& inputData, const ov::AnyMap& callback_args = {});
 
 protected:
