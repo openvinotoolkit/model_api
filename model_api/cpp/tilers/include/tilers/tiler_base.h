@@ -53,5 +53,6 @@ protected:
     size_t tile_size = 400;
     float tiles_overlap = 0.5f;
     float iou_threshold = 0.45f;
+    bool tile_with_full_img = true;
     ExecutionMode run_mode = ExecutionMode::async;
 };
