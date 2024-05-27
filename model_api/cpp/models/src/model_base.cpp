@@ -168,7 +168,7 @@ void ModelBase::setCallback(std::function<void(std::unique_ptr<ResultBase>, cons
         InferenceResult result;
 
         InferenceOutput output;
-        for (const auto& item : this->getoutputNames()) {
+        for (const auto& item : this->getInferenceAdapter()->getOutputNames()) {
             output.emplace(item, request.get_tensor(item));
         }
 
