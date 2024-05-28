@@ -86,8 +86,8 @@ void AsyncInferQueue::set_default_callbacks() {
                 if (exception_ptr) {
                     std::rethrow_exception(exception_ptr);
                 }
-            } catch (const std::exception& e) {
-                OPENVINO_THROW(e.what());
+            } catch (const std::exception& ex) {
+                m_errors.push(std::make_shared<std::exception>(ex));
             }
         });
     }
@@ -119,8 +119,8 @@ void AsyncInferQueue::set_custom_callbacks(std::function<void(ov::InferRequest, 
                 if (exception_ptr) {
                     std::rethrow_exception(exception_ptr);
                 }
-            } catch (const std::exception& e) {
-                OPENVINO_THROW(e.what());
+            } catch (const std::exception& ex) {
+                m_errors.push(std::make_shared<std::exception>(ex));
             }
         });
     }
