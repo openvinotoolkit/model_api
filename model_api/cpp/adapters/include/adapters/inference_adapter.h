@@ -43,6 +43,7 @@ public:
     virtual bool isReady() = 0;
     virtual void awaitAll() = 0;
     virtual void awaitAny() = 0;
+    virtual size_t getNumAsyncExecutors() const = 0;
     virtual void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
                            const std::string& device = "", const ov::AnyMap& compilationConfig = {},
                            size_t max_num_requests = 0) = 0;

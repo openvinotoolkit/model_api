@@ -204,6 +204,10 @@ void ModelBase::setCallback(std::function<void(std::unique_ptr<ResultBase>, cons
     });
 }
 
+size_t ModelBase::getNumAsyncExecutors() const {
+    return inferenceAdapter->getNumAsyncExecutors();
+}
+
 std::shared_ptr<ov::Model> ModelBase::getModel() {
     if (!model) {
         throw std::runtime_error(std::string("ov::Model is not accessible for the current model adapter: ") + typeid(inferenceAdapter).name());

@@ -39,7 +39,8 @@ public:
     virtual void awaitAny();
     virtual void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
                                                     const std::string& device = "", const ov::AnyMap& compilationConfig = {},
-                                                    size_t max_num_requests = 0) override;
+                                                    size_t max_num_requests = 1) override;
+    virtual size_t getNumAsyncExecutors() const;
     virtual ov::PartialShape getInputShape(const std::string& inputName) const override;
     virtual std::vector<std::string> getInputNames() const override;
     virtual std::vector<std::string> getOutputNames() const override;

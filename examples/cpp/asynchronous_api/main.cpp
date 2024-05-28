@@ -43,8 +43,13 @@ int main(int argc, char* argv[]) try {
     }
 
     // Instantiate Object Detection model
-    auto model = DetectionModel::create_model(argv[1]); // works with SSD models. Download it using Python Model API
+    auto model = DetectionModel::create_model(argv[1], {}, "", false); // works with SSD models. Download it using Python Model API
+    //Define number of parallel infer requests. Is this number is set to 0, OpenVINO will determine it automatically to obtain optimal performance.
+    size_t num_requests = 0;
+    static ov::Core core;
+    model->load(core, "CPU", num_requests);
 
+    std::cout << "Async inference will be carried out by " << model->getNumAsyncExecutors() << " parallel executors\n";
     //Prepare batch data
     std::vector<ImageInputData> data;
     for (size_t i = 0; i < 3; i++) {

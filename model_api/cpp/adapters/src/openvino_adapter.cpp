@@ -82,6 +82,10 @@ void OpenVINOInferenceAdapter::awaitAny() {
     asyncQueue->get_idle_request_id();
 }
 
+size_t OpenVINOInferenceAdapter::getNumAsyncExecutors() const {
+    return asyncQueue->size();
+}
+
 ov::PartialShape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {
     return compiledModel.input(inputName).get_partial_shape();
 }

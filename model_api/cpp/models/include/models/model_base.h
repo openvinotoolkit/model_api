@@ -57,6 +57,7 @@ public:
     virtual void awaitAll();
     virtual void awaitAny();
     virtual void setCallback(std::function<void(std::unique_ptr<ResultBase>, const ov::AnyMap& callback_args)> callback);
+    virtual size_t getNumAsyncExecutors() const;
 
     const std::vector<std::string>& getoutputNames() const {
         return outputNames;
