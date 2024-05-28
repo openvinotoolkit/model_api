@@ -131,12 +131,12 @@ std::unique_ptr<DetectionModel> DetectionModel::create_model(std::shared_ptr<Inf
 }
 
 std::unique_ptr<DetectionResult> DetectionModel::infer(const ImageInputData& inputData) {
-    auto result = ImageModel::infer(inputData);
+    auto result = ImageModel::inferImage(inputData);
     return std::unique_ptr<DetectionResult>(static_cast<DetectionResult*>(result.release()));
 }
 
 std::vector<std::unique_ptr<DetectionResult>> DetectionModel::inferBatch(const std::vector<ImageInputData>& inputImgs) {
-    auto results = ImageModel::inferBatch(inputImgs);
+    auto results = ImageModel::inferBatchImage(inputImgs);
     std::vector<std::unique_ptr<DetectionResult>> detResults;
     detResults.reserve(results.size());
     for (auto& result : results) {

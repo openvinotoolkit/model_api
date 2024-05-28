@@ -88,11 +88,11 @@ ImageModel::ImageModel(std::shared_ptr<InferenceAdapter>& adapter, const ov::Any
     init_from_config(configuration, adapter->getModelConfig());
 }
 
-std::unique_ptr<ResultBase> ImageModel::infer(const ImageInputData& inputData) {
+std::unique_ptr<ResultBase> ImageModel::inferImage(const ImageInputData& inputData) {
     return ModelBase::infer(static_cast<const InputData&>(inputData));;
 }
 
-std::vector<std::unique_ptr<ResultBase>> ImageModel::inferBatch(const std::vector<ImageInputData>& inputImgs) {
+std::vector<std::unique_ptr<ResultBase>> ImageModel::inferBatchImage(const std::vector<ImageInputData>& inputImgs) {
     std::vector<std::reference_wrapper<const InputData>> inputData;
     inputData.reserve(inputImgs.size());
     for (const auto& img : inputImgs) {

@@ -104,7 +104,7 @@ std::unique_ptr<ResultBase> TilerBase::predict_async(const cv::Mat& image, const
     }
 
     std::vector<std::unique_ptr<ResultBase>> tile_results;
-    auto tile_predictions = model->inferBatch(input_data);
+    auto tile_predictions = model->inferBatchImage(input_data);
     for (size_t i = 0; i < tile_predictions.size(); ++i) {
         auto tile_result = postprocess_tile(std::move(tile_predictions[i]), tile_coords[i]);
         tile_results.push_back(std::move(tile_result));

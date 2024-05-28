@@ -517,12 +517,12 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
 }
 
 std::unique_ptr<ClassificationResult> ClassificationModel::infer(const ImageInputData& inputData) {
-    auto result = ImageModel::infer(inputData);
+    auto result = ImageModel::inferImage(inputData);
     return std::unique_ptr<ClassificationResult>(static_cast<ClassificationResult*>(result.release()));
 }
 
 std::vector<std::unique_ptr<ClassificationResult>> ClassificationModel::inferBatch(const std::vector<ImageInputData>& inputImgs) {
-    auto results = ImageModel::inferBatch(inputImgs);
+    auto results = ImageModel::inferBatchImage(inputImgs);
     std::vector<std::unique_ptr<ClassificationResult>> clsResults;
     clsResults.reserve(results.size());
     for (auto& result : results) {
