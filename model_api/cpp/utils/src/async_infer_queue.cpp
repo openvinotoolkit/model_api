@@ -108,9 +108,7 @@ void AsyncInferQueue::set_custom_callbacks(std::function<void(ov::InferRequest, 
             }
             else {
                 try {
-                if (exception_ptr) {
                     std::rethrow_exception(exception_ptr);
-                }
                 } catch (const std::exception& ex) {
                     std::lock_guard<std::mutex> lock(m_mutex);
                     m_errors.push(std::make_shared<std::exception>(ex));
