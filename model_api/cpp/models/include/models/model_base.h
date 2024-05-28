@@ -78,4 +78,5 @@ protected:
     std::shared_ptr<InferenceAdapter> inferenceAdapter;
     std::map<std::string, ov::Layout> inputsLayouts;
     ov::Layout getInputLayout(const ov::Output<ov::Node>& input);
+    std::function<void(std::unique_ptr<ResultBase>, const ov::AnyMap&)> lastCallback;
 };

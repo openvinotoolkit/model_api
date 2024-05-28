@@ -28,6 +28,24 @@
 #include <utils/ocv_common.hpp>
 #include <utils/slog.hpp>
 
+
+namespace {
+class TmpCallbackSetter {
+    public:
+        ModelBase* model;
+        std::function<void(std::unique_ptr<ResultBase>, const ov::AnyMap&)> last_callback;
+    TmpCallbackSetter(ModelBase* model_,
+                      std::function<void(std::unique_ptr<ResultBase>, const ov::AnyMap&)> tmp_callback,
+                      std::function<void(std::unique_ptr<ResultBase>, const ov::AnyMap&)> last_callback_)
+        : model(model_), last_callback(last_callback_) {
+        model->setCallback(tmp_callback);
+    }
+    ~TmpCallbackSetter() {
+        model->setCallback(last_callback);
+    }
+};
+}
+
 ModelBase::ModelBase(const std::string& modelFile, const std::string& layout)
         : modelFile(modelFile),
           inputsLayouts(parseLayoutString(layout)) {
@@ -124,10 +142,12 @@ std::unique_ptr<ResultBase> ModelBase::infer(const InputData& inputData) {
 
 std::vector<std::unique_ptr<ResultBase>> ModelBase::inferBatch(const std::vector<std::reference_wrapper<const InputData>>& inputData) {
     auto results = std::vector<std::unique_ptr<ResultBase>>(inputData.size());
-    setCallback([&](std::unique_ptr<ResultBase> result, const ov::AnyMap& callback_args){
-        size_t id = callback_args.find("id")->second.as<size_t>();
-        results[id] = std::move(result);
-    });
+    auto setter = TmpCallbackSetter(this,
+        [&](std::unique_ptr<ResultBase> result, const ov::AnyMap& callback_args){
+            size_t id = callback_args.find("id")->second.as<size_t>();
+            results[id] = std::move(result);
+        },
+        lastCallback);
     size_t req_id = 0;
     for (const auto& data : inputData) {
         inferAsync(data, {{"id", req_id++}});
@@ -164,6 +184,7 @@ void ModelBase::awaitAny() {
     inferenceAdapter->awaitAny();
 }
 void ModelBase::setCallback(std::function<void(std::unique_ptr<ResultBase>, const ov::AnyMap& callback_args)> callback) {
+    lastCallback = callback;
     inferenceAdapter->setCallback([this, callback](ov::InferRequest request, CallbackData args) {
         InferenceResult result;
 
