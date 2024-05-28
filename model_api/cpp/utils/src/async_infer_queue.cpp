@@ -20,7 +20,6 @@
 AsyncInferQueue::AsyncInferQueue(ov::CompiledModel& model, size_t jobs) {
     if (jobs == 0) {
         jobs = static_cast<size_t>(model.get_property(ov::optimal_number_of_infer_requests));
-        std::cout << "Optimal requests: " << model.get_property(ov::optimal_number_of_infer_requests) << "\n";
     }
 
     m_requests.reserve(jobs);
