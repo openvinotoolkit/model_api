@@ -34,7 +34,9 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
             customCompilationConfig["PERFORMANCE_HINT"] = ov::hint::PerformanceMode::LATENCY;
         }
     }
-    customCompilationConfig["PERFORMANCE_HINT_NUM_REQUESTS"] = ov::hint::num_requests(max_num_requests);
+    if (max_num_requests > 0) {
+        customCompilationConfig["PERFORMANCE_HINT_NUM_REQUESTS"] = ov::hint::num_requests(max_num_requests);
+    }
     compiledModel = core.compile_model(model, device, customCompilationConfig);
     asyncQueue = std::make_unique<AsyncInferQueue>(compiledModel, max_num_requests);
     initInputsOutputs();
