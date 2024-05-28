@@ -98,7 +98,6 @@ std::vector<std::unique_ptr<ResultBase>> ImageModel::inferBatchImage(const std::
     for (const auto& img : inputImgs) {
         inputData.push_back(static_cast<const InputData&>(img));
     }
-    ModelBase::inferBatch(std::vector<InputData>());
     return ModelBase::inferBatch(inputData);
 }
 

@@ -36,10 +36,6 @@ AsyncInferQueue::AsyncInferQueue(ov::CompiledModel& model, size_t jobs) {
     set_default_callbacks();
 }
 
-AsyncInferQueue::~AsyncInferQueue() {
-    m_requests.clear();
-}
-
 bool AsyncInferQueue::is_ready() {
     // acquire the mutex to access m_errors and m_idle_handles
     std::lock_guard<std::mutex> lock(m_mutex);

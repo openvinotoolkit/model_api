@@ -44,7 +44,7 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
 }
 
 InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {
-    auto request = (*asyncQueue)[asyncQueue->get_idle_request_id()];
+    auto request = asyncQueue->operator[](asyncQueue->get_idle_request_id());
     // Fill input blobs
     for (const auto& item : input) {
         request.set_tensor(item.first, item.second);
