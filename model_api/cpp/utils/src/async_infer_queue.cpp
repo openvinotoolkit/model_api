@@ -20,6 +20,7 @@
 AsyncInferQueue::AsyncInferQueue(ov::CompiledModel& model, size_t jobs) {
     if (jobs == 0) {
         jobs = static_cast<size_t>(model.get_property(ov::optimal_number_of_infer_requests));
+        std::cout << "Optimal requests: " << model.get_property(ov::optimal_number_of_infer_requests) << "\n";
     }
 
     m_requests.reserve(jobs);
@@ -72,7 +73,7 @@ void AsyncInferQueue::wait_all() {
 
 void AsyncInferQueue::set_default_callbacks() {
     for (size_t handle = 0; handle < m_requests.size(); handle++) {
-        m_requests[handle].set_callback([this, handle /* ... */](std::exception_ptr exception_ptr) {
+        m_requests[handle].set_callback([this, handle](std::exception_ptr exception_ptr) {
             {
                 // acquire the mutex to access m_idle_handles
                 std::lock_guard<std::mutex> lock(m_mutex);
@@ -87,6 +88,7 @@ void AsyncInferQueue::set_default_callbacks() {
                     std::rethrow_exception(exception_ptr);
                 }
             } catch (const std::exception& ex) {
+                std::lock_guard<std::mutex> lock(m_mutex);
                 m_errors.push(std::make_shared<std::exception>(ex));
             }
         });
@@ -105,6 +107,16 @@ void AsyncInferQueue::set_custom_callbacks(std::function<void(ov::InferRequest, 
                     m_errors.push(std::make_shared<std::exception>(ex));
                 }
             }
+            else {
+                try {
+                if (exception_ptr) {
+                    std::rethrow_exception(exception_ptr);
+                }
+                } catch (const std::exception& ex) {
+                    std::lock_guard<std::mutex> lock(m_mutex);
+                    m_errors.push(std::make_shared<std::exception>(ex));
+                }
+            }
 
             {
                 // acquire the mutex to access m_idle_handles
@@ -114,14 +126,6 @@ void AsyncInferQueue::set_custom_callbacks(std::function<void(ov::InferRequest, 
             }
             // Notify locks in getIdleRequestId()
             m_cv.notify_one();
-
-            try {
-                if (exception_ptr) {
-                    std::rethrow_exception(exception_ptr);
-                }
-            } catch (const std::exception& ex) {
-                m_errors.push(std::make_shared<std::exception>(ex));
-            }
         });
     }
 }
