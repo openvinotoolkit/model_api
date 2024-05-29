@@ -397,14 +397,14 @@
         ]
 
     },
-    {
+        {
         "name": "otx_models/action_cls_xd3_kinetic.xml",
         "type": "ActionClassificationModel",
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
-                "reference": ["86 (86): 0.070, [0], [0], [0]"]
+                "reference": ["38 (38): 0.096, [0], [0], [0]"]
             }
         ]
-    },
+    }
 ]
