@@ -34,13 +34,17 @@ class ActionClassificationModel(Model):
 
     The ActionClassificationModel has 1 or more inputs with images - 6D tensors.
     It may support additional inputs - 4D tensors.
+    Two input formats are supported. One is 'NSCTHW' and another one is 'NSTHWC'.
+    What each alphabet means are as below.
+    N => batch size / S => number of clips x number of crops / C => number of channels
+    T => time / H => height / W => width
 
     Video format is different from image format, so OpenVINO PrePostProcessors isn't available.
     For that reason, basic preprocessing such as resize and normalize are conducted in this class.
 
     Attributes:
-        image_blob_names (List[str]): names of all image-like inputs (4D tensors)
-        image_info_blob_names (List[str]): names of all secondary inputs (2D tensors)
+        image_blob_names (List[str]): names of all image-like inputs (6D tensors)
+        image_info_blob_names (List[str]): names of all secondary inputs (4D tensors)
         image_blob_name (str): name of the first image input
         resize_type (str): the type for image resizing (see `RESIZE_TYPE` for info)
         resize (function): resizing function corresponding to the `resize_type`
@@ -70,11 +74,11 @@ class ActionClassificationModel(Model):
         super().__init__(inference_adapter, configuration, preload)
         self.image_blob_names, self.image_info_blob_names = self._get_inputs()
         self.image_blob_name = self.image_blob_names[0]
-        self.ncthw_layout = "NCTHW" in self.inputs[self.image_blob_name].layout
-        if self.ncthw_layout:
-            _, self.n, self.c, self.t, self.h, self.w = self.inputs[self.image_blob_name].shape
+        self.nscthw_layout = "NSCTHW" in self.inputs[self.image_blob_name].layout
+        if self.nscthw_layout:
+            self.n, self.s, self.c, self.t, self.h, self.w = self.inputs[self.image_blob_name].shape
         else:
-            _, self.n, self.t, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
+            self.n, self.s, self.t, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
         self.input_transform = InputTransform(self.reverse_input_channels, self.mean_values, self.scale_values)
         if self.path_to_labels:
@@ -167,7 +171,7 @@ class ActionClassificationModel(Model):
                 }
             - the input metadata, which might be used in `postprocess` method
         """
-        meta = {"original_shape": inputs.shape, "resized_shape": (1, self.n, self.c, self.t, self.h, self.w)}
+        meta = {"original_shape": inputs.shape, "resized_shape": (self.n, self.s, self.c, self.t, self.h, self.w)}
         resized_inputs = [self.resize(frame, (self.w, self.h), pad_value=self.pad_value) for frame in inputs]
         frames = self.input_transform(np.array(resized_inputs))
         np_frames = self._change_layout(frames)
@@ -184,7 +188,7 @@ class ActionClassificationModel(Model):
             - the frame with layout aligned with the model layout
         """
         np_inputs = np.expand_dims(inputs, axis=(0, 1))  # [1, 1, T, H, W, C]
-        if self.ncthw_layout:
+        if self.nscthw_layout:
             return np_inputs.transpose(0, 1, -1, 2, 3, 4)  # [1, 1, C, T, H, W]
         return np_inputs
 

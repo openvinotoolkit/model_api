@@ -42,7 +42,7 @@ class Layout:
         if len(shape) == 4:
             return "NCHW" if shape[1] in range(1, 5) else "NHWC"
         if len(shape) == 6:
-            return "?NCTHW" if shape[1] in range(1, 5) else "?NTHWC"
+            return "NSTHWC" if shape[5] in range(1, 5) else "NSCTHW"
 
         raise RuntimeError(
             "Get layout from shape method doesn't support {}D shape".format(len(shape))
