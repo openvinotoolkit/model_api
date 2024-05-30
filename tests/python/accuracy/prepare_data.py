@@ -112,6 +112,7 @@ async def main():
             download_otx_model(
                 client, otx_models_dir, "cls_efficient_b0_shuffled_outputs"
             ),
+            download_otx_model( client, otx_models_dir, "action_cls_xd3_kinetic"),
         )
 
 

@@ -403,7 +403,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
-                "reference": ["38 (38): 0.096, [0], [0], [0]"]
+                "reference": ["38 (WritingOnBoard): 0.096, [0], [0], [0]"]
             }
         ]
     }

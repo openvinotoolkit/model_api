@@ -22,7 +22,7 @@ import numpy as np
 
 from model_api.adapters.utils import RESIZE_TYPES, InputTransform
 from .model import Model
-from .utils import ClassificationResult
+from .utils import ClassificationResult, load_labels
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
 
 if TYPE_CHECKING:
@@ -60,7 +60,7 @@ class ActionClassificationModel(Model):
         Args:
             inference_adapter (InferenceAdapter): allows working with the specified executor
             configuration (dict, optional): it contains values for parameters accepted by specific
-              wrapper (`confidence_threshold`, `labels` etc.) which are set as data attributes
+              wrapper (`labels` `mean_values`, etc.) which are set as data attributes
             preload (bool, optional): a flag whether the model is loaded to device while
               initialization. If `preload=False`, the model must be loaded via `load` method before inference
 
@@ -77,12 +77,18 @@ class ActionClassificationModel(Model):
             _, self.n, self.t, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
         self.input_transform = InputTransform(self.reverse_input_channels, self.mean_values, self.scale_values)
+        if self.path_to_labels:
+            self.labels = load_labels(self.path_to_labels)
 
     @classmethod
     def parameters(cls) -> dict[str, Any]:
         parameters = super().parameters()
         parameters.update(
             {
+                "labels": ListValue(description="List of class labels"),
+                "path_to_labels": StringValue(
+                    description="Path to file with labels. Overrides the labels, if they sets via 'labels' parameter"
+                ),
                 "mean_values": ListValue(
                     description="Normalization values, which will be subtracted from image channels for image-input layer during preprocessing",
                     default_value=[],
@@ -152,7 +158,7 @@ class ActionClassificationModel(Model):
             additional supported inputs, the `preprocess` should be overloaded in a specific wrapper.
 
         Args:
-            inputs (ndarray): a single image as 3D array in HWC layout
+            inputs (ndarray): a single image as 4D array.
 
         Returns:
             - the preprocessed image in the following format:
@@ -185,10 +191,5 @@ class ActionClassificationModel(Model):
     def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]) -> ClassificationResult:
         """Post-process."""
         logits = next(iter(outputs.values())).squeeze()
-        return get_multiclass_predictions(logits)
-
-
-def get_multiclass_predictions(logits: np.ndarray) -> ClassificationResult:
-    """Get multiclass predictions."""
-    index = np.argmax(logits)
-    return ClassificationResult([(index, index, logits[index])], np.ndarray(0), np.ndarray(0), np.ndarray(0))
+        index = np.argmax(logits)
+        return ClassificationResult([(index, self.labels[index], logits[index])], np.ndarray(0), np.ndarray(0), np.ndarray(0))
