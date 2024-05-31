@@ -398,7 +398,7 @@
 
     },
         {
-        "name": "otx_models/action_cls_xd3_kinetic/action_cls_xd3_kinetic.xml",
+        "name": "otx_models/action_cls_xd3_kinetic.xml",
         "type": "ActionClassificationModel",
         "test_data": [
             {
