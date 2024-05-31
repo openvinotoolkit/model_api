@@ -10,7 +10,7 @@ Note that it isn't a subclass of `ImageModel`. It gets video as input so it is d
 
 Utilizing the ActionClassificationModel is similar to other model wrappers, with the primary difference being the preparation of video clip inputs instead of single images.
 
-Below is an example demonstrating how to initialize the model with OpenVINO™ IR files and classify actions in a video clip.
+Below is an example demonstrating how to initialize the model with OpenVINO IR files and classify actions in a video clip.
 
 
 ```python
@@ -30,7 +30,7 @@ input_data = np.stack([cap.read()[1] for _ in range(8)])
 # define the path to action classification model in IR format
 model_path = "action_classification.xml"
 
-# create adapter for OpenVINO™ runtime, pass the model path
+# create adapter for OpenVINO runtime, pass the model path
 inference_adapter = OpenvinoAdapter(create_core(), model_path, device="CPU")
 
 # instantiate the ActionClassificationModel wrapper
@@ -70,8 +70,8 @@ It's often refered as single alphabet, and each alphabet means as below.
 
 The input should be provided as a single clip in THWC format.
 Depending on the specified layout, the input will be transformed into either NSTHWC or NSCTHW format.
-Unlike other vision model wrappers that utilize OpenVINO™'s PrePostProcessors (PPP) for preprocessing,
-the ActionClassificationModel performs its preprocessing due to the current lack of video format support in OpenVINO™ PPP.
+Unlike other vision model wrappers that utilize OpenVINO's PrePostProcessors (PPP) for preprocessing,
+the ActionClassificationModel performs its preprocessing due to the current lack of video format support in OpenVINO PPP.
 
 ## output format
 
