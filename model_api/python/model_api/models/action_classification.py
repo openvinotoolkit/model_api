@@ -16,14 +16,14 @@
 
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
-
 from model_api.adapters.utils import RESIZE_TYPES, InputTransform
+
 from .model import Model
-from .utils import ClassificationResult, load_labels
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
+from .utils import ClassificationResult, load_labels
 
 if TYPE_CHECKING:
     from model_api.adapters.inference_adapter import InferenceAdapter
@@ -57,7 +57,7 @@ class ActionClassificationModel(Model):
         self,
         inference_adapter: InferenceAdapter,
         configuration: dict[str, Any] = dict(),
-        preload: bool = False
+        preload: bool = False,
     ) -> None:
         """Action classaification model constructor
 
@@ -76,11 +76,17 @@ class ActionClassificationModel(Model):
         self.image_blob_name = self.image_blob_names[0]
         self.nscthw_layout = "NSCTHW" in self.inputs[self.image_blob_name].layout
         if self.nscthw_layout:
-            self.n, self.s, self.c, self.t, self.h, self.w = self.inputs[self.image_blob_name].shape
+            self.n, self.s, self.c, self.t, self.h, self.w = self.inputs[
+                self.image_blob_name
+            ].shape
         else:
-            self.n, self.s, self.t, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
+            self.n, self.s, self.t, self.h, self.w, self.c = self.inputs[
+                self.image_blob_name
+            ].shape
         self.resize = RESIZE_TYPES[self.resize_type]
-        self.input_transform = InputTransform(self.reverse_input_channels, self.mean_values, self.scale_values)
+        self.input_transform = InputTransform(
+            self.reverse_input_channels, self.mean_values, self.scale_values
+        )
         if self.path_to_labels:
             self.labels = load_labels(self.path_to_labels)
 
@@ -146,7 +152,9 @@ class ActionClassificationModel(Model):
             )
         return image_blob_names, image_info_blob_names
 
-    def preprocess(self, inputs: np.ndarray) -> tuple[dict[str, np.ndarray], dict[str, tuple[int, ...]]]:
+    def preprocess(
+        self, inputs: np.ndarray
+    ) -> tuple[dict[str, np.ndarray], dict[str, tuple[int, ...]]]:
         """Data preprocess method
 
         It performs basic preprocessing of a single image:
@@ -171,8 +179,14 @@ class ActionClassificationModel(Model):
                 }
             - the input metadata, which might be used in `postprocess` method
         """
-        meta = {"original_shape": inputs.shape, "resized_shape": (self.n, self.s, self.c, self.t, self.h, self.w)}
-        resized_inputs = [self.resize(frame, (self.w, self.h), pad_value=self.pad_value) for frame in inputs]
+        meta = {
+            "original_shape": inputs.shape,
+            "resized_shape": (self.n, self.s, self.c, self.t, self.h, self.w),
+        }
+        resized_inputs = [
+            self.resize(frame, (self.w, self.h), pad_value=self.pad_value)
+            for frame in inputs
+        ]
         frames = self.input_transform(np.array(resized_inputs))
         np_frames = self._change_layout(frames)
         dict_inputs = {self.image_blob_name: np_frames}
@@ -192,8 +206,15 @@ class ActionClassificationModel(Model):
             return np_inputs.transpose(0, 1, -1, 2, 3, 4)  # [1, 1, C, T, H, W]
         return np_inputs
 
-    def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]) -> ClassificationResult:
+    def postprocess(
+        self, outputs: dict[str, np.ndarray], meta: dict[str, Any]
+    ) -> ClassificationResult:
         """Post-process."""
         logits = next(iter(outputs.values())).squeeze()
         index = np.argmax(logits)
-        return ClassificationResult([(index, self.labels[index], logits[index])], np.ndarray(0), np.ndarray(0), np.ndarray(0))
+        return ClassificationResult(
+            [(index, self.labels[index], logits[index])],
+            np.ndarray(0),
+            np.ndarray(0),
+            np.ndarray(0),
+        )
