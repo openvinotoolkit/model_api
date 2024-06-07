@@ -39,6 +39,7 @@ from .retinaface import RetinaFace, RetinaFacePyTorch
 from .segmentation import SalientObjectDetectionModel, SegmentationModel
 from .ssd import SSD
 from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
+from .sam_models import SAMDecoder, SAMImageEncoder
 from .utils import (
     AnomalyResult,
     ClassificationResult,
@@ -118,6 +119,8 @@ __all__ = [
     "YOLOv8",
     "YOLOF",
     "YOLOX",
+    "SAMDecoder",
+    "SAMImageEncoder",
     "ClassificationResult",
     "Detection",
     "DetectionResult",

@@ -136,6 +136,31 @@ class InstanceSegmentationResult(NamedTuple):
         return f"{obj_str}; {filled}; [{','.join(str(i) for i in self.feature_vector.shape)}]"
 
 
+class VisualPromptingResult(NamedTuple):
+    upscaled_masks: list[np.ndarray] | None = None
+    low_res_masks: list[np.ndarray] | None = None
+    iou_predictions: list[np.ndarray] | None = None
+    scores: list[np.ndarray] | None = None
+    labels: list[np.ndarray] | None = None
+    hard_predictions: list[np.ndarray] | None = None
+    soft_predictions: list[np.ndarray] | None = None
+
+    def _compute_min_max(self, tensor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        return tensor.min(), tensor.max()
+
+    def __str__(self) -> str:
+        assert self.hard_predictions is not None
+        assert self.upscaled_masks is not None
+        upscaled_masks_min, upscaled_masks_max = self._compute_min_max(
+            self.upscaled_masks[0]
+        )
+
+        return (
+            f"upscaled_masks min:{upscaled_masks_min} max:{upscaled_masks_max};"
+            f"hard_predictions shape:{self.hard_predictions[0].shape};"
+        )
+
+
 def add_rotated_rects(segmented_objects):
     objects_with_rects = []
     for segmented_object in segmented_objects:
