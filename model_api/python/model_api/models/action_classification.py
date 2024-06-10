@@ -176,6 +176,13 @@ class ActionClassificationModel(Model):
                 }
             - the input metadata, which might be used in `postprocess` method
         """
+        if self.t != -1 and self.t != inputs.shape[0]:
+            msg = (
+                f"Given model expects ({self.t}, {self.h}, {self.w} ,{self.c}) input shape but current input "
+                f"has {inputs.shape} shape. Please fit input shape to model or set dynamic shapes to the model."
+            )
+            raise RuntimeError(msg)
+
         meta = {
             "original_shape": inputs.shape,
             "resized_shape": (self.n, self.s, self.c, self.t, self.h, self.w),
