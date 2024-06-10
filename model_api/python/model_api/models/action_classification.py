@@ -30,21 +30,20 @@ if TYPE_CHECKING:
 
 
 class ActionClassificationModel(Model):
-    """An wrapper for an action classification model
+    """A wrapper for an action classification model
 
-    The ActionClassificationModel has 1 or more inputs with images - 6D tensors.
-    It may support additional inputs - 4D tensors.
-    Two input formats are supported. One is 'NSCTHW' and another one is 'NSTHWC'.
-    What each alphabet means are as below.
+    The model given by inference_adapter can have two input formats.
+    One is 'NSCTHW' and another one is 'NSTHWC'.
+    What each letter means are as below.
     N => batch size / S => number of clips x number of crops / C => number of channels
     T => time / H => height / W => width
+    The ActionClassificationModel should gets single input with video - 4D tensors, which means N and S should be 1.
 
     Video format is different from image format, so OpenVINO PrePostProcessors isn't available.
-    For that reason, basic preprocessing such as resize and normalize are conducted in this class.
+    For that reason, postprocessing operations such as resize and normalize are conducted in this class.
 
     Attributes:
         image_blob_names (List[str]): names of all image-like inputs (6D tensors)
-        image_info_blob_names (List[str]): names of all secondary inputs (4D tensors)
         image_blob_name (str): name of the first image input
         resize_type (str): the type for image resizing (see `RESIZE_TYPE` for info)
         resize (function): resizing function corresponding to the `resize_type`
@@ -72,7 +71,7 @@ class ActionClassificationModel(Model):
             WrapperError: if the wrapper failed to define appropriate inputs for images
         """
         super().__init__(inference_adapter, configuration, preload)
-        self.image_blob_names, self.image_info_blob_names = self._get_inputs()
+        self.image_blob_names = self._get_inputs()
         self.image_blob_name = self.image_blob_names[0]
         self.nscthw_layout = "NSCTHW" in self.inputs[self.image_blob_name].layout
         if self.nscthw_layout:
@@ -136,12 +135,10 @@ class ActionClassificationModel(Model):
             - list of inputs names for images
             - list of inputs names for additional info
         """
-        image_blob_names, image_info_blob_names = [], []
+        image_blob_names = []
         for name, metadata in self.inputs.items():
             if len(metadata.shape) == 6:
                 image_blob_names.append(name)
-            elif len(metadata.shape) == 4:
-                image_info_blob_names.append(name)
             else:
                 self.raise_error(
                     "Failed to identify the input for ImageModel: only 4D and 6D input layer supported"
@@ -150,14 +147,14 @@ class ActionClassificationModel(Model):
             self.raise_error(
                 "Failed to identify the input for the image: no 6D input layer found"
             )
-        return image_blob_names, image_info_blob_names
+        return image_blob_names
 
     def preprocess(
         self, inputs: np.ndarray
     ) -> tuple[dict[str, np.ndarray], dict[str, tuple[int, ...]]]:
         """Data preprocess method
 
-        It performs basic preprocessing of a single image:
+        It performs basic preprocessing of a single video:
             - Resizes the image to fit the model input size via the defined resize type
             - Normalizes the image: subtracts means, divides by scales, switch channels BGR-RGB
             - Changes the image layout according to the model input layout
