@@ -11,15 +11,14 @@
  limitations under the License.
 """
 
-from typing import Any
-from copy import deepcopy
 from collections import defaultdict
+from copy import deepcopy
 from itertools import product
+from typing import Any
 
-import numpy as np
 import cv2
-
-from model_api.models import SAMImageEncoder, SAMDecoder
+import numpy as np
+from model_api.models import SAMDecoder, SAMImageEncoder
 from model_api.models.utils import VisualPromptingResult
 
 

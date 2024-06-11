@@ -36,10 +36,10 @@ from .monodepth import MonoDepthModel
 from .nanodet import NanoDet, NanoDetPlus
 from .open_pose import OpenPose
 from .retinaface import RetinaFace, RetinaFacePyTorch
+from .sam_models import SAMDecoder, SAMImageEncoder
 from .segmentation import SalientObjectDetectionModel, SegmentationModel
 from .ssd import SSD
 from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
-from .sam_models import SAMDecoder, SAMImageEncoder
 from .utils import (
     AnomalyResult,
     ClassificationResult,

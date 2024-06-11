@@ -18,10 +18,9 @@ from copy import deepcopy
 from typing import Any, Dict
 
 import numpy as np
+from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.models import ImageModel, SegmentationModel
 from model_api.models.types import BooleanValue, NumericalValue
-
-from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class SAMImageEncoder(ImageModel):
