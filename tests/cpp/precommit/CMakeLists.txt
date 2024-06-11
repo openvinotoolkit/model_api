@@ -12,13 +12,13 @@ if(NOT GENERATOR_IS_MULTI_CONFIG_VAR AND NOT DEFINED CMAKE_BUILD_TYPE)
     # Setting CMAKE_BUILD_TYPE as CACHE must go before project(). Otherwise project() sets its value and set() doesn't take an effect
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel ...")
 endif()
-
 project(tests)
 
 if(WIN32)
     if(NOT "${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
         message(FATAL_ERROR "Only 64-bit supported on Windows")
     endif()
+    set(CMAKE_CXX_STANDARD 14)
 
     add_definitions(-DNOMINMAX)
 endif()
