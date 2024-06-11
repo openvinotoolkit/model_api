@@ -122,8 +122,8 @@ jobs:
         curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/windows/w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64.zip --output w_openvino_toolkit_windows.zip
         unzip w_openvino_toolkit_windows.zip
         rm w_openvino_toolkit_windows.zip
-        curl -L https://github.com/opencv/opencv/releases/download/4.8.0/opencv-4.8.0-windows.exe --output opencv-4.8.0-windows.exe
-        ./opencv-4.8.0-windows.exe -oopencv -y
+        curl -L https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-windows.exe --output opencv-4.10.0-windows.exe
+        ./opencv-4.10.0-windows.exe -oopencv -y
     - name: Prepare test data
       shell: bash
       run: |
