@@ -529,5 +529,5 @@ class InputTransform:
         if self.is_trivial:
             return inputs
         if self.reverse_input_channels:
-            inputs = inputs[..., ::-1]
+            inputs = cv2.cvtColor(inputs, cv2.COLOR_BGR2RGB)
         return (inputs - self.means) / self.std_scales

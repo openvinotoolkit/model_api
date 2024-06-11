@@ -89,6 +89,10 @@ class ActionClassificationModel(Model):
         if self.path_to_labels:
             self.labels = load_labels(self.path_to_labels)
 
+    @property
+    def clip_size(self) -> int:
+        return self.t
+
     @classmethod
     def parameters(cls) -> dict[str, Any]:
         parameters = super().parameters()
@@ -191,8 +195,9 @@ class ActionClassificationModel(Model):
             self.resize(frame, (self.w, self.h), pad_value=self.pad_value)
             for frame in inputs
         ]
-        frames = self.input_transform(np.array(resized_inputs))
-        np_frames = self._change_layout(frames)
+        np_frames = self._change_layout(
+            [self.input_transform(inputs) for inputs in resized_inputs]
+        )
         dict_inputs = {self.image_blob_name: np_frames}
         return dict_inputs, meta
 

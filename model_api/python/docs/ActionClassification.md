@@ -22,11 +22,6 @@ from model_api.models import ActionClassificationModel
 from model_api.adapters import OpenvinoAdapter, create_core
 
 
-# load video and make a clip as input
-cap = cv2.VideoCapture("sample.mp4")
-input_data = np.stack([cap.read()[1] for _ in range(8)])
-
-
 # define the path to action classification model in IR format
 model_path = "action_classification.xml"
 
@@ -36,6 +31,10 @@ inference_adapter = OpenvinoAdapter(create_core(), model_path, device="CPU")
 # instantiate the ActionClassificationModel wrapper
 # setting preload=True loads the model onto the CPU within the adapter0
 action_cls_model = ActionClassificationModel(inference_adapter, preload=True)
+
+# load video and make a clip as input
+cap = cv2.VideoCapture("sample.mp4")
+input_data = np.stack([cap.read()[1] for _ in range(action_cls_model.clip_size)])
 
 # perform preprocessing, inference, and postprocessing
 results = action_cls_model(input_data)
