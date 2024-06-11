@@ -130,6 +130,9 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     if (name.find(".onnx") != std::string::npos) {
         GTEST_SKIP() << "ONNX models are not supported in C++ implementation";
     }
+    if (name.find("action_cls_xd3_kinetic") != std::string::npos) {
+        GTEST_SKIP() << "ActionClassificationModel are not supported in C++ implementation";
+    }
 
     if (name.substr(name.size() - 4) == ".xml") {
         modelPath = DATA_DIR + '/' + name;
