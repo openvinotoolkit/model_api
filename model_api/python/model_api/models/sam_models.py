@@ -19,8 +19,10 @@ from typing import Any, Dict
 
 import numpy as np
 from model_api.adapters.inference_adapter import InferenceAdapter
-from model_api.models import ImageModel, SegmentationModel
 from model_api.models.types import BooleanValue, NumericalValue
+
+from .image_model import ImageModel
+from .segmentation import SegmentationModel
 
 
 class SAMImageEncoder(ImageModel):
@@ -31,7 +33,7 @@ class SAMImageEncoder(ImageModel):
     def __init__(
         self,
         inference_adapter: InferenceAdapter,
-        configuration: Dict[str, Any] | None = dict(),
+        configuration: Dict[str, Any] = dict(),
         preload: bool = False,
     ):
         super().__init__(inference_adapter, configuration, preload)
@@ -65,7 +67,7 @@ class SAMDecoder(SegmentationModel):
     def __init__(
         self,
         model_adapter: InferenceAdapter,
-        configuration: Dict[str, Any] | None = dict(),
+        configuration: Dict[str, Any] = dict(),
         preload: bool = False,
     ):
         super().__init__(model_adapter, configuration, preload)
