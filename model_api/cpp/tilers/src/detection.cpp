@@ -51,13 +51,7 @@ DetectionTiler::DetectionTiler(const std::shared_ptr<ImageModel>& _model, const 
         extra_config = model->getInferenceAdapter()->getModelConfig();
     }
 
-    ov::AnyMap merged_config(configuration);
-    merged_config.merge(extra_config);
-
-    auto max_pred_iter = merged_config.find("max_pred_number");
-    if (max_pred_iter != merged_config.end()) {
-        max_pred_number = max_pred_iter->second.as<size_t>();
-    }
+    max_pred_number = get_from_any_maps("max_pred_number", configuration, extra_config, max_pred_number);
 }
 
 std::unique_ptr<ResultBase> DetectionTiler::postprocess_tile(std::unique_ptr<ResultBase> tile_result, const cv::Rect& coord) {
@@ -99,7 +93,7 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
         }
     }
 
-    auto keep_idx = multiclass_nms(all_detections, all_scores, iou_threshold, false, 200);
+    auto keep_idx = multiclass_nms(all_detections, all_scores, iou_threshold, false, max_pred_number);
 
     result->objects.reserve(keep_idx.size());
     for (auto idx : keep_idx) {
@@ -152,7 +146,7 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
         image_saliency_map = all_saliency_maps[0];
     }
 
-    if (image_saliency_map.get_size() == 1) {
+    if ((image_saliency_map.get_size() == 1) || (all_saliency_maps.size() == 1)) {
         return image_saliency_map;
     }
 
@@ -223,4 +217,9 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
     }
 
     return merged_map;
+}
+
+std::unique_ptr<DetectionResult> DetectionTiler::run(const ImageInputData& inputData) {
+    auto result = this->run_impl(inputData);
+    return std::unique_ptr<DetectionResult>(static_cast<DetectionResult*>(result.release()));
 }
