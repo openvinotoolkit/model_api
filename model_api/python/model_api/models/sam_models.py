@@ -15,11 +15,11 @@
 """
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, Dict
 
 import numpy as np
 from model_api.models import ImageModel, SegmentationModel
-from model_api.models.types import BooleanValue, NumericalValue, StringValue
+from model_api.models.types import BooleanValue, NumericalValue
 
 from model_api.adapters.inference_adapter import InferenceAdapter
 
@@ -32,7 +32,7 @@ class SAMImageEncoder(ImageModel):
     def __init__(
         self,
         inference_adapter: InferenceAdapter,
-        configuration: dict[str, Any] | None = None,
+        configuration: Dict[str, Any] | None = dict(),
         preload: bool = False,
     ):
         super().__init__(inference_adapter, configuration, preload)
@@ -66,7 +66,7 @@ class SAMDecoder(SegmentationModel):
     def __init__(
         self,
         model_adapter: InferenceAdapter,
-        configuration: dict | None = None,
+        configuration: Dict[str, Any] | None = dict(),
         preload: bool = False,
     ):
         super().__init__(model_adapter, configuration, preload)
