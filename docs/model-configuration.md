@@ -78,6 +78,17 @@ The list features only model wrappers which intoduce new configuration values in
 1. `blur_strength`: int - blurring kernel size. -1 value means no blurring and no soft_threshold
 1. `soft_threshold`: float - probability threshold value for bounding box filtering. inf value means no blurring and no soft_threshold
 1. `return_soft_prediction`: bool - return raw resized model prediction in addition to processed one
+### `ActionClassificationModel`
+1. `labels`: List - list of class labels
+1. `path_to_labels`: str - path to file with labels. Overrides the labels, if they sets via 'labels' parameter
+1. `mean_values`: List - normalization values, which will be subtracted from image channels for image-input layer during preprocessing
+1. `pad_value`: int - pad value for resize_image_letterbox embedded into a model
+1. `resize_type`: str - crop, standard, fit_to_window or fit_to_window_letterbox
+1. `reverse_input_channels`: bool - reverse the input channel order
+1. `scale_values`: List - normalization values, which will divide the image channels for image-input layer
+
+> **NOTE** `ActionClassificationModel` isn't subclass of ImageModel.
+
 ### `Bert` and its subclasses
 1. `vocab`: Dict - mapping from string token to int
 1. `input_names`: str - comma-separated names of input layers

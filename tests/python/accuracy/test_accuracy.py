@@ -3,12 +3,14 @@ import os
 from pathlib import Path
 
 import cv2
+import numpy as np
 import onnx
 import pytest
 from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
 from model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 from model_api.adapters.utils import load_parameters_from_onnx
 from model_api.models import (
+    ActionClassificationModel,
     AnomalyDetection,
     AnomalyResult,
     ClassificationModel,
@@ -118,6 +120,8 @@ def test_image_models(data, dump, result, model_data):
                 raise RuntimeError("Failed to read the image")
             if "input_res" in model_data:
                 image = cv2.resize(image, eval(model_data["input_res"]))
+            if isinstance(model, ActionClassificationModel):
+                image = np.stack([image for _ in range(8)])
             outputs = model(image)
             if isinstance(outputs, ClassificationResult):
                 assert 1 == len(test_data["reference"])
