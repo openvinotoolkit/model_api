@@ -146,7 +146,7 @@ class SAMLearnableVisualPrompter:
         for label, input_prompts in processed_prompts_w_labels.items():
             ref_mask: np.ndarray = np.zeros(original_shape, dtype=np.uint8)
             for inputs_decoder in input_prompts:
-                label = inputs_decoder.pop("label")  # noqa: PLW2901
+                inputs_decoder.pop("label")
                 if "point_coords" in inputs_decoder:
                     # bboxes and points
                     inputs_decoder.update(image_embeddings)
@@ -173,7 +173,7 @@ class SAMLearnableVisualPrompter:
                 cur_default_threshold_reference -= 0.05
 
             self.reference_feats[label] = ref_feat
-            self.used_indices: np.ndarray = np.concatenate((self.used_indices, label))
+            self.used_indices: np.ndarray = np.concatenate((self.used_indices, [label]))
             ref_masks[label] = ref_mask
 
         self.used_indices = np.unique(self.used_indices)
