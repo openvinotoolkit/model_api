@@ -78,6 +78,7 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: 3.9
+        cache: pip
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
@@ -108,7 +109,7 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: 3.9
-        #cache: pip
+        cache: pip
     - name: Create and start a virtual environment
       shell: bash
       run: |
