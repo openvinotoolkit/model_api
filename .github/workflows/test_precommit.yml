@@ -16,7 +16,7 @@ jobs:
     - run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/README.md'"
     - uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: pip
     - name: Create and start a virtual environment
       run: |
@@ -41,7 +41,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: pip
     - name: Create and start a virtual environment
       run: |
@@ -77,8 +77,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: 3.8
-        cache: pip
+        python-version: 3.9
     - name: Create and start a virtual environment
       run: |
         python -m venv venv
@@ -108,8 +107,8 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version: 3.8
-        cache: pip
+        python-version: 3.9
+        #cache: pip
     - name: Create and start a virtual environment
       shell: bash
       run: |
@@ -121,11 +120,12 @@ jobs:
         source venv/Scripts/activate
         python -m pip install --upgrade pip
         pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
-        curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2023.0/windows/w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64.zip --output w_openvino_toolkit_windows.zip
+        curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/windows/w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64.zip --output w_openvino_toolkit_windows.zip
         unzip w_openvino_toolkit_windows.zip
         rm w_openvino_toolkit_windows.zip
-        curl -L https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe --output opencv-4.7.0-windows.exe
-        ./opencv-4.7.0-windows.exe -oopencv -y
+        curl -L https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-windows.exe --output opencv-4.10.0-windows.exe
+        ./opencv-4.10.0-windows.exe -oopencv -y
+        rm opencv-4.10.0-windows.exe
     - name: Prepare test data
       shell: bash
       run: |
@@ -135,15 +135,14 @@ jobs:
       shell: bash
       run: |
         mkdir build && cd build
-        MSYS_NO_PATHCONV=1 cmake ../tests/cpp/precommit/ -DOpenVINO_DIR=$GITHUB_WORKSPACE/w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64/runtime/cmake -DOpenCV_DIR=$GITHUB_WORKSPACE/opencv/opencv/build -DCMAKE_CXX_FLAGS=/WX
+        MSYS_NO_PATHCONV=1 cmake ../examples/cpp/synchronous_api/ -DOpenVINO_DIR=$GITHUB_WORKSPACE/w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64/runtime/cmake -DOpenCV_DIR=$GITHUB_WORKSPACE/opencv/opencv/build -DCMAKE_CXX_FLAGS=/WX
         cmake --build . --config Release -j $((`nproc`*2+2))
-    - name: Run test
+    - name: Run sync sample
       shell: cmd
       # .\w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\setupvars.bat exits with 0 code without moving to a next command. Set PATH manually
       run: |
-        set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\runtime\3rdparty\tbb\bin;%PATH%
-        .\build\Release\test_sanity.exe -d data -p tests\cpp\precommit\public_scope.json
-        .\build\Release\test_model_config -d data
+        set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64\runtime\3rdparty\tbb\bin;%PATH%
+        .\build\Release\synchronous_api.exe .\data\public\ssd_mobilenet_v1_fpn_coco\FP16\ssd_mobilenet_v1_fpn_coco.xml .\data\BloodImage_00007.jpg
   serving_api:
     strategy:
       fail-fast: false
