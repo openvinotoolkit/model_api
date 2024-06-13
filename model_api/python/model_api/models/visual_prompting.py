@@ -117,13 +117,12 @@ class SAMLearnableVisualPrompter:
         points: np.ndarray | None,
         labels: dict[str, np.ndarray] | None,
     ):
-        processed_image, meta = self.encoder_model.preprocess(image)
         processed_prompts = self.decoder_model.preprocess(
             {
                 "bboxes": boxes,
                 "points": points,
                 "labels": labels,
-                "orig_size": meta["original_shape"][:2],
+                "orig_size": image.shape[:2],
             },
         )
 
@@ -131,13 +130,11 @@ class SAMLearnableVisualPrompter:
         largest_label: int = max([int(p) for p in processed_prompts_w_labels] + [0])
         self._expand_reference_info(largest_label)
 
-        original_shape = np.array(meta["original_shape"][:2])
+        original_shape = np.array(image.shape[:2])
 
         # forward image encoder
-        image_embeddings = self.encoder_model.infer_sync(processed_image)
-        processed_embedding = (
-            image_embeddings["image_embeddings"].squeeze().transpose(1, 2, 0)
-        )
+        image_embeddings = self.encoder_model(image)
+        processed_embedding = image_embeddings.squeeze().transpose(1, 2, 0)
 
         # get reference masks
         ref_masks: np.ndarray = np.zeros(
@@ -149,7 +146,7 @@ class SAMLearnableVisualPrompter:
                 inputs_decoder.pop("label")
                 if "point_coords" in inputs_decoder:
                     # bboxes and points
-                    inputs_decoder.update(image_embeddings)
+                    inputs_decoder["image_embeddings"] = image_embeddings
                     prediction = self._predict_masks(
                         inputs_decoder, original_shape, is_cascade=self.is_cascade
                     )
@@ -384,13 +381,12 @@ class SAMLearnableVisualPrompter:
             else:
                 used_indices = self.used_indices
 
-        processed_image, meta = self.encoder_model.preprocess(image)
-        original_shape = np.array(meta["original_shape"][:2])
+        original_shape = np.array(image.shape[:2])
 
-        image_embeddings = self.encoder_model.infer_sync(processed_image)
+        image_embeddings = self.encoder_model(image)
 
         total_points_scores, total_bg_coords = self._get_prompt_candidates(
-            image_embeddings=image_embeddings["image_embeddings"],
+            image_embeddings=image_embeddings,
             reference_feats=reference_features,
             used_indices=used_indices,
             original_shape=original_shape,
@@ -432,7 +428,7 @@ class SAMLearnableVisualPrompter:
                     "point_labels": point_labels[None],
                     "orig_size": original_shape[None],
                 }
-                inputs_decoder.update(image_embeddings)
+                inputs_decoder["image_embeddings"] = image_embeddings
 
                 prediction = self._predict_masks(
                     inputs_decoder, original_shape, self.is_cascade

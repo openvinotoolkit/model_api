@@ -37,6 +37,7 @@ class SAMImageEncoder(ImageModel):
         preload: bool = False,
     ):
         super().__init__(inference_adapter, configuration, preload)
+        self.output_name: str = list(self.outputs.keys())[0]
 
     @classmethod
     def parameters(cls) -> dict[str, Any]:
@@ -57,6 +58,11 @@ class SAMImageEncoder(ImageModel):
         dict_inputs, meta = super().preprocess(inputs)
         meta["resize_type"] = self.resize_type
         return dict_inputs, meta
+
+    def postprocess(
+        self, outputs: dict[str, np.ndarray], meta: dict[str, Any]
+    ) -> np.ndarray:
+        return outputs[self.output_name]
 
 
 class SAMDecoder(SegmentationModel):
