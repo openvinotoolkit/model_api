@@ -161,7 +161,7 @@ class SAMLearnableVisualPrompter:
             cur_default_threshold_reference = deepcopy(self.default_threshold_reference)
             while ref_feat is None:
                 # log.info(f"[*] default_threshold_reference : {cur_default_threshold_reference:.4f}")
-                ref_feat = self._generate_masked_features(
+                ref_feat = _generate_masked_features(
                     feats=processed_embedding,
                     masks=ref_mask,
                     threshold_mask=cur_default_threshold_reference,
@@ -209,55 +209,6 @@ class SAMLearnableVisualPrompter:
                 self.reference_feats, ((0, diff), (0, 0), (0, 0)), constant_values=0.0
             )
 
-    def _generate_masked_features(
-        self,
-        feats: np.ndarray,
-        masks: np.ndarray,
-        threshold_mask: float,
-        image_size: int = 1024,
-    ) -> np.ndarray | None:
-        """Generate masked features.
-
-        Args:
-            feats (np.ndarray): Raw reference features. It will be filtered with masks.
-            masks (np.ndarray): Reference masks used to filter features.
-            threshold_mask (float): Threshold to control masked region.
-            image_size (int): Input image size.
-
-        Returns:
-            (np.ndarray): Masked features.
-        """
-        target_shape = image_size / max(masks.shape) * np.array(masks.shape)
-        target_shape = target_shape[::-1].astype(np.int32)
-
-        # Post-process masks
-        masks = cv2.resize(masks, target_shape, interpolation=cv2.INTER_LINEAR)
-        masks = self._pad_to_square(masks, image_size)
-        masks = cv2.resize(masks, feats.shape[:2][::-1], interpolation=cv2.INTER_LINEAR)
-
-        # Target feature extraction
-        if (masks > threshold_mask).sum() == 0:
-            # (for stability) there is no area to be extracted
-            return None
-
-        masked_feat = feats[masks > threshold_mask]
-        masked_feat = masked_feat.mean(0)[None]
-        return masked_feat / np.linalg.norm(masked_feat, axis=-1, keepdims=True)
-
-    def _pad_to_square(self, x: np.ndarray, image_size: int = 1024) -> np.ndarray:
-        """Pad to a square input.
-
-        Args:
-            x (np.ndarray): Mask to be padded.
-
-        Returns:
-            (np.ndarray): Padded mask.
-        """
-        h, w = x.shape[-2:]
-        padh = image_size - h
-        padw = image_size - w
-        return np.pad(x, ((0, padh), (0, padw)), constant_values=0.0)
-
     def _predict_masks(
         self,
         inputs: dict[str, np.ndarray],
@@ -280,7 +231,7 @@ class SAMLearnableVisualPrompter:
 
             elif i == 1:
                 # Cascaded Post-refinement-1
-                mask_input, masks = self._decide_masks(
+                mask_input, masks = _decide_masks(
                     masks, logits, scores, is_single=True
                 )  # noqa: F821
                 if masks.sum() == 0:
@@ -290,7 +241,7 @@ class SAMLearnableVisualPrompter:
 
             elif i == 2:
                 # Cascaded Post-refinement-2
-                mask_input, masks = self._decide_masks(
+                mask_input, masks = _decide_masks(
                     masks, logits, scores
                 )  # noqa: F821
                 if masks.sum() == 0:
@@ -325,39 +276,8 @@ class SAMLearnableVisualPrompter:
             )
             masks = upscaled_masks > self.decoder_model.mask_threshold
 
-        _, masks = self._decide_masks(masks, logits, scores)
+        _, masks = _decide_masks(masks, logits, scores)
         return {"upscaled_masks": masks}
-
-    def _decide_masks(
-        self,
-        masks: np.ndarray,
-        logits: np.ndarray,
-        scores: np.ndarray,
-        is_single: bool = False,
-    ) -> tuple[np.ndarray, ...] | tuple[None, np.ndarray]:
-        """Post-process logits for resized masks according to best index based on scores."""
-        if is_single:
-            best_idx = 0
-        else:
-            # skip the first index components
-            scores, masks, logits = (x[:, 1:] for x in (scores, masks, logits))
-
-            # filter zero masks
-            while (
-                len(scores[0]) > 0
-                and masks[0, (best_idx := np.argmax(scores[0]))].sum() == 0
-            ):
-                scores, masks, logits = (
-                    np.concatenate((x[:, :best_idx], x[:, best_idx + 1 :]), axis=1)
-                    for x in (scores, masks, logits)
-                )
-
-            if len(scores[0]) == 0:
-                # all predicted masks were zero masks, ignore them.
-                return None, np.zeros(masks.shape[-2:])
-
-            best_idx = np.argmax(scores[0])
-        return logits[:, [best_idx]], masks[0, best_idx]
 
     def infer(
         self,
@@ -385,7 +305,7 @@ class SAMLearnableVisualPrompter:
 
         image_embeddings = self.encoder_model(image)
 
-        total_points_scores, total_bg_coords = self._get_prompt_candidates(
+        total_points_scores, total_bg_coords = _get_prompt_candidates(
             image_embeddings=image_embeddings,
             reference_feats=reference_features,
             used_indices=used_indices,
@@ -441,206 +361,290 @@ class SAMLearnableVisualPrompter:
                 used_points[label].append(points_score)
 
         # check overlapping area between different label masks
-        self._inspect_overlapping_areas(predicted_masks, used_points)
+        _inspect_overlapping_areas(predicted_masks, used_points)
 
         return (predicted_masks, used_points)
 
-    def _get_prompt_candidates(
-        self,
-        image_embeddings: np.ndarray,
-        reference_feats: np.ndarray,
-        used_indices: np.ndarray,
-        original_shape: np.ndarray,
-        threshold: float = 0.0,
-        num_bg_points: int = 1,
-        default_threshold_target: float = 0.65,
-        image_size: int = 1024,
-        downsizing: int = 64,
-    ) -> tuple[dict[int, np.ndarray], dict[int, np.ndarray]]:
-        """Get prompt candidates."""
-        target_feat = image_embeddings.squeeze()
-        c_feat, h_feat, w_feat = target_feat.shape
-        target_feat = target_feat / np.linalg.norm(target_feat, axis=0, keepdims=True)
-        target_feat = target_feat.reshape(c_feat, h_feat * w_feat)
 
-        total_points_scores: dict[int, np.ndarray] = {}
-        total_bg_coords: dict[int, np.ndarray] = {}
-        for label in used_indices:
-            sim = reference_feats[label] @ target_feat
-            sim = sim.reshape(h_feat, w_feat)
-            sim = self._resize_to_original_shape(sim, image_size, original_shape)
+def _generate_masked_features(
+    feats: np.ndarray,
+    masks: np.ndarray,
+    threshold_mask: float,
+    image_size: int = 1024,
+) -> np.ndarray | None:
+    """Generate masked features.
 
-            threshold = (threshold == 0) * default_threshold_target + threshold
-            points_scores, bg_coords = self._point_selection(
-                mask_sim=sim,
-                original_shape=original_shape,
-                threshold=threshold,
-                num_bg_points=num_bg_points,
-                image_size=image_size,
-                downsizing=downsizing,
+    Args:
+        feats (np.ndarray): Raw reference features. It will be filtered with masks.
+        masks (np.ndarray): Reference masks used to filter features.
+        threshold_mask (float): Threshold to control masked region.
+        image_size (int): Input image size.
+
+    Returns:
+        (np.ndarray): Masked features.
+    """
+    target_shape = image_size / max(masks.shape) * np.array(masks.shape)
+    target_shape = target_shape[::-1].astype(np.int32)
+
+    # Post-process masks
+    masks = cv2.resize(masks, target_shape, interpolation=cv2.INTER_LINEAR)
+    masks = _pad_to_square(masks, image_size)
+    masks = cv2.resize(masks, feats.shape[:2][::-1], interpolation=cv2.INTER_LINEAR)
+
+    # Target feature extraction
+    if (masks > threshold_mask).sum() == 0:
+        # (for stability) there is no area to be extracted
+        return None
+
+    masked_feat = feats[masks > threshold_mask]
+    masked_feat = masked_feat.mean(0)[None]
+    return masked_feat / np.linalg.norm(masked_feat, axis=-1, keepdims=True)
+
+
+def _pad_to_square(x: np.ndarray, image_size: int = 1024) -> np.ndarray:
+    """Pad to a square input.
+
+    Args:
+        x (np.ndarray): Mask to be padded.
+
+    Returns:
+        (np.ndarray): Padded mask.
+    """
+    h, w = x.shape[-2:]
+    padh = image_size - h
+    padw = image_size - w
+    return np.pad(x, ((0, padh), (0, padw)), constant_values=0.0)
+
+
+def _decide_masks(
+    masks: np.ndarray,
+    logits: np.ndarray,
+    scores: np.ndarray,
+    is_single: bool = False,
+) -> tuple[np.ndarray, ...] | tuple[None, np.ndarray]:
+    """Post-process logits for resized masks according to best index based on scores."""
+    if is_single:
+        best_idx = 0
+    else:
+        # skip the first index components
+        scores, masks, logits = (x[:, 1:] for x in (scores, masks, logits))
+
+        # filter zero masks
+        while (
+            len(scores[0]) > 0
+            and masks[0, (best_idx := np.argmax(scores[0]))].sum() == 0
+        ):
+            scores, masks, logits = (
+                np.concatenate((x[:, :best_idx], x[:, best_idx + 1 :]), axis=1)
+                for x in (scores, masks, logits)
             )
 
-            if points_scores is not None:
-                total_points_scores[label] = points_scores
-                total_bg_coords[label] = bg_coords
-        return total_points_scores, total_bg_coords
+        if len(scores[0]) == 0:
+            # all predicted masks were zero masks, ignore them.
+            return None, np.zeros(masks.shape[-2:])
 
-    def _point_selection(
-        self,
-        mask_sim: np.ndarray,
-        original_shape: np.ndarray,
-        threshold: float = 0.0,
-        num_bg_points: int = 1,
-        image_size: int = 1024,
-        downsizing: int = 64,
-    ) -> tuple[np.ndarray, np.ndarray] | tuple[None, None]:
-        """Select point used as point prompts."""
-        _, w_sim = mask_sim.shape
+        best_idx = np.argmax(scores[0])
+    return logits[:, [best_idx]], masks[0, best_idx]
 
-        # Top-first point selection
-        point_coords = np.where(mask_sim > threshold)
-        fg_coords_scores = np.stack(
-            point_coords[::-1] + (mask_sim[point_coords],), axis=0
-        ).T
 
-        ## skip if there is no point coords
-        if len(fg_coords_scores) == 0:
-            return None, None
+def _get_prompt_candidates(
+    image_embeddings: np.ndarray,
+    reference_feats: np.ndarray,
+    used_indices: np.ndarray,
+    original_shape: np.ndarray,
+    threshold: float = 0.0,
+    num_bg_points: int = 1,
+    default_threshold_target: float = 0.65,
+    image_size: int = 1024,
+    downsizing: int = 64,
+) -> tuple[dict[int, np.ndarray], dict[int, np.ndarray]]:
+    """Get prompt candidates."""
+    target_feat = image_embeddings.squeeze()
+    c_feat, h_feat, w_feat = target_feat.shape
+    target_feat = target_feat / np.linalg.norm(target_feat, axis=0, keepdims=True)
+    target_feat = target_feat.reshape(c_feat, h_feat * w_feat)
 
-        ratio = image_size / original_shape.max()
-        width = (original_shape[1] * ratio).astype(np.int64)
-        n_w = width // downsizing
+    total_points_scores: dict[int, np.ndarray] = {}
+    total_bg_coords: dict[int, np.ndarray] = {}
+    for label in used_indices:
+        sim = reference_feats[label] @ target_feat
+        sim = sim.reshape(h_feat, w_feat)
+        sim = _resize_to_original_shape(sim, image_size, original_shape)
 
-        ## get grid numbers
-        idx_grid = (
-            fg_coords_scores[:, 1] * ratio // downsizing * n_w
-            + fg_coords_scores[:, 0] * ratio // downsizing
-        )
-        idx_grid_unique = np.unique(idx_grid.astype(np.int64))
-
-        ## get matched indices
-        matched_matrix = (
-            np.expand_dims(idx_grid, axis=-1) == idx_grid_unique
-        )  # (totalN, uniqueN)
-
-        ## sample fg_coords_scores matched by matched_matrix
-        matched_grid = np.expand_dims(fg_coords_scores, axis=1) * np.expand_dims(
-            matched_matrix, axis=-1
+        threshold = (threshold == 0) * default_threshold_target + threshold
+        points_scores, bg_coords = _point_selection(
+            mask_sim=sim,
+            original_shape=original_shape,
+            threshold=threshold,
+            num_bg_points=num_bg_points,
+            image_size=image_size,
+            downsizing=downsizing,
         )
 
-        ## sample the highest score one of the samples that are in the same grid
-        matched_indices = self._topk_numpy(
-            matched_grid[..., -1], k=1, axis=0, largest=True
-        )[1][0].astype(np.int64)
-        points_scores = matched_grid[matched_indices].diagonal().T
+        if points_scores is not None:
+            total_points_scores[label] = points_scores
+            total_bg_coords[label] = bg_coords
+    return total_points_scores, total_bg_coords
 
-        ## sort by the highest score
-        sorted_points_scores_indices = np.flip(
-            np.argsort(points_scores[:, -1]), axis=-1
-        ).astype(np.int64)
-        points_scores = points_scores[sorted_points_scores_indices]
 
-        # Top-last point selection
-        bg_indices = self._topk_numpy(mask_sim.flatten(), num_bg_points, largest=False)[
-            1
-        ]
-        bg_x = np.expand_dims(bg_indices // w_sim, axis=0)
-        bg_y = bg_indices - bg_x * w_sim
-        bg_coords = np.concatenate((bg_y, bg_x), axis=0).transpose(1, 0)
-        bg_coords = bg_coords.astype(np.float32)
+def _point_selection(
+    mask_sim: np.ndarray,
+    original_shape: np.ndarray,
+    threshold: float = 0.0,
+    num_bg_points: int = 1,
+    image_size: int = 1024,
+    downsizing: int = 64,
+) -> tuple[np.ndarray, np.ndarray] | tuple[None, None]:
+    """Select point used as point prompts."""
+    _, w_sim = mask_sim.shape
 
-        return points_scores, bg_coords
+    # Top-first point selection
+    point_coords = np.where(mask_sim > threshold)
+    fg_coords_scores = np.stack(
+        point_coords[::-1] + (mask_sim[point_coords],), axis=0
+    ).T
 
-    def _resize_to_original_shape(
-        self, masks: np.ndarray, image_size: int, original_shape: np.ndarray
-    ) -> np.ndarray:
-        """Resize feature size to original shape."""
-        # resize feature size to input size
-        masks = cv2.resize(
-            masks, (image_size, image_size), interpolation=cv2.INTER_LINEAR
-        )
+    ## skip if there is no point coords
+    if len(fg_coords_scores) == 0:
+        return None, None
 
-        # remove pad
-        prepadded_size = self._get_prepadded_size(original_shape, image_size)
-        masks = masks[..., : prepadded_size[0], : prepadded_size[1]]
+    ratio = image_size / original_shape.max()
+    width = (original_shape[1] * ratio).astype(np.int64)
+    n_w = width // downsizing
 
-        # resize unpadded one to original shape
-        original_shape = original_shape.astype(np.int64)
-        h, w = original_shape[0], original_shape[1]
-        return cv2.resize(masks, (w, h), interpolation=cv2.INTER_LINEAR)
+    ## get grid numbers
+    idx_grid = (
+        fg_coords_scores[:, 1] * ratio // downsizing * n_w
+        + fg_coords_scores[:, 0] * ratio // downsizing
+    )
+    idx_grid_unique = np.unique(idx_grid.astype(np.int64))
 
-    def _get_prepadded_size(self, original_shape: int, image_size: int) -> np.ndarray:
-        """Get pre-padded size."""
-        scale = image_size / np.max(original_shape)
-        transformed_size = scale * original_shape
-        return np.floor(transformed_size + 0.5).astype(np.int64)
+    ## get matched indices
+    matched_matrix = (
+        np.expand_dims(idx_grid, axis=-1) == idx_grid_unique
+    )  # (totalN, uniqueN)
 
-    def _topk_numpy(
-        self, x: np.ndarray, k: int, axis: int = -1, largest: bool = True
-    ) -> tuple[np.ndarray, np.ndarray]:
-        """Top-k function for numpy same with torch.topk."""
-        if largest:
-            k = -k
-            indices = range(k, 0)
-        else:
-            indices = range(k)
-        partitioned_ind = np.argpartition(x, k, axis=axis).take(
-            indices=indices, axis=axis
-        )
-        partitioned_scores = np.take_along_axis(x, partitioned_ind, axis=axis)
-        sorted_trunc_ind = np.argsort(partitioned_scores, axis=axis)
-        if largest:
-            sorted_trunc_ind = np.flip(sorted_trunc_ind, axis=axis)
-        ind = np.take_along_axis(partitioned_ind, sorted_trunc_ind, axis=axis)
-        scores = np.take_along_axis(partitioned_scores, sorted_trunc_ind, axis=axis)
-        return scores, ind
+    ## sample fg_coords_scores matched by matched_matrix
+    matched_grid = np.expand_dims(fg_coords_scores, axis=1) * np.expand_dims(
+        matched_matrix, axis=-1
+    )
 
-    def _inspect_overlapping_areas(
-        self,
-        predicted_masks: dict[int, list[np.ndarray]],
-        used_points: dict[int, list[np.ndarray]],
-        threshold_iou: float = 0.8,
-    ) -> None:
-        def _calculate_mask_iou(
-            mask1: np.ndarray, mask2: np.ndarray
-        ) -> tuple[float, np.ndarray | None]:
-            assert mask1.ndim == 2  # noqa: S101
-            assert mask2.ndim == 2  # noqa: S101
-            # Avoid division by zero
-            if (union := np.logical_or(mask1, mask2).sum().item()) == 0:
-                return 0.0, None
-            intersection = np.logical_and(mask1, mask2)
-            return intersection.sum().item() / union, intersection
+    ## sample the highest score one of the samples that are in the same grid
+    matched_indices = _topk_numpy(
+        matched_grid[..., -1], k=1, axis=0, largest=True
+    )[1][0].astype(np.int64)
+    points_scores = matched_grid[matched_indices].diagonal().T
 
-        for (label, masks), (other_label, other_masks) in product(
-            predicted_masks.items(), predicted_masks.items()
+    ## sort by the highest score
+    sorted_points_scores_indices = np.flip(
+        np.argsort(points_scores[:, -1]), axis=-1
+    ).astype(np.int64)
+    points_scores = points_scores[sorted_points_scores_indices]
+
+    # Top-last point selection
+    bg_indices = _topk_numpy(mask_sim.flatten(), num_bg_points, largest=False)[
+        1
+    ]
+    bg_x = np.expand_dims(bg_indices // w_sim, axis=0)
+    bg_y = bg_indices - bg_x * w_sim
+    bg_coords = np.concatenate((bg_y, bg_x), axis=0).transpose(1, 0)
+    bg_coords = bg_coords.astype(np.float32)
+
+    return points_scores, bg_coords
+
+
+def _resize_to_original_shape(
+    masks: np.ndarray, image_size: int, original_shape: np.ndarray
+) -> np.ndarray:
+    """Resize feature size to original shape."""
+    # resize feature size to input size
+    masks = cv2.resize(
+        masks, (image_size, image_size), interpolation=cv2.INTER_LINEAR
+    )
+
+    # remove pad
+    prepadded_size = _get_prepadded_size(original_shape, image_size)
+    masks = masks[..., : prepadded_size[0], : prepadded_size[1]]
+
+    # resize unpadded one to original shape
+    original_shape = original_shape.astype(np.int64)
+    h, w = original_shape[0], original_shape[1]
+    return cv2.resize(masks, (w, h), interpolation=cv2.INTER_LINEAR)
+
+
+def _get_prepadded_size(original_shape: np.ndarray, image_size: int) -> np.ndarray:
+    """Get pre-padded size."""
+    scale = image_size / np.max(original_shape)
+    transformed_size = scale * original_shape
+    return np.floor(transformed_size + 0.5).astype(np.int64)
+
+
+def _topk_numpy(
+    x: np.ndarray, k: int, axis: int = -1, largest: bool = True
+) -> tuple[np.ndarray, np.ndarray]:
+    """Top-k function for numpy same with torch.topk."""
+    if largest:
+        k = -k
+        indices = range(k, 0)
+    else:
+        indices = range(k)
+    partitioned_ind = np.argpartition(x, k, axis=axis).take(
+        indices=indices, axis=axis
+    )
+    partitioned_scores = np.take_along_axis(x, partitioned_ind, axis=axis)
+    sorted_trunc_ind = np.argsort(partitioned_scores, axis=axis)
+    if largest:
+        sorted_trunc_ind = np.flip(sorted_trunc_ind, axis=axis)
+    ind = np.take_along_axis(partitioned_ind, sorted_trunc_ind, axis=axis)
+    scores = np.take_along_axis(partitioned_scores, sorted_trunc_ind, axis=axis)
+    return scores, ind
+
+
+def _inspect_overlapping_areas(
+    predicted_masks: dict[int, list[np.ndarray]],
+    used_points: dict[int, list[np.ndarray]],
+    threshold_iou: float = 0.8,
+) -> None:
+    def _calculate_mask_iou(
+        mask1: np.ndarray, mask2: np.ndarray
+    ) -> tuple[float, np.ndarray | None]:
+        assert mask1.ndim == 2  # noqa: S101
+        assert mask2.ndim == 2  # noqa: S101
+        # Avoid division by zero
+        if (union := np.logical_or(mask1, mask2).sum().item()) == 0:
+            return 0.0, None
+        intersection = np.logical_and(mask1, mask2)
+        return intersection.sum().item() / union, intersection
+
+    for (label, masks), (other_label, other_masks) in product(
+        predicted_masks.items(), predicted_masks.items()
+    ):
+        if other_label <= label:
+            continue
+
+        overlapped_label = []
+        overlapped_other_label = []
+        for (im, mask), (jm, other_mask) in product(
+            enumerate(masks), enumerate(other_masks)
         ):
-            if other_label <= label:
-                continue
+            _mask_iou, _intersection = _calculate_mask_iou(mask, other_mask)
+            if _mask_iou > threshold_iou:
+                if used_points[label][im][2] > used_points[other_label][jm][2]:
+                    overlapped_other_label.append(jm)
+                else:
+                    overlapped_label.append(im)
+            elif _mask_iou > 0:
+                # refine the slightly overlapping region
+                overlapped_coords = np.where(_intersection)
+                if used_points[label][im][2] > used_points[other_label][jm][2]:
+                    other_mask[overlapped_coords] = 0.0
+                else:
+                    mask[overlapped_coords] = 0.0
 
-            overlapped_label = []
-            overlapped_other_label = []
-            for (im, mask), (jm, other_mask) in product(
-                enumerate(masks), enumerate(other_masks)
-            ):
-                _mask_iou, _intersection = _calculate_mask_iou(mask, other_mask)
-                if _mask_iou > threshold_iou:
-                    if used_points[label][im][2] > used_points[other_label][jm][2]:
-                        overlapped_other_label.append(jm)
-                    else:
-                        overlapped_label.append(im)
-                elif _mask_iou > 0:
-                    # refine the slightly overlapping region
-                    overlapped_coords = np.where(_intersection)
-                    if used_points[label][im][2] > used_points[other_label][jm][2]:
-                        other_mask[overlapped_coords] = 0.0
-                    else:
-                        mask[overlapped_coords] = 0.0
+        for im in sorted(set(overlapped_label), reverse=True):
+            masks.pop(im)
+            used_points[label].pop(im)
 
-            for im in sorted(set(overlapped_label), reverse=True):
-                masks.pop(im)
-                used_points[label].pop(im)
-
-            for jm in sorted(set(overlapped_other_label), reverse=True):
-                other_masks.pop(jm)
-                used_points[other_label].pop(jm)
+        for jm in sorted(set(overlapped_other_label), reverse=True):
+            other_masks.pop(jm)
+            used_points[other_label].pop(jm)
