@@ -95,7 +95,7 @@ class SAMLearnableVisualPrompter:
         self.point_labels_box = np.array([[2, 3]], dtype=np.float32)
         self.has_mask_inputs = [np.array([[0.0]]), np.array([[1.0]])]
 
-        self.is_cascade: bool = True
+        self.is_cascade: bool = False
         self.threshold: float = 0.0
         self.num_bg_points: int = 1
         self.default_threshold_target: float = 0.65
@@ -151,15 +151,13 @@ class SAMLearnableVisualPrompter:
                     )
                     masks = prediction["upscaled_masks"]
                 else:
-                    # log.warning("annotation and polygon will be supported.")
-                    continue
+                    raise RuntimeError("Prompts other than points are not supported")
                 ref_mask[masks] += 1
             ref_mask = np.clip(ref_mask, 0, 1)
 
             ref_feat: np.ndarray | None = None
             cur_default_threshold_reference = self.default_threshold_reference
             while ref_feat is None:
-                # log.info(f"[*] default_threshold_reference : {cur_default_threshold_reference:.4f}")
                 ref_feat = _generate_masked_features(
                     feats=processed_embedding,
                     masks=ref_mask,
@@ -350,7 +348,7 @@ class SAMLearnableVisualPrompter:
                 inputs_decoder["image_embeddings"] = image_embeddings
 
                 prediction = self._predict_masks(
-                    inputs_decoder, original_shape, self.is_cascade
+                    inputs_decoder, original_shape, True
                 )
                 prediction.update({"scores": points_score[-1]})
 
