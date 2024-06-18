@@ -12,7 +12,6 @@
 """
 
 from collections import defaultdict
-from copy import deepcopy
 from itertools import product
 from typing import Any
 
@@ -158,7 +157,7 @@ class SAMLearnableVisualPrompter:
             ref_mask = np.clip(ref_mask, 0, 1)
 
             ref_feat: np.ndarray | None = None
-            cur_default_threshold_reference = deepcopy(self.default_threshold_reference)
+            cur_default_threshold_reference = self.default_threshold_reference
             while ref_feat is None:
                 # log.info(f"[*] default_threshold_reference : {cur_default_threshold_reference:.4f}")
                 ref_feat = _generate_masked_features(
@@ -169,20 +168,20 @@ class SAMLearnableVisualPrompter:
                 )
                 cur_default_threshold_reference -= 0.05
 
-            self.reference_feats[label] = ref_feat
+            self.reference_features[label] = ref_feat
             self.used_indices: np.ndarray = np.concatenate((self.used_indices, [label]))
             ref_masks[label] = ref_mask
 
         self.used_indices = np.unique(self.used_indices)
 
         return {
-            "reference_feats": self.reference_feats,
+            "reference_features": self.reference_features,
             "used_indices": self.used_indices,
         }, ref_masks
 
     def reset_reference_info(self) -> None:
         """Initialize reference information."""
-        self.reference_feats = np.zeros(
+        self.reference_features = np.zeros(
             (0, 1, self.decoder_model.embed_dim), dtype=np.float32
         )
         self.used_indices = np.array([], dtype=np.int64)
@@ -203,10 +202,10 @@ class SAMLearnableVisualPrompter:
 
     def _expand_reference_info(self, new_largest_label: int) -> None:
         """Expand reference info dimensions if newly given processed prompts have more lables."""
-        if new_largest_label > (cur_largest_label := len(self.reference_feats) - 1):
+        if new_largest_label > (cur_largest_label := len(self.reference_features) - 1):
             diff = new_largest_label - cur_largest_label
-            self.reference_feats = np.pad(
-                self.reference_feats, ((0, diff), (0, 0), (0, 0)), constant_values=0.0
+            self.reference_features = np.pad(
+                self.reference_features, ((0, diff), (0, 0), (0, 0)), constant_values=0.0
             )
 
     def _predict_masks(
