@@ -82,8 +82,10 @@ class SAMVisualPrompter:
             {
                 "bboxes": boxes.data if boxes else None,
                 "points": points.data if points else None,
-                "labels": {"bboxes": boxes.labels if boxes else None,
-                           "points": points.labels if points else None},
+                "labels": {
+                    "bboxes": boxes.labels if boxes else None,
+                    "points": points.labels if points else None,
+                },
                 "orig_size": meta["original_shape"][:2],
             },
         )
@@ -124,6 +126,7 @@ class SAMLearnableVisualPrompter:
     To obtain segmentation results, one should run learn() first to obtain the reference features,
     or use previously generated ones.
     """
+
     def __init__(
         self,
         encoder_model: SAMImageEncoder,
@@ -164,7 +167,9 @@ class SAMLearnableVisualPrompter:
         the features are not presented in the internal object state.
         """
         if self.has_reference_features():
-            return VisualPromptingFeatures(np.copy(self._reference_features), np.copy(self._used_indices))
+            return VisualPromptingFeatures(
+                np.copy(self._reference_features), np.copy(self._used_indices)
+            )
 
         raise RuntimeError("Reference features are not generated")
 
@@ -173,7 +178,7 @@ class SAMLearnableVisualPrompter:
         image: np.ndarray,
         boxes: Prompt | None = None,
         points: Prompt | None = None,
-        reset_features: bool = False
+        reset_features: bool = False,
     ) -> tuple[VisualPromptingFeatures, np.ndarray]:
         """
         Executes `learn` stage of SAM ZSL pipeline.
@@ -205,8 +210,10 @@ class SAMLearnableVisualPrompter:
             {
                 "bboxes": boxes.data if boxes else None,
                 "points": points.data if points else None,
-                "labels": {"bboxes": boxes.labels if boxes else None,
-                           "points": points.labels if points else None},
+                "labels": {
+                    "bboxes": boxes.labels if boxes else None,
+                    "points": points.labels if points else None,
+                },
                 "orig_size": image.shape[:2],
             },
         )
@@ -253,7 +260,9 @@ class SAMLearnableVisualPrompter:
                 cur_default_threshold_reference -= 0.05
 
             self._reference_features[label] = ref_feat
-            self._used_indices: np.ndarray = np.concatenate((self._used_indices, [label]))
+            self._used_indices: np.ndarray = np.concatenate(
+                (self._used_indices, [label])
+            )
             ref_masks[label] = ref_mask
 
         self._used_indices = np.unique(self._used_indices)
@@ -343,9 +352,7 @@ class SAMLearnableVisualPrompter:
                 point_coords = np.concatenate(
                     (np.array([[x, y]]), bg_coords), axis=0, dtype=np.float32
                 )
-                point_coords = self.decoder.apply_coords(
-                    point_coords, original_shape
-                )
+                point_coords = self.decoder.apply_coords(point_coords, original_shape)
                 point_labels = np.array([1] + [0] * len(bg_coords), dtype=np.float32)
                 inputs_decoder = {
                     "point_coords": point_coords[None],
@@ -354,14 +361,10 @@ class SAMLearnableVisualPrompter:
                 }
                 inputs_decoder["image_embeddings"] = image_embeddings
 
-                prediction = self._predict_masks(
-                    inputs_decoder, original_shape, True
-                )
+                prediction = self._predict_masks(inputs_decoder, original_shape, True)
                 prediction.update({"scores": points_score[-1]})
 
-                predicted_masks[label].append(
-                    prediction[self.decoder.output_blob_name]
-                )
+                predicted_masks[label].append(prediction[self.decoder.output_blob_name])
                 used_points[label].append(points_score)
 
         # check overlapping area between different label masks
@@ -402,7 +405,9 @@ class SAMLearnableVisualPrompter:
         if new_largest_label > (cur_largest_label := len(self._reference_features) - 1):
             diff = new_largest_label - cur_largest_label
             self._reference_features = np.pad(
-                self._reference_features, ((0, diff), (0, 0), (0, 0)), constant_values=0.0
+                self._reference_features,
+                ((0, diff), (0, 0), (0, 0)),
+                constant_values=0.0,
             )
 
     def _predict_masks(
@@ -437,9 +442,7 @@ class SAMLearnableVisualPrompter:
 
             elif i == 2:
                 # Cascaded Post-refinement-2
-                mask_input, masks = _decide_masks(
-                    masks, logits, scores
-                )  # noqa: F821
+                mask_input, masks = _decide_masks(masks, logits, scores)  # noqa: F821
                 if masks.sum() == 0:
                     return {"upscaled_masks": masks}
 
@@ -640,9 +643,9 @@ def _point_selection(
     )
 
     ## sample the highest score one of the samples that are in the same grid
-    matched_indices = _topk_numpy(
-        matched_grid[..., -1], k=1, axis=0, largest=True
-    )[1][0].astype(np.int64)
+    matched_indices = _topk_numpy(matched_grid[..., -1], k=1, axis=0, largest=True)[1][
+        0
+    ].astype(np.int64)
     points_scores = matched_grid[matched_indices].diagonal().T
 
     ## sort by the highest score
@@ -652,9 +655,7 @@ def _point_selection(
     points_scores = points_scores[sorted_points_scores_indices]
 
     # Top-last point selection
-    bg_indices = _topk_numpy(mask_sim.flatten(), num_bg_points, largest=False)[
-        1
-    ]
+    bg_indices = _topk_numpy(mask_sim.flatten(), num_bg_points, largest=False)[1]
     bg_x = np.expand_dims(bg_indices // w_sim, axis=0)
     bg_y = bg_indices - bg_x * w_sim
     bg_coords = np.concatenate((bg_y, bg_x), axis=0).transpose(1, 0)
@@ -668,9 +669,7 @@ def _resize_to_original_shape(
 ) -> np.ndarray:
     """Resize feature size to original shape."""
     # resize feature size to input size
-    masks = cv2.resize(
-        masks, (image_size, image_size), interpolation=cv2.INTER_LINEAR
-    )
+    masks = cv2.resize(masks, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
 
     # remove pad
     prepadded_size = _get_prepadded_size(original_shape, image_size)
@@ -698,9 +697,7 @@ def _topk_numpy(
         indices = range(k, 0)
     else:
         indices = range(k)
-    partitioned_ind = np.argpartition(x, k, axis=axis).take(
-        indices=indices, axis=axis
-    )
+    partitioned_ind = np.argpartition(x, k, axis=axis).take(indices=indices, axis=axis)
     partitioned_scores = np.take_along_axis(x, partitioned_ind, axis=axis)
     sorted_trunc_ind = np.argsort(partitioned_scores, axis=axis)
     if largest:
