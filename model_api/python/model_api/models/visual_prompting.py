@@ -59,18 +59,17 @@ class SAMVisualPrompter:
         points: Prompt | None = None,
     ) -> VisualPromptingResult:
         """
-        _summary_
+        Obtains segmentation masks using given prompts.
 
         Args:
             image (np.ndarray): HWC-shaped image
-            boxes (Prompt | None, optional): _description_. Defaults to None.
-            points (Prompt | None, optional): _description_. Defaults to None.
-
-        Raises:
-            RuntimeError: _description_
+            boxes (Prompt | None, optional): Prompt containing bounding boxes (in XYXY torchvision format)
+              and their labels (ints, one per box). Defaults to None.
+            points (Prompt | None, optional): Prompt containing points (in XY format)
+              and their labels (ints, one per point). Defaults to None.
 
         Returns:
-            VisualPromptingResult: _description_
+            VisualPromptingResult: result object containing predicted masks and aux information.
         """
         if boxes is None and points is None:
             raise RuntimeError("boxes or points prompts are required for inference")
@@ -115,6 +114,7 @@ class SAMVisualPrompter:
         boxes: Prompt | None = None,
         points: Prompt | None = None,
     ) -> VisualPromptingResult:
+        """A wrapper of the SAMVisualPrompter.infer() method"""
         return self.infer(image, boxes, points)
 
 
@@ -178,13 +178,16 @@ class SAMLearnableVisualPrompter:
         """
         Executes `learn` stage of SAM ZSL pipeline.
 
-        Reference features are updated according to newly arrived prompts. Features corresponding to the same labels are overridden during
+        Reference features are updated according to newly arrived prompts.
+        Features corresponding to the same labels are overridden during
         consequent learn() calls.
 
         Args:
             image (np.ndarray): HWC-shaped image
-            boxes (Prompt | None, optional): Prompt containing bounding boxes (in XYXY torchvision format) and their labels (ints, one per box). Defaults to None.
-            points (Prompt | None, optional): Prompt containing bounding boxes (in XY format) and their labels (ints, one per point). Defaults to None.
+            boxes (Prompt | None, optional): Prompt containing bounding boxes (in XYXY torchvision format)
+              and their labels (ints, one per box). Defaults to None.
+            points (Prompt | None, optional): Prompt containing points (in XY format)
+              and their labels (ints, one per point). Defaults to None.
             reset_features (bool, optional): Forces learning from scratch. Defaults to False.
 
         Returns:
