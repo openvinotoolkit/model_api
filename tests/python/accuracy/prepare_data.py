@@ -113,6 +113,8 @@ async def main():
                 client, otx_models_dir, "cls_efficient_b0_shuffled_outputs"
             ),
             download_otx_model(client, otx_models_dir, "action_cls_xd3_kinetic"),
+            download_otx_model(client, otx_models_dir, "sam_vit_b_zsl_encoder"),
+            download_otx_model(client, otx_models_dir, "sam_vit_b_zsl_decoder"),
         )
 
 

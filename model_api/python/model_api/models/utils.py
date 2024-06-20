@@ -137,13 +137,13 @@ class InstanceSegmentationResult(NamedTuple):
 
 
 class VisualPromptingResult(NamedTuple):
-    upscaled_masks: list[np.ndarray] | None = None
-    low_res_masks: list[np.ndarray] | None = None
-    iou_predictions: list[np.ndarray] | None = None
-    scores: list[np.ndarray] | None = None
-    labels: list[np.ndarray] | None = None
-    hard_predictions: list[np.ndarray] | None = None
-    soft_predictions: list[np.ndarray] | None = None
+    upscaled_masks: List[np.ndarray] | None = None
+    low_res_masks: List[np.ndarray] | None = None
+    iou_predictions: List[np.ndarray] | None = None
+    scores: List[np.ndarray] | None = None
+    labels: List[np.ndarray] | None = None
+    hard_predictions: List[np.ndarray] | None = None
+    soft_predictions: List[np.ndarray] | None = None
 
     def _compute_min_max(self, tensor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         return tensor.min(), tensor.max()
@@ -159,6 +159,29 @@ class VisualPromptingResult(NamedTuple):
             f"upscaled_masks min:{upscaled_masks_min} max:{upscaled_masks_max};"
             f"hard_predictions shape:{self.hard_predictions[0].shape};"
         )
+
+
+class PredictedMask(NamedTuple):
+    mask: list[np.ndarray]
+    points: list[np.ndarray] | np.ndarray
+
+    def __str__(self) -> str:
+        obj_str = ""
+        obj_str += f"mask sum: {np.sum(sum(self.mask))}; "
+
+        if isinstance(self.points, list):
+            for point in self.points:
+                obj_str += "["
+                obj_str += ", ".join(str(round(c, 2)) for c in point)
+                obj_str += "] "
+        else:
+            for i in range(self.points.shape[0]):
+                point = self.points[i]
+                obj_str += "["
+                obj_str += ", ".join(str(round(c, 2)) for c in point)
+                obj_str += "] "
+
+        return obj_str
 
 
 def add_rotated_rects(segmented_objects):
