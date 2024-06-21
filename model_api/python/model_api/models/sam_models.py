@@ -192,9 +192,9 @@ class SAMDecoder(SegmentationModel):
         """
         probability = np.clip(outputs["scores"], 0.0, 1.0)
         hard_prediction = (
-            outputs[self.output_blob_name].squeeze(1) > self.mask_threshold
+            outputs[self.output_blob_name].squeeze(0) > self.mask_threshold
         ).astype(np.uint8)
-        soft_prediction = hard_prediction * probability
+        soft_prediction = hard_prediction * probability.reshape(-1, 1, 1)
 
         outputs["hard_prediction"] = hard_prediction
         outputs["soft_prediction"] = soft_prediction
