@@ -18,7 +18,11 @@ from typing import Any, NamedTuple
 import cv2
 import numpy as np
 from model_api.models import SAMDecoder, SAMImageEncoder
-from model_api.models.utils import PredictedMask, VisualPromptingResult, ZSLVisualPromptingResult
+from model_api.models.utils import (
+    PredictedMask,
+    VisualPromptingResult,
+    ZSLVisualPromptingResult,
+)
 
 
 class VisualPromptingFeatures(NamedTuple):

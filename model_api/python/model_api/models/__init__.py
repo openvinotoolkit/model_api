@@ -39,7 +39,6 @@ from .open_pose import OpenPose
 from .retinaface import RetinaFace, RetinaFacePyTorch
 from .sam_models import SAMDecoder, SAMImageEncoder
 from .segmentation import SalientObjectDetectionModel, SegmentationModel
-from .visual_prompting import SAMVisualPrompter, SAMLearnableVisualPrompter, Prompt
 from .ssd import SSD
 from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
 from .utils import (
@@ -51,15 +50,16 @@ from .utils import (
     DetectionWithLandmarks,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
-    VisualPromptingResult,
-    PredictedMask,
-    ZSLVisualPromptingResult,
     OutputTransform,
+    PredictedMask,
     SegmentedObject,
     SegmentedObjectWithRects,
+    VisualPromptingResult,
+    ZSLVisualPromptingResult,
     add_rotated_rects,
     get_contours,
 )
+from .visual_prompting import Prompt, SAMLearnableVisualPrompter, SAMVisualPrompter
 from .yolo import YOLO, YOLOF, YOLOX, YoloV3ONNX, YoloV4, YOLOv5, YOLOv8
 
 classification_models = [

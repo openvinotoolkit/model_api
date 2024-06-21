@@ -186,6 +186,7 @@ class PredictedMask(NamedTuple):
 
 class ZSLVisualPromptingResult(NamedTuple):
     data: dict[int, PredictedMask]
+
     def __str__(self) -> str:
         return ", ".join(str(self.data[k]) for k in self.data)
 
