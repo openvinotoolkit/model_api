@@ -429,7 +429,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
-                "reference": ["38 (WritingOnBoard): 0.096, [0], [0], [0]"]
+                "reference": ["upscaled_masks min:-25.906675338745117 max:11.185405731201172;hard_predictions shape:(4, 427, 640);"]
             }
         ]
     }
