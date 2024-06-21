@@ -17,19 +17,19 @@ from model_api.models import (
     ClassificationResult,
     DetectionModel,
     DetectionResult,
-    VisualPromptingResult,
-    PredictedMask,
     ImageModel,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
     MaskRCNNModel,
-    SegmentationModel,
-    SAMImageEncoder,
-    SAMDecoder,
-    SAMVisualPrompter,
-    SAMLearnableVisualPrompter,
-    ZSLVisualPromptingResult,
+    PredictedMask,
     Prompt,
+    SAMDecoder,
+    SAMImageEncoder,
+    SAMLearnableVisualPrompter,
+    SAMVisualPrompter,
+    SegmentationModel,
+    VisualPromptingResult,
+    ZSLVisualPromptingResult,
     add_rotated_rects,
     get_contours,
 )
@@ -124,10 +124,7 @@ def test_image_models(data, dump, result, model_data):
             encoder_model = eval(model_data["encoder_type"])(
                 encoder_adapter, configuration={}, preload=True
             )
-            model = eval(model_data["prompter"])(
-                encoder_model,
-                model
-            )
+            model = eval(model_data["prompter"])(encoder_model, model)
 
         if dump:
             result.append(model_data)
@@ -144,10 +141,26 @@ def test_image_models(data, dump, result, model_data):
                 image = np.stack([image for _ in range(8)])
             if "prompter" in model_data:
                 if model_data["prompter"] == "SAMLearnableVisualPrompter":
-                    model.learn(image, points=Prompt(np.array([image.shape[0] / 2, image.shape[1] / 2]).reshape(1, 2), [0]))
+                    model.learn(
+                        image,
+                        points=Prompt(
+                            np.array([image.shape[0] / 2, image.shape[1] / 2]).reshape(
+                                1, 2
+                            ),
+                            [0],
+                        ),
+                    )
                     outputs = model(image)
                 else:
-                    outputs = model(image, points=Prompt(np.array([image.shape[0] / 2, image.shape[1] / 2]).reshape(1, 2), [0]))
+                    outputs = model(
+                        image,
+                        points=Prompt(
+                            np.array([image.shape[0] / 2, image.shape[1] / 2]).reshape(
+                                1, 2
+                            ),
+                            [0],
+                        ),
+                    )
             else:
                 outputs = model(image)
             if isinstance(outputs, ClassificationResult):
