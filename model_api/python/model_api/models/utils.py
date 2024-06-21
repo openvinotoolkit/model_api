@@ -181,7 +181,13 @@ class PredictedMask(NamedTuple):
                 obj_str += ", ".join(str(round(c, 2)) for c in point)
                 obj_str += "] "
 
-        return obj_str
+        return obj_str.strip()
+
+
+class ZSLVisualPromptingResult(NamedTuple):
+    data: dict[int, PredictedMask]
+    def __str__(self) -> str:
+        return ", ".join(str(self.data[k]) for k in self.data)
 
 
 def add_rotated_rects(segmented_objects):

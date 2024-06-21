@@ -18,7 +18,7 @@ from typing import Any, NamedTuple
 import cv2
 import numpy as np
 from model_api.models import SAMDecoder, SAMImageEncoder
-from model_api.models.utils import VisualPromptingResult
+from model_api.models.utils import PredictedMask, VisualPromptingResult, ZSLVisualPromptingResult
 
 
 class VisualPromptingFeatures(NamedTuple):
@@ -29,11 +29,6 @@ class VisualPromptingFeatures(NamedTuple):
 class Prompt(NamedTuple):
     data: list[np.ndarray] | np.ndarray
     labels: list[np.ndarray | int] | np.ndarray
-
-
-class PredictedMask(NamedTuple):
-    mask: list[np.ndarray]
-    points: list[np.ndarray] | np.ndarray
 
 
 class SAMVisualPrompter:
@@ -273,7 +268,7 @@ class SAMLearnableVisualPrompter:
         self,
         image: np.ndarray,
         reference_features: VisualPromptingFeatures | None = None,
-    ) -> dict[int, PredictedMask]:
+    ) -> ZSLVisualPromptingResult:
         """A wrapper of the SAMLearnableVisualPrompter.infer() method"""
         return self.infer(image, reference_features)
 
@@ -281,7 +276,7 @@ class SAMLearnableVisualPrompter:
         self,
         image: np.ndarray,
         reference_features: VisualPromptingFeatures | None = None,
-    ) -> dict[int, PredictedMask]:
+    ) -> ZSLVisualPromptingResult:
         """
         Obtains masks by already prepared reference features.
 
@@ -294,7 +289,7 @@ class SAMLearnableVisualPrompter:
             If not passed, object internal state is used, which reflects the last learn() call. Defaults to None.
 
         Returns:
-            dict[int, PredictedMask]: Mapping label -> predicted mask. Each mask object contains a list of binary masks, and a list of
+            ZSLVisualPromptingResult: Mapping label -> predicted mask. Each mask object contains a list of binary masks, and a list of
             related prompts. Each binary mask corresponds to one prompt point. Class mask can be obtained by applying OR operation to all
             mask corresponding to one label.
         """
@@ -374,7 +369,7 @@ class SAMLearnableVisualPrompter:
         for k in used_points:
             prediction[k] = PredictedMask(predicted_masks[k], used_points[k])
 
-        return prediction
+        return ZSLVisualPromptingResult(prediction)
 
     def reset_reference_info(self) -> None:
         """Initialize reference information."""

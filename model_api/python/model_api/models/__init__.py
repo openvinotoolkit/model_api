@@ -39,6 +39,7 @@ from .open_pose import OpenPose
 from .retinaface import RetinaFace, RetinaFacePyTorch
 from .sam_models import SAMDecoder, SAMImageEncoder
 from .segmentation import SalientObjectDetectionModel, SegmentationModel
+from .visual_prompting import SAMVisualPrompter, SAMLearnableVisualPrompter, Prompt
 from .ssd import SSD
 from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
 from .utils import (
@@ -50,6 +51,9 @@ from .utils import (
     DetectionWithLandmarks,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
+    VisualPromptingResult,
+    PredictedMask,
+    ZSLVisualPromptingResult,
     OutputTransform,
     SegmentedObject,
     SegmentedObjectWithRects,
@@ -98,6 +102,11 @@ __all__ = [
     "ImageModel",
     "ImageResultWithSoftPrediction",
     "InstanceSegmentationResult",
+    "VisualPromptingResult",
+    "ZSLVisualPromptingResult",
+    "PredictedMask",
+    "SAMVisualPrompter",
+    "SAMLearnableVisualPrompter",
     "MaskRCNNModel",
     "Model",
     "MonoDepthModel",
@@ -124,6 +133,7 @@ __all__ = [
     "SAMDecoder",
     "SAMImageEncoder",
     "ClassificationResult",
+    "Prompt",
     "Detection",
     "DetectionResult",
     "DetectionWithLandmarks",

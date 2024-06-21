@@ -17,11 +17,19 @@ from model_api.models import (
     ClassificationResult,
     DetectionModel,
     DetectionResult,
+    VisualPromptingResult,
+    PredictedMask,
     ImageModel,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
     MaskRCNNModel,
     SegmentationModel,
+    SAMImageEncoder,
+    SAMDecoder,
+    SAMVisualPrompter,
+    SAMLearnableVisualPrompter,
+    ZSLVisualPromptingResult,
+    Prompt,
     add_rotated_rects,
     get_contours,
 )
@@ -108,6 +116,18 @@ def test_image_models(data, dump, result, model_data):
                 )
             else:
                 model = eval(model_data["tiler"])(model, configuration={})
+        elif "prompter" in model_data:
+            encoder_adapter = OpenvinoAdapter(
+                create_core(), f"{data}/{model_data['encoder']}", device="CPU"
+            )
+
+            encoder_model = eval(model_data["encoder_type"])(
+                encoder_adapter, configuration={}, preload=True
+            )
+            model = eval(model_data["prompter"])(
+                encoder_model,
+                model
+            )
 
         if dump:
             result.append(model_data)
@@ -122,7 +142,14 @@ def test_image_models(data, dump, result, model_data):
                 image = cv2.resize(image, eval(model_data["input_res"]))
             if isinstance(model, ActionClassificationModel):
                 image = np.stack([image for _ in range(8)])
-            outputs = model(image)
+            if "prompter" in model_data:
+                if model_data["prompter"] == "SAMLearnableVisualPrompter":
+                    model.learn(image, points=Prompt(np.array([image.shape[0] / 2, image.shape[1] / 2]).reshape(1, 2), [0]))
+                    outputs = model(image)
+                else:
+                    outputs = model(image, points=Prompt(np.array([image.shape[0] / 2, image.shape[1] / 2]).reshape(1, 2), [0]))
+            else:
+                outputs = model(image)
             if isinstance(outputs, ClassificationResult):
                 assert 1 == len(test_data["reference"])
                 output_str = str(outputs)
@@ -175,6 +202,14 @@ def test_image_models(data, dump, result, model_data):
                 output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
+            elif isinstance(outputs, ZSLVisualPromptingResult):
+                output_str = str(outputs)
+                assert test_data["reference"][0] == output_str
+                image_result = [output_str]
+            elif isinstance(outputs, VisualPromptingResult):
+                output_str = str(outputs)
+                assert test_data["reference"][0] == output_str
+                image_result = [output_str]
             else:
                 assert False
             if dump:
@@ -189,6 +224,8 @@ def test_image_models(data, dump, result, model_data):
     if not model_data.get("force_ort", False):
         if "tiler" in model_data:
             model.get_model().save(data + "/serialized/" + save_name)
+        elif "prompter" in model_data:
+            pass
         else:
             model.save(data + "/serialized/" + save_name)
             if model_data.get("check_extra_rt_info", False):
