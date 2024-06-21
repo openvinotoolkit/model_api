@@ -11,6 +11,8 @@
  limitations under the License.
 """
 
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
+
 from collections import defaultdict
 from itertools import product
 from typing import Any, NamedTuple

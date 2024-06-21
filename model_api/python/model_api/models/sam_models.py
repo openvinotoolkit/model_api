@@ -14,6 +14,8 @@
  limitations under the License.
 """
 
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
+
 from copy import deepcopy
 from typing import Any, Dict
 
