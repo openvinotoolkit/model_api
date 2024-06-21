@@ -143,23 +143,23 @@ def test_image_models(data, dump, result, model_data):
                 if model_data["prompter"] == "SAMLearnableVisualPrompter":
                     model.learn(
                         image,
-                        points=Prompt(
-                            np.array([image.shape[0] / 2, image.shape[1] / 2]).reshape(
-                                1, 2
-                            ),
-                            [0],
-                        ),
+                        points=[
+                            Prompt(
+                                np.array([image.shape[0] / 2, image.shape[1] / 2]),
+                                0,
+                            )
+                        ],
                     )
                     outputs = model(image)
                 else:
                     outputs = model(
                         image,
-                        points=Prompt(
-                            np.array([image.shape[0] / 2, image.shape[1] / 2]).reshape(
-                                1, 2
-                            ),
-                            [0],
-                        ),
+                        points=[
+                            Prompt(
+                                np.array([image.shape[0] / 2, image.shape[1] / 2]),
+                                0,
+                            )
+                        ],
                     )
             else:
                 outputs = model(image)
@@ -215,11 +215,7 @@ def test_image_models(data, dump, result, model_data):
                 output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
-            elif isinstance(outputs, ZSLVisualPromptingResult):
-                output_str = str(outputs)
-                assert test_data["reference"][0] == output_str
-                image_result = [output_str]
-            elif isinstance(outputs, VisualPromptingResult):
+            elif isinstance(outputs, (ZSLVisualPromptingResult, VisualPromptingResult)):
                 output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
