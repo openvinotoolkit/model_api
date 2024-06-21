@@ -156,7 +156,7 @@ class VisualPromptingResult(NamedTuple):
         )
 
         return (
-            f"upscaled_masks min:{upscaled_masks_min} max:{upscaled_masks_max};"
+            f"upscaled_masks min:{upscaled_masks_min:.3f} max:{upscaled_masks_max:.3f};"
             f"hard_predictions shape:{self.hard_predictions[0].shape};"
         )
 

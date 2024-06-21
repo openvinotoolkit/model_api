@@ -33,8 +33,8 @@ class VisualPromptingFeatures(NamedTuple):
 
 
 class Prompt(NamedTuple):
-    data: list[np.ndarray] | np.ndarray
-    labels: list[np.ndarray | int] | np.ndarray
+    data: np.ndarray
+    label: int | np.ndarray
 
 
 class SAMVisualPrompter:
@@ -56,17 +56,17 @@ class SAMVisualPrompter:
     def infer(
         self,
         image: np.ndarray,
-        boxes: Prompt | None = None,
-        points: Prompt | None = None,
+        boxes: list[Prompt] | None = None,
+        points: list[Prompt] | None = None,
     ) -> VisualPromptingResult:
         """
         Obtains segmentation masks using given prompts.
 
         Args:
             image (np.ndarray): HWC-shaped image
-            boxes (Prompt | None, optional): Prompt containing bounding boxes (in XYXY torchvision format)
+            boxes (list[Prompt] | None, optional): Prompts containing bounding boxes (in XYXY torchvision format)
               and their labels (ints, one per box). Defaults to None.
-            points (Prompt | None, optional): Prompt containing points (in XY format)
+            points (list[Prompt] | None, optional): Prompts containing points (in XY format)
               and their labels (ints, one per point). Defaults to None.
 
         Returns:
@@ -81,11 +81,11 @@ class SAMVisualPrompter:
         image_embeddings = self.encoder.infer_sync(processed_image)
         processed_prompts = self.decoder.preprocess(
             {
-                "bboxes": boxes.data if boxes else None,
-                "points": points.data if points else None,
+                "bboxes": [box.data for box in boxes] if boxes else None,
+                "points": [point.data for point in points] if points else None,
                 "labels": {
-                    "bboxes": boxes.labels if boxes else None,
-                    "points": points.labels if points else None,
+                    "bboxes": [box.label for box in boxes] if boxes else None,
+                    "points": [point.label for point in points] if points else None,
                 },
                 "orig_size": meta["original_shape"][:2],
             },
@@ -114,8 +114,8 @@ class SAMVisualPrompter:
     def __call__(
         self,
         image: np.ndarray,
-        boxes: Prompt | None = None,
-        points: Prompt | None = None,
+        boxes: list[Prompt] | None = None,
+        points: list[Prompt] | None = None,
     ) -> VisualPromptingResult:
         """A wrapper of the SAMVisualPrompter.infer() method"""
         return self.infer(image, boxes, points)
@@ -177,8 +177,8 @@ class SAMLearnableVisualPrompter:
     def learn(
         self,
         image: np.ndarray,
-        boxes: Prompt | None = None,
-        points: Prompt | None = None,
+        boxes: list[Prompt] | None = None,
+        points: list[Prompt] | None = None,
         reset_features: bool = False,
     ) -> tuple[VisualPromptingFeatures, np.ndarray]:
         """
@@ -190,9 +190,9 @@ class SAMLearnableVisualPrompter:
 
         Args:
             image (np.ndarray): HWC-shaped image
-            boxes (Prompt | None, optional): Prompt containing bounding boxes (in XYXY torchvision format)
+            boxes (list[Prompt] | None, optional): Prompts containing bounding boxes (in XYXY torchvision format)
               and their labels (ints, one per box). Defaults to None.
-            points (Prompt | None, optional): Prompt containing points (in XY format)
+            points (list[Prompt] | None, optional): Prompts containing points (in XY format)
               and their labels (ints, one per point). Defaults to None.
             reset_features (bool, optional): Forces learning from scratch. Defaults to False.
 
@@ -209,11 +209,11 @@ class SAMLearnableVisualPrompter:
 
         processed_prompts = self.decoder.preprocess(
             {
-                "bboxes": boxes.data if boxes else None,
-                "points": points.data if points else None,
+                "bboxes": [box.data for box in boxes] if boxes else None,
+                "points": [point.data for point in points] if points else None,
                 "labels": {
-                    "bboxes": boxes.labels if boxes else None,
-                    "points": points.labels if points else None,
+                    "bboxes": [box.label for box in boxes] if boxes else None,
+                    "points": [point.label for point in points] if points else None,
                 },
                 "orig_size": image.shape[:2],
             },
