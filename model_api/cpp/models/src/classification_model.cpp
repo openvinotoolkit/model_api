@@ -500,7 +500,7 @@ void ClassificationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model
         if (outputShape.size() == 4 && (outputShape[ov::layout::height_idx(outputLayout)] != 1 ||
                                         outputShape[ov::layout::width_idx(outputLayout)] != 1)) {
             throw std::logic_error("Classification model wrapper supports topologies only"
-                                " with 4-dimensional output hich has last two dimensions of size 1");
+                                " with 4-dimensional output which has last two dimensions of size 1");
         }
 
         size_t classesNum = outputShape[ov::layout::channels_idx(outputLayout)];
