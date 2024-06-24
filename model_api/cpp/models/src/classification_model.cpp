@@ -163,13 +163,9 @@ std::vector<size_t> get_non_xai_output_indices(const std::vector<ov::Output<ov::
     outputIndices.reserve(std::max(1, int(outputs.size()) - 2));
     size_t idx = 0;
     for (const ov::Output<ov::Node>& output : outputs) {
-        if (output.get_names().count(saliency_map_name) > 0) {
-            continue;
-        }
-        else if (output.get_names().count(feature_vector_name) > 0) {
-            continue;
-        }
-        else {
+        bool is_xai = output.get_names().count(saliency_map_name) > 0
+            || output.get_names().count(feature_vector_name) > 0;
+        if (!is_xai) {
             outputIndices.push_back(idx);
         }
         ++idx;
