@@ -58,6 +58,7 @@ class SAMVisualPrompter:
         image: np.ndarray,
         boxes: list[Prompt] | None = None,
         points: list[Prompt] | None = None,
+        polygons: list[Prompt] | None = None,
     ) -> VisualPromptingResult:
         """
         Obtains segmentation masks using given prompts.
@@ -68,12 +69,16 @@ class SAMVisualPrompter:
               and their labels (ints, one per box). Defaults to None.
             points (list[Prompt] | None, optional): Prompts containing points (in XY format)
               and their labels (ints, one per point). Defaults to None.
+            polygons: (list[Prompt] | None): Prompts containing polygons (a sequence of points in XY format)
+              and their labels (ints, one per polygon). Each polygon is represented as a mask prompt. Defaults to None.
 
         Returns:
             VisualPromptingResult: result object containing predicted masks and aux information.
         """
         if boxes is None and points is None:
             raise RuntimeError("boxes or points prompts are required for inference")
+        if polygons is not None:
+            raise RuntimeError("Polygon support is not implemented yet")
 
         outputs: list[dict[str, Any]] = []
 
@@ -116,9 +121,10 @@ class SAMVisualPrompter:
         image: np.ndarray,
         boxes: list[Prompt] | None = None,
         points: list[Prompt] | None = None,
+        polygons: list[Prompt] | None = None,
     ) -> VisualPromptingResult:
         """A wrapper of the SAMVisualPrompter.infer() method"""
-        return self.infer(image, boxes, points)
+        return self.infer(image, boxes, points, polygons)
 
 
 class SAMLearnableVisualPrompter:
@@ -179,6 +185,7 @@ class SAMLearnableVisualPrompter:
         image: np.ndarray,
         boxes: list[Prompt] | None = None,
         points: list[Prompt] | None = None,
+        polygons: list[Prompt] | None = None,
         reset_features: bool = False,
     ) -> tuple[VisualPromptingFeatures, np.ndarray]:
         """
@@ -194,6 +201,8 @@ class SAMLearnableVisualPrompter:
               and their labels (ints, one per box). Defaults to None.
             points (list[Prompt] | None, optional): Prompts containing points (in XY format)
               and their labels (ints, one per point). Defaults to None.
+            polygons: (list[Prompt] | None): Prompts containing polygons (a sequence of points in XY format)
+              and their labels (ints, one per polygon). Each polygon is represented as a mask prompt. Defaults to None.
             reset_features (bool, optional): Forces learning from scratch. Defaults to False.
 
         Returns:
@@ -203,6 +212,8 @@ class SAMLearnableVisualPrompter:
 
         if boxes is None and points is None:
             raise RuntimeError("boxes or points prompts are required for learning")
+        if polygons is not None:
+            raise RuntimeError("Polygon support is not implemented yet")
 
         if reset_features or not self.has_reference_features():
             self.reset_reference_info()
