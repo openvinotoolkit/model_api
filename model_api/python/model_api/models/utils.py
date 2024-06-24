@@ -190,6 +190,10 @@ class ZSLVisualPromptingResult(NamedTuple):
     def __str__(self) -> str:
         return ", ".join(str(self.data[k]) for k in self.data)
 
+    def get_mask(self, label: int) -> PredictedMask:
+        """Returns a mask belonging to a given label"""
+        return self.data[label]
+
 
 def add_rotated_rects(segmented_objects):
     objects_with_rects = []
