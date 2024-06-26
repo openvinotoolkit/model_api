@@ -406,5 +406,31 @@
                 "reference": ["38 (WritingOnBoard): 0.096, [0], [0], [0]"]
             }
         ]
+    },
+    {
+        "name": "otx_models/sam_vit_b_zsl_decoder.xml",
+        "type": "SAMDecoder",
+        "prompter": "SAMLearnableVisualPrompter",
+        "encoder": "otx_models/sam_vit_b_zsl_encoder.xml",
+        "encoder_type": "SAMImageEncoder",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": ["mask sum: 14991; [385.0, 315.0, 0.93] [44.0, 205.0, 0.66] [605.0, 224.0, 0.65], mask sum: 248221; [374.0, 365.0, 0.9] [335.0, 34.0, 0.9] [354.0, 135.0, 0.71]"]
+            }
+        ]
+    },
+    {
+        "name": "otx_models/sam_vit_b_zsl_decoder.xml",
+        "type": "SAMDecoder",
+        "prompter": "SAMVisualPrompter",
+        "encoder": "otx_models/sam_vit_b_zsl_encoder.xml",
+        "encoder_type": "SAMImageEncoder",
+        "test_data": [
+            {
+                "image": "coco128/images/train2017/000000000471.jpg",
+                "reference": ["upscaled_masks min:-25.907 max:11.185;hard_predictions shape:(4, 427, 640);"]
+            }
+        ]
     }
 ]

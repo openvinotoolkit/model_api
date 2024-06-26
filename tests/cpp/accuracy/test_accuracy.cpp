@@ -131,7 +131,10 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         GTEST_SKIP() << "ONNX models are not supported in C++ implementation";
     }
     if (name.find("action_cls_xd3_kinetic") != std::string::npos) {
-        GTEST_SKIP() << "ActionClassificationModel are not supported in C++ implementation";
+        GTEST_SKIP() << "ActionClassificationModel is not supported in C++ implementation";
+    }
+    if (name.find("sam_vit_b") != std::string::npos) {
+        GTEST_SKIP() << "SAM-based models are not supported in C++ implementation";
     }
 
     if (name.substr(name.size() - 4) == ".xml") {
