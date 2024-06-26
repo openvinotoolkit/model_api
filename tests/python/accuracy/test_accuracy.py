@@ -149,6 +149,18 @@ def test_image_models(data, dump, result, model_data):
                                 0,
                             )
                         ],
+                        polygons=[
+                            Prompt(
+                                np.array(
+                                    [
+                                        [image.shape[0] / 4, image.shape[1] / 4],
+                                        [image.shape[0] / 4, image.shape[1] / 2],
+                                        [image.shape[0] / 2, image.shape[1] / 2],
+                                    ]
+                                ),
+                                1,
+                            )
+                        ],
                     )
                     outputs = model(image)
                 else:
