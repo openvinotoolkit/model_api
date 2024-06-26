@@ -206,7 +206,9 @@ class SAMLearnableVisualPrompter:
         """
 
         if boxes is None and points is None and polygons is None:
-            raise RuntimeError("boxes, polygons or points prompts are required for learning")
+            raise RuntimeError(
+                "boxes, polygons or points prompts are required for learning"
+            )
 
         if reset_features or not self.has_reference_features():
             self.reset_reference_info()
@@ -491,7 +493,9 @@ class SAMLearnableVisualPrompter:
         return {"upscaled_masks": masks}
 
 
-def _polygon_to_mask(polygon: np.ndarray | list[np.ndarray], height: int, width: int) -> np.ndarray:
+def _polygon_to_mask(
+    polygon: np.ndarray | list[np.ndarray], height: int, width: int
+) -> np.ndarray:
     """Converts a polygon represented as an array of 2D points into a mask"""
     if isinstance(polygon, np.ndarray) and np.issubdtype(polygon.dtype, np.integer):
         contour = polygon.reshape(-1, 2)
