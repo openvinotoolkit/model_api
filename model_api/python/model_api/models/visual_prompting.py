@@ -58,7 +58,6 @@ class SAMVisualPrompter:
         image: np.ndarray,
         boxes: list[Prompt] | None = None,
         points: list[Prompt] | None = None,
-        polygons: list[Prompt] | None = None,
     ) -> VisualPromptingResult:
         """
         Obtains segmentation masks using given prompts.
@@ -69,16 +68,12 @@ class SAMVisualPrompter:
               and their labels (ints, one per box). Defaults to None.
             points (list[Prompt] | None, optional): Prompts containing points (in XY format)
               and their labels (ints, one per point). Defaults to None.
-            polygons: (list[Prompt] | None): Prompts containing polygons (a sequence of points in XY format)
-              and their labels (ints, one per polygon). Each polygon is represented as a mask prompt. Defaults to None.
 
         Returns:
             VisualPromptingResult: result object containing predicted masks and aux information.
         """
         if boxes is None and points is None:
             raise RuntimeError("boxes or points prompts are required for inference")
-        if polygons is not None:
-            raise RuntimeError("Polygon support is not implemented yet")
 
         outputs: list[dict[str, Any]] = []
 
@@ -121,10 +116,9 @@ class SAMVisualPrompter:
         image: np.ndarray,
         boxes: list[Prompt] | None = None,
         points: list[Prompt] | None = None,
-        polygons: list[Prompt] | None = None,
     ) -> VisualPromptingResult:
         """A wrapper of the SAMVisualPrompter.infer() method"""
-        return self.infer(image, boxes, points, polygons)
+        return self.infer(image, boxes, points)
 
 
 class SAMLearnableVisualPrompter:
@@ -202,7 +196,8 @@ class SAMLearnableVisualPrompter:
             points (list[Prompt] | None, optional): Prompts containing points (in XY format)
               and their labels (ints, one per point). Defaults to None.
             polygons: (list[Prompt] | None): Prompts containing polygons (a sequence of points in XY format)
-              and their labels (ints, one per polygon). Each polygon is represented as a mask prompt. Defaults to None.
+              and their labels (ints, one per polygon).
+              Polygon prompts are used to mask out the source features without implying decoder usage. Defaults to None.
             reset_features (bool, optional): Forces learning from scratch. Defaults to False.
 
         Returns:
@@ -210,10 +205,8 @@ class SAMLearnableVisualPrompter:
             The shape of the reference mask is N_labels x H x W, where H and W are the same as in the input image.
         """
 
-        if boxes is None and points is None:
-            raise RuntimeError("boxes or points prompts are required for learning")
-        if polygons is not None:
-            raise RuntimeError("Polygon support is not implemented yet")
+        if boxes is None and points is None and polygons is None:
+            raise RuntimeError("boxes, polygons or points prompts are required for learning")
 
         if reset_features or not self.has_reference_features():
             self.reset_reference_info()
@@ -230,8 +223,13 @@ class SAMLearnableVisualPrompter:
             },
         )
 
+        if polygons is not None:
+            for poly in polygons:
+                processed_prompts.append({"polygon": poly.data, "label": poly.label})
+
         processed_prompts_w_labels = self._gather_prompts_with_labels(processed_prompts)
         largest_label: int = max([int(p) for p in processed_prompts_w_labels] + [0])
+
         self._expand_reference_info(largest_label)
 
         original_shape = np.array(image.shape[:2])
@@ -255,8 +253,10 @@ class SAMLearnableVisualPrompter:
                         inputs_decoder, original_shape, is_cascade=self._is_cascade
                     )
                     masks = prediction["upscaled_masks"]
+                elif "polygon" in inputs_decoder:
+                    masks = _polygon_to_mask(inputs_decoder["polygon"], *original_shape)
                 else:
-                    raise RuntimeError("Prompts other than points are not supported")
+                    raise RuntimeError("Unsupported type of prompt")
                 ref_mask[masks] += 1
             ref_mask = np.clip(ref_mask, 0, 1)
 
@@ -489,6 +489,17 @@ class SAMLearnableVisualPrompter:
 
         _, masks = _decide_masks(masks, logits, scores)
         return {"upscaled_masks": masks}
+
+
+def _polygon_to_mask(polygon: np.ndarray | list[np.ndarray], height: int, width: int) -> np.ndarray:
+    """Converts a polygon represented as an array of 2D points into a mask"""
+    if isinstance(polygon, np.ndarray) and np.issubdtype(polygon.dtype, np.integer):
+        contour = polygon.reshape(-1, 2)
+    else:
+        contour = [[int(point[0]), int(point[1])] for point in polygon]
+    gt_mask = np.zeros((height, width), dtype=np.uint8)
+    gt_mask = cv2.drawContours(gt_mask, np.asarray([contour]), 0, 1, cv2.FILLED)
+    return gt_mask
 
 
 def _generate_masked_features(
