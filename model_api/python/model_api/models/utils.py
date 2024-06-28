@@ -160,6 +160,25 @@ class VisualPromptingResult(NamedTuple):
             f"hard_predictions shape:{self.hard_predictions[0].shape};"
         )
 
+    def get_aggregated_hard_mask(self, i: int):
+        """
+        Returns a ready-to use aggregated full resolution mask for a particular prompt,
+        and it's score.
+
+        Args:
+            i (int): prompt index
+
+        Returns:
+            Mask and it's iou score if the prediction is not empty.
+        """
+        if self.hard_predictions is not None:
+            mask = self.hard_predictions[i]
+            iou = self.iou_predictions[i].squeeze(0)
+            best_idx = np.argmax(iou)
+            return mask[best_idx], iou[best_idx]
+
+        return None
+
 
 class PredictedMask(NamedTuple):
     mask: list[np.ndarray]
