@@ -25,9 +25,9 @@ from model_api.models import Model, SAMVisualPrompter, Prompt
 
 
 def get_colors(n: int):
-    HSV_tuples = [(x/n, 0.5, 0.5) for x in range(n)]
+    HSV_tuples = [(x / n, 0.5, 0.5) for x in range(n)]
     RGB_tuples = map(lambda x: colorsys.hsv_to_rgb(*x), HSV_tuples)
-    return (np.array(list(RGB_tuples))*255).astype(np.uint8)
+    return (np.array(list(RGB_tuples)) * 255).astype(np.uint8)
 
 
 def main():
@@ -47,7 +47,7 @@ def main():
     sam_prompter = SAMVisualPrompter(encoder, decoder)
 
     all_prompts = []
-    for i, p in enumerate(np.array(args.prompts).reshape(-1,2)):
+    for i, p in enumerate(np.array(args.prompts).reshape(-1, 2)):
         all_prompts.append(Prompt(p, i))
 
     result = sam_prompter(image, points=all_prompts)
@@ -57,12 +57,11 @@ def main():
     for i in range(len(result.upscaled_masks)):
         mask, iou = result.get_aggregated_hard_mask(i)
         print(f"Mask score {iou:.3f} for prompt {i}")
-        masked_img = np.where(mask[...,None], colors[i], image)
+        masked_img = np.where(mask[..., None], colors[i], image)
         image = cv2.addWeighted(image, 0.2, masked_img, 0.8, 0)
 
     cv2.imwrite("sam_result.jpg", image)
 
-#python examples/python/visual_prompting/run.py ./data/coco128/images/train2017/000000000127.jpg ./data/otx_models/sam_vit_b_zsl_encoder.xml ./data/otx_models/sam_vit_b_zsl_decoder.xml  274 306 482 295
 
 if __name__ == "__main__":
     main()
