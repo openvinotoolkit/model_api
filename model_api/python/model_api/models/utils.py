@@ -138,12 +138,14 @@ class InstanceSegmentationResult(NamedTuple):
 
 class VisualPromptingResult(NamedTuple):
     upscaled_masks: List[np.ndarray] | None = None
+    processed_mask: List[np.ndarray] | None = None
     low_res_masks: List[np.ndarray] | None = None
     iou_predictions: List[np.ndarray] | None = None
     scores: List[np.ndarray] | None = None
     labels: List[np.ndarray] | None = None
     hard_predictions: List[np.ndarray] | None = None
     soft_predictions: List[np.ndarray] | None = None
+    best_iou: List[float] | None = None
 
     def _compute_min_max(self, tensor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         return tensor.min(), tensor.max()
@@ -159,26 +161,6 @@ class VisualPromptingResult(NamedTuple):
             f"upscaled_masks min:{upscaled_masks_min:.3f} max:{upscaled_masks_max:.3f};"
             f"hard_predictions shape:{self.hard_predictions[0].shape};"
         )
-
-    def get_aggregated_hard_mask(self, i: int):
-        """
-        Returns a ready-to use aggregated full resolution mask for a particular prompt,
-        and it's score.
-
-        Args:
-            i (int): prompt index
-
-        Returns:
-            Mask and it's iou score if the prediction is not empty.
-        """
-        if self.hard_predictions is not None:
-            mask = self.hard_predictions[i]
-            iou = self.iou_predictions[i].squeeze(0)
-            best_idx = np.argmax(iou)
-            return mask[best_idx], iou[best_idx]
-
-        return None
-
 
 class PredictedMask(NamedTuple):
     mask: list[np.ndarray]
