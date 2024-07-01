@@ -21,8 +21,8 @@ python tests/python/accuracy/prepare_data.py -d data
 ```
 and then run
 ```bash
-python run.py ../../data/coco128/images/train2017/000000000127.jpg \
-     ../../data/otx_models/sam_vit_b_zsl_encoder.xml ../../data/otx_models/sam_vit_b_zsl_decoder.xml \
+python run.py ../../../data/coco128/images/train2017/000000000127.jpg \
+     ../../../data/otx_models/sam_vit_b_zsl_encoder.xml ../../../data/otx_models/sam_vit_b_zsl_decoder.xml \
      274 306 482 295
 ```
 from the sample folder. Here two prompt poinst are passed via CLI: `(274, 306)` and `(482, 295)`

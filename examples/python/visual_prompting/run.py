@@ -55,9 +55,8 @@ def main():
     colors = get_colors(len(all_prompts))
 
     for i in range(len(result.upscaled_masks)):
-        mask, iou = result.get_aggregated_hard_mask(i)
-        print(f"Mask score {iou:.3f} for prompt {i}")
-        masked_img = np.where(mask[..., None], colors[i], image)
+        print(f"Prompt {i}, mask score {result.best_iou[i]:.3f}")
+        masked_img = np.where(result.processed_mask[i][..., None], colors[i], image)
         image = cv2.addWeighted(image, 0.2, masked_img, 0.8, 0)
 
     cv2.imwrite("sam_result.jpg", image)
