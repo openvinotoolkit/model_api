@@ -16,12 +16,11 @@
 """
 
 import argparse
+import colorsys
 
 import cv2
 import numpy as np
-import colorsys
-
-from model_api.models import Model, SAMLearnableVisualPrompter, Prompt
+from model_api.models import Model, Prompt, SAMLearnableVisualPrompter
 
 
 def get_colors(n: int):
@@ -69,7 +68,9 @@ def main():
             masked_img = np.where(instance[..., None], colors[i], image_target)
             image_target = cv2.addWeighted(image_target, 0.2, masked_img, 0.8, 0)
             print(f"Reference point: {prompt_point}, point score: {confidence:.3f}")
-            cv2.circle(image_target, prompt_point, radius=0, color=(0, 0, 255), thickness=5)
+            cv2.circle(
+                image_target, prompt_point, radius=0, color=(0, 0, 255), thickness=5
+            )
 
     cv2.imwrite("zsl_sam_result.jpg", image_target)
 

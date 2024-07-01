@@ -16,12 +16,11 @@
 """
 
 import argparse
+import colorsys
 
 import cv2
 import numpy as np
-import colorsys
-
-from model_api.models import Model, SAMVisualPrompter, Prompt
+from model_api.models import Model, Prompt, SAMVisualPrompter
 
 
 def get_colors(n: int):
