@@ -105,7 +105,7 @@ class SAMVisualPrompter:
                 processed_prediction["iou_predictions"],
                 processed_prediction["low_res_masks"],
             )
-            _, mask, best_iou= _decide_masks(hard_masks, logits, scores)
+            _, mask, best_iou = _decide_masks(hard_masks, logits, scores)
             processed_prediction["processed_mask"] = mask
             processed_prediction["best_iou"] = best_iou
 
@@ -468,7 +468,9 @@ class SAMLearnableVisualPrompter:
 
             elif i == 2:
                 # Cascaded Post-refinement-2
-                mask_input, masks, _ = _decide_masks(masks, logits, scores)  # noqa: F821
+                mask_input, masks, _ = _decide_masks(
+                    masks, logits, scores
+                )  # noqa: F821
                 if masks.sum() == 0:
                     return {"upscaled_masks": masks}
 
@@ -593,10 +595,18 @@ def _decide_masks(
 
         if len(scores[0]) == 0:
             # all predicted masks were zero masks, ignore them.
-            return None, np.zeros(masks.shape[-2:]), float(np.clip(scores[0][best_idx], 0, 1))
+            return (
+                None,
+                np.zeros(masks.shape[-2:]),
+                float(np.clip(scores[0][best_idx], 0, 1)),
+            )
 
         best_idx = np.argmax(scores[0])
-    return logits[:, [best_idx]], masks[0, best_idx], float(np.clip(scores[0][best_idx], 0, 1))
+    return (
+        logits[:, [best_idx]],
+        masks[0, best_idx],
+        float(np.clip(scores[0][best_idx], 0, 1)),
+    )
 
 
 def _get_prompt_candidates(

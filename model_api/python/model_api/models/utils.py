@@ -162,6 +162,7 @@ class VisualPromptingResult(NamedTuple):
             f"hard_predictions shape:{self.hard_predictions[0].shape};"
         )
 
+
 class PredictedMask(NamedTuple):
     mask: list[np.ndarray]
     points: list[np.ndarray] | np.ndarray
