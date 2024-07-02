@@ -138,12 +138,14 @@ class InstanceSegmentationResult(NamedTuple):
 
 class VisualPromptingResult(NamedTuple):
     upscaled_masks: List[np.ndarray] | None = None
+    processed_mask: List[np.ndarray] | None = None
     low_res_masks: List[np.ndarray] | None = None
     iou_predictions: List[np.ndarray] | None = None
     scores: List[np.ndarray] | None = None
     labels: List[np.ndarray] | None = None
     hard_predictions: List[np.ndarray] | None = None
     soft_predictions: List[np.ndarray] | None = None
+    best_iou: List[float] | None = None
 
     def _compute_min_max(self, tensor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         return tensor.min(), tensor.max()
@@ -164,6 +166,7 @@ class VisualPromptingResult(NamedTuple):
 class PredictedMask(NamedTuple):
     mask: list[np.ndarray]
     points: list[np.ndarray] | np.ndarray
+    scores: list[float] | np.ndarray
 
     def __str__(self) -> str:
         obj_str = ""
