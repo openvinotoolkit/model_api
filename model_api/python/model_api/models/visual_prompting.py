@@ -413,7 +413,12 @@ class SAMLearnableVisualPrompter:
 
         prediction = {}
         for k in used_points:
-            prediction[k] = PredictedMask(predicted_masks[k], used_points[k])
+            processed_points = []
+            scores = []
+            for pt in used_points[k]:
+                processed_points.append(pt[:2])
+                scores.append(float(pt[2]))
+            prediction[k] = PredictedMask(predicted_masks[k], processed_points, scores)
 
         return ZSLVisualPromptingResult(prediction)
 

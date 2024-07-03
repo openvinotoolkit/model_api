@@ -166,6 +166,7 @@ class VisualPromptingResult(NamedTuple):
 class PredictedMask(NamedTuple):
     mask: list[np.ndarray]
     points: list[np.ndarray] | np.ndarray
+    scores: list[float] | np.ndarray
 
     def __str__(self) -> str:
         obj_str = ""

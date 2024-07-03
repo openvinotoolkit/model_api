@@ -49,7 +49,9 @@ def main():
 
     encoder = Model.create_model(args.encoder_path)
     decoder = Model.create_model(args.decoder_path)
-    zsl_sam_prompter = SAMLearnableVisualPrompter(encoder, decoder, threshold=args.threshold)
+    zsl_sam_prompter = SAMLearnableVisualPrompter(
+        encoder, decoder, threshold=args.threshold
+    )
 
     all_prompts = []
     for i, p in enumerate(np.array(args.prompts).reshape(-1, 2)):
@@ -64,8 +66,8 @@ def main():
     for i in result.data:
         masks = result.get_mask(i)
         for j, instance in enumerate(masks.mask):
-            prompt_point = masks.points[j][:2].astype(np.int32)
-            confidence = float(masks.points[j][2])
+            prompt_point = masks.points[j].astype(np.int32)
+            confidence = float(masks.scores[j])
             masked_img = np.where(instance[..., None], colors[i], image_target)
             image_target = cv2.addWeighted(image_target, 0.2, masked_img, 0.8, 0)
             print(f"Reference point: {prompt_point}, point score: {confidence:.3f}")
