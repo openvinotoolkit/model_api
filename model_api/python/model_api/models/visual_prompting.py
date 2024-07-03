@@ -145,7 +145,19 @@ class SAMLearnableVisualPrompter:
         encoder_model: SAMImageEncoder,
         decoder_model: SAMDecoder,
         reference_features: VisualPromptingFeatures | None = None,
+        threshold: float = 0.65,
     ):
+        """
+        Initializes ZSL pipeline.
+
+        Args:
+            encoder_model (SAMImageEncoder): initialized decoder wrapper
+            decoder_model (SAMDecoder): initialized encoder wrapper
+            reference_features (VisualPromptingFeatures | None, optional): Previously generated reference features.
+             Once the features are passed, one can skip learn() method, and start predicting masks right away. Defaults to None.
+            threshold (float, optional): Threshold to match vs reference features on infer(). Greater value means a
+            stricter matching. Defaults to 0.65.
+        """
         self.encoder = encoder_model
         self.decoder = decoder_model
 
@@ -160,9 +172,12 @@ class SAMLearnableVisualPrompter:
         self._has_mask_inputs = [np.array([[0.0]]), np.array([[1.0]])]
 
         self._is_cascade: bool = False
-        self._threshold: float = 0.0
+        if 0 <= threshold <= 1:
+            self._threshold: float = threshold
+        else:
+            raise ValueError("Confidence threshold should belong to [0;1] range.")
         self._num_bg_points: int = 1
-        self._default_threshold_target: float = 0.65
+        self._default_threshold_target: float = 0.0
         self._image_size: int = self.encoder.image_size
         self._downsizing: int = 64
         self._default_threshold_reference: float = 0.3

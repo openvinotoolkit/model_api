@@ -11,7 +11,7 @@ Install Model API from source. Please refer to the main [README](../../../README
 ## Run example
 To run the example, please execute the following command:
 ```bash
-python run.py <path_to_image> <encoder_path>, <decoder_path>, <prompts>
+python run.py <path_to_image> <encoder_path> <decoder_path> <prompts>
 ```
 where prompts are in X Y format.
 

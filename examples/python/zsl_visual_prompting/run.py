@@ -36,6 +36,7 @@ def main():
     parser.add_argument("encoder_path", type=str)
     parser.add_argument("decoder_path", type=str)
     parser.add_argument("prompts", nargs="+", type=int)
+    parser.add_argument("-t", "--threshold", type=float, default=0.65)
     args = parser.parse_args()
 
     image = cv2.imread(args.image_source)
@@ -48,7 +49,7 @@ def main():
 
     encoder = Model.create_model(args.encoder_path)
     decoder = Model.create_model(args.decoder_path)
-    zsl_sam_prompter = SAMLearnableVisualPrompter(encoder, decoder)
+    zsl_sam_prompter = SAMLearnableVisualPrompter(encoder, decoder, threshold=args.threshold)
 
     all_prompts = []
     for i, p in enumerate(np.array(args.prompts).reshape(-1, 2)):
