@@ -1,6 +1,6 @@
 # ActionClassification Wrapper
 
-## Use Case and High-Level Description
+## Use case and high-level description
 
 The `ActionClassificationModel` is a wrapper class designed for action classification models.
 This class allows to encapsulate data pre-and post processing for action classification OpenVINO models satisfying
@@ -19,7 +19,7 @@ The following parameters can be provided via python API or RT Info embedded into
 - `reverse_input_channels` (`bool`) : Whether to reverse the order of input channels.
 - `scale_values` (`list[int | float]`): Normalization values used to divide the image channels during preprocessing.
 
-## OV model specifications
+## OV Model specifications
 
 ### Inputs
 
