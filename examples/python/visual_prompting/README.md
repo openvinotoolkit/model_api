@@ -17,6 +17,7 @@ where prompts are in X Y format.
 
 To run the pipeline out-of-the box you can download the test data by running the following command from the repo root:
 ```bash
+pip install httpx
 python tests/python/accuracy/prepare_data.py -d data
 ```
 and then run

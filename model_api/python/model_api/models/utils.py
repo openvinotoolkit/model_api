@@ -173,16 +173,18 @@ class PredictedMask(NamedTuple):
         obj_str += f"mask sum: {np.sum(sum(self.mask))}; "
 
         if isinstance(self.points, list):
-            for point in self.points:
+            for i, point in enumerate(self.points):
                 obj_str += "["
                 obj_str += ", ".join(str(round(c, 2)) for c in point)
                 obj_str += "] "
+                obj_str += "iou: " + f"{float(self.scores[i]):.3f} "
         else:
             for i in range(self.points.shape[0]):
                 point = self.points[i]
                 obj_str += "["
                 obj_str += ", ".join(str(round(c, 2)) for c in point)
                 obj_str += "] "
+                obj_str += "iou: " + f"{float(self.scores[i]):.3f} "
 
         return obj_str.strip()
 

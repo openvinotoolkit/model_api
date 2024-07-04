@@ -1,5 +1,5 @@
 # Zero-shot Segment Anything example
-This example demonstrates how to use a Python API implementation of Segment Anything pipeline inference:
+This example demonstrates how to use a Python API implementation of Zero-shot Segment Anything pipeline inference:
 - Create encoder and decoder models
 - Create a zero-shot visual prompter pipeline
 - Use points as prompts to learn on one image
@@ -14,10 +14,12 @@ To run the example, please execute the following command:
 ```bash
 python run.py <path_to_source_image> <path_to_target_image> <encoder_path> <decoder_path> <prompts> -t <mask confidence threshold>
 ```
-where prompts are in X Y format.
+where prompts are in X Y format. `t` is a threshold to match the reference features from the source image vs features obtained from the target image.
+Higher thresholds leads to lower mask recall in the final prediction, i.e. low confidence masks can be filtered.
 
 To run the pipeline out-of-the box you can download the test data by running the following command from the repo root:
 ```bash
+pip install httpx
 python tests/python/accuracy/prepare_data.py -d data
 ```
 and then run
