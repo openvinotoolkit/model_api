@@ -44,7 +44,7 @@ A single tensor containing softmax-activated logits.
 
 A single clip in THWC format.
 
-## Outputs
+### Outputs
 
 The output is represented as a `ClassificationResult` object, which includes the indices, labels, and logits of the top predictions.
 At present, saliency maps, feature vectors, and raw scores are not provided.
