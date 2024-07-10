@@ -14,12 +14,15 @@
  limitations under the License.
 """
 
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
+
+import copy
 import json
 from typing import Dict
 
 import numpy as np
-from openvino import Model, Type
 from openvino.preprocess import PrePostProcessor
+from openvino.runtime import Model, Type
 from openvino.runtime import opset10 as opset
 
 from .image_model import ImageModel
@@ -48,6 +51,7 @@ class ClassificationModel(ImageModel):
             self.raw_scores_name = self.out_layer_names[0]
             self.hierarchical_info = json.loads(self.hierarchical_config)
             self.labels_resolver = GreedyLabelsResolver(self.hierarchical_info)
+            #self.labels_resolver = ProbabilisticLabelsResolver(self.hierarchical_info)
             if preload:
                 self.load()
             return
@@ -221,6 +225,7 @@ class ClassificationModel(ImageModel):
 
     def get_hierarchical_predictions(self, logits: np.ndarray):
         predicted_labels = []
+        predicted_indexes = []
         predicted_scores = []
         cls_heads_info = self.hierarchical_info["cls_heads_info"]
         for i in range(cls_heads_info["num_multiclass_heads"]):
@@ -233,6 +238,7 @@ class ClassificationModel(ImageModel):
             label_str = cls_heads_info["all_groups"][i][j]
             predicted_labels.append(label_str)
             predicted_scores.append(head_logits[j])
+            predicted_indexes.append(cls_heads_info["label_to_idx"][label_str])
 
         if cls_heads_info["num_multilabel_classes"]:
             logits_begin = cls_heads_info["num_single_label_classes"]
@@ -246,9 +252,11 @@ class ClassificationModel(ImageModel):
                     ][0]
                     predicted_labels.append(label_str)
                     predicted_scores.append(head_logits[i])
+                    predicted_indexes.append(cls_heads_info["label_to_idx"][label_str])
 
         predictions = zip(predicted_labels, predicted_scores)
         return self.labels_resolver.resolve_labels(predictions)
+        #return zip(predicted_indexes, predicted_labels, predicted_scores)
 
     def get_multilabel_predictions(self, logits: np.ndarray):
         logits = sigmoid_numpy(logits)
@@ -418,6 +426,179 @@ class GreedyLabelsResolver:
         return output_predictions
 
 
+class ProbabilisticLabelsResolver(GreedyLabelsResolver):
+    def __init__(self, hierarchical_config) -> None:
+        super().__init__(hierarchical_config)
+        self.label_tree = LabelTree()
+        for label in self.label_to_idx:
+            self.label_tree.add_node(label)
+
+        for child, parent in self.label_relations:
+            self.label_tree.add_child(parent, child)
+
+    def _get_children(self, label):
+        children = []
+        for child, parent in self.label_relations:
+            if label == parent:
+                children.append(child)
+
+        return children
+
+    def resolve_labels(self, predictions):
+        """Resolves hierarchical labels and exclusivity based on a list of ScoredLabels (labels with probability).
+
+        The following two steps are taken:
+
+        - selects the most likely label from an exclusive (multiclass) group
+        - removes children of "not-most-likely" (non-max) parents in an exclusive group (top-down approach)
+
+        The method is intended to post-process the output of probabilistic systems such as predictions coming from
+        machine learning methods to resolve ambiguities and logical impossibilities. When processing (non-probabilistic)
+        user input please use `complete_labels` instead.
+
+        Args:
+            predictions (List[ScoredLabel]): a list of tuples (label name, score)
+        """
+        label_to_prob = {}
+        for lbl, score in predictions:
+            label_to_prob[lbl] = score
+        print(len(label_to_prob), "pred")
+        res = self.__resolve_labels_probabilistic(label_to_prob)
+        print(len(list(res)))
+        return res
+
+    def __resolve_labels_probabilistic(
+        self,
+        label_to_probability,
+    ):
+        """Resolves hierarchical labels and exclusivity based on a probabilistic label output.
+
+        - selects the most likely (max) label from an exclusive group
+        - removes children of non-max parents in an exclusive group
+
+        See `resolve_labels_probabilistic` for parameter descriptions
+
+        Args:
+            label_to_probability : map from label to float.
+
+        Returns:
+            List of labels with probability
+        """
+        # add (potentially) missing ancestors labels for children with probability 0
+        # this is needed so that suppression of children of non-max exclusive labels works when the exclusive
+        # group has only one member
+        label_to_probability = self._add_missing_ancestors(label_to_probability)
+
+        hard_classification = self._resolve_exclusive_labels(label_to_probability)
+
+        # suppress the output of children of parent nodes that are not the most likely label within their group
+        resolved = self._suppress_descendant_output(hard_classification)
+
+        result = []
+        for lbl, probability in resolved.items():
+            if probability > 0:  # only return labels with non-zero probability
+                result.append((self.label_to_idx[lbl], lbl,
+                            # retain the original probability in the output
+                            probability * label_to_probability.get(lbl, 1.0)
+                               ))
+        return result
+
+    def _suppress_descendant_output(self, hard_classification: dict[str, float]) -> dict[str, float]:
+        """Suppresses outputs in `label_to_probability`.
+
+        Sets probability to 0.0 for descendants of parents that have 0 probability in `hard_classification`.
+        """
+
+        # Input: Conditional probability of each label given its parent label
+        # Output: Marginal probability of each label
+
+        # We recursively compute the marginal probability of each node by multiplying the conditional probability
+        # with the marginal probability of its parent. That is:
+        # P(B) = P(B|A) * P(A)
+        # The recursion is done a topologically sorted list of labels to ensure that the marginal probability
+        # of the parent label has been computed before trying to compute the child's probability.
+
+        label_tree = self.label_tree
+        all_labels = label_tree.get_labels_in_topological_order()
+
+        for child in all_labels:
+            if child in hard_classification:
+                # Get the immediate parents (should be at most one element; zero for root labels)
+                parents = label_tree.neighbors(child)
+
+                if len(parents) > 0:
+                    parent = parents[0]
+                    if parent in hard_classification:
+                        hard_classification[child] *= hard_classification[parent]
+
+        return hard_classification
+
+    def _resolve_exclusive_labels(self, label_to_probability: dict[str, float]) -> dict[str, float]:
+        """Resolve exclusive labels.
+
+        For labels in `label_to_probability` sets labels that are most likely (maximum probability) in their exclusive
+        group to 1.0 and other (non-max) labels to probability 0.
+        """
+        hard_classification: Dict[str, float] = {}
+        top_level_labels_in_label_schema = [
+            label_ for label_ in self.label_tree.get_labels_in_topological_order() if self._get_parent(label_) is None
+        ]
+
+        for label, probability in label_to_probability.items():
+            if label not in hard_classification:
+                label_parent = self._get_parent(label)
+                if label_parent is None:
+                    # The label itself is a top-level label
+                    exclusive_neighbours = [label_ for label_ in top_level_labels_in_label_schema if label_ != label]
+                else:
+                    exclusive_neighbours = [label_ for label_ in self._get_children(label_parent) if label_ != label]
+
+                probabilities = [probability]
+                neighbours_ = [label]
+                for neighbor in exclusive_neighbours:
+                    neighbours_.append(neighbor)
+                    probabilities.append(label_to_probability.get(neighbor, 0))
+                if len(probabilities) > 1:
+                    max_index = np.argmax(probabilities)
+                    for idx, neighbor in enumerate(neighbours_):
+                        hard_classification[neighbor] = float(max_index == idx)
+                else:
+                    # single node group, interpret as multilabel node
+                    hard_classification[label] = float(label_to_probability[label] > 0.0)
+        return hard_classification
+
+    def _get_ancestors(self, label):
+        """Returns all the ancestors of the input label, including self."""
+
+        predecessors = [label]
+        last_parent = self._get_parent(label)
+        if last_parent is None:
+            return [label]
+
+        while last_parent is not None:
+            predecessors.append(last_parent)
+            last_parent = self._get_parent(last_parent)
+
+        if predecessors:
+            predecessors.append(label)
+        return predecessors
+
+    def _add_missing_ancestors(
+        self,
+        label_to_probability: dict[str, float],
+    ) -> dict[str, float]:
+        """Adds missing ancestors to the `label_to_probability` map.
+        """
+        updated_label_to_probability = copy.deepcopy(label_to_probability)
+        for label in label_to_probability:
+            for ancestor in self._get_ancestors(label):
+                if ancestor not in updated_label_to_probability:
+                    updated_label_to_probability[ancestor] = (
+                        0.0  # by default missing ancestors get probability 0.0
+                    )
+        return updated_label_to_probability
+
+
 _saliency_map_name = "saliency_map"
 _feature_vector_name = "feature_vector"
 _raw_scores_name = "raw_scores"
@@ -436,3 +617,133 @@ def _append_xai_names(outputs, output_names):
         output_names.append(_saliency_map_name)
     if _feature_vector_name in outputs:
         output_names.append(_feature_vector_name)
+
+from otx.api.entities.graph import MultiDiGraph
+
+
+class LabelTree(MultiDiGraph):
+    """Represents a hierarchy of labels in the form a tree.
+
+    The tree is represented by a directed graph
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.__topological_order_cache = None
+
+    def add_edge(self, node1, node2, edge_value=None):
+        """Add edge between two nodes in the tree.
+
+        Args:
+            node1: first node
+            node2: second node
+            edge_value: The value of the new edge. Defaults to None.
+        """
+        super().add_edge(node1, node2, edge_value)
+        self.clear_topological_cache()
+
+    def add_node(self, node):
+        """Add node to the tree."""
+        super().add_node(node)
+        self.clear_topological_cache()
+
+    def add_edges(self, edges):
+        """Add edges between Labels."""
+        self._graph.add_edges_from(edges)
+        self.clear_topological_cache()
+
+    def remove_node(self, node):
+        """Remove node from the tree."""
+        super().remove_node(node)
+        self.clear_topological_cache()
+
+    @property
+    def num_labels(self):
+        """Return the number of labels in the tree."""
+        return self.num_nodes()
+
+    def clear_topological_cache(self):
+        """Clear the internal cache of the list of labels sorted in topological order.
+
+        This function should be called if the topology of the graph has changed to
+            prevent the cache from being stale.
+        Note that it is automatically called when modifying the topology through the
+            methods provided by this class.
+        """
+        self.__topological_order_cache = None
+
+    def get_labels_in_topological_order(self):
+        """Return a list of the labels in this graph sorted in topological order.
+
+        To avoid performance issues, the output of this function is cached.
+
+        Returns:
+            List[LabelEntity]: sorted list of labels
+        """
+        if self.__topological_order_cache is None:
+            # TODO: It seems that we are storing the edges the wrong way around.
+            #       To work around this issue, we have to reverse the sorted list.
+            self.__topological_order_cache = list(reversed(list(self.topological_sort())))
+
+        #print(self.__topological_order_cache)
+        return self.__topological_order_cache
+
+    @property
+    def type(self):
+        """Returns the type of the LabelTree."""
+        return "tree"
+
+    def add_child(self, parent, child):
+        """Add a `child` Label to `parent`."""
+        self.add_edge(child, parent)
+        self.clear_topological_cache()
+
+    def get_parent(self, label):
+        """Returns the parent of `label`.
+
+        Returns:
+            the parent if it has one otherwise None
+        """
+        result = self.neighbors(label)
+        return result[0] if len(result) > 0 else None
+
+    def get_children(self, parent):
+        """Returns children of `parent`."""
+        if parent not in self._graph.nodes:
+            return []
+        return list(self._graph.predecessors(parent))  # pylint: disable=no-member
+
+    def get_descendants(self, parent):
+        """Returns descendants (children and children of children, etc.) of `parent`."""
+        return self.descendants(parent)
+
+    def get_siblings(self, label):
+        """Returns the siblings of a label."""
+        parent = self.get_parent(label)
+        if parent is None:
+            siblings = []
+        else:
+            siblings = [u for u, v in self._graph.in_edges(parent) if u != label]  # pylint: disable=no-member
+        return siblings
+
+    def get_ancestors(self, label):
+        """Returns ancestors of `label`, including self."""
+        result = []
+        parent = label
+        while parent is not None:
+            result.append(parent)
+            parent = self.get_parent(parent)
+        return result
+
+    def subgraph(self, labels):
+        """Return the subgraph containing the given labels."""
+        new_graph = LabelTree()
+        new_graph.set_graph(self.get_graph().subgraph(labels).copy())
+        return new_graph
+
+    def __eq__(self, other) -> bool:
+        """Check if two LabelTrees are equal."""
+        if isinstance(other, LabelTree):
+            return super().__eq__(other)
+        return False
