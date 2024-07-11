@@ -290,7 +290,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000081.jpg",
-                "reference": ["5 (triangle): 0.993, 3 (equilateral): 0.596, 1 (multi a): 0.922, 2 (multi b): 0.696, [0], [0], [0]"]
+                "reference": ["3 (equilateral): 0.596, 5 (triangle): 0.993, 1 (multi a): 0.922, 2 (multi b): 0.696, [0], [0], [0]"]
             }
         ]
     },
