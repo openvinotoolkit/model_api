@@ -431,8 +431,10 @@ class GreedyLabelsResolver:
 
 
 class ProbabilisticLabelsResolver(GreedyLabelsResolver):
-    def __init__(self, hierarchical_config) -> None:
+    def __init__(self, hierarchical_config, warmup_cache=True) -> None:
         super().__init__(hierarchical_config)
+        if warmup_cache:
+            self.label_tree.get_labels_in_topological_order()
 
     def resolve_labels(self, predictions):
         """Resolves hierarchical labels and exclusivity based on a list of ScoredLabels (labels with probability).
@@ -572,7 +574,7 @@ class SimpleLabelsGraph:
         predecessors = [label]
         last_parent = self.get_parent(label)
         if last_parent is None:
-            return [label]
+            return predecessors
 
         while last_parent is not None:
             predecessors.append(last_parent)
@@ -589,8 +591,8 @@ class SimpleLabelsGraph:
     def topological_sort(self):
         in_degree = defaultdict(int)
 
-        for node in self._v:
-            for j in self._adj[node]:
+        for node_adj in self._adj.values():
+            for j in node_adj:
                 in_degree[j] += 1
 
         nodes_deque = []
@@ -598,9 +600,7 @@ class SimpleLabelsGraph:
             if in_degree[node] == 0:
                 nodes_deque.append(node)
 
-        visited_count = 0
         ordered = []
-
         while nodes_deque:
             u = nodes_deque.pop(0)
             ordered.append(u)
@@ -610,9 +610,7 @@ class SimpleLabelsGraph:
                 if in_degree[node] == 0:
                     nodes_deque.append(node)
 
-            visited_count += 1
-
-        if visited_count != len(self._v):
+        if len(ordered) != len(self._v):
             raise RuntimeError(
                 "Topological sort failed: input graph has been"
                 "changed during the sorting or contains a cycle"
