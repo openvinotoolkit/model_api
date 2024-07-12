@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 
 #include "models/image_model.h"
 
@@ -58,8 +59,8 @@ class SimpleLabelsGraph {
 
     protected:
         std::vector<std::string> vertices;
-        std::map<std::string, std::vector<std::string>> adj;
-        std::map<std::string, std::string> parents_map;
+        std::unordered_map<std::string, std::vector<std::string>> adj;
+        std::unordered_map<std::string, std::string> parents_map;
         bool t_sort_cache_valid = false;
         std::vector<std::string> topological_order_cache;
 
@@ -71,8 +72,8 @@ class GreedyLabelsResolver {
         GreedyLabelsResolver() = default;
         GreedyLabelsResolver(const HierarchicalConfig&);
 
-        std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
-                                                                               const std::vector<float>& scores);
+        virtual std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
+                                                                                       const std::vector<float>& scores);
     protected:
         std::map<std::string, int> label_to_idx;
         std::vector<std::pair<std::string, std::string>> label_relations;
@@ -87,10 +88,10 @@ class ProbabilisticLabelsResolver : public GreedyLabelsResolver {
         ProbabilisticLabelsResolver() = default;
         ProbabilisticLabelsResolver(const HierarchicalConfig&);
 
-        std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
-                                                                               const std::vector<float>& scores);
-        std::map<std::string, float> add_missing_ancestors(const std::map<std::string, float>&) const;
-        std::map<std::string, float> resolve_exclusive_labels(const std::map<std::string, float>&) const;
+        virtual std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
+                                                                                       const std::vector<float>& scores);
+        std::unordered_map<std::string, float> add_missing_ancestors(const std::unordered_map<std::string, float>&) const;
+        std::map<std::string, float> resolve_exclusive_labels(const std::unordered_map<std::string, float>&) const;
         void suppress_descendant_output(std::map<std::string, float>&);
     protected:
         SimpleLabelsGraph label_tree;
@@ -117,8 +118,9 @@ protected:
     bool output_raw_scores = false;
     float confidence_threshold = 0.5f;
     std::string hierarchical_config;
+    std::string hierarchical_postproc = "probabilistic";
     HierarchicalConfig hierarchical_info;
-    GreedyLabelsResolver resolver;
+    std::unique_ptr<GreedyLabelsResolver> resolver;
 
     void init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority);
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
@@ -127,5 +129,4 @@ protected:
     std::unique_ptr<ResultBase> get_multiclass_predictions(InferenceResult& infResult, bool add_raw_scores);
     std::unique_ptr<ResultBase> get_hierarchical_predictions(InferenceResult& infResult, bool add_raw_scores);
     ov::Tensor reorder_saliency_maps(const ov::Tensor&);
-
 };

@@ -229,7 +229,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000471.jpg",
-                "reference": ["3 (Non-Rigid): 0.503, 4 (Circle): 0.943, 5 (Lion): 0.969, 6 (Panda): 0.988, [1,7,7,7], [1,7], [0]"]
+                "reference": ["4 (Circle): 0.943, 5 (Lion): 0.969, 3 (Non-Rigid): 0.503, 6 (Panda): 0.988, [1,7,7,7], [1,7], [0]"]
             }
         ]
     },
@@ -290,7 +290,7 @@
         "test_data": [
             {
                 "image": "coco128/images/train2017/000000000081.jpg",
-                "reference": ["3 (equilateral): 0.596, 5 (triangle): 0.993, 1 (multi a): 0.922, 2 (multi b): 0.696, [0], [0], [0]"]
+                "reference": ["3 (equilateral): 0.596, 1 (multi a): 0.922, 2 (multi b): 0.696, 5 (triangle): 0.993, [0], [0], [0]"]
             }
         ]
     },

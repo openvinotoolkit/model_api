@@ -481,7 +481,7 @@ class ProbabilisticLabelsResolver(GreedyLabelsResolver):
         resolved = self._suppress_descendant_output(hard_classification)
 
         result = []
-        for lbl, probability in resolved.items():
+        for lbl, probability in sorted(resolved.items()):
             if probability > 0:  # only return labels with non-zero probability
                 result.append(
                     (

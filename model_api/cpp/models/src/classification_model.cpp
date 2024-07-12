@@ -216,12 +216,21 @@ void ClassificationModel::init_from_config(const ov::AnyMap& top_priority, const
     output_raw_scores = get_from_any_maps("output_raw_scores", top_priority, mid_priority, output_raw_scores);
     hierarchical = get_from_any_maps("hierarchical", top_priority, mid_priority, hierarchical);
     hierarchical_config = get_from_any_maps("hierarchical_config", top_priority, mid_priority, hierarchical_config);
+    hierarchical_postproc = get_from_any_maps("hierarchical_postproc", top_priority, mid_priority, hierarchical_postproc);
     if (hierarchical) {
         if (hierarchical_config.empty()) {
             throw std::runtime_error("Error: empty hierarchical classification config");
         }
         hierarchical_info = HierarchicalConfig(hierarchical_config);
-        resolver = GreedyLabelsResolver(hierarchical_info);
+        if (hierarchical_postproc == "probabilistic") {
+            resolver = std::make_unique<ProbabilisticLabelsResolver>(hierarchical_info);
+        }
+        else if (hierarchical_postproc == "greedy") {
+            resolver = std::make_unique<GreedyLabelsResolver>(hierarchical_info);
+        }
+        else {
+            throw std::runtime_error("Wrong hierarchical labels postprocessing type");
+        }
     }
 }
 
@@ -247,6 +256,7 @@ void ClassificationModel::updateModelInfo() {
     model->set_rt_info(output_raw_scores, "model_info", "output_raw_scores");
     model->set_rt_info(confidence_threshold, "model_info", "confidence_threshold");
     model->set_rt_info(hierarchical_config, "model_info", "hierarchical_config");
+    model->set_rt_info(hierarchical_postproc, "model_info", "hierarchical_postproc");
 }
 
 std::unique_ptr<ClassificationModel> ClassificationModel::create_model(const std::string& modelFile, const ov::AnyMap& configuration, bool preload, const std::string& device) {
@@ -390,7 +400,7 @@ std::unique_ptr<ResultBase> ClassificationModel::get_hierarchical_predictions(In
         }
     }
 
-    auto resolved_labels = resolver.resolve_labels(predicted_labels, predicted_scores);
+    auto resolved_labels = resolver->resolve_labels(predicted_labels, predicted_scores);
 
     auto retVal = std::unique_ptr<ResultBase>(result);
     result->topLabels.reserve(resolved_labels.first.size());
@@ -714,7 +724,7 @@ std::vector<std::string> SimpleLabelsGraph::get_labels_in_topological_order() {
 }
 
 std::vector<std::string> SimpleLabelsGraph::topological_sort() {
-    auto in_degree = std::map<std::string, size_t>();
+    auto in_degree = std::unordered_map<std::string, size_t>();
     for (const auto& node : vertices) {
         in_degree[node] = 0;
     }
@@ -764,6 +774,7 @@ ProbabilisticLabelsResolver::ProbabilisticLabelsResolver(const HierarchicalConfi
     for (const auto& item : label_relations) {
         label_tree.add_edge(item.second, item.first);
     }
+    label_tree.get_labels_in_topological_order();
 }
 
 std::pair<std::vector<std::string>, std::vector<float>> ProbabilisticLabelsResolver::resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
@@ -772,7 +783,7 @@ std::pair<std::vector<std::string>, std::vector<float>> ProbabilisticLabelsResol
         throw std::runtime_error("Inconsistent number of labels and scores");
     }
 
-    std::map<std::string, float> label_to_prob;
+    std::unordered_map<std::string, float> label_to_prob;
     for (size_t i = 0; i < labels.size(); ++i) {
         label_to_prob[labels[i]] = scores[i];
     }
@@ -799,8 +810,8 @@ std::pair<std::vector<std::string>, std::vector<float>> ProbabilisticLabelsResol
     return {output_labels, output_scores};
 }
 
-std::map<std::string, float> ProbabilisticLabelsResolver::add_missing_ancestors(const std::map<std::string, float>& label_to_prob) const {
-    std::map<std::string, float> updated_label_to_probability(label_to_prob);
+std::unordered_map<std::string, float> ProbabilisticLabelsResolver::add_missing_ancestors(const std::unordered_map<std::string, float>& label_to_prob) const {
+    std::unordered_map<std::string, float> updated_label_to_probability(label_to_prob);
     for (const auto& item : label_to_prob) {
         for (const auto& ancestor : label_tree.get_ancestors(item.first)) {
             if (updated_label_to_probability.find(ancestor) == updated_label_to_probability.end()) {
@@ -811,7 +822,7 @@ std::map<std::string, float> ProbabilisticLabelsResolver::add_missing_ancestors(
     return updated_label_to_probability;
 }
 
-std::map<std::string, float> ProbabilisticLabelsResolver::resolve_exclusive_labels(const std::map<std::string, float>& label_to_prob) const {
+std::map<std::string, float> ProbabilisticLabelsResolver::resolve_exclusive_labels(const std::unordered_map<std::string, float>& label_to_prob) const {
     std::map<std::string, float> hard_classification;
 
     for (const auto& item : label_to_prob) {
