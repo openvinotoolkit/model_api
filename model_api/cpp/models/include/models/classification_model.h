@@ -72,7 +72,7 @@ class GreedyLabelsResolver {
         GreedyLabelsResolver() = default;
         GreedyLabelsResolver(const HierarchicalConfig&);
 
-        virtual std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
+        virtual std::map<std::string, float> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
                                                                                        const std::vector<float>& scores);
     protected:
         std::map<std::string, int> label_to_idx;
@@ -88,7 +88,7 @@ class ProbabilisticLabelsResolver : public GreedyLabelsResolver {
         ProbabilisticLabelsResolver() = default;
         ProbabilisticLabelsResolver(const HierarchicalConfig&);
 
-        virtual std::pair<std::vector<std::string>, std::vector<float>> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
+        virtual std::map<std::string, float> resolve_labels(const std::vector<std::reference_wrapper<std::string>>& labels,
                                                                                        const std::vector<float>& scores);
         std::unordered_map<std::string, float> add_missing_ancestors(const std::unordered_map<std::string, float>&) const;
         std::map<std::string, float> resolve_exclusive_labels(const std::unordered_map<std::string, float>&) const;
@@ -118,7 +118,7 @@ protected:
     bool output_raw_scores = false;
     float confidence_threshold = 0.5f;
     std::string hierarchical_config;
-    std::string hierarchical_postproc = "probabilistic";
+    std::string hierarchical_postproc = "greedy";
     HierarchicalConfig hierarchical_info;
     std::unique_ptr<GreedyLabelsResolver> resolver;
 

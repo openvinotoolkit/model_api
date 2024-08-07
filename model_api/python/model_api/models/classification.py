@@ -160,7 +160,7 @@ class ClassificationModel(ImageModel):
                     description="Output all scores for multiclass classification",
                 ),
                 "hierarchical_postproc": StringValue(
-                    default_value="probabilistic",
+                    default_value="greedy",
                     choices=("probabilistic", "greedy"),
                     description="Type of hierarchical postprocessing",
                 ),
@@ -425,7 +425,7 @@ class GreedyLabelsResolver:
                     output_labels.append(new_lbl)
 
         output_predictions = [
-            (self.label_to_idx[lbl], lbl, label_to_prob[lbl]) for lbl in output_labels
+            (self.label_to_idx[lbl], lbl, label_to_prob[lbl]) for lbl in sorted(output_labels)
         ]
         return output_predictions
 
