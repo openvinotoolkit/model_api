@@ -425,7 +425,8 @@ class GreedyLabelsResolver:
                     output_labels.append(new_lbl)
 
         output_predictions = [
-            (self.label_to_idx[lbl], lbl, label_to_prob[lbl]) for lbl in sorted(output_labels)
+            (self.label_to_idx[lbl], lbl, label_to_prob[lbl])
+            for lbl in sorted(output_labels)
         ]
         return output_predictions
 
