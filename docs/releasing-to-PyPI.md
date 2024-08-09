@@ -7,4 +7,4 @@ py -m twine upload --username __token__ model_api/python/dist/*
 git tag X.Y.Z
 git push upstream X.Y.Z
 ```
-Pull request to increment `version` in `setup.py` for the next release.
+Pull request to increment `version` in `pyproject.toml` for the next release.
