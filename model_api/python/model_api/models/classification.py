@@ -387,18 +387,14 @@ class GreedyLabelsResolver:
         def get_predecessors(lbl, candidates):
             """Returns all the predecessors of the input label or an empty list if one of the predecessors is not a candidate."""
             predecessors = []
-            last_parent = self.label_tree.get_parent(lbl)
-            if last_parent is None:
-                return [lbl]
 
+            last_parent = self.label_tree.get_parent(lbl)
             while last_parent is not None:
                 if last_parent not in candidates:
                     return []
                 predecessors.append(last_parent)
                 last_parent = self.label_tree.get_parent(last_parent)
-
-            if predecessors:
-                predecessors.append(lbl)
+            predecessors.append(lbl)
             return predecessors
 
         label_to_prob = {lbl: 0.0 for lbl in self.label_to_idx.keys()}
@@ -560,6 +556,7 @@ class SimpleLabelsGraph:
     Class representing a tree. It implements basic operations
     like adding edges, getting children and parents.
     """
+
     def __init__(self, vertices):
         self._v = vertices
         self._adj = defaultdict(list)
