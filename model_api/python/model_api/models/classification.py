@@ -374,10 +374,14 @@ class GreedyLabelsResolver:
             self.label_tree.add_edge(parent, child)
 
     def resolve_labels(self, predictions):
-        """Resolves hierarchical labels and exclusivity based on a list of ScoredLabels (labels with probability).
+        """
+        Resolves hierarchical labels and exclusivity based on a list of ScoredLabels (labels with probability).
         The following two steps are taken:
         - select the most likely label from each label group
         - add it and it's predecessors if they are also most likely labels (greedy approach).
+
+        Args:
+            predictions: a list of tuples (label name, score)
         """
 
         def get_predecessors(lbl, candidates):
@@ -552,6 +556,10 @@ class ProbabilisticLabelsResolver(GreedyLabelsResolver):
 
 
 class SimpleLabelsGraph:
+    """
+    Class representing a tree. It implements basic operations
+    like adding edges, getting children and parents.
+    """
     def __init__(self, vertices):
         self._v = vertices
         self._adj = defaultdict(list)
