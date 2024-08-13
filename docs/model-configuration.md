@@ -1,7 +1,7 @@
 # Model configuration
 Model's static method `create_model()` has two overloads. One constructs the model from a string (a path or a model name) and the other takes an already constructed `InferenceAdapter`. The first overload configures a created model with values taken from `configuration` dict function argument and from model's intermediate representation (IR) stored in `.xml` in `model_info` section of `rt_info`. Values provided in `configuration` have priority over values in IR `rt_info`. If no value is specified in `configuration` nor in `rt_info` the default value for a model wrapper is used. For Python configuration values are accessible as model wrapper member fields.
 ## List of values
-The list features only model wrappers which intoduce new configuration values in their hirachy.
+The list features only model wrappers which introduce new configuration values in their hierarchy.
 1. `model_type`: str - name of a model wrapper to be created
 1. `layout`: str - layout of input data in the format: "input0:NCHW,input1:NC"
 
@@ -29,7 +29,7 @@ The list features only model wrappers which intoduce new configuration values in
 1. `hierarchical`: bool - predict a hierarchy of labels per image hierarchical_config
 1. `confidence_threshold`: float - probability threshold value for multilabel or hierarchical predictions filtering
 1. `hierarchical_config`: str - a serialized configuration for decoding hierarchical predictions
-1. `output_raw_scores`: bool - output all scores for multiclass classificaiton
+1. `output_raw_scores`: bool - output all scores for multiclass classification
 #### `DetectionModel` and its subclasses
 1. `confidence_threshold`: float - probability threshold value for bounding box filtering
 1. `labels`: List - List of class labels
@@ -59,14 +59,14 @@ The list features only model wrappers which intoduce new configuration values in
 1. `aspect_ratio`: float - image aspect ratio which is going to be processed. Reshapes network to match a given size
 1. `confidence_threshold`: float - pose confidence threshold
 1. `delta`: float
-1. `size_divisor`: int - width and height of the rehaped model will be a multiple of this value
+1. `size_divisor`: int - width and height of the reshaped model will be a multiple of this value
 1. `padding_mode`: str - center or right_bottom
 #### `OpenPose`
 1. `target_size`: int - image resolution which is going to be processed. Reshapes network to match a given size
 1. `aspect_ratio`: float - image aspect ratio which is going to be processed. Reshapes network to match a given size
 1. `confidence_threshold`: float - pose confidence threshold
 1. `upsample_ratio`: int - upsample ratio of a model backbone
-1. `size_divisor`: int - width and height of the rehaped model will be a multiple of this value
+1. `size_divisor`: int - width and height of the reshaped model will be a multiple of this value
 #### `MaskRCNNModel`
 1. `confidence_threshold`: float - probability threshold value for bounding box filtering
 1. `labels`: List - list of class labels

@@ -2,13 +2,13 @@
 Model API is a set of wrapper classes for particular tasks and model architectures, simplifying data preprocess and postprocess as well as routine procedures (model loading, asynchronous execution, etc.). It is aimed at simplifying end-to-end model inference for different deployment scenarious, including local execution and serving. The Model API is based on the OpenVINO inference API.
 
 ## How it works
-Model API searches for additional information required for model inference, data, pre/postprocessing, label names, etc. directly in OpenVINO Intermediate Representation. This information is used to prepare the inference data, process and ouput the inference results in a human-readable format.
+Model API searches for additional information required for model inference, data, pre/postprocessing, label names, etc. directly in OpenVINO Intermediate Representation. This information is used to prepare the inference data, process and output the inference results in a human-readable format.
 
 ## Features
 - Python and C++ API
 - Automatic prefetch of public models from [OpenVINO Model Zoo](https://github.com/openvinotoolkit/open_model_zoo) (Python only)
-- Syncronous and asynchronous inference
-- Local inference and servring through the rest API (Python only)
+- Synchronous and asynchronous inference
+- Local inference and serving through the rest API (Python only)
 - Model preprocessing embedding for faster inference
 
 ## Installation
