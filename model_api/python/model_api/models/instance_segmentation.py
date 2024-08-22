@@ -201,11 +201,14 @@ class MaskRCNNModel(ImageModel):
                 confidence <= self.confidence_threshold and not has_feature_vector_name
             ):
                 continue
-            str_label = (
-                self.labels[cls]
-                if self.labels and cls < len(self.labels)
-                else f"#{cls}"
-            )
+
+            # Skip if label index is out of bounds
+            if self.labels and cls >= len(self.labels):
+                continue
+
+            # Get label string
+            str_label = self.labels[cls] if self.labels else f"#{cls}"
+
             raw_cls_mask = raw_mask[cls, ...] if self.is_segmentoly else raw_mask
             if self.postprocess_semantic_masks or has_feature_vector_name:
                 resized_mask = _segm_postprocess(
