@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2019 Intel Corporation
+# Copyright (C) 2018-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -92,6 +92,7 @@ endmacro()
 
 find_package(OpenCV REQUIRED COMPONENTS imgcodecs)
 
-add_subdirectory(../../../model_api/cpp ${Samples_BINARY_DIR}/model_api/cpp)
+add_subdirectory(../../model_api/cpp ${Samples_BINARY_DIR}/model_api/cpp)
 
-add_example(NAME synchronous_api SOURCES main.cpp DEPENDENCIES model_api)
+add_example(NAME asynchronous_api SOURCES ./asynchronous_api/main.cpp DEPENDENCIES model_api)
+add_example(NAME synchronous_api SOURCES ./synchronous_api/main.cpp DEPENDENCIES model_api)
