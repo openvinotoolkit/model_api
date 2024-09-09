@@ -85,7 +85,7 @@ class TopDownKeypointDetectionPipeline:
     Pipeline implementing top down keypoint detection approach.
     """
 
-    def __init__(self, base_model) -> None:
+    def __init__(self, base_model: KeypointDetectionModel) -> None:
         self.base_model = base_model
         self.async_pipeline = AsyncPipeline(self.base_model)
 
