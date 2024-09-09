@@ -49,6 +49,16 @@ class KeypointDetectionModel(ImageModel):
     def postprocess(
         self, outputs: dict[str, np.ndarray], meta: dict[str, Any]
     ) -> DetectedKeypoints:
+        """
+        Applies SCC decored to the model outputs.
+
+        Args:
+            outputs (dict[str, np.ndarray]): raw outputs of the model
+            meta (dict[str, Any]): meta information about the input data
+
+        Returns:
+            DetectedKeypoints: detected keypoints
+        """
         encoded_kps = list(outputs.values())
         batch_keypoints, batch_scores = self.kp_dencoder.decode(*encoded_kps)
         orig_h, orig_w = meta["original_shape"][:2]
@@ -82,6 +92,16 @@ class TopDownKeypointDetectionPipeline:
     def predict(
         self, image: np.ndarray, detections: list[Detection]
     ) -> list[DetectedKeypoints]:
+        """
+        Predicts keypoints for the given image and detections.
+
+        Args:
+            image (np.ndarray): input full-size image
+            detections (list[Detection]): detections located within the given image
+
+        Returns:
+            list[DetectedKeypoints]: per detection keypoints in detection coordinates
+        """
         crops = []
         for det in detections:
             crops.append(image[det.ymin : det.ymax, det.xmin : det.xmax])
@@ -89,6 +109,15 @@ class TopDownKeypointDetectionPipeline:
         return self.predict_crops(crops)
 
     def predict_crops(self, crops: list[np.ndarray]) -> list[DetectedKeypoints]:
+        """
+        Predicts keypoints for the given crops.
+
+        Args:
+            crops (list[np.ndarray]): list of cropped object images
+
+        Returns:
+            list[DetectedKeypoints]: per crop keypoints
+        """
         for i, crop in enumerate(crops):
             self.async_pipeline.submit_data(crop, i)
         self.async_pipeline.await_all()
