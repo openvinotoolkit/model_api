@@ -108,7 +108,7 @@ __all__ = [
     "PredictedMask",
     "SAMVisualPrompter",
     "SAMLearnableVisualPrompter",
-    "KeypointDetection",
+    "KeypointDetectionModel",
     "MaskRCNNModel",
     "Model",
     "MonoDepthModel",

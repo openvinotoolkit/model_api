@@ -1,7 +1,4 @@
-"""Definition for anomaly models.
-
-Note: This file will change when anomalib is upgraded in OTX. CVS-114640
-
+"""
  Copyright (c) 2024 Intel Corporation
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,12 +20,18 @@ from typing import Any
 
 import numpy as np
 
+from model_api.python.model_api.pipelines.async_pipeline import AsyncPipeline
+
 from .image_model import ImageModel
 from .types import ListValue
-from .utils import DetectedKeypoints
+from .utils import DetectedKeypoints, Detection
 
 
-class KeypointDetection(ImageModel):
+class KeypointDetectionModel(ImageModel):
+    """
+    A wrapper that implements a basic keypoint regression model.
+    """
+
     __model__ = "keypoint_detection"
 
     def __init__(self, inference_adapter, configuration=dict(), preload=False):
@@ -36,20 +39,21 @@ class KeypointDetection(ImageModel):
         self._check_io_number(1, 2)
         simcc_split_ratio = 2.0
         sigma = (4.9, 5.66)
-        decoder_cfg= {
-            "input_size": self.input_size,
+        decoder_cfg = {
+            "input_size": (self.h, self.w),
             "simcc_split_ratio": simcc_split_ratio,
             "sigma": sigma,
-            }
+        }
         self.kp_dencoder = SimCCLabel(**decoder_cfg)
 
-    def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]) -> DetectedKeypoints:
+    def postprocess(
+        self, outputs: dict[str, np.ndarray], meta: dict[str, Any]
+    ) -> DetectedKeypoints:
         encoded_kps = list(outputs.values())
         batch_keypoints, batch_scores = self.kp_dencoder.decode(*encoded_kps)
         orig_h, orig_w = meta["original_shape"][:2]
-        model_w, model_h = tuple(self.input_size)
-        kp_scale_h = orig_h / model_h
-        kp_scale_w = orig_w / model_w
+        kp_scale_h = orig_h / self.h
+        kp_scale_w = orig_w / self.w
         batch_keypoints = batch_keypoints.squeeze() * np.array([kp_scale_w, kp_scale_h])
         return DetectedKeypoints(batch_keypoints, batch_scores.squeeze())
 
@@ -58,10 +62,44 @@ class KeypointDetection(ImageModel):
         parameters = super().parameters()
         parameters.update(
             {
-                "input_size": ListValue(description="List of class labels", value_type=int, default_value=[256, 192]),
+                "labels": ListValue(
+                    description="List of class labels", value_type=str, default_value=[]
+                ),
             }
         )
         return parameters
+
+
+class TopDownKeypointDetectionPipeline:
+    """
+    Pipeline implementing top down keypoint detection approach.
+    """
+
+    def __init__(self, base_model) -> None:
+        self.base_model = base_model
+        self.async_pipeline = AsyncPipeline(self.base_model)
+
+    def predict(
+        self, image: np.ndarray, detections: list[Detection]
+    ) -> list[DetectedKeypoints]:
+        crops = []
+        for det in detections:
+            crops.append(image[det.ymin : det.ymax, det.xmin : det.xmax])
+
+        return self.predict_crops(crops)
+
+    def predict_crops(self, crops: list[np.ndarray]) -> list[DetectedKeypoints]:
+        for i, crop in enumerate(crops):
+            self.async_pipeline.submit_data(crop, i)
+        self.async_pipeline.await_all()
+
+        num_crops = len(crops)
+        result = []
+        for j in range(num_crops):
+            crop_prediction, _ = self.async_pipeline.get_result(j)
+            result.append(crop_prediction)
+
+        return result
 
 
 class SimCCLabel:
@@ -138,7 +176,9 @@ class SimCCLabel:
             msg = "`label_smooth_weight` should be in range [0, 1]."
             raise ValueError(msg)
 
-    def decode(self, simcc_x: np.ndarray, simcc_y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    def decode(
+        self, simcc_x: np.ndarray, simcc_y: np.ndarray
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Decode keypoint coordinates from SimCC representations. The decoded coordinates are in the input image space.
 
         Args:

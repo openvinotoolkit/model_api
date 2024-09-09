@@ -134,7 +134,10 @@ class InstanceSegmentationResult(NamedTuple):
             if cls_map.size:
                 filled += 1
         prefix = f"{obj_str}; " if len(obj_str) else ""
-        return prefix + f"{filled}; [{','.join(str(i) for i in self.feature_vector.shape)}]"
+        return (
+            prefix
+            + f"{filled}; [{','.join(str(i) for i in self.feature_vector.shape)}]"
+        )
 
 
 class VisualPromptingResult(NamedTuple):
