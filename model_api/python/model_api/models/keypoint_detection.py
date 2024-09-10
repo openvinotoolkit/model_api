@@ -20,7 +20,7 @@ from typing import Any
 
 import numpy as np
 
-from model_api.python.model_api.pipelines.async_pipeline import AsyncPipeline
+from model_api.pipelines import AsyncPipeline
 
 from .image_model import ImageModel
 from .types import ListValue
