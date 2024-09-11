@@ -106,7 +106,11 @@ class TopDownKeypointDetectionPipeline:
         for det in detections:
             crops.append(image[det.ymin : det.ymax, det.xmin : det.xmax])
 
-        return self.predict_crops(crops)
+        crops_results = self.predict_crops(crops)
+        for i, det in enumerate(detections):
+            crops_results[i] = DetectedKeypoints(crops_results[i].keypoints + np.array([det.xmin, det.ymin]), crops_results[i].scores)
+
+        return crops_results
 
     def predict_crops(self, crops: list[np.ndarray]) -> list[DetectedKeypoints]:
         """
