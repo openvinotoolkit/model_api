@@ -19,7 +19,6 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-
 from model_api.pipelines import AsyncPipeline
 
 from .image_model import ImageModel
@@ -37,20 +36,13 @@ class KeypointDetectionModel(ImageModel):
     def __init__(self, inference_adapter, configuration=dict(), preload=False):
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 2)
-        simcc_split_ratio = 2.0
-        sigma = (4.9, 5.66)
-        decoder_cfg = {
-            "input_size": (self.h, self.w),
-            "simcc_split_ratio": simcc_split_ratio,
-            "sigma": sigma,
-        }
-        self.kp_dencoder = SimCCLabel(**decoder_cfg)
+        self.kp_dencoder = SimCCLabel()
 
     def postprocess(
         self, outputs: dict[str, np.ndarray], meta: dict[str, Any]
     ) -> DetectedKeypoints:
         """
-        Applies SCC decored to the model outputs.
+        Applies SCC decoded to the model outputs.
 
         Args:
             outputs (dict[str, np.ndarray]): raw outputs of the model
@@ -108,7 +100,10 @@ class TopDownKeypointDetectionPipeline:
 
         crops_results = self.predict_crops(crops)
         for i, det in enumerate(detections):
-            crops_results[i] = DetectedKeypoints(crops_results[i].keypoints + np.array([det.xmin, det.ymin]), crops_results[i].scores)
+            crops_results[i] = DetectedKeypoints(
+                crops_results[i].keypoints + np.array([det.xmin, det.ymin]),
+                crops_results[i].scores,
+            )
 
         return crops_results
 
@@ -161,17 +156,9 @@ class SimCCLabel:
         - keypoint_weights (np.ndarray): The target weights in shape (N, K)
 
     Args:
-        input_size (tuple): Input image size in [h, w]
-        smoothing_type (str): The SimCC label smoothing strategy. Options are
-            ``'gaussian'`` and ``'standard'``. Defaults to ``'gaussian'``
-        sigma (float | int | tuple): The sigma value in the Gaussian SimCC
-            label. Defaults to 6.0
         simcc_split_ratio (float): The ratio of the label size to the input
             size. For example, if the input width is ``w``, the x label size
             will be :math:`w*simcc_split_ratio`. Defaults to 2.0
-        label_smooth_weight (float): Label Smoothing weight. Defaults to 0.0
-        decode_beta (float): The beta value for decoding visibility. Defaults
-            to 150.0.
 
     .. _`SimCC: a Simple Coordinate Classification Perspective for Human Pose
     Estimation`: https://arxiv.org/abs/2107.03332
@@ -179,35 +166,10 @@ class SimCCLabel:
 
     def __init__(
         self,
-        input_size: tuple[int, int],
         smoothing_type: str = "gaussian",
-        sigma: float | int | tuple[float, float] = 6.0,
         simcc_split_ratio: float = 2.0,
-        label_smooth_weight: float = 0.0,
-        decode_beta: float = 150.0,
     ) -> None:
-        self.input_size = input_size
-        self.smoothing_type = smoothing_type
         self.simcc_split_ratio = simcc_split_ratio
-        self.label_smooth_weight = label_smooth_weight
-        self.decode_beta = decode_beta
-
-        if isinstance(sigma, (float, int)):
-            self.sigma = np.array([sigma, sigma])
-        else:
-            self.sigma = np.array(sigma)
-
-        if self.smoothing_type not in {"gaussian", "standard"}:
-            msg = f"{self.__class__.__name__} got invalid `smoothing_type` value {self.smoothing_type}."
-            raise ValueError(msg)
-
-        if self.smoothing_type == "gaussian" and self.label_smooth_weight > 0:
-            msg = "Attribute `label_smooth_weight` is only used for `standard` mode."
-            raise ValueError(msg)
-
-        if self.label_smooth_weight < 0.0 or self.label_smooth_weight > 1.0:
-            msg = "`label_smooth_weight` should be in range [0, 1]."
-            raise ValueError(msg)
 
     def decode(
         self, simcc_x: np.ndarray, simcc_y: np.ndarray
