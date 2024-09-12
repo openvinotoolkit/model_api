@@ -203,7 +203,6 @@ class SimCCLabel:
 def get_simcc_maximum(
     simcc_x: np.ndarray,
     simcc_y: np.ndarray,
-    apply_softmax: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Get maximum response location and value from simcc representations.
 
@@ -216,8 +215,6 @@ def get_simcc_maximum(
     Args:
         simcc_x (np.ndarray): x-axis SimCC in shape (K, Wx) or (N, K, Wx)
         simcc_y (np.ndarray): y-axis SimCC in shape (K, Wy) or (N, K, Wy)
-        apply_softmax (bool): whether to apply softmax on the heatmap.
-            Defaults to False.
 
     Returns:
         tuple:
@@ -242,13 +239,6 @@ def get_simcc_maximum(
         simcc_y = simcc_y.reshape(batch_size * num_keypoints, -1)
     else:
         batch_size = None
-
-    if apply_softmax:
-        simcc_x = simcc_x - np.max(simcc_x, axis=1, keepdims=True)
-        simcc_y = simcc_y - np.max(simcc_y, axis=1, keepdims=True)
-        ex, ey = np.exp(simcc_x), np.exp(simcc_y)
-        simcc_x = ex / np.sum(ex, axis=1, keepdims=True)
-        simcc_y = ey / np.sum(ey, axis=1, keepdims=True)
 
     x_locs = np.argmax(simcc_x, axis=1)
     y_locs = np.argmax(simcc_y, axis=1)
