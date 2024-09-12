@@ -15,6 +15,7 @@ from model_api.models import (
     AnomalyResult,
     ClassificationModel,
     ClassificationResult,
+    DetectedKeypoints,
     DetectionModel,
     DetectionResult,
     ImageModel,
@@ -30,7 +31,6 @@ from model_api.models import (
     SegmentationModel,
     VisualPromptingResult,
     ZSLVisualPromptingResult,
-    DetectedKeypoints,
     add_rotated_rects,
     get_contours,
 )
