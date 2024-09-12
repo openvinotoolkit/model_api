@@ -34,6 +34,15 @@ class KeypointDetectionModel(ImageModel):
     __model__ = "keypoint_detection"
 
     def __init__(self, inference_adapter, configuration=dict(), preload=False):
+        """
+        Initializes the keypoint detection model.
+
+        Args:
+            inference_adapter (InferenceAdapter): inference adapter containing the underlying model.
+            configuration (dict, optional): Configuration overrides the model parameters (see parameters() method).
+              Defaults to dict().
+            preload (bool, optional): Forces inference adapter to load the model. Defaults to False.
+        """
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 2)
         self.kp_dencoder = SimCCLabel()
