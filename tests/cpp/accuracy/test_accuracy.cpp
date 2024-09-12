@@ -136,6 +136,9 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     if (name.find("sam_vit_b") != std::string::npos) {
         GTEST_SKIP() << "SAM-based models are not supported in C++ implementation";
     }
+    if (name.find("rtmpose_tiny") != std::string::npos) {
+        GTEST_SKIP() << "Keypoint detection models are not supported in C++ implementation";
+    }
 
     if (name.substr(name.size() - 4) == ".xml") {
         modelPath = DATA_DIR + '/' + name;
