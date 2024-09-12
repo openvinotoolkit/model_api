@@ -16,6 +16,7 @@ from model_api.models import (
     ClassificationModel,
     ClassificationResult,
     DetectedKeypoints,
+    KeypointDetectionModel,
     DetectionModel,
     DetectionResult,
     ImageModel,
