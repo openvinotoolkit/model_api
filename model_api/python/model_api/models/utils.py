@@ -209,7 +209,7 @@ class DetectedKeypoints(NamedTuple):
     scores: np.ndarray
 
     def __str__(self):
-        return f"keypoints: {self.keypoints.shape}, scores: {self.scores.shape}"
+        return f"keypoints: {self.keypoints.shape}, keypoints_x_sum: {np.sum(self.keypoints[:,:1]):.3f}, scores: {self.scores.shape}"
 
 
 def add_rotated_rects(segmented_objects):
