@@ -15,11 +15,13 @@ from model_api.models import (
     AnomalyResult,
     ClassificationModel,
     ClassificationResult,
+    DetectedKeypoints,
     DetectionModel,
     DetectionResult,
     ImageModel,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
+    KeypointDetectionModel,
     MaskRCNNModel,
     PredictedMask,
     Prompt,
@@ -228,6 +230,10 @@ def test_image_models(data, dump, result, model_data):
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
             elif isinstance(outputs, (ZSLVisualPromptingResult, VisualPromptingResult)):
+                output_str = str(outputs)
+                assert test_data["reference"][0] == output_str
+                image_result = [output_str]
+            elif isinstance(outputs, DetectedKeypoints):
                 output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
