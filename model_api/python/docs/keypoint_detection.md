@@ -41,7 +41,7 @@ from model_api.models import TopDownKeypointDetectionPipeline, Detection, Keypoi
     top_down_pipeline = TopDownKeypointDetectionPipeline(model)
     predictions = top_down_detector.predict(image, detections)
 
-    # iterating over a list of DetectedKeypoints. Each of the items correspond to a detection
+    # iterating over a list of DetectedKeypoints. Each of the items corresponds to a detection
     for obj_keypoints in predictions:
         for point in obj_keypoints.keypoints.astype(np.int32):
             cv2.circle(
