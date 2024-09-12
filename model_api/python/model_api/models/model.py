@@ -414,6 +414,8 @@ class Model:
         Returns:
             list: a list of inference results
         """
+        self.await_all()
+
         completed_results = {}
 
         @contextmanager
