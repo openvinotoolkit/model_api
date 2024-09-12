@@ -45,7 +45,6 @@ class KeypointDetectionModel(ImageModel):
         """
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 2)
-        self.kp_dencoder = SimCCLabel()
 
     def postprocess(
         self, outputs: dict[str, np.ndarray], meta: dict[str, Any]
@@ -61,7 +60,7 @@ class KeypointDetectionModel(ImageModel):
             DetectedKeypoints: detected keypoints
         """
         encoded_kps = list(outputs.values())
-        batch_keypoints, batch_scores = self.kp_dencoder.decode(*encoded_kps)
+        batch_keypoints, batch_scores = _decode_simcc(*encoded_kps)
         orig_h, orig_w = meta["original_shape"][:2]
         kp_scale_h = orig_h / self.h
         kp_scale_w = orig_w / self.w
@@ -139,77 +138,35 @@ class TopDownKeypointDetectionPipeline:
         return result
 
 
-class SimCCLabel:
-    """Generate keypoint representation via "SimCC" approach.
-
-    See the paper: `SimCC: a Simple Coordinate Classification Perspective for
-    Human Pose Estimation`_ by Li et al (2022) for more details.
-    Old name: SimDR
-
-    Note:
-        - instance number: N
-        - keypoint number: K
-        - keypoint dimension: D
-        - image size: [h, w]
-
-    Encoded:
-
-        - keypoint_x_labels (np.ndarray): The generated SimCC label for x-axis.
-            The label shape is (N, K, Wx) if ``smoothing_type=='gaussian'``
-            and (N, K) if `smoothing_type=='standard'``, where
-            :math:`Wx=w*simcc_split_ratio`
-        - keypoint_y_labels (np.ndarray): The generated SimCC label for y-axis.
-            The label shape is (N, K, Wy) if ``smoothing_type=='gaussian'``
-            and (N, K) if `smoothing_type=='standard'``, where
-            :math:`Wy=h*simcc_split_ratio`
-        - keypoint_weights (np.ndarray): The target weights in shape (N, K)
+def _decode_simcc(
+    simcc_x: np.ndarray, simcc_y: np.ndarray, simcc_split_ratio: float = 2.0
+) -> tuple[np.ndarray, np.ndarray]:
+    """Decodes keypoint coordinates from SimCC representations. The decoded coordinates are in the input image space.
 
     Args:
-        simcc_split_ratio (float): The ratio of the label size to the input
-            size. For example, if the input width is ``w``, the x label size
-            will be :math:`w*simcc_split_ratio`. Defaults to 2.0
+        simcc_x (np.ndarray): SimCC label for x-axis
+        simcc_y (np.ndarray): SimCC label for y-axis
+        simcc_split_ratio (float): The ratio of the label size to the input size.
 
-    .. _`SimCC: a Simple Coordinate Classification Perspective for Human Pose
-    Estimation`: https://arxiv.org/abs/2107.03332
+    Returns:
+        tuple:
+        - keypoints (np.ndarray): Decoded coordinates in shape (N, K, D)
+        - scores (np.ndarray): The keypoint scores in shape (N, K).
+            It usually represents the confidence of the keypoint prediction
     """
+    keypoints, scores = _get_simcc_maximum(simcc_x, simcc_y)
 
-    def __init__(
-        self,
-        smoothing_type: str = "gaussian",
-        simcc_split_ratio: float = 2.0,
-    ) -> None:
-        self.simcc_split_ratio = simcc_split_ratio
+    # Unsqueeze the instance dimension for single-instance results
+    if keypoints.ndim == 2:
+        keypoints = keypoints[None, :]
+        scores = scores[None, :]
 
-    def decode(
-        self, simcc_x: np.ndarray, simcc_y: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray]:
-        """Decode keypoint coordinates from SimCC representations. The decoded coordinates are in the input image space.
+    keypoints /= simcc_split_ratio
 
-        Args:
-            encoded (Tuple[np.ndarray, np.ndarray]): SimCC labels for x-axis
-                and y-axis
-            simcc_x (np.ndarray): SimCC label for x-axis
-            simcc_y (np.ndarray): SimCC label for y-axis
-
-        Returns:
-            tuple:
-            - keypoints (np.ndarray): Decoded coordinates in shape (N, K, D)
-            - socres (np.ndarray): The keypoint scores in shape (N, K).
-                It usually represents the confidence of the keypoint prediction
-        """
-        keypoints, scores = get_simcc_maximum(simcc_x, simcc_y)
-
-        # Unsqueeze the instance dimension for single-instance results
-        if keypoints.ndim == 2:
-            keypoints = keypoints[None, :]
-            scores = scores[None, :]
-
-        keypoints /= self.simcc_split_ratio
-
-        return keypoints, scores
+    return keypoints, scores
 
 
-def get_simcc_maximum(
+def _get_simcc_maximum(
     simcc_x: np.ndarray,
     simcc_y: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -223,7 +180,7 @@ def get_simcc_maximum(
 
     Args:
         simcc_x (np.ndarray): x-axis SimCC in shape (K, Wx) or (N, K, Wx)
-        simcc_y (np.ndarray): y-axis SimCC in shape (K, Wy) or (N, K, Wy)
+        simcc_y (np.ndarray): y-axis SimCC in shape (K, Hy) or (N, K, Hy)
 
     Returns:
         tuple:
