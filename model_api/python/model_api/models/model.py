@@ -14,9 +14,9 @@
  limitations under the License.
 """
 
-from contextlib import contextmanager
 import logging as log
 import re
+from contextlib import contextmanager
 
 from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
