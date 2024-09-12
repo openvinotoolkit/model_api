@@ -30,6 +30,7 @@ from model_api.models import (
     SegmentationModel,
     VisualPromptingResult,
     ZSLVisualPromptingResult,
+    DetectedKeypoints,
     add_rotated_rects,
     get_contours,
 )
@@ -228,6 +229,10 @@ def test_image_models(data, dump, result, model_data):
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
             elif isinstance(outputs, (ZSLVisualPromptingResult, VisualPromptingResult)):
+                output_str = str(outputs)
+                assert test_data["reference"][0] == output_str
+                image_result = [output_str]
+            elif isinstance(outputs, DetectedKeypoints):
                 output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
