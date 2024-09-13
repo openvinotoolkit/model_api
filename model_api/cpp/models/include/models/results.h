@@ -357,3 +357,14 @@ struct HumanPoseResult : public ResultBase {
         : ResultBase(frameId, metaData) {}
     std::vector<HumanPose> poses;
 };
+
+struct DetectedKeypoints {
+    std::vector<cv::Point2f> keypoints;
+    std::vector<float> scores;
+};
+
+struct KeypointDetectionResult : public ResultBase {
+    KeypointDetectionResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
+        : ResultBase(frameId, metaData) {}
+    std::vector<DetectedKeypoints> poses;
+};
