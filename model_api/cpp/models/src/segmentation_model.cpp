@@ -179,7 +179,7 @@ void SegmentationModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& model) 
         }
     }
     if (out_name.empty()) {
-        throw std::runtime_error("No output containing segmentatation found");
+        throw std::runtime_error("No output containing segmentation masks found");
     }
 
     if (!embedded_processing) {
