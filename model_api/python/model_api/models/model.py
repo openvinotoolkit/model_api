@@ -419,7 +419,7 @@ class Model:
         completed_results = {}
 
         @contextmanager
-        def tmp_callback(*args, **kwds):
+        def tmp_callback():
             old_callback = self.callback_fn
 
             def batch_infer_callback(result, id):
