@@ -61,7 +61,7 @@ DetectedKeypoints decode_simcc(cv::Mat simcc_x, cv::Mat simcc_y, cv::Point2f ext
         scores.at<float>(i) = std::min(max_val_x.at<float>(i), max_val_y.at<float>(i));
 
         if (scores.at<float>(i) <= 0.f) {
-            scores.at<float>(i) = -1.f;
+            keypoints[i] = cv::Point2f(-1.f, -1.f);
         }
     }
 
