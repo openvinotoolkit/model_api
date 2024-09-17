@@ -185,14 +185,15 @@ std::unique_ptr<ResultBase> KeypointDetectionModel::postprocess(InferenceResult&
 
     const ov::Tensor& pred_x_tensor = infResult.outputsData.find(outputNames[0])->second;
     size_t shape_offset = pred_x_tensor.get_shape().size() == 3 ? 1 : 0;
-    auto pred_x_mat = cv::Mat(cv::Size(pred_x_tensor.get_shape()[shape_offset + 1], pred_x_tensor.get_shape()[shape_offset]),
+    auto pred_x_mat = cv::Mat(cv::Size(static_cast<int>(pred_x_tensor.get_shape()[shape_offset + 1]),
+                                       static_cast<int>(pred_x_tensor.get_shape()[shape_offset])),
                               CV_32F, pred_x_tensor.data(), pred_x_tensor.get_strides()[shape_offset]);
 
     const ov::Tensor& pred_y_tensor = infResult.outputsData.find(outputNames[1])->second;
     shape_offset = pred_y_tensor.get_shape().size() == 3 ? 1 : 0;
-    auto pred_y_mat = cv::Mat(cv::Size(pred_y_tensor.get_shape()[shape_offset + 1], pred_y_tensor.get_shape()[shape_offset]),
+    auto pred_y_mat = cv::Mat(cv::Size(static_cast<int>(pred_y_tensor.get_shape()[shape_offset + 1]),
+                                       static_cast<int>(pred_y_tensor.get_shape()[shape_offset])),
                               CV_32F, pred_y_tensor.data(), pred_y_tensor.get_strides()[shape_offset]);
-
 
     const auto& image_data = infResult.internalModelData->asRef<InternalImageModelData>();
     float inverted_scale_x = static_cast<float>(image_data.inputImgWidth) / netInputWidth,
