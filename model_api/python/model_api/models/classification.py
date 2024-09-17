@@ -80,9 +80,14 @@ class ClassificationModel(ImageModel):
             if self.output_raw_scores:
                 self.out_layer_names.append(self.raw_scores_name)
         except (RuntimeError, AttributeError):
-            self.embedded_topk = False
-            self.out_layer_names = _get_non_xai_names(self.outputs.keys())
-            self.raw_scores_name = self.out_layer_names[0]
+            if self.embedded_processing:
+                self.embedded_topk = True
+                self.out_layer_names = ["indices", "scores"]
+                self.raw_scores_name = _raw_scores_name
+            else:  # likely a 3rd party model
+                self.embedded_topk = False
+                self.out_layer_names = _get_non_xai_names(self.outputs.keys())
+                self.raw_scores_name = self.out_layer_names[0]
 
         self.embedded_processing = True
 
