@@ -57,8 +57,12 @@ DetectedKeypoints decode_simcc(cv::Mat simcc_x, cv::Mat simcc_y, cv::Point2f ext
     std::vector<cv::Point2f> keypoints(x_locs.rows);
     cv::Mat scores = cv::Mat::zeros(x_locs.rows, 1, CV_32F);
     for (int i = 0; i < x_locs.rows; i++) {
-        keypoints[i] = cv::Point2f(x_locs.at<int>(i) * extra_scale.x, y_locs.at<int>(i) * extra_scale.x) / simcc_split_ratio;
+        keypoints[i] = cv::Point2f(x_locs.at<int>(i) * extra_scale.x, y_locs.at<int>(i) * extra_scale.y) / simcc_split_ratio;
         scores.at<float>(i) = std::min(max_val_x.at<float>(i), max_val_y.at<float>(i));
+
+        if (scores.at<float>(i) <= 0.f) {
+            scores.at<float>(i) = -1.f;
+        }
     }
 
     return {std::move(keypoints), scores};
@@ -158,13 +162,15 @@ void KeypointDetectionModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& mo
                                                   inputShape[ov::layout::height_idx(inputLayout)]},
                                         pad_value,
                                         reverse_input_channels,
-                                        {},
+                                        mean_values,
                                         scale_values);
 
         ov::preprocess::PrePostProcessor ppp = ov::preprocess::PrePostProcessor(model);
         model = ppp.build();
         embedded_processing = true;
         useAutoResize = true;
+        netInputWidth = inputShape[ov::layout::width_idx(inputLayout)];
+        netInputHeight = inputShape[ov::layout::height_idx(inputLayout)];
     }
 
     for (ov::Output<ov::Node>& output : model->outputs()) {
@@ -186,11 +192,11 @@ std::unique_ptr<ResultBase> KeypointDetectionModel::postprocess(InferenceResult&
                               CV_32F, pred_y_tensor.data(), pred_y_tensor.get_strides()[shape_offset]);
 
 
-    const auto& internalData = infResult.internalModelData->asRef<InternalImageModelData>();
-    float invertedScaleX = float(internalData.inputImgWidth) / netInputWidth,
-          invertedScaleY = float(internalData.inputImgHeight) / netInputHeight;
+    const auto& image_data = infResult.internalModelData->asRef<InternalImageModelData>();
+    float inverted_scale_x = static_cast<float>(image_data.inputImgWidth) / netInputWidth,
+          inverted_scale_y = static_cast<float>(image_data.inputImgHeight) / netInputHeight;
 
-    result->poses.emplace_back(decode_simcc(pred_x_mat, pred_y_mat, {invertedScaleX, invertedScaleY}));
+    result->poses.emplace_back(decode_simcc(pred_x_mat, pred_y_mat, {inverted_scale_x, inverted_scale_y}));
     return std::unique_ptr<ResultBase>(result);
 }
 
