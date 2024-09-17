@@ -30,6 +30,40 @@
 
 namespace {
 
+void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values) {
+    dst_locs = cv::Mat::zeros(src.rows, 1, CV_32S);
+    dst_values = cv::Mat::zeros(src.rows, 1, CV_32F);
+
+    for (int row = 0; row < src.rows; row++) {
+        const float *ptr_row = src.ptr<float>(row);
+        int max_val_idx = 0;
+        for (int col = 1; col < src.cols; ++col) {
+            if (ptr_row[col] > ptr_row[max_val_idx]) {
+                max_val_idx = col;
+                dst_locs.at<int>(row) = max_val_idx;
+                dst_values.at<float>(row) = ptr_row[col];
+            }
+        }
+    }
+}
+
+DetectedKeypoints decode_simcc(cv::Mat simcc_x, cv::Mat simcc_y, cv::Point2f extra_scale = cv::Point2f(1.f, 1.f), float simcc_split_ratio = 2.0f) {
+    cv::Mat x_locs, max_val_x;
+    colArgMax(simcc_x, x_locs, max_val_x);
+
+    cv::Mat y_locs, max_val_y;
+    colArgMax(simcc_y, y_locs, max_val_y);
+
+    std::vector<cv::Point2f> keypoints(x_locs.rows);
+    cv::Mat scores = cv::Mat::zeros(x_locs.rows, 1, CV_32F);
+    for (int i = 0; i < x_locs.rows; i++) {
+        keypoints[i] = cv::Point2f(x_locs.at<int>(i) * extra_scale.x, y_locs.at<int>(i) * extra_scale.x) / simcc_split_ratio;
+        scores.at<float>(i) = std::min(max_val_x.at<float>(i), max_val_y.at<float>(i));
+    }
+
+    return {std::move(keypoints), scores};
+}
+
 }
 
 std::string KeypointDetectionModel::ModelType = "keypoint_detection";
@@ -140,6 +174,23 @@ void KeypointDetectionModel::prepareInputsOutputs(std::shared_ptr<ov::Model>& mo
 
 std::unique_ptr<ResultBase> KeypointDetectionModel::postprocess(InferenceResult& infResult) {
     KeypointDetectionResult* result = new KeypointDetectionResult(infResult.frameId, infResult.metaData);
+
+    const ov::Tensor& pred_x_tensor = infResult.outputsData.find(outputNames[0])->second;
+    size_t shape_offset = pred_x_tensor.get_shape().size() == 3 ? 1 : 0;
+    auto pred_x_mat = cv::Mat(cv::Size(pred_x_tensor.get_shape()[shape_offset + 1], pred_x_tensor.get_shape()[shape_offset]),
+                              CV_32F, pred_x_tensor.data(), pred_x_tensor.get_strides()[shape_offset]);
+
+    const ov::Tensor& pred_y_tensor = infResult.outputsData.find(outputNames[1])->second;
+    shape_offset = pred_y_tensor.get_shape().size() == 3 ? 1 : 0;
+    auto pred_y_mat = cv::Mat(cv::Size(pred_y_tensor.get_shape()[shape_offset + 1], pred_y_tensor.get_shape()[shape_offset]),
+                              CV_32F, pred_y_tensor.data(), pred_y_tensor.get_strides()[shape_offset]);
+
+
+    const auto& internalData = infResult.internalModelData->asRef<InternalImageModelData>();
+    float invertedScaleX = float(internalData.inputImgWidth) / netInputWidth,
+          invertedScaleY = float(internalData.inputImgHeight) / netInputHeight;
+
+    result->poses.emplace_back(decode_simcc(pred_x_mat, pred_y_mat, {invertedScaleX, invertedScaleY}));
     return std::unique_ptr<ResultBase>(result);
 }
 
