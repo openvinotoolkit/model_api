@@ -47,7 +47,9 @@ void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values) {
     }
 }
 
-DetectedKeypoints decode_simcc(cv::Mat simcc_x, cv::Mat simcc_y, cv::Point2f extra_scale = cv::Point2f(1.f, 1.f), float simcc_split_ratio = 2.0f) {
+DetectedKeypoints decode_simcc(const cv::Mat& simcc_x, const cv::Mat& simcc_y,
+                               const cv::Point2f& extra_scale = cv::Point2f(1.f, 1.f),
+                               float simcc_split_ratio = 2.0f) {
     cv::Mat x_locs, max_val_x;
     colArgMax(simcc_x, x_locs, max_val_x);
 
