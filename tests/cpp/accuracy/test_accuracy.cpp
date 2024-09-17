@@ -19,6 +19,7 @@
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/instance_segmentation.h>
+#include <models/keypoint_detection.h>
 #include <models/results.h>
 #include <models/segmentation_model.h>
 #include <adapters/openvino_adapter.h>
@@ -135,9 +136,6 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
     }
     if (name.find("sam_vit_b") != std::string::npos) {
         GTEST_SKIP() << "SAM-based models are not supported in C++ implementation";
-    }
-    if (name.find("rtmpose_tiny") != std::string::npos) {
-        GTEST_SKIP() << "Keypoint detection models are not supported in C++ implementation";
     }
 
     if (name.substr(name.size() - 4) == ".xml") {
@@ -266,8 +264,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
             }
         }
-        else if (modelData.type == "AnomalyDetection")
-        {
+        else if (modelData.type == "AnomalyDetection") {
             for (const std::shared_ptr<AnomalyModel> &model : create_models<AnomalyModel>(modelXml))
             {
                 for (size_t i = 0; i < modelData.testData.size(); i++)
@@ -285,6 +282,22 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                 }
             }
         }
+        else if (modelData.type == "KeypointDetectionModel") {
+            for (const std::shared_ptr<KeypointDetectionModel>& model : create_models<KeypointDetectionModel>(modelXml)) {
+                for (size_t i = 0; i < modelData.testData.size(); i++) {
+                    ASSERT_EQ(modelData.testData[i].reference.size(), 1);
+                    auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
+
+                    cv::Mat image = cv::imread(imagePath);
+                    if (!image.data) {
+                        throw std::runtime_error{"Failed to read the image"};
+                    }
+                    auto result = model->infer(image);
+                    EXPECT_EQ(std::string{(*result).poses[0]}, modelData.testData[i].reference[0]);
+                }
+            }
+        }
+
         else {
             throw std::runtime_error("Unknown model type: " + modelData.type);
         }
