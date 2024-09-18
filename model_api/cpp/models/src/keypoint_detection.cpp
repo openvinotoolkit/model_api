@@ -37,6 +37,7 @@ void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values) {
     for (int row = 0; row < src.rows; row++) {
         const float *ptr_row = src.ptr<float>(row);
         int max_val_idx = 0;
+        dst_values.at<float>(row) = ptr_row[max_val_idx];
         for (int col = 1; col < src.cols; ++col) {
             if (ptr_row[col] > ptr_row[max_val_idx]) {
                 max_val_idx = col;
