@@ -80,7 +80,7 @@ class ClassificationModel(ImageModel):
             if self.output_raw_scores:
                 self.out_layer_names.append(self.raw_scores_name)
         except (RuntimeError, AttributeError):
-            if self.embedded_processing:
+            if self.embedded_processing and len(self.outputs) >= 2:
                 self.embedded_topk = True
                 self.out_layer_names = ["indices", "scores"]
                 self.raw_scores_name = _raw_scores_name
