@@ -160,7 +160,7 @@ jobs:
     - name: Set up docker for macOS
       if: startsWith(matrix.os, 'macos-1')
       run: |
-        brew install docker
+        brew install colima docker
         colima start
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
