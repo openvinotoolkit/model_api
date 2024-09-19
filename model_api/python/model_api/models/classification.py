@@ -80,11 +80,13 @@ class ClassificationModel(ImageModel):
             if self.output_raw_scores:
                 self.out_layer_names.append(self.raw_scores_name)
         except (RuntimeError, AttributeError):
+            # exception means we have a non-ov model, or a model behind OVMS
+            # with already inserted softmax and topk
             if self.embedded_processing and len(self.outputs) >= 2:
                 self.embedded_topk = True
                 self.out_layer_names = ["indices", "scores"]
                 self.raw_scores_name = _raw_scores_name
-            else:  # likely a 3rd party model
+            else:  # likely a non-ov model
                 self.embedded_topk = False
                 self.out_layer_names = _get_non_xai_names(self.outputs.keys())
                 self.raw_scores_name = self.out_layer_names[0]
