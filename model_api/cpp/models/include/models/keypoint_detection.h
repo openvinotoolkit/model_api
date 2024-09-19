@@ -1,5 +1,5 @@
 /*
-// Copyright (C) 2020-2024 Intel Corporation
+// Copyright (C) 2024 Intel Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,34 +26,27 @@ class Model;
 }  // namespace ov
 struct InferenceResult;
 struct ResultBase;
-struct ImageResult;
-struct ImageResultWithSoftPrediction;
+struct KeypointDetectionResult;
 struct ImageInputData;
-struct Contour;
 
-class SegmentationModel : public ImageModel {
+class KeypointDetectionModel : public ImageModel {
 public:
-    SegmentationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
-    SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter, const ov::AnyMap& configuration = {});
+    KeypointDetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
+    KeypointDetectionModel(std::shared_ptr<InferenceAdapter>& adapter, const ov::AnyMap& configuration = {});
 
-    static std::unique_ptr<SegmentationModel> create_model(const std::string& modelFile, const ov::AnyMap& configuration = {}, bool preload = true, const std::string& device = "AUTO");
-    static std::unique_ptr<SegmentationModel> create_model(std::shared_ptr<InferenceAdapter>& adapter);
+    static std::unique_ptr<KeypointDetectionModel> create_model(const std::string& modelFile, const ov::AnyMap& configuration = {}, bool preload = true, const std::string& device = "AUTO");
+    static std::unique_ptr<KeypointDetectionModel> create_model(std::shared_ptr<InferenceAdapter>& adapter);
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
 
-    virtual std::unique_ptr<ImageResult> infer(const ImageInputData& inputData);
-    virtual std::vector<std::unique_ptr<ImageResult>> inferBatch(const std::vector<ImageInputData>& inputImgs);
+    virtual std::unique_ptr<KeypointDetectionResult> infer(const ImageInputData& inputData);
+    virtual std::vector<std::unique_ptr<KeypointDetectionResult>> inferBatch(const std::vector<ImageInputData>& inputImgs);
 
     static std::string ModelType;
-    std::vector<Contour> getContours(const ImageResultWithSoftPrediction& imageResult);
 
 protected:
 
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void updateModelInfo() override;
     void init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority);
-
-    int blur_strength = -1;
-    float soft_threshold = -std::numeric_limits<float>::infinity();
-    bool return_soft_prediction = true;
 };

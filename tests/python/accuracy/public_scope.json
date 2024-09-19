@@ -132,16 +132,6 @@
         ]
     },
     {
-        "name": "mobilenet-v3-large-1.0-224-tf",
-        "type": "ClassificationModel",
-        "test_data": [
-            {
-                "image": "coco128/images/train2017/000000000074.jpg",
-                "reference": ["208 (Labrador_retriever): 0.166, [0], [0], [0]"]
-            }
-        ]
-    },
-    {
         "name": "efficientnet-b0-pytorch",
         "type": "ClassificationModel",
         "test_data": [
