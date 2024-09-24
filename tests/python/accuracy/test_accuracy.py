@@ -35,7 +35,7 @@ from model_api.models import (
     add_rotated_rects,
     get_contours,
 )
-from model_api.tilers import DetectionTiler, InstanceSegmentationTiler
+from model_api.tilers import DetectionTiler, InstanceSegmentationTiler, SemanticSegmentationTiler
 
 
 def read_config(path: Path):
@@ -189,9 +189,10 @@ def test_image_models(data, dump, result, model_data):
                 image_result = [output_str]
             elif isinstance(outputs, ImageResultWithSoftPrediction):
                 assert 1 == len(test_data["reference"])
-                contours = model.get_contours(
-                    outputs.resultImage, outputs.soft_prediction
-                )
+                if hasattr(model, "get_contours"):
+                    contours = model.get_contours(outputs)
+                else:
+                    contours = model.model.get_contours(outputs)
                 contour_str = "; "
                 for contour in contours:
                     contour_str += str(contour) + ", "
