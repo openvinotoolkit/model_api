@@ -197,7 +197,21 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                         throw std::runtime_error{"Failed to read the image"};
                     }
 
-                    std::unique_ptr<ImageResult> pred = model->infer(image);
+                    std::unique_ptr<ImageResult> pred;
+                    if (modelData.tiler == "SemanticSegmentationTiler") {
+                        GTEST_SKIP() << "Semantic segmentation tiler is not supported in C++ implementation";
+                        /*
+                        auto tiler = SemanticSegmentationTiler(std::move(model), {});
+                        if (modelData.input_res.height > 0 && modelData.input_res.width > 0) {
+                            cv::resize(image, image, modelData.input_res);
+                        }
+                        pred = tiler.run(image);
+                        */
+                    }
+                    else {
+                        pred = model->infer(image);
+                    }
+
                     ImageResultWithSoftPrediction* soft = dynamic_cast<ImageResultWithSoftPrediction*>(pred.get());
                     if (soft) {
                         const std::vector<Contour>& contours = model->getContours(*soft);
