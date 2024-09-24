@@ -35,7 +35,11 @@ from model_api.models import (
     add_rotated_rects,
     get_contours,
 )
-from model_api.tilers import DetectionTiler, InstanceSegmentationTiler, SemanticSegmentationTiler
+from model_api.tilers import (
+    DetectionTiler,
+    InstanceSegmentationTiler,
+    SemanticSegmentationTiler,
+)
 
 
 def read_config(path: Path):
