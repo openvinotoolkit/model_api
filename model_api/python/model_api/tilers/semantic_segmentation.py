@@ -15,11 +15,12 @@
 """
 
 from __future__ import annotations
+
 from contextlib import contextmanager
 
 import numpy as np
-from model_api.models.utils import ImageResultWithSoftPrediction
 from model_api.models import SegmentationModel
+from model_api.models.utils import ImageResultWithSoftPrediction
 
 from .tiler import Tiler
 
