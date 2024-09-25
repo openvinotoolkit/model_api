@@ -15,9 +15,11 @@
 """
 
 from __future__ import annotations
+from contextlib import contextmanager
 
 import numpy as np
 from model_api.models.utils import ImageResultWithSoftPrediction
+from model_api.models import SegmentationModel
 
 from .tiler import Tiler
 
@@ -76,3 +78,19 @@ class SemanticSegmentationTiler(Tiler):
             feature_vector=np.array([]),
             saliency_map=np.array([]),
         )
+
+    def __call__(self, inputs):
+        @contextmanager
+        def setup_segm_model():
+            return_soft_prediction_state = None
+            if isinstance(self.model, SegmentationModel):
+                return_soft_prediction_state = self.model.return_soft_prediction
+                self.model.return_soft_prediction = True
+            try:
+                yield
+            finally:
+                if isinstance(self.model, SegmentationModel):
+                    self.model.return_soft_prediction = return_soft_prediction_state
+
+        with setup_segm_model():
+            return super().__call__(inputs)
