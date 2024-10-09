@@ -146,6 +146,7 @@ class SAMLearnableVisualPrompter:
         decoder_model: SAMDecoder,
         reference_features: VisualPromptingFeatures | None = None,
         threshold: float = 0.65,
+        masks_extra_refinement: bool = False,
     ):
         """
         Initializes ZSL pipeline.
@@ -157,6 +158,7 @@ class SAMLearnableVisualPrompter:
              Once the features are passed, one can skip learn() method, and start predicting masks right away. Defaults to None.
             threshold (float, optional): Threshold to match vs reference features on infer(). Greater value means a
             stricter matching. Defaults to 0.65.
+            masks_extra_refinement (bool, optional): Flag controlling additional refinement stage on inference.
         """
         self.encoder = encoder_model
         self.decoder = decoder_model
@@ -171,6 +173,7 @@ class SAMLearnableVisualPrompter:
         self._point_labels_box = np.array([[2, 3]], dtype=np.float32)
         self._has_mask_inputs = [np.array([[0.0]]), np.array([[1.0]])]
 
+        self._masks_extra_refinement = masks_extra_refinement
         self._is_cascade: bool = False
         if 0 <= threshold <= 1:
             self._threshold: float = threshold
@@ -401,7 +404,9 @@ class SAMLearnableVisualPrompter:
                 }
                 inputs_decoder["image_embeddings"] = image_embeddings
 
-                prediction = self._predict_masks(inputs_decoder, original_shape, True)
+                prediction = self._predict_masks(
+                    inputs_decoder, original_shape, self._masks_extra_refinement
+                )
                 prediction.update({"scores": points_score[-1]})
 
                 predicted_masks[label].append(prediction[self.decoder.output_blob_name])
