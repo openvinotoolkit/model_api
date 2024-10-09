@@ -146,7 +146,7 @@ class SAMLearnableVisualPrompter:
         decoder_model: SAMDecoder,
         reference_features: VisualPromptingFeatures | None = None,
         threshold: float = 0.65,
-        masks_extra_refinement: bool = False,
+        masks_extra_refinement: bool = True,
     ):
         """
         Initializes ZSL pipeline.
