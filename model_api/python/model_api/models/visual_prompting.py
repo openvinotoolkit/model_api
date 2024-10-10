@@ -146,7 +146,6 @@ class SAMLearnableVisualPrompter:
         decoder_model: SAMDecoder,
         reference_features: VisualPromptingFeatures | None = None,
         threshold: float = 0.65,
-        masks_extra_refinement: bool = True,
     ):
         """
         Initializes ZSL pipeline.
@@ -158,7 +157,6 @@ class SAMLearnableVisualPrompter:
              Once the features are passed, one can skip learn() method, and start predicting masks right away. Defaults to None.
             threshold (float, optional): Threshold to match vs reference features on infer(). Greater value means a
             stricter matching. Defaults to 0.65.
-            masks_extra_refinement (bool, optional): Flag controlling additional refinement stage on inference.
         """
         self.encoder = encoder_model
         self.decoder = decoder_model
@@ -173,7 +171,6 @@ class SAMLearnableVisualPrompter:
         self._point_labels_box = np.array([[2, 3]], dtype=np.float32)
         self._has_mask_inputs = [np.array([[0.0]]), np.array([[1.0]])]
 
-        self._masks_extra_refinement = masks_extra_refinement
         self._is_cascade: bool = False
         if 0 <= threshold <= 1:
             self._threshold: float = threshold
@@ -316,14 +313,16 @@ class SAMLearnableVisualPrompter:
         self,
         image: np.ndarray,
         reference_features: VisualPromptingFeatures | None = None,
+        apply_masks_refinement: bool = True,
     ) -> ZSLVisualPromptingResult:
         """A wrapper of the SAMLearnableVisualPrompter.infer() method"""
-        return self.infer(image, reference_features)
+        return self.infer(image, reference_features, apply_masks_refinement)
 
     def infer(
         self,
         image: np.ndarray,
         reference_features: VisualPromptingFeatures | None = None,
+        apply_masks_refinement: bool = True,
     ) -> ZSLVisualPromptingResult:
         """
         Obtains masks by already prepared reference features.
@@ -335,6 +334,8 @@ class SAMLearnableVisualPrompter:
             image (np.ndarray): HWC-shaped image
             reference_features (VisualPromptingFeatures | None, optional): Reference features object obtained during previous learn() calls.
             If not passed, object internal state is used, which reflects the last learn() call. Defaults to None.
+            apply_masks_refinement (bool, optional): Flag controlling additional refinement stage on inference. Once enabled, decoder will
+            be launched 2 extra times to refine the masks obtained with the first decoder call. Defaults to True.
 
         Returns:
             ZSLVisualPromptingResult: Mapping label -> predicted mask. Each mask object contains a list of binary masks, and a list of
@@ -405,7 +406,7 @@ class SAMLearnableVisualPrompter:
                 inputs_decoder["image_embeddings"] = image_embeddings
 
                 prediction = self._predict_masks(
-                    inputs_decoder, original_shape, self._masks_extra_refinement
+                    inputs_decoder, original_shape, apply_masks_refinement
                 )
                 prediction.update({"scores": points_score[-1]})
 
