@@ -510,7 +510,7 @@ std::pair<std::vector<std::string>, std::vector<float>> GreedyLabelsResolver::re
 
     std::vector<std::string> candidates;
     for (const auto& g : label_groups) {
-        if (g.size() == 1) {
+        if (g.size() == 1 && label_to_prob[g[0]] > 0.f) {
             candidates.push_back(g[0]);
         }
         else {
