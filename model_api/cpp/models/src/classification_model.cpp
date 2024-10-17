@@ -555,14 +555,17 @@ std::vector<std::unique_ptr<ClassificationResult>> ClassificationModel::inferBat
     return clsResults;
 }
 
-HierarchicalConfig::HierarchicalConfig(const std::string& json_repr)  {
+HierarchicalConfig::HierarchicalConfig(const std::string& json_repr, const std::vector<std::string>& labels)  {
     nlohmann::json data = nlohmann::json::parse(json_repr);
 
     num_multilabel_heads = data.at("cls_heads_info").at("num_multilabel_classes");
     num_multiclass_heads = data.at("cls_heads_info").at("num_multiclass_heads");
     num_single_label_classes = data.at("cls_heads_info").at("num_single_label_classes");
 
-    data.at("cls_heads_info").at("label_to_idx").get_to(label_to_idx);
+    int idx = 0;
+    for (const auto& lbl_name : labels) {
+        label_to_idx[lbl_name] = idx++;
+    }
     data.at("cls_heads_info").at("all_groups").get_to(all_groups);
     data.at("label_tree_edges").get_to(label_tree_edges);
 
