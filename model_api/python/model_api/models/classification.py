@@ -391,13 +391,13 @@ class GreedyLabelsResolver:
             predictions: a list of tuples (label name, score)
         """
 
-        def get_predecessors(lbl, candidates):
+        def get_predecessors(lbl, candidates, label_to_prob):
             """Returns all the predecessors of the input label or an empty list if one of the predecessors is not a candidate."""
             predecessors = []
 
             last_parent = self.label_tree.get_parent(lbl)
             while last_parent is not None:
-                if last_parent not in candidates:
+                if last_parent not in candidates or label_to_prob[last_parent] == 0.0:
                     return []
                 predecessors.append(last_parent)
                 last_parent = self.label_tree.get_parent(last_parent)
@@ -426,7 +426,7 @@ class GreedyLabelsResolver:
         for lbl in candidates:
             if lbl in output_labels:
                 continue
-            labels_to_add = get_predecessors(lbl, candidates)
+            labels_to_add = get_predecessors(lbl, candidates, label_to_prob)
             for new_lbl in labels_to_add:
                 if new_lbl not in output_labels:
                     output_labels.append(new_lbl)

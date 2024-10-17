@@ -629,7 +629,7 @@ std::map<std::string, float> GreedyLabelsResolver::resolve_labels(const std::vec
         if (resolved_label_to_prob.find(lbl) != resolved_label_to_prob.end()) {
             continue;
         }
-        auto labels_to_add = get_predecessors(lbl, candidates);
+        auto labels_to_add = get_predecessors(lbl, candidates, label_to_prob);
         for (const auto& new_lbl : labels_to_add) {
             if (resolved_label_to_prob.find(new_lbl) == resolved_label_to_prob.end()) {
                 resolved_label_to_prob[new_lbl] = label_to_prob[new_lbl];
@@ -649,7 +649,8 @@ std::string GreedyLabelsResolver::get_parent(const std::string& label) {
     return "";
 }
 
-std::vector<std::string> GreedyLabelsResolver::get_predecessors(const std::string& label, const std::vector<std::string>& candidates) {
+std::vector<std::string> GreedyLabelsResolver::get_predecessors(const std::string& label, const std::vector<std::string>& candidates,
+                                                                std::map<std::string, float>& label_to_prob) {
     std::vector<std::string> predecessors;
     auto last_parent = get_parent(label);
 
@@ -657,7 +658,7 @@ std::vector<std::string> GreedyLabelsResolver::get_predecessors(const std::strin
         return {label};
     }
     while (last_parent.size() > 0) {
-        if (std::find(candidates.begin(), candidates.end(), last_parent) == candidates.end()) {
+        if (std::find(candidates.begin(), candidates.end(), last_parent) == candidates.end() || (label_to_prob[last_parent] == 0.f)) {
             return {};
         }
         predecessors.push_back(last_parent);

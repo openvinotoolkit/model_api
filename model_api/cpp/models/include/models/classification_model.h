@@ -80,7 +80,8 @@ class GreedyLabelsResolver {
         std::vector<std::vector<std::string>> label_groups;
 
         std::string get_parent(const std::string& label);
-        std::vector<std::string> get_predecessors(const std::string& label, const std::vector<std::string>& candidates);
+        std::vector<std::string> get_predecessors(const std::string& label, const std::vector<std::string>& candidates,
+                                                  std::map<std::string, float>& label_to_prob);
 };
 
 class ProbabilisticLabelsResolver : public GreedyLabelsResolver {
