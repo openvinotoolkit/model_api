@@ -50,8 +50,9 @@ class ClassificationModel(ImageModel):
                 self.raise_error("Hierarchical classification config is empty.")
             self.raw_scores_name = self.out_layer_names[0]
             self.hierarchical_info = json.loads(self.hierarchical_config)
-            self.hierarchical_info["cls_heads_info"]["label_to_idx"] = \
-                {label_name: i for i, label_name in enumerate(self.labels)}
+            self.hierarchical_info["cls_heads_info"]["label_to_idx"] = {
+                label_name: i for i, label_name in enumerate(self.labels)
+            }
 
             if self.hierarchical_postproc == "probabilistic":
                 self.labels_resolver = ProbabilisticLabelsResolver(
