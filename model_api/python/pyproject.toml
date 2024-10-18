@@ -33,7 +33,7 @@ dependencies = [
 
 [project.optional-dependencies]
 ovms = [
-  "ovmsclient",
+  "tritonclient[http]",
 ]
 tests = [
     "httpx",
