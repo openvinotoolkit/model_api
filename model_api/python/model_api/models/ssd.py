@@ -41,6 +41,7 @@ class SSD(DetectionModel):
     def postprocess(self, outputs, meta):
         detections = self._parse_outputs(outputs)
         detections = self._resize_detections(detections, meta)
+        detections = self._filter_detections(detections, 1)
         detections = self._add_label_names(detections)
         return DetectionResult(
             detections,
