@@ -75,8 +75,7 @@ class SSD(DetectionModel):
         self.raise_error("Unsupported model outputs")
 
     def _parse_outputs(self, outputs):
-        detections = self.output_parser(outputs)
-        return [d for d in detections if d.score > self.confidence_threshold]
+        return self.output_parser(outputs)
 
 
 def find_layer_by_name(name, layers):
