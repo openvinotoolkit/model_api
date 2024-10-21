@@ -104,34 +104,34 @@ class DetectionModel(ImageModel):
                 pad_left = (self.w - round(input_img_widht / inverted_scale_x)) // 2
                 pad_top = (self.h - round(input_img_height / inverted_scale_y)) // 2
 
+        def _clamp_and_round(val, min_value, max_value):
+            return round(max(min_value, min(max_value, val)))
+
         for detection in detections:
-            detection.xmin = round(
-                min(
-                    max((detection.xmin * self.w - pad_left) * inverted_scale_x, 0),
-                    input_img_widht,
-                )
+            detection.xmin = _clamp_and_round(
+                (detection.xmin * self.w - pad_left) * inverted_scale_x,
+                0,
+                input_img_widht,
             )
-            detection.ymin = round(
-                min(
-                    max((detection.ymin * self.h - pad_top) * inverted_scale_y, 0),
-                    input_img_height,
-                )
+            detection.ymin = _clamp_and_round(
+                (detection.ymin * self.h - pad_top) * inverted_scale_y,
+                0,
+                input_img_height,
             )
-            detection.xmax = round(
-                min(
-                    max((detection.xmax * self.w - pad_left) * inverted_scale_x, 0),
-                    input_img_widht,
-                )
+            detection.xmax = _clamp_and_round(
+                (detection.xmax * self.w - pad_left) * inverted_scale_x,
+                0,
+                input_img_widht,
             )
-            detection.ymax = round(
-                min(
-                    max((detection.ymax * self.h - pad_top) * inverted_scale_y, 0),
-                    input_img_height,
-                )
+            detection.ymax = _clamp_and_round(
+                (detection.ymax * self.h - pad_top) * inverted_scale_y,
+                0,
+                input_img_height,
             )
+
         return detections
 
-    def _filter_detections(self, detections, box_area_threshold=0):
+    def _filter_detections(self, detections, box_area_threshold=0.0):
         """Filters detections by confidence threshold and box size threshold
 
         Args:
