@@ -36,21 +36,24 @@ extensions = [
     "sphinx.ext.graphviz"
 ]
 
+myst_enable_extensions = [
+    "colon_fence",
+    # other MyST extensions...
+]
+
 templates_path = ['_templates']
 exclude_patterns = []
 
-
+# Automatic exclusion of prompts from the copies
+# https://sphinx-copybutton.readthedocs.io/en/latest/use.html#automatic-exclusion-of-prompts-from-the-copies
+copybutton_exclude = ".linenos, .gp, .go"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_book_theme"
 html_static_path = ['_static']
-html_theme_options = {
-    "logo": {
-        "text": "InferenceSDK",
-    },
-}
 
 breathe_projects = {"InferenceSDK":  Path(__file__).parent.parent/"build_cpp"/ "xml"}
 breathe_default_project = "InferenceSDK"
+breathe_default_members = ('members', 'undoc-members', 'private-members')
