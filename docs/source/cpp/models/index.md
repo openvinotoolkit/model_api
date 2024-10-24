@@ -208,4 +208,4 @@
 ./detection_model_retinaface_pt
 ./openpose_decoder
 
-```{toctree}
+```
