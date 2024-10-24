@@ -1,1 +1,1 @@
-# Jpeg Restoration Model.H
+# Jpeg Restoration Model

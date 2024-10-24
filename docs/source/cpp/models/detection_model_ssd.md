@@ -1,1 +1,1 @@
-# Detection Model Ssd.H
+# Detection Model Ssd

@@ -1,1 +1,1 @@
-# Detection Model Yolo.H
+# Detection Model Yolo

@@ -1,1 +1,1 @@
-# Detection Model Yolox.H
+# Detection Model Yolox
