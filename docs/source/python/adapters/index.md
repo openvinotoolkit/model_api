@@ -37,3 +37,14 @@
 :::
 
 ::::
+
+```{toctree}
+:caption: Adapters
+:hidden:
+
+./inference_adapter
+./onnx_adapter
+./openvino_adapter
+./ovms_adapter
+./utils
+```

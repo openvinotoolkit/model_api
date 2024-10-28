@@ -51,9 +51,28 @@ copybutton_exclude = ".linenos, .gp, .go"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "sphinx_book_theme"
+html_theme = "pydata_sphinx_theme"
 html_static_path = ['_static']
 
 breathe_projects = {"InferenceSDK":  Path(__file__).parent.parent/"build_cpp"/ "xml"}
 breathe_default_project = "InferenceSDK"
 breathe_default_members = ('members', 'undoc-members', 'private-members')
+
+autodoc_docstring_signature = True
+autodoc_member_order = "bysource"
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+}
+autodoc_member_order = "groupwise"
+autodoc_default_options = {
+    "members": True,
+    "methods": True,
+    "special-members": "__call__",
+    "exclude-members": "_abc_impl",
+    "show-inheritance": True,
+}
+
+autoclass_content = "both"
+
+autosummary_generate = True  # Turn on sphinx.ext.autosummary

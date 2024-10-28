@@ -3,7 +3,7 @@ nbsphinx
 pandoc
 sphinx
 sphinx_autodoc_typehints
-sphinx_book_theme
+pydata-sphinx-theme
 sphinx-copybutton
 sphinx_design
 breathe

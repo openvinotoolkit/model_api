@@ -1,5 +1,9 @@
 # Tilers
 
+::::{grid} 1 2 2 3
+:margin: 1 1 0 0
+:gutter: 1
+
 :::{grid-item-card} Semantic Segmentation
 :link: ./semantic_segmentation
 :link-type: doc
@@ -27,6 +31,8 @@
 
 [todo]
 :::
+
+::::
 
 ```{toctree}
 :caption: Tilers

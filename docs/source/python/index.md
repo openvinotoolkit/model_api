@@ -35,11 +35,11 @@ Tilers description[todo]
 ::::
 
 ```{toctree}
-:caption: Python Reference
+:caption: Python API Reference
 :hidden:
 
-adapters/index
-models/index
-pipelines/index
-tilers/index
+./adapters/index
+./models/index
+./pipelines/index
+./tilers/index
 ```

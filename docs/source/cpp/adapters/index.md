@@ -1,4 +1,4 @@
-## Adapters
+# Adapters
 
 ```{eval-rst}
 .. doxygenclass:: InferenceAdapter

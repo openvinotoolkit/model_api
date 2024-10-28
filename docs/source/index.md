@@ -76,12 +76,19 @@ Pipelines description[todo]
 :caption: Python Reference
 :hidden:
 
-python/index
+./python/index
 ```
 
 ```{toctree}
 :caption: C++ Reference
 :hidden:
 
-cpp/index
+./cpp/index
+```
+
+```{toctree}
+:caption: Developer Guides
+:hidden:
+
+./guides/index
 ```
