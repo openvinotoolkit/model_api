@@ -1,7 +1,7 @@
-# Visual Prompting
+# Detection
 
 ```{eval-rst}
-.. automodule:: model_api.models.visual_prompting
+.. automodule:: model_api.tilers.detection
    :members:
    :undoc-members:
    :show-inheritance:

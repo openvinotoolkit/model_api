@@ -1,1 +1,6 @@
-# Detection Model Yolox
+# Detection Model YoloX
+
+```{eval-rst}
+.. doxygenclass:: ModelYoloX
+
+```

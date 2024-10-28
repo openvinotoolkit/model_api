@@ -1,7 +1,7 @@
 # Instance Segmentation
 
 ```{eval-rst}
-.. automodule:: model_api.models.instance_segmentation
+.. automodule:: model_api.tilers.instance_segmentation
    :members:
    :undoc-members:
    :show-inheritance:

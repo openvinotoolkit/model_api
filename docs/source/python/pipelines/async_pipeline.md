@@ -1,7 +1,7 @@
-# Visual Prompting
+# Async Pipeline
 
 ```{eval-rst}
-.. automodule:: model_api.models.visual_prompting
+.. automodule:: model_api.pipelines.async_pipeline
    :members:
    :undoc-members:
    :show-inheritance:
