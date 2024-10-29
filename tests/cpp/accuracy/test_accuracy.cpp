@@ -1,31 +1,27 @@
-#include <stddef.h>
-
-#include <cstdint>
-#include <exception>
-#include <iomanip>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-#include <fstream>
-
-#include <nlohmann/json.hpp>
-
-#include <opencv2/core.hpp>
-
+#include <adapters/openvino_adapter.h>
 #include <gtest/gtest.h>
-
-#include <models/classification_model.h>
 #include <models/anomaly_model.h>
+#include <models/classification_model.h>
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/instance_segmentation.h>
 #include <models/keypoint_detection.h>
 #include <models/results.h>
 #include <models/segmentation_model.h>
-#include <adapters/openvino_adapter.h>
+#include <stddef.h>
 #include <tilers/detection.h>
 #include <tilers/instance_segmentation.h>
 #include <tilers/semantic_segmentation.h>
+
+#include <cstdint>
+#include <exception>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <nlohmann/json.hpp>
+#include <opencv2/core.hpp>
+#include <stdexcept>
+#include <string>
 
 using json = nlohmann::json;
 
@@ -46,12 +42,10 @@ struct ModelData {
     cv::Size input_res = cv::Size(0, 0);
 };
 
-class ModelParameterizedTest : public testing::TestWithParam<ModelData> {
-};
+class ModelParameterizedTest : public testing::TestWithParam<ModelData> {};
 
-template<typename... Args>
-std::string string_format(const std::string &fmt, Args... args)
-{
+template <typename... Args>
+std::string string_format(const std::string& fmt, Args... args) {
     size_t size = snprintf(nullptr, 0, fmt.c_str(), args...);
     std::string buf;
     buf.reserve(size + 1);
@@ -60,8 +54,7 @@ std::string string_format(const std::string &fmt, Args... args)
     return buf;
 }
 
-inline void from_json(const nlohmann::json& j, ModelData& test)
-{
+inline void from_json(const nlohmann::json& j, ModelData& test) {
     test.name = j.at("name").get<std::string>();
     test.type = j.at("type").get<std::string>();
     for (auto& item : j.at("test_data")) {
@@ -86,8 +79,7 @@ inline void from_json(const nlohmann::json& j, ModelData& test)
 }
 
 namespace {
-std::vector<ModelData> GetTestData(const std::string& path)
-{
+std::vector<ModelData> GetTestData(const std::string& path) {
     std::ifstream input(path);
     nlohmann::json j;
     input >> j;
@@ -111,7 +103,8 @@ std::vector<std::shared_ptr<Type>> create_models(const std::string& model_path) 
 template <>
 std::vector<std::shared_ptr<DetectionModel>> create_models(const std::string& model_path) {
     bool preload = true;
-    std::vector<std::shared_ptr<DetectionModel>> models{DetectionModel::create_model(model_path, {}, "", preload, "CPU")};
+    std::vector<std::shared_ptr<DetectionModel>> models{
+        DetectionModel::create_model(model_path, {}, "", preload, "CPU")};
     if (std::string::npos != model_path.find("/serialized/")) {
         static ov::Core core;
         std::shared_ptr<ov::Model> model = core.read_model(model_path);
@@ -121,10 +114,9 @@ std::vector<std::shared_ptr<DetectionModel>> create_models(const std::string& mo
     }
     return models;
 }
-}
+}  // namespace
 
-TEST_P(ModelParameterizedTest, AccuracyTest)
-{
+TEST_P(ModelParameterizedTest, AccuracyTest) {
     auto modelData = GetParam();
 
     std::string modelPath;
@@ -145,7 +137,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
         modelPath = DATA_DIR + '/' + string_format(MODEL_PATH_TEMPLATE, name.c_str(), name.c_str());
     }
     const std::string& basename = modelPath.substr(modelPath.find_last_of("/\\") + 1);
-    for (const std::string& modelXml: {modelPath, DATA_DIR + "/serialized/" + basename}) {
+    for (const std::string& modelXml : {modelPath, DATA_DIR + "/serialized/" + basename}) {
         if (modelData.type == "DetectionModel") {
             for (const std::shared_ptr<DetectionModel>& model : create_models<DetectionModel>(modelXml)) {
                 for (size_t i = 0; i < modelData.testData.size(); i++) {
@@ -164,15 +156,13 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                             cv::resize(image, image, modelData.input_res);
                         }
                         result = tiler.run(image);
-                    }
-                    else {
+                    } else {
                         result = model->infer(image);
                     }
                     EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
                 }
             }
-        }
-        else if (modelData.type == "ClassificationModel") {
+        } else if (modelData.type == "ClassificationModel") {
             for (const std::shared_ptr<ClassificationModel>& model : create_models<ClassificationModel>(modelXml)) {
                 for (size_t i = 0; i < modelData.testData.size(); i++) {
                     ASSERT_EQ(modelData.testData[i].reference.size(), 1);
@@ -186,8 +176,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
                 }
             }
-        }
-        else if (modelData.type == "SegmentationModel") {
+        } else if (modelData.type == "SegmentationModel") {
             for (const std::shared_ptr<SegmentationModel>& model : create_models<SegmentationModel>(modelXml)) {
                 for (size_t i = 0; i < modelData.testData.size(); i++) {
                     ASSERT_EQ(modelData.testData[i].reference.size(), 1);
@@ -205,8 +194,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                             cv::resize(image, image, modelData.input_res);
                         }
                         pred = tiler.run(image);
-                    }
-                    else {
+                    } else {
                         pred = model->infer(image);
                     }
 
@@ -224,8 +212,7 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                     }
                 }
             }
-        }
-        else if (modelData.type == "MaskRCNNModel") {
+        } else if (modelData.type == "MaskRCNNModel") {
             for (const std::shared_ptr<MaskRCNNModel>& model : create_models<MaskRCNNModel>(modelXml)) {
                 for (size_t i = 0; i < modelData.testData.size(); i++) {
                     ASSERT_EQ(modelData.testData[i].reference.size(), 1);
@@ -247,7 +234,8 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                         result = model->infer(image);
                     }
 
-                    const std::vector<SegmentedObjectWithRects>& withRects = add_rotated_rects(result->segmentedObjects);
+                    const std::vector<SegmentedObjectWithRects>& withRects =
+                        add_rotated_rects(result->segmentedObjects);
                     std::stringstream ss;
                     for (const SegmentedObjectWithRects& obj : withRects) {
                         ss << obj << "; ";
@@ -271,31 +259,28 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
                         for (const Contour& contour : getContours(result->segmentedObjects)) {
                             ss << contour << "; ";
                         }
-                    } catch (const std::runtime_error&) {}
+                    } catch (const std::runtime_error&) {
+                    }
                     EXPECT_EQ(ss.str(), modelData.testData[i].reference[0]);
                 }
             }
-        }
-        else if (modelData.type == "AnomalyDetection") {
-            for (const std::shared_ptr<AnomalyModel> &model : create_models<AnomalyModel>(modelXml))
-            {
-                for (size_t i = 0; i < modelData.testData.size(); i++)
-                {
+        } else if (modelData.type == "AnomalyDetection") {
+            for (const std::shared_ptr<AnomalyModel>& model : create_models<AnomalyModel>(modelXml)) {
+                for (size_t i = 0; i < modelData.testData.size(); i++) {
                     ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                     auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
 
                     cv::Mat image = cv::imread(imagePath);
-                    if (!image.data)
-                    {
+                    if (!image.data) {
                         throw std::runtime_error{"Failed to read the image"};
                     }
                     auto result = model->infer(image);
                     EXPECT_EQ(std::string{*result}, modelData.testData[i].reference[0]);
                 }
             }
-        }
-        else if (modelData.type == "KeypointDetectionModel") {
-            for (const std::shared_ptr<KeypointDetectionModel>& model : create_models<KeypointDetectionModel>(modelXml)) {
+        } else if (modelData.type == "KeypointDetectionModel") {
+            for (const std::shared_ptr<KeypointDetectionModel>& model :
+                 create_models<KeypointDetectionModel>(modelXml)) {
                 for (size_t i = 0; i < modelData.testData.size(); i++) {
                     ASSERT_EQ(modelData.testData[i].reference.size(), 1);
                     auto imagePath = DATA_DIR + "/" + modelData.testData[i].image;
@@ -318,57 +303,53 @@ TEST_P(ModelParameterizedTest, AccuracyTest)
 
 INSTANTIATE_TEST_SUITE_P(TestAccuracyPublic, ModelParameterizedTest, testing::ValuesIn(GetTestData(PUBLIC_SCOPE_PATH)));
 
-class InputParser{
-    public:
-        InputParser (int &argc, char **argv){
-            for (int i=1; i < argc; ++i)
-                this->tokens.push_back(std::string(argv[i]));
-        }
+class InputParser {
+public:
+    InputParser(int& argc, char** argv) {
+        for (int i = 1; i < argc; ++i)
+            this->tokens.push_back(std::string(argv[i]));
+    }
 
-        const std::string& getCmdOption(const std::string &option) const{
-            std::vector<std::string>::const_iterator itr;
-            itr = std::find(this->tokens.begin(), this->tokens.end(), option);
-            if (itr != this->tokens.end() && ++itr != this->tokens.end()){
-                return *itr;
-            }
-            static const std::string empty_string("");
-            return empty_string;
+    const std::string& getCmdOption(const std::string& option) const {
+        std::vector<std::string>::const_iterator itr;
+        itr = std::find(this->tokens.begin(), this->tokens.end(), option);
+        if (itr != this->tokens.end() && ++itr != this->tokens.end()) {
+            return *itr;
         }
+        static const std::string empty_string("");
+        return empty_string;
+    }
 
-        bool cmdOptionExists(const std::string &option) const{
-            return std::find(this->tokens.begin(), this->tokens.end(), option)
-                   != this->tokens.end();
-        }
-    private:
-        std::vector <std::string> tokens;
+    bool cmdOptionExists(const std::string& option) const {
+        return std::find(this->tokens.begin(), this->tokens.end(), option) != this->tokens.end();
+    }
+
+private:
+    std::vector<std::string> tokens;
 };
 
-void print_help(const char* program_name)
-{
+void print_help(const char* program_name) {
     std::cout << "Usage: " << program_name << " -p <path_to_public_scope.json> -d <path_to_data>" << std::endl;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv) {
     InputParser input(argc, argv);
 
-    if(input.cmdOptionExists("-h")){
+    if (input.cmdOptionExists("-h")) {
         print_help(argv[0]);
         return 1;
     }
-    const std::string &public_scope = input.getCmdOption("-p");
-    if (!public_scope.empty()){
+    const std::string& public_scope = input.getCmdOption("-p");
+    if (!public_scope.empty()) {
         PUBLIC_SCOPE_PATH = public_scope;
-    }
-    else{
+    } else {
         print_help(argv[0]);
         return 1;
     }
-    const std::string &data_dir = input.getCmdOption("-d");
-    if (!data_dir.empty()){
+    const std::string& data_dir = input.getCmdOption("-d");
+    if (!data_dir.empty()) {
         DATA_DIR = data_dir;
-    }
-    else{
+    } else {
         print_help(argv[0]);
         return 1;
     }
