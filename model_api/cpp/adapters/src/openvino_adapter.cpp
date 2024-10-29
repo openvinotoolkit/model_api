@@ -112,10 +112,10 @@ void OpenVINOInferenceAdapter::initInputsOutputs() {
         outputNames.push_back(output.get_any_name());
     }
 }
-ov::element::Type_t OpenVINOInferenceAdapter::getInputDatatype(const std::string& inputName) const {
+ov::element::Type_t OpenVINOInferenceAdapter::getInputDatatype(const std::string&) const {
     throw std::runtime_error("Not implemented");
 }
-ov::element::Type_t OpenVINOInferenceAdapter::getOutputDatatype(const std::string& outputName) const {
+ov::element::Type_t OpenVINOInferenceAdapter::getOutputDatatype(const std::string&) const {
     throw std::runtime_error("Not implemented");
 }
 
