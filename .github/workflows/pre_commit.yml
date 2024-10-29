@@ -1,0 +1,29 @@
+name: Pre-Commit Checks
+permissions: read-all
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+  workflow_dispatch: # run on request (no need for PR)
+
+jobs:
+  Code-Quality-Checks:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: CHECKOUT REPOSITORY
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install 'model_api/python/.[full]'
+      - name: Run pre-commit checks
+        run: pre-commit run --all-files

@@ -1,3 +1,5 @@
+# Releasing to PyPI
+
 ```bash
 py -m pip install --upgrade build
 # Remove master omz_tools. Will use one from openvino-dev
@@ -7,4 +9,5 @@ py -m twine upload --username __token__ model_api/python/dist/*
 git tag X.Y.Z
 git push upstream X.Y.Z
 ```
+
 Pull request to increment `version` in `pyproject.toml` for the next release.

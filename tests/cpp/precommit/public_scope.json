@@ -1,26 +1,26 @@
 [
-    {
-        "name": "ssd_mobilenet_v1_fpn_coco",
-        "type": "DetectionModel"
-    },
-    {
-        "name": "ssdlite_mobilenet_v2",
-        "type": "DetectionModel"
-    },
-    {
-        "name": "efficientnet-b0-pytorch",
-        "type": "ClassificationModel"
-    },
-    {
-        "name": "otx_models/mlc_mobilenetv3_large_voc.xml",
-        "type": "ClassificationModel"
-    },
-    {
-        "name": "hrnet-v2-c1-segmentation",
-        "type": "SegmentationModel"
-    },
-    {
-        "name": "otx_models/tinynet_imagenet.xml",
-        "type": "ClassificationModel"
-    }
+  {
+    "name": "ssd_mobilenet_v1_fpn_coco",
+    "type": "DetectionModel"
+  },
+  {
+    "name": "ssdlite_mobilenet_v2",
+    "type": "DetectionModel"
+  },
+  {
+    "name": "efficientnet-b0-pytorch",
+    "type": "ClassificationModel"
+  },
+  {
+    "name": "otx_models/mlc_mobilenetv3_large_voc.xml",
+    "type": "ClassificationModel"
+  },
+  {
+    "name": "hrnet-v2-c1-segmentation",
+    "type": "SegmentationModel"
+  },
+  {
+    "name": "otx_models/tinynet_imagenet.xml",
+    "type": "ClassificationModel"
+  }
 ]
