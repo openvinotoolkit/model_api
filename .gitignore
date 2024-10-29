@@ -140,3 +140,6 @@ dmypy.json
 docs/build/
 docs/build_cpp/
 docs/source/_build/
+
+# vs-code
+.vscode/
