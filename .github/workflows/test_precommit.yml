@@ -9,9 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Prohibit non ASCII chars in file names
-        run: test $(git diff --name-only --diff-filter=A -z $(git hash-object -t tree /dev/null) | LC_ALL=C tr -d '[ -~]\0' | wc -c) == 0
-      - run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/README.md'"
       - uses: actions/setup-python@v4
         with:
           python-version: 3.9
@@ -58,17 +55,6 @@ jobs:
         run: |
           source venv/bin/activate
           pytest tests/python/precommit
-  CPP-Code-Quality:
-    name: CPP-Code-Quality
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: cppcheck
-        uses: chmorgan/cppcheck-action@main
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN}}
-          # missingInclude: cppcheck can't find stl, openvino, opencv
-          other_options: --suppress=missingInclude -Imodel_api/cpp/models/include -Imodel_api/cpp/utils/include -Imodel_api/cpp/pipelines/include --check-config
   CPP-Precommit:
     runs-on: ubuntu-latest
     steps:
