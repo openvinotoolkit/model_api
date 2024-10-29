@@ -55,6 +55,17 @@ jobs:
         run: |
           source venv/bin/activate
           pytest tests/python/precommit
+  CPP-Code-Quality:
+    name: CPP-Code-Quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: cppcheck
+        uses: chmorgan/cppcheck-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN}}
+          # missingInclude: cppcheck can't find stl, openvino, opencv
+          other_options: --suppress=missingInclude -Imodel_api/cpp/models/include -Imodel_api/cpp/utils/include -Imodel_api/cpp/pipelines/include --check-config
   CPP-Precommit:
     runs-on: ubuntu-latest
     steps:
