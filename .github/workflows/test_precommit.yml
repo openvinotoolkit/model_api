@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: git --no-pager diff --check $(git hash-object -t tree /dev/null)
-        run: git --no-pager diff --check $(git hash-object -t tree /dev/null)
       - name: Prohibit non ASCII chars in file names
         run: test $(git diff --name-only --diff-filter=A -z $(git hash-object -t tree /dev/null) | LC_ALL=C tr -d '[ -~]\0' | wc -c) == 0
       - run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/README.md'"
