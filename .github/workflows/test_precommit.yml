@@ -8,58 +8,58 @@ jobs:
   Python-Code-Quality:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: git --no-pager diff --check $(git hash-object -t tree /dev/null)
-      run: git --no-pager diff --check $(git hash-object -t tree /dev/null)
-    - name: Prohibit non ASCII chars in file names
-      run: test $(git diff --name-only --diff-filter=A -z $(git hash-object -t tree /dev/null) | LC_ALL=C tr -d '[ -~]\0' | wc -c) == 0
-    - run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/README.md'"
-    - uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-        cache: pip
-    - name: Create and start a virtual environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-    - name: Install dependencies
-      run: |
-        source venv/bin/activate
-        pip install --upgrade pip
-        pip install isort black
-    - name: Check style with black
-      run: |
-        source venv/bin/activate
-        black --check .
-    - name: Check style with isort
-      run: |
-        source venv/bin/activate
-        isort --check .
+      - uses: actions/checkout@v3
+      - name: git --no-pager diff --check $(git hash-object -t tree /dev/null)
+        run: git --no-pager diff --check $(git hash-object -t tree /dev/null)
+      - name: Prohibit non ASCII chars in file names
+        run: test $(git diff --name-only --diff-filter=A -z $(git hash-object -t tree /dev/null) | LC_ALL=C tr -d '[ -~]\0' | wc -c) == 0
+      - run: "! git grep -n '[^ -~]' -- ':(exclude)model_api/python/README.md'"
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+          cache: pip
+      - name: Create and start a virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install isort black
+      - name: Check style with black
+        run: |
+          source venv/bin/activate
+          black --check .
+      - name: Check style with isort
+        run: |
+          source venv/bin/activate
+          isort --check .
   Python-Precommit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-        cache: pip
-    - name: Create and start a virtual environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-    - name: Install dependencies
-      run: |
-        source venv/bin/activate
-        python -m pip install --upgrade pip
-        pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
-    - name: Prepare test data
-      run: |
-        source venv/bin/activate
-        python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
-    - name: Run test
-      run: |
-        source venv/bin/activate
-        pytest tests/python/precommit
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+          cache: pip
+      - name: Create and start a virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
+      - name: Prepare test data
+        run: |
+          source venv/bin/activate
+          python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
+      - name: Run test
+        run: |
+          source venv/bin/activate
+          pytest tests/python/precommit
   CPP-Code-Quality:
     name: CPP-Code-Quality
     runs-on: ubuntu-latest
@@ -74,102 +74,102 @@ jobs:
   CPP-Precommit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-        cache: pip
-    - name: Create and start a virtual environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-    - name: Install dependencies
-      run: |
-        source venv/bin/activate
-        python -m pip install --upgrade pip
-        pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+          cache: pip
+      - name: Create and start a virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+      - name: Install dependencies
+        run: |
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
 
-        sudo bash model_api/cpp/install_dependencies.sh
-    - name: Prepare test data
-      run: |
-        source venv/bin/activate
-        python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
-    - name: Build
-      run: |
-        mkdir build && cd build
-        cmake ../tests/cpp/precommit/ -DCMAKE_CXX_FLAGS=-Werror
-        cmake --build . -j $((`nproc`*2+2))
-    - name: Run test
-      run: |
-        build/test_sanity -d data -p tests/cpp/precommit/public_scope.json && build/test_model_config -d data
+          sudo bash model_api/cpp/install_dependencies.sh
+      - name: Prepare test data
+        run: |
+          source venv/bin/activate
+          python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake ../tests/cpp/precommit/ -DCMAKE_CXX_FLAGS=-Werror
+          cmake --build . -j $((`nproc`*2+2))
+      - name: Run test
+        run: |
+          build/test_sanity -d data -p tests/cpp/precommit/public_scope.json && build/test_model_config -d data
   CPP-Windows-Precommit:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-        cache: pip
-    - name: Create and start a virtual environment
-      shell: bash
-      run: |
-        python -m venv venv
-        source venv/Scripts/activate
-    - name: Install dependencies
-      shell: bash
-      run: |
-        source venv/Scripts/activate
-        python -m pip install --upgrade pip
-        pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
-        curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/windows/w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64.zip --output w_openvino_toolkit_windows.zip
-        unzip w_openvino_toolkit_windows.zip
-        rm w_openvino_toolkit_windows.zip
-        curl -L https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-windows.exe --output opencv-4.10.0-windows.exe
-        ./opencv-4.10.0-windows.exe -oopencv -y
-        rm opencv-4.10.0-windows.exe
-    - name: Prepare test data
-      shell: bash
-      run: |
-        source venv/Scripts/activate
-        python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
-    - name: Build
-      shell: bash
-      run: |
-        mkdir build && cd build
-        MSYS_NO_PATHCONV=1 cmake ../examples/cpp/ -DOpenVINO_DIR=$GITHUB_WORKSPACE/w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64/runtime/cmake -DOpenCV_DIR=$GITHUB_WORKSPACE/opencv/opencv/build -DCMAKE_CXX_FLAGS=/WX
-        cmake --build . --config Release -j $((`nproc`*2+2))
-    - name: Run sync sample
-      shell: cmd
-      # .\w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\setupvars.bat exits with 0 code without moving to a next command. Set PATH manually
-      run: |
-        set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64\runtime\3rdparty\tbb\bin;%PATH%
-        .\build\Release\synchronous_api.exe .\data\public\ssd_mobilenet_v1_fpn_coco\FP16\ssd_mobilenet_v1_fpn_coco.xml .\data\BloodImage_00007.jpg
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+          cache: pip
+      - name: Create and start a virtual environment
+        shell: bash
+        run: |
+          python -m venv venv
+          source venv/Scripts/activate
+      - name: Install dependencies
+        shell: bash
+        run: |
+          source venv/Scripts/activate
+          python -m pip install --upgrade pip
+          pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
+          curl https://storage.openvinotoolkit.org/repositories/openvino/packages/2024.1/windows/w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64.zip --output w_openvino_toolkit_windows.zip
+          unzip w_openvino_toolkit_windows.zip
+          rm w_openvino_toolkit_windows.zip
+          curl -L https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-windows.exe --output opencv-4.10.0-windows.exe
+          ./opencv-4.10.0-windows.exe -oopencv -y
+          rm opencv-4.10.0-windows.exe
+      - name: Prepare test data
+        shell: bash
+        run: |
+          source venv/Scripts/activate
+          python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
+      - name: Build
+        shell: bash
+        run: |
+          mkdir build && cd build
+          MSYS_NO_PATHCONV=1 cmake ../examples/cpp/ -DOpenVINO_DIR=$GITHUB_WORKSPACE/w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64/runtime/cmake -DOpenCV_DIR=$GITHUB_WORKSPACE/opencv/opencv/build -DCMAKE_CXX_FLAGS=/WX
+          cmake --build . --config Release -j $((`nproc`*2+2))
+      - name: Run sync sample
+        shell: cmd
+        # .\w_openvino_toolkit_windows_2023.0.0.10926.b4452d56304_x86_64\setupvars.bat exits with 0 code without moving to a next command. Set PATH manually
+        run: |
+          set PATH=opencv\opencv\build\x64\vc16\bin;w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64\runtime\bin\intel64\Release;w_openvino_toolkit_windows_2024.1.0.15008.f4afc983258_x86_64\runtime\3rdparty\tbb\bin;%PATH%
+          .\build\Release\synchronous_api.exe .\data\public\ssd_mobilenet_v1_fpn_coco\FP16\ssd_mobilenet_v1_fpn_coco.xml .\data\BloodImage_00007.jpg
   serving_api:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
-        python-version: [3.9, '3.10', '3.11']
+        python-version: [3.9, "3.10", "3.11"]
         exclude:
           - os: ubuntu-24.04
-            python-version: '3.9'
+            python-version: "3.9"
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Set up docker for macOS
-      if: startsWith(matrix.os, 'macos-1')
-      run: |
-        brew install colima docker
-        colima start
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-        cache: pip
-    - name: serving_api
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install model_api/python/[ovms,tests]
-        python -c "from model_api.models import DetectionModel; DetectionModel.create_model('ssd_mobilenet_v1_fpn_coco').save('ovms_models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml')"
-        docker run -d --rm -v $GITHUB_WORKSPACE/ovms_models/:/models -p 9000:9000 -p 8000:8000 openvino/model_server:latest --model_path /models/ssd_mobilenet_v1_fpn_coco/ --model_name ssd_mobilenet_v1_fpn_coco --port 9000 --rest_port 8000 --log_level DEBUG --target_device CPU
-        python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
-        python examples/python/serving_api/run.py data/coco128/images/train2017/000000000009.jpg  # detects 4 objects
+      - name: Set up docker for macOS
+        if: startsWith(matrix.os, 'macos-1')
+        run: |
+          brew install colima docker
+          colima start
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: serving_api
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install model_api/python/[ovms,tests]
+          python -c "from model_api.models import DetectionModel; DetectionModel.create_model('ssd_mobilenet_v1_fpn_coco').save('ovms_models/ssd_mobilenet_v1_fpn_coco/1/ssd_mobilenet_v1_fpn_coco.xml')"
+          docker run -d --rm -v $GITHUB_WORKSPACE/ovms_models/:/models -p 9000:9000 -p 8000:8000 openvino/model_server:latest --model_path /models/ssd_mobilenet_v1_fpn_coco/ --model_name ssd_mobilenet_v1_fpn_coco --port 9000 --rest_port 8000 --log_level DEBUG --target_device CPU
+          python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
+          python examples/python/serving_api/run.py data/coco128/images/train2017/000000000009.jpg  # detects 4 objects
