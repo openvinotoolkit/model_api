@@ -1,20 +1,20 @@
 # Internal Model Data
 
 ```{eval-rst}
-.. doxygenclass:: InternalModelData
+.. doxygenstruct:: InternalModelData
 
 ```
 
 ## InternamImageModelData
 
 ```{eval-rst}
-.. doxygenclass:: InternalImageModelData
+.. doxygenstruct:: InternalImageModelData
 
 ```
 
 ## InternalScaleData
 
 ```{eval-rst}
-.. doxygenclass:: InternalScaleData
+.. doxygenstruct:: InternalScaleData
 
 ```

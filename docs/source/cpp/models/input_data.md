@@ -1,13 +1,13 @@
 # Input Data
 
 ```{eval-rst}
-.. doxygenclass:: InputData
+.. doxygenstruct:: InputData
 
 ```
 
 ## ImageInput Data
 
 ```{eval-rst}
-.. doxygenclass:: ImageInputData
+.. doxygenstruct:: ImageInputData
 
 ```
