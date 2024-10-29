@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 */
-
 #include <adapters/openvino_adapter.h>
 #include <models/detection_model.h>
 #include <models/results.h>
@@ -89,7 +88,6 @@ int main(int argc, char* argv[]) try {
         model->inferAsync(image, {{"id", i}});
     }
     model->awaitAll();
-
 } catch (const std::exception& error) {
     std::cerr << error.what() << '\n';
     return 1;

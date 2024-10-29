@@ -25,7 +25,7 @@ repos:
 
   # C++ code quality
   - repo: https://github.com/cpp-linter/cpp-linter-hooks
-    rev: v0.5.1 # Use the ref you want to point at
+    rev: v0.5.1
     hooks:
       - id: clang-format
-        args: [--style=file] # to load .clang-format
+        args: [--style=file, --version=10]
