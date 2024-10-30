@@ -22,6 +22,10 @@ def prepare_model(
     data_dir="./data",
     public_scope=Path(__file__).resolve().parent / "public_scope.json",
 ):
+    # TODO refactor this test so that it does not use eval
+    # flake8: noqa: F401
+    from model_api.models import ClassificationModel, DetectionModel, SegmentationModel
+
     with open(public_scope, "r") as f:
         public_scope = json.load(f)
 
