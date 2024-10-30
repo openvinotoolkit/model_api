@@ -22,3 +22,10 @@ repos:
     rev: v0.41.0
     hooks:
       - id: markdownlint
+
+  # C++ code quality
+  - repo: https://github.com/cpp-linter/cpp-linter-hooks
+    rev: v0.5.1
+    hooks:
+      - id: clang-format
+        args: [--style=file, --version=10]

@@ -14,23 +14,21 @@
 // limitations under the License.
 */
 
+#include <models/detection_model.h>
+#include <models/input_data.h>
+#include <models/results.h>
 #include <stddef.h>
 
 #include <cstdint>
 #include <exception>
 #include <iomanip>
 #include <iostream>
-#include <stdexcept>
-#include <string>
-
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <openvino/openvino.hpp>
-
-#include <models/detection_model.h>
-#include <models/input_data.h>
-#include <models/results.h>
+#include <stdexcept>
+#include <string>
 
 int main(int argc, char* argv[]) try {
     if (argc != 3) {
@@ -43,16 +41,16 @@ int main(int argc, char* argv[]) try {
     }
 
     // Instantiate Object Detection model
-    auto model = DetectionModel::create_model(argv[1]); // works with SSD models. Download it using Python Model API
+    auto model = DetectionModel::create_model(argv[1]);  // works with SSD models. Download it using Python Model API
 
     // Run the inference
     auto result = model->infer(image);
 
     // Process detections
     for (auto& obj : result->objects) {
-        std::cout << " " << std::left << std::setw(9) << obj.label << " | " << std::setw(10) << obj.confidence
-            << " | " << std::setw(4) << int(obj.x) << " | " << std::setw(4) << int(obj.y) << " | "
-            << std::setw(4) << int(obj.x + obj.width) << " | " << std::setw(4) << int(obj.y + obj.height) << "\n";
+        std::cout << " " << std::left << std::setw(9) << obj.label << " | " << std::setw(10) << obj.confidence << " | "
+                  << std::setw(4) << int(obj.x) << " | " << std::setw(4) << int(obj.y) << " | " << std::setw(4)
+                  << int(obj.x + obj.width) << " | " << std::setw(4) << int(obj.y + obj.height) << "\n";
     }
 } catch (const std::exception& error) {
     std::cerr << error.what() << '\n';
