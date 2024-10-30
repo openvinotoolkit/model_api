@@ -13,6 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
+
 from collections.abc import Iterable
 
 import cv2
