@@ -136,5 +136,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Sphinx documentation
+docs/build/
+docs/build_cpp/
+docs/source/_build/
+
 # vs-code
 .vscode/
