@@ -374,9 +374,7 @@
 <p>Licensed under the Apache License, Version 2.0 (the “License”);
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at</p>
-<blockquote>
-<div><p><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
-</div></blockquote>
+<p><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
 <p>Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an “AS IS” BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -446,7 +444,7 @@ limitations under the License.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.Contour.shape">
-<span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.Contour.shape" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.Contour.shape" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
@@ -534,13 +532,13 @@ limitations under the License.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.InstanceSegmentationResult.saliency_map">
-<span class="sig-name descname"><span class="pre">saliency_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span></em><a class="headerlink" href="#model_api.models.utils.InstanceSegmentationResult.saliency_map" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">saliency_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span></em><a class="headerlink" href="#model_api.models.utils.InstanceSegmentationResult.saliency_map" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.InstanceSegmentationResult.segmentedObjects">
-<span class="sig-name descname"><span class="pre">segmentedObjects</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code><span class="pre">[</span><a class="reference internal" href="#model_api.models.utils.SegmentedObject" title="model_api.models.utils.SegmentedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SegmentedObject</span></code></a><span class="pre">,</span> <a class="reference internal" href="#model_api.models.utils.SegmentedObjectWithRects" title="model_api.models.utils.SegmentedObjectWithRects"><code class="xref py py-class docutils literal notranslate"><span class="pre">SegmentedObjectWithRects</span></code></a><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.InstanceSegmentationResult.segmentedObjects" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">segmentedObjects</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><a class="reference internal" href="#model_api.models.utils.SegmentedObject" title="model_api.models.utils.SegmentedObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">SegmentedObject</span></code></a> <span class="pre">|</span> <a class="reference internal" href="#model_api.models.utils.SegmentedObjectWithRects" title="model_api.models.utils.SegmentedObjectWithRects"><code class="xref py py-class docutils literal notranslate"><span class="pre">SegmentedObjectWithRects</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#model_api.models.utils.InstanceSegmentationResult.segmentedObjects" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
@@ -611,55 +609,55 @@ limitations under the License.</p>
 <p>Create new instance of VisualPromptingResult(upscaled_masks, processed_mask, low_res_masks, iou_predictions, scores, labels, hard_predictions, soft_predictions, best_iou)</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.best_iou">
-<span class="sig-name descname"><span class="pre">best_iou</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.best_iou" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">best_iou</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.best_iou" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 8</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.hard_predictions">
-<span class="sig-name descname"><span class="pre">hard_predictions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.hard_predictions" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">hard_predictions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.hard_predictions" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 6</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.iou_predictions">
-<span class="sig-name descname"><span class="pre">iou_predictions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.iou_predictions" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">iou_predictions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.iou_predictions" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 3</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.labels">
-<span class="sig-name descname"><span class="pre">labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.labels" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.labels" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 5</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.low_res_masks">
-<span class="sig-name descname"><span class="pre">low_res_masks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.low_res_masks" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">low_res_masks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.low_res_masks" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.processed_mask">
-<span class="sig-name descname"><span class="pre">processed_mask</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.processed_mask" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">processed_mask</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.processed_mask" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.scores">
-<span class="sig-name descname"><span class="pre">scores</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.scores" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">scores</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.scores" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 4</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.soft_predictions">
-<span class="sig-name descname"><span class="pre">soft_predictions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.soft_predictions" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">soft_predictions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.soft_predictions" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 7</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.models.utils.VisualPromptingResult.upscaled_masks">
-<span class="sig-name descname"><span class="pre">upscaled_masks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]]</span></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.upscaled_masks" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">upscaled_masks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code><span class="pre">]</span> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><a class="headerlink" href="#model_api.models.utils.VisualPromptingResult.upscaled_masks" title="Link to this definition">#</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 

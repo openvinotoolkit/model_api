@@ -374,9 +374,7 @@
 <p>Licensed under the Apache License, Version 2.0 (the “License”);
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at</p>
-<blockquote>
-<div><p><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
-</div></blockquote>
+<p><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
 <p>Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an “AS IS” BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -385,10 +383,9 @@ limitations under the License.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.adapters.inference_adapter.</span></span><span class="sig-name descname"><span class="pre">InferenceAdapter</span></span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>An abstract Model Adapter with the following interface:</p>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li><p>Reading the model from disk or other place</p></li>
 <li><p>Loading the model to the device</p></li>
 <li><p>Accessing the information about inputs/outputs</p></li>
@@ -396,7 +393,6 @@ limitations under the License.</p>
 <li><p>Synchronous model inference</p></li>
 <li><p>Asynchronous model inference</p></li>
 </ul>
-</div></blockquote>
 <p>An abstract Model Adapter constructor.
 Reads the model from disk or other place.</p>
 <dl class="py method">
@@ -585,12 +581,12 @@ list of new shape as values in the following format:
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.Metadata.meta">
-<span class="sig-name descname"><span class="pre">meta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></em><a class="headerlink" href="#model_api.adapters.inference_adapter.Metadata.meta" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">meta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></em><a class="headerlink" href="#model_api.adapters.inference_adapter.Metadata.meta" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.Metadata.names">
-<span class="sig-name descname"><span class="pre">names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#model_api.adapters.inference_adapter.Metadata.names" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#model_api.adapters.inference_adapter.Metadata.names" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -600,7 +596,7 @@ list of new shape as values in the following format:
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.Metadata.shape">
-<span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#model_api.adapters.inference_adapter.Metadata.shape" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code><span class="pre">]</span></em><a class="headerlink" href="#model_api.adapters.inference_adapter.Metadata.shape" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
