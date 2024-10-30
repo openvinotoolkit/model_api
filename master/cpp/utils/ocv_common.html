@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Ocv Common &#8212; InferenceSDK 2024 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../../_static/documentation_options.js?v=6fefd858"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cpp/utils/ocv_common';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Common" href="common.html" />
+    <link rel="prev" title="Utils" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">InferenceSDK 2024 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../python/index.html">
+    Python API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    C++ API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guides/index.html">
+    Guides
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../python/index.html">
+    Python API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    C++ API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guides/index.html">
+    Guides
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Classes</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../adapters/index.html">Adapters</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../models/index.html">Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../models/model_base.html">Model Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model.html">Detection Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/image_model.html">Image Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/internal_model_data.html">Internal Model Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/keypoint_detection.html">Keypoint Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_yolov3_onnx.html">Detection Model Yolov3 ONNX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/anomaly_model.html">Anomaly Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_ext.html">Detection Model Ext</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/segmentation_model.html">Segmentation Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_yolox.html">Detection Model YoloX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_ssd.html">Detection Model SSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/results.html">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/instance_segmentation.html">Instance Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/input_data.html">Input Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_yolo.html">Detection Model Yolo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/classification_model.html">Classification Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tilers/index.html">Tilers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tilers/tiler_base.html">Tiler Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tilers/instance_segmentation.html">Instance Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tilers/detection.html">Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tilers/semantic_segmentation.html">Semantic Segmentation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Utils</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Ocv Common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common.html">Common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="args_helper.html">Args Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="slog.html">Slog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nms.html">Nms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_utils.html">Image Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_metrics.html">Performance Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="async_infer_queue.html">Async Infer Queue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kuhn_munkres.html">Kuhn Munkres</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">C++ API Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Utils</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Ocv Common</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="ocv-common">
+<h1>Ocv Common<a class="headerlink" href="#ocv-common" title="Link to this heading">#</a></h1>
+<p>a header file with common samples functionality using OpenCV </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv415LayoutCondition">
+<span class="target" id="ocv__common_8hpp_1a134c6f9b148c877535e58a36ab77e8c2"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LayoutCondition</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">tuple</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417IntervalCondition" title="IntervalCondition"><span class="n"><span class="pre">IntervalCondition</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv415LayoutCondition" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv414wrapMat2TensorRKN2cv3MatE">
+<span class="target" id="ocv__common_8hpp_1afd9866d48a62fa573261268ca25fb725"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wrapMat2Tensor</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mat</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414wrapMat2TensorRKN2cv3MatE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4II0E0DpE8makeCond17IntervalConditionDpRR4Args">
+<span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Cond</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="sig-name descname"><span class="n"><span class="pre">Args</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="ocv__common_8hpp_1adfc91c57d6fc74e40fe432a7518b7d50"></span><a class="reference internal" href="#_CPPv417IntervalCondition" title="IntervalCondition"><span class="n"><span class="pre">IntervalCondition</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">makeCond</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4II0E0DpE8makeCond17IntervalConditionDpRR4Args" title="makeCond::Args"><span class="n"><span class="pre">Args</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">...</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">args</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4II0E0DpE8makeCond17IntervalConditionDpRR4Args" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv425makeGuesLayoutFrom4DShapeRKN2ov12PartialShapeE">
+<span class="target" id="ocv__common_8hpp_1a2833b7283a56cce17bc1a85a3a061e2d"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">tuple</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Layout</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">makeGuesLayoutFrom4DShape</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">PartialShape</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">shape</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425makeGuesLayoutFrom4DShapeRKN2ov12PartialShapeE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv418getLayoutFromShapeRKN2ov12PartialShapeE">
+<span class="target" id="ocv__common_8hpp_1aa5d5b58ad86e84146ac414eda2f3b469"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Layout</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getLayoutFromShape</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">PartialShape</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">shape</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418getLayoutFromShapeRKN2ov12PartialShapeE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv413string2ScalarRKNSt6stringE">
+<span class="target" id="ocv__common_8hpp_1a3f5b64bb99dd6534ed3d38a5a5262ff4"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Scalar</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">string2Scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">string</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413string2ScalarRKNSt6stringE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv431wrap_saliency_map_tensor_to_matRN2ov6TensorE6size_t6size_t">
+<span class="target" id="ocv__common_8hpp_1a02597ffafca33ef01474d64f1079cc1b"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wrap_saliency_map_tensor_to_mat</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">t</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">shape_shift</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">class_idx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv431wrap_saliency_map_tensor_to_matRN2ov6TensorE6size_t6size_t" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv417IntervalCondition">
+<span class="target" id="structIntervalCondition"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IntervalCondition</span></span></span><a class="headerlink" href="#_CPPv417IntervalCondition" title="Link to this definition">#</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N17IntervalCondition7DimTypeE">
+<span class="target" id="structIntervalCondition_1a46822d38762bd18ef85321d0002388cf"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DimType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><a class="headerlink" href="#_CPPv4N17IntervalCondition7DimTypeE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N17IntervalCondition9IndexTypeE">
+<span class="target" id="structIntervalCondition_1a0d0210b4eec065170f47e3235dd264ae"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IndexType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><a class="headerlink" href="#_CPPv4N17IntervalCondition9IndexTypeE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N17IntervalCondition16ConditionCheckerE">
+<span class="target" id="structIntervalCondition_1aed0a31fba71154ad4cdd52762a339ee2"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConditionChecker</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv4N17IntervalCondition9IndexTypeE" title="IntervalCondition::IndexType"><span class="n"><span class="pre">IndexType</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">PartialShape</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N17IntervalCondition16ConditionCheckerE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN17IntervalCondition17IntervalConditionE9IndexType9IndexType4Cond">
+<span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Cond</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structIntervalCondition_1a722e8905891e3274a5bffe98fcfe0efd"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IntervalCondition</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N17IntervalCondition9IndexTypeE" title="IntervalCondition::IndexType"><span class="n"><span class="pre">IndexType</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">i1</span></span>, <a class="reference internal" href="#_CPPv4N17IntervalCondition9IndexTypeE" title="IntervalCondition::IndexType"><span class="n"><span class="pre">IndexType</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">i2</span></span>, <a class="reference internal" href="#_CPPv4I0EN17IntervalCondition17IntervalConditionE9IndexType9IndexType4Cond" title="IntervalCondition::IntervalCondition::Cond"><span class="n"><span class="pre">Cond</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN17IntervalCondition17IntervalConditionE9IndexType9IndexType4Cond" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK17IntervalConditionclE9IndexTypeRKN2ov12PartialShapeE">
+<span class="target" id="structIntervalCondition_1a71fa61400b9ebaf051ebc60a89f617cf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N17IntervalCondition9IndexTypeE" title="IntervalCondition::IndexType"><span class="n"><span class="pre">IndexType</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">i0</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">PartialShape</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">shape</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK17IntervalConditionclE9IndexTypeRKN2ov12PartialShapeE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N17IntervalCondition4implE">
+<span class="target" id="structIntervalCondition_1a7d4f38160c91e5e39feeaafa9b2d232a"></span><a class="reference internal" href="#_CPPv4N17IntervalCondition16ConditionCheckerE" title="IntervalCondition::ConditionChecker"><span class="n"><span class="pre">ConditionChecker</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">impl</span></span></span><a class="headerlink" href="#_CPPv4N17IntervalCondition4implE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv414InputTransform">
+<span class="target" id="classInputTransform"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InputTransform</span></span></span><a class="headerlink" href="#_CPPv414InputTransform" title="Link to this definition">#</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14InputTransform14InputTransformEv">
+<span class="target" id="classInputTransform_1af0daac150086e3f4fc05204581c998e6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InputTransform</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14InputTransform14InputTransformEv" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14InputTransform14InputTransformEbRKNSt6stringERKNSt6stringE">
+<span class="target" id="classInputTransform_1ae819e840abf9756501c69e3e64e078fb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InputTransform</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">reverseInputChannels</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">meanValues</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">scaleValues</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14InputTransform14InputTransformEbRKNSt6stringERKNSt6stringE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14InputTransform12setPrecisionERN2ov10preprocess16PrePostProcessorERKNSt6stringE">
+<span class="target" id="classInputTransform_1a747bc6537897415f5427fa5f1c685c15"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setPrecision</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">preprocess</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">PrePostProcessor</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">ppp</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">tensorName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14InputTransform12setPrecisionERN2ov10preprocess16PrePostProcessorERKNSt6stringE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N14InputTransformclERKN2cv3MatE">
+<span class="target" id="classInputTransform_1a01d697bd37a59c0f4008e504b5c87b3e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inputs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14InputTransformclERKN2cv3MatE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14InputTransform20reverseInputChannelsE">
+<span class="target" id="classInputTransform_1aeb4c530bd5df6af6b8cc35f1b833ce7f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reverseInputChannels</span></span></span><a class="headerlink" href="#_CPPv4N14InputTransform20reverseInputChannelsE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14InputTransform9isTrivialE">
+<span class="target" id="classInputTransform_1a9ec1ededd25a53e9f1f7c2cd8a13126b"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">isTrivial</span></span></span><a class="headerlink" href="#_CPPv4N14InputTransform9isTrivialE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14InputTransform5meansE">
+<span class="target" id="classInputTransform_1a63baaa14a3d5992cbcfb49f796866be4"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Scalar</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">means</span></span></span><a class="headerlink" href="#_CPPv4N14InputTransform5meansE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N14InputTransform9stdScalesE">
+<span class="target" id="classInputTransform_1a82cb950e6ec6398849978a47ab51376c"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Scalar</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stdScales</span></span></span><a class="headerlink" href="#_CPPv4N14InputTransform9stdScalesE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Utils</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="common.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Common</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv415LayoutCondition"><code class="docutils literal notranslate"><span class="pre">LayoutCondition</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv414wrapMat2TensorRKN2cv3MatE"><code class="docutils literal notranslate"><span class="pre">wrapMat2Tensor()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4II0E0DpE8makeCond17IntervalConditionDpRR4Args"><code class="docutils literal notranslate"><span class="pre">makeCond()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv425makeGuesLayoutFrom4DShapeRKN2ov12PartialShapeE"><code class="docutils literal notranslate"><span class="pre">makeGuesLayoutFrom4DShape()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv418getLayoutFromShapeRKN2ov12PartialShapeE"><code class="docutils literal notranslate"><span class="pre">getLayoutFromShape()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv413string2ScalarRKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">string2Scalar()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv431wrap_saliency_map_tensor_to_matRN2ov6TensorE6size_t6size_t"><code class="docutils literal notranslate"><span class="pre">wrap_saliency_map_tensor_to_mat()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv417IntervalCondition"><code class="docutils literal notranslate"><span class="pre">IntervalCondition</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N17IntervalCondition7DimTypeE"><code class="docutils literal notranslate"><span class="pre">IntervalCondition::DimType</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N17IntervalCondition9IndexTypeE"><code class="docutils literal notranslate"><span class="pre">IntervalCondition::IndexType</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N17IntervalCondition16ConditionCheckerE"><code class="docutils literal notranslate"><span class="pre">IntervalCondition::ConditionChecker</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN17IntervalCondition17IntervalConditionE9IndexType9IndexType4Cond"><code class="docutils literal notranslate"><span class="pre">IntervalCondition::IntervalCondition()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK17IntervalConditionclE9IndexTypeRKN2ov12PartialShapeE"><code class="docutils literal notranslate"><span class="pre">IntervalCondition::operator()()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N17IntervalCondition4implE"><code class="docutils literal notranslate"><span class="pre">IntervalCondition::impl</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv414InputTransform"><code class="docutils literal notranslate"><span class="pre">InputTransform</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14InputTransform14InputTransformEv"><code class="docutils literal notranslate"><span class="pre">InputTransform::InputTransform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14InputTransform14InputTransformEbRKNSt6stringERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">InputTransform::InputTransform()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14InputTransform12setPrecisionERN2ov10preprocess16PrePostProcessorERKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">InputTransform::setPrecision()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14InputTransformclERKN2cv3MatE"><code class="docutils literal notranslate"><span class="pre">InputTransform::operator()()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14InputTransform20reverseInputChannelsE"><code class="docutils literal notranslate"><span class="pre">InputTransform::reverseInputChannels</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14InputTransform9isTrivialE"><code class="docutils literal notranslate"><span class="pre">InputTransform::isTrivial</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14InputTransform5meansE"><code class="docutils literal notranslate"><span class="pre">InputTransform::means</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14InputTransform9stdScalesE"><code class="docutils literal notranslate"><span class="pre">InputTransform::stdScales</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/cpp/utils/ocv_common.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Intel OpenVINO.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,2430 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; InferenceSDK 2024 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="_static/documentation_options.js?v=6fefd858"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=6dbb43f8"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">InferenceSDK 2024 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="python/index.html">
+    Python API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="cpp/index.html">
+    C++ API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/index.html">
+    Guides
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="python/index.html">
+    Python API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="cpp/index.html">
+    C++ API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="guides/index.html">
+    Guides
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
+ | <a href="#Y"><strong>Y</strong></a>
+ | <a href="#Z"><strong>Z</strong></a>
+ 
+</div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.InputTransform.__call__">__call__() (model_api.adapters.utils.InputTransform method)</a>
+
+      <ul>
+        <li><a href="python/models/model.html#model_api.models.model.Model.__call__">(model_api.models.model.Model method)</a>
+</li>
+        <li><a href="python/models/ssd.html#model_api.models.ssd.BoxesLabelsParser.__call__">(model_api.models.ssd.BoxesLabelsParser method)</a>
+</li>
+        <li><a href="python/models/ssd.html#model_api.models.ssd.MultipleOutputParser.__call__">(model_api.models.ssd.MultipleOutputParser method)</a>
+</li>
+        <li><a href="python/models/ssd.html#model_api.models.ssd.SingleOutputParser.__call__">(model_api.models.ssd.SingleOutputParser method)</a>
+</li>
+        <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMLearnableVisualPrompter.__call__">(model_api.models.visual_prompting.SAMLearnableVisualPrompter method)</a>
+</li>
+        <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMVisualPrompter.__call__">(model_api.models.visual_prompting.SAMVisualPrompter method)</a>
+</li>
+        <li><a href="python/tilers/instance_segmentation.html#model_api.tilers.instance_segmentation.InstanceSegmentationTiler.__call__">(model_api.tilers.instance_segmentation.InstanceSegmentationTiler method)</a>
+</li>
+        <li><a href="python/tilers/semantic_segmentation.html#model_api.tilers.semantic_segmentation.SemanticSegmentationTiler.__call__">(model_api.tilers.semantic_segmentation.SemanticSegmentationTiler method)</a>
+</li>
+        <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler.__call__">(model_api.tilers.tiler.Tiler method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel">ActionClassificationModel (class in model_api.models.action_classification)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.SimpleLabelsGraph.add_edge">add_edge() (model_api.models.classification.SimpleLabelsGraph method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.add_rotated_rects">add_rotated_rects() (in module model_api.models.utils)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.addOrFindSoftmaxAndTopkOutputs">addOrFindSoftmaxAndTopkOutputs() (in module model_api.models.classification)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv46Anchor">Anchor (C++ struct)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4N6Anchor6AnchorEffff">Anchor::Anchor (C++ function)</a>, <a href="cpp/utils/nms.html#_CPPv4N6Anchor6AnchorEv">[1]</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4N6Anchor6bottomE">Anchor::bottom (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4NK6Anchor9getHeightEv">Anchor::getHeight (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4NK6Anchor8getWidthEv">Anchor::getWidth (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4NK6Anchor10getXCenterEv">Anchor::getXCenter (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4NK6Anchor10getYCenterEv">Anchor::getYCenter (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4N6Anchor4leftE">Anchor::left (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4N6Anchor5rightE">Anchor::right (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4N6Anchor3topE">Anchor::top (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv413AnchorLabeled">AnchorLabeled (C++ struct)</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4N13AnchorLabeled13AnchorLabeledEffffi">AnchorLabeled::AnchorLabeled (C++ function)</a>, <a href="cpp/utils/nms.html#_CPPv4N13AnchorLabeled13AnchorLabeledEv">[1]</a>
+</li>
+      <li><a href="cpp/utils/nms.html#_CPPv4N13AnchorLabeled7labelIDE">AnchorLabeled::labelID (C++ member)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.AnomalyResult.anomaly_map">anomaly_map (model_api.models.utils.AnomalyResult attribute)</a>
+</li>
+      <li><a href="python/models/anomaly.html#model_api.models.anomaly.AnomalyDetection">AnomalyDetection (class in model_api.models.anomaly)</a>
+</li>
+      <li><a href="cpp/models/anomaly_model.html#_CPPv412AnomalyModel">AnomalyModel (C++ class)</a>
+</li>
+      <li><a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModel12AnomalyModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">AnomalyModel::AnomalyModel (C++ function)</a>, <a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModel12AnomalyModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE">AnomalyModel::create_model (C++ function)</a>, <a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE">[1]</a>
+</li>
+      <li><a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModel5inferERK14ImageInputData">AnomalyModel::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModel10inferBatchERKNSt6vectorI14ImageInputDataEE">AnomalyModel::inferBatch (C++ function)</a>
+</li>
+      <li><a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModel9ModelTypeE">AnomalyModel::ModelType (C++ member)</a>
+</li>
+      <li><a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModellsERNSt7ostreamERNSt10unique_ptrI12AnomalyModelEE">AnomalyModel::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/anomaly_model.html#_CPPv4N12AnomalyModel11postprocessER15InferenceResult">AnomalyModel::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv413AnomalyResult">AnomalyResult (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.AnomalyResult">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N13AnomalyResult11anomaly_mapE">AnomalyResult::anomaly_map (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N13AnomalyResult13AnomalyResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">AnomalyResult::AnomalyResult (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N13AnomalyResultcvNSt6stringEEv">AnomalyResult::operator std::string (C++ function)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/models/results.html#_CPPv4N13AnomalyResultlsERNSt7ostreamERK13AnomalyResult">AnomalyResult::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N13AnomalyResult10pred_boxesE">AnomalyResult::pred_boxes (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N13AnomalyResult10pred_labelE">AnomalyResult::pred_label (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N13AnomalyResult9pred_maskE">AnomalyResult::pred_mask (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N13AnomalyResult10pred_scoreE">AnomalyResult::pred_score (C++ member)</a>
+</li>
+      <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMDecoder.apply_coords">apply_coords() (model_api.models.sam_models.SAMDecoder method)</a>
+</li>
+      <li><a href="cpp/utils/common.html#_CPPv4I0_NSt6size_tEE9arraySizeNSt6size_tERA1N_K1T">arraySize (C++ function)</a>
+</li>
+      <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler.async_pipeline">async_pipeline (model_api.tilers.tiler.Tiler attribute)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv415AsyncInferQueue">AsyncInferQueue (C++ class)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue15AsyncInferQueueERN2ov13CompiledModelE6size_t">AsyncInferQueue::AsyncInferQueue (C++ function)</a>, <a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue15AsyncInferQueueEv">[1]</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue19get_idle_request_idEv">AsyncInferQueue::get_idle_request_id (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue8is_readyEv">AsyncInferQueue::is_ready (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueueixE6size_t">AsyncInferQueue::operator[] (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue20set_custom_callbacksENSt8functionIFvN2ov12InferRequestENSt10shared_ptrIN2ov6AnyMapEEEEEE">AsyncInferQueue::set_custom_callbacks (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue21set_default_callbacksEv">AsyncInferQueue::set_default_callbacks (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4NK15AsyncInferQueue4sizeEv">AsyncInferQueue::size (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue11start_asyncERKN2ov6TensorENSt10shared_ptrIN2ov6AnyMapEEE">AsyncInferQueue::start_async (C++ function)</a>, <a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue11start_asyncERKNSt3mapINSt6stringEN2ov6TensorEEENSt10shared_ptrIN2ov6AnyMapEEE">[1]</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueue8wait_allEv">AsyncInferQueue::wait_all (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/async_infer_queue.html#_CPPv4N15AsyncInferQueueD0Ev">AsyncInferQueue::~AsyncInferQueue (C++ function)</a>
+</li>
+      <li><a href="python/pipelines/async_pipeline.html#model_api.pipelines.async_pipeline.AsyncPipeline">AsyncPipeline (class in model_api.pipelines.async_pipeline)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.available_wrappers">available_wrappers() (model_api.models.model.Model class method)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.await_all">await_all() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.await_all">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.await_all">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.await_all">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.await_all">(model_api.models.model.Model method)</a>
+</li>
+        <li><a href="python/pipelines/async_pipeline.html#model_api.pipelines.async_pipeline.AsyncPipeline.await_all">(model_api.pipelines.async_pipeline.AsyncPipeline method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.await_any">await_any() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.await_any">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.await_any">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.await_any">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.await_any">(model_api.models.model.Model method)</a>
+</li>
+        <li><a href="python/pipelines/async_pipeline.html#model_api.pipelines.async_pipeline.AsyncPipeline.await_any">(model_api.pipelines.async_pipeline.AsyncPipeline method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/types.html#model_api.models.types.BaseValue">BaseValue (class in model_api.models.types)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.best_iou">best_iou (model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/types.html#model_api.models.types.BooleanValue">BooleanValue (class in model_api.models.types)</a>
+</li>
+      <li><a href="python/models/ssd.html#model_api.models.ssd.BoxesLabelsParser">BoxesLabelsParser (class in model_api.models.ssd)</a>
+</li>
+      <li><a href="python/models/types.html#model_api.models.types.BaseValue.build_error">build_error() (model_api.models.types.BaseValue method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/pipelines/async_pipeline.html#model_api.pipelines.async_pipeline.AsyncPipeline.callback">callback() (model_api.pipelines.async_pipeline.AsyncPipeline method)</a>
+</li>
+      <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.change_layout">change_layout() (in module model_api.adapters.onnx_adapter)</a>
+</li>
+      <li><a href="cpp/utils/common.html#_CPPv4I0E5clamp1T1T1T1T">clamp (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv419ClassificationModel">ClassificationModel (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/classification.html#model_api.models.classification.ClassificationModel">(class in model_api.models.classification)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N19ClassificationModel19ClassificationModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">ClassificationModel::ClassificationModel (C++ function)</a>, <a href="cpp/models/classification_model.html#_CPPv4N19ClassificationModel19ClassificationModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N19ClassificationModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE">ClassificationModel::create_model (C++ function)</a>, <a href="cpp/models/classification_model.html#_CPPv4N19ClassificationModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE">[1]</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N19ClassificationModel5inferERK14ImageInputData">ClassificationModel::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N19ClassificationModel10inferBatchERKNSt6vectorI14ImageInputDataEE">ClassificationModel::inferBatch (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N19ClassificationModel9ModelTypeE">ClassificationModel::ModelType (C++ member)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N19ClassificationModel11postprocessER15InferenceResult">ClassificationModel::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv420ClassificationResult">ClassificationResult (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.ClassificationResult">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult14ClassificationE">ClassificationResult::Classification (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult14Classification14ClassificationEjRKNSt6stringEf">ClassificationResult::Classification::Classification (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult14Classification2idE">ClassificationResult::Classification::id (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult14Classification5labelE">ClassificationResult::Classification::label (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult14ClassificationlsERNSt7ostreamERK14Classification">ClassificationResult::Classification::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult14Classification5scoreE">ClassificationResult::Classification::score (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult20ClassificationResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">ClassificationResult::ClassificationResult (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult14feature_vectorE">ClassificationResult::feature_vector (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResultcvNSt6stringEEv">ClassificationResult::operator std::string (C++ function)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResultlsERNSt7ostreamERK20ClassificationResult">ClassificationResult::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult10raw_scoresE">ClassificationResult::raw_scores (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult12saliency_mapE">ClassificationResult::saliency_map (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N20ClassificationResult9topLabelsE">ClassificationResult::topLabels (C++ member)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.SimpleLabelsGraph.clear_topological_cache">clear_topological_cache() (model_api.models.classification.SimpleLabelsGraph method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.clip_detections">clip_detections() (in module model_api.models.utils)</a>
+</li>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.clip_size">clip_size (model_api.models.action_classification.ActionClassificationModel property)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.OutputTransform.compute_resolution">compute_resolution() (model_api.models.utils.OutputTransform method)</a>
+</li>
+      <li><a href="python/models/types.html#model_api.models.types.ConfigurableValueError">ConfigurableValueError</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv47Contour">Contour (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.Contour">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N7Contour5labelE">Contour::label (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N7ContourlsERNSt7ostreamERK7Contour">Contour::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N7Contour11probabilityE">Contour::probability (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N7Contour5shapeE">Contour::shape (C++ member)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.copy_raw_result">copy_raw_result() (model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.create_core">create_core() (in module model_api.adapters.openvino_adapter)</a>
+</li>
+      <li><a href="python/models/segmentation.html#model_api.models.segmentation.create_hard_prediction_from_soft_prediction">create_hard_prediction_from_soft_prediction() (in module model_api.models.segmentation)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.create_model">create_model() (model_api.models.model.Model class method)</a>
+</li>
+      <li><a href="cpp/utils/image_utils.html#_CPPv417createResizeGraph11RESIZE_MODERKN2ov5ShapeEKN2cv18InterpolationFlagsE7uint8_t">createResizeGraph (C++ function)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.crop_resize">crop_resize() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.crop_resize_graph">crop_resize_graph() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.crop_resize_ocv">crop_resize_ocv() (in module model_api.adapters.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/utils.html#model_api.models.utils.ZSLVisualPromptingResult.data">data (model_api.models.utils.ZSLVisualPromptingResult attribute)</a>
+
+      <ul>
+        <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.Prompt.data">(model_api.models.visual_prompting.Prompt attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv417DetectedKeypoints">DetectedKeypoints (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.DetectedKeypoints">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N17DetectedKeypoints9keypointsE">DetectedKeypoints::keypoints (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N17DetectedKeypointscvNSt6stringEEv">DetectedKeypoints::operator std::string (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N17DetectedKeypointslsERNSt7ostreamERK17DetectedKeypoints">DetectedKeypoints::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N17DetectedKeypoints6scoresE">DetectedKeypoints::scores (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv414DetectedObject">DetectedObject (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N14DetectedObject10confidenceE">DetectedObject::confidence (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N14DetectedObject5labelE">DetectedObject::label (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N14DetectedObject7labelIDE">DetectedObject::labelID (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N14DetectedObjectlsERNSt7ostreamERK14DetectedObject">DetectedObject::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.Detection">Detection (class in model_api.models.utils)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.DetectionBox">DetectionBox (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="cpp/models/detection_model.html#_CPPv414DetectionModel">DetectionModel (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/detection_model.html#model_api.models.detection_model.DetectionModel">(class in model_api.models.detection_model)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/detection_model.html#_CPPv4N14DetectionModel12create_modelERKNSt6stringERKN2ov6AnyMapENSt6stringEbRKNSt6stringE">DetectionModel::create_model (C++ function)</a>, <a href="cpp/models/detection_model.html#_CPPv4N14DetectionModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE">[1]</a>
+</li>
+      <li><a href="cpp/models/detection_model.html#_CPPv4N14DetectionModel14DetectionModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">DetectionModel::DetectionModel (C++ function)</a>, <a href="cpp/models/detection_model.html#_CPPv4N14DetectionModel14DetectionModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/models/detection_model.html#_CPPv4N14DetectionModel5inferERK14ImageInputData">DetectionModel::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model.html#_CPPv4N14DetectionModel10inferBatchERKNSt6vectorI14ImageInputDataEE">DetectionModel::inferBatch (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model_ext.html#_CPPv417DetectionModelExt">DetectionModelExt (C++ class)</a>
+</li>
+      <li><a href="cpp/models/detection_model_ext.html#_CPPv4N17DetectionModelExt17DetectionModelExtERNSt10shared_ptrI16InferenceAdapterEE">DetectionModelExt::DetectionModelExt (C++ function)</a>, <a href="cpp/models/detection_model_ext.html#_CPPv4N17DetectionModelExt17DetectionModelExtERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv415DetectionResult">DetectionResult (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.DetectionResult">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N15DetectionResult15DetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">DetectionResult::DetectionResult (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15DetectionResult14feature_vectorE">DetectionResult::feature_vector (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15DetectionResult7objectsE">DetectionResult::objects (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15DetectionResultcvNSt6stringEEv">DetectionResult::operator std::string (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15DetectionResultlsERNSt7ostreamERK15DetectionResult">DetectionResult::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15DetectionResult12saliency_mapE">DetectionResult::saliency_map (C++ member)</a>
+</li>
+      <li><a href="cpp/tilers/detection.html#_CPPv414DetectionTiler">DetectionTiler (C++ class)</a>
+
+      <ul>
+        <li><a href="python/tilers/detection.html#model_api.tilers.detection.DetectionTiler">(class in model_api.tilers.detection)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/tilers/detection.html#_CPPv4N14DetectionTiler14DetectionTilerERKNSt10shared_ptrI10ImageModelEERKN2ov6AnyMapE">DetectionTiler::DetectionTiler (C++ function)</a>
+</li>
+      <li><a href="cpp/tilers/detection.html#_CPPv4N14DetectionTiler3runERK14ImageInputData">DetectionTiler::run (C++ function)</a>
+</li>
+      <li><a href="cpp/tilers/detection.html#_CPPv4N14DetectionTilerD0Ev">DetectionTiler::~DetectionTiler (C++ function)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.DetectionWithLandmarks">DetectionWithLandmarks (class in model_api.models.utils)</a>
+</li>
+      <li><a href="python/models/types.html#model_api.models.types.DictValue">DictValue (class in model_api.models.types)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.embed_preprocessing">embed_preprocessing() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.embed_preprocessing">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.embed_preprocessing">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.embed_preprocessing">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler.execution_mode">execution_mode (model_api.tilers.tiler.Tiler attribute)</a>
+</li>
+      <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler.EXECUTION_MODES">EXECUTION_MODES (model_api.tilers.tiler.Tiler attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/utils.html#model_api.models.utils.ImageResultWithSoftPrediction.feature_vector">feature_vector (model_api.models.utils.ImageResultWithSoftPrediction attribute)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.InstanceSegmentationResult.feature_vector">(model_api.models.utils.InstanceSegmentationResult attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.VisualPromptingFeatures.feature_vectors">feature_vectors (model_api.models.visual_prompting.VisualPromptingFeatures attribute)</a>
+</li>
+      <li><a href="python/models/ssd.html#model_api.models.ssd.BoxesLabelsParser.find_layer_bboxes_output">find_layer_bboxes_output() (model_api.models.ssd.BoxesLabelsParser static method)</a>
+</li>
+      <li><a href="python/models/ssd.html#model_api.models.ssd.find_layer_by_name">find_layer_by_name() (in module model_api.models.ssd)</a>
+</li>
+      <li><a href="cpp/utils/args_helper.html#_CPPv413formatLayoutsRKNSt3mapINSt6stringEN2ov6LayoutEEE">formatLayouts (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/image_utils.html#_CPPv416formatResizeMode11RESIZE_MODE">formatResizeMode (C++ function)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.Layout.from_openvino">from_openvino() (model_api.adapters.utils.Layout static method)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.Layout.from_shape">from_shape() (model_api.adapters.utils.Layout static method)</a>
+</li>
+      <li><a href="python/models/types.html#model_api.models.types.BooleanValue.from_str">from_str() (model_api.models.types.BooleanValue method)</a>
+
+      <ul>
+        <li><a href="python/models/types.html#model_api.models.types.DictValue.from_str">(model_api.models.types.DictValue method)</a>
+</li>
+        <li><a href="python/models/types.html#model_api.models.types.ListValue.from_str">(model_api.models.types.ListValue method)</a>
+</li>
+        <li><a href="python/models/types.html#model_api.models.types.NumericalValue.from_str">(model_api.models.types.NumericalValue method)</a>
+</li>
+        <li><a href="python/models/types.html#model_api.models.types.StringValue.from_str">(model_api.models.types.StringValue method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.Layout.from_user_layouts">from_user_layouts() (model_api.adapters.utils.Layout static method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/classification.html#model_api.models.classification.ClassificationModel.get_all_probs">get_all_probs() (model_api.models.classification.ClassificationModel method)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.SimpleLabelsGraph.get_ancestors">get_ancestors() (model_api.models.classification.SimpleLabelsGraph method)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.SimpleLabelsGraph.get_children">get_children() (model_api.models.classification.SimpleLabelsGraph method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.get_contours">get_contours() (in module model_api.models.utils)</a>
+
+      <ul>
+        <li><a href="python/models/segmentation.html#model_api.models.segmentation.SegmentationModel.get_contours">(model_api.models.segmentation.SegmentationModel method)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/utils/args_helper.html#_CPPv4I0E17get_from_any_maps4TypeRKNSt6stringERKN2ov6AnyMapERKN2ov6AnyMapE4Type">get_from_any_maps (C++ function)</a>, <a href="cpp/utils/args_helper.html#_CPPv4IE17get_from_any_mapsbRKNSt6stringERKN2ov6AnyMapERKN2ov6AnyMapEb">[1]</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.ClassificationModel.get_hierarchical_predictions">get_hierarchical_predictions() (model_api.models.classification.ClassificationModel method)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.get_input_layers">get_input_layers() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.get_input_layers">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_input_layers">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.get_input_layers">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.get_input_shape">get_input_shape() (in module model_api.adapters.openvino_adapter)</a>
+</li>
+      <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.get_label_name">get_label_name() (model_api.models.image_model.ImageModel method)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.SimpleLabelsGraph.get_labels_in_topological_order">get_labels_in_topological_order() (model_api.models.classification.SimpleLabelsGraph method)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_layout_for_input">get_layout_for_input() (model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.ZSLVisualPromptingResult.get_mask">get_mask() (model_api.models.utils.ZSLVisualPromptingResult method)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_model">get_model() (model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+
+      <ul>
+        <li><a href="python/models/model.html#model_api.models.model.Model.get_model">(model_api.models.model.Model method)</a>
+</li>
+        <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler.get_model">(model_api.tilers.tiler.Tiler method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.get_model_class">get_model_class() (model_api.models.model.Model class method)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.ClassificationModel.get_multiclass_predictions">get_multiclass_predictions() (model_api.models.classification.ClassificationModel method)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.ClassificationModel.get_multilabel_predictions">get_multilabel_predictions() (model_api.models.classification.ClassificationModel method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.get_output_layers">get_output_layers() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.get_output_layers">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_output_layers">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.get_output_layers">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/classification.html#model_api.models.classification.SimpleLabelsGraph.get_parent">get_parent() (model_api.models.classification.SimpleLabelsGraph method)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_raw_result">get_raw_result() (model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+
+      <ul>
+        <li><a href="python/pipelines/async_pipeline.html#model_api.pipelines.async_pipeline.AsyncPipeline.get_raw_result">(model_api.pipelines.async_pipeline.AsyncPipeline method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/pipelines/async_pipeline.html#model_api.pipelines.async_pipeline.AsyncPipeline.get_result">get_result() (model_api.pipelines.async_pipeline.AsyncPipeline method)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.get_rt_info">get_rt_info() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.get_rt_info">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_rt_info">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.get_rt_info">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.get_rt_info_from_dict">get_rt_info_from_dict() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.ClassificationModel.get_saliency_maps">get_saliency_maps() (model_api.models.classification.ClassificationModel method)</a>
+</li>
+      <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.get_shape_from_onnx">get_shape_from_onnx() (in module model_api.adapters.onnx_adapter)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.get_subclasses">get_subclasses() (model_api.models.model.Model class method)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.get_user_config">get_user_config() (in module model_api.adapters.openvino_adapter)</a>
+</li>
+      <li><a href="python/models/types.html#model_api.models.types.BaseValue.get_value">get_value() (model_api.models.types.BaseValue method)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv418getLayoutFromShapeRKN2ov12PartialShapeE">getLayoutFromShape (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv420GreedyLabelsResolver">GreedyLabelsResolver (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/classification.html#model_api.models.classification.GreedyLabelsResolver">(class in model_api.models.classification)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N20GreedyLabelsResolver20GreedyLabelsResolverERK18HierarchicalConfig">GreedyLabelsResolver::GreedyLabelsResolver (C++ function)</a>, <a href="cpp/models/classification_model.html#_CPPv4N20GreedyLabelsResolver20GreedyLabelsResolverEv">[1]</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N20GreedyLabelsResolver14resolve_labelsERKNSt6vectorINSt17reference_wrapperINSt6stringEEEEERKNSt6vectorIfEE">GreedyLabelsResolver::resolve_labels (C++ function)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.DetectionBox.h">h (model_api.models.yolo.DetectionBox attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.hard_predictions">hard_predictions (model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMLearnableVisualPrompter.has_reference_features">has_reference_features() (model_api.models.visual_prompting.SAMLearnableVisualPrompter method)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv49HumanPose">HumanPose (C++ struct)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/models/results.html#_CPPv4N9HumanPose9keypointsE">HumanPose::keypoints (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N9HumanPose5scoreE">HumanPose::score (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv415HumanPoseResult">HumanPoseResult (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15HumanPoseResult15HumanPoseResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">HumanPoseResult::HumanPoseResult (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15HumanPoseResult5posesE">HumanPoseResult::poses (C++ member)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.image_blob_name">image_blob_name (model_api.models.action_classification.ActionClassificationModel attribute)</a>
+
+      <ul>
+        <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.image_blob_name">(model_api.models.image_model.ImageModel attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.image_blob_names">image_blob_names (model_api.models.action_classification.ActionClassificationModel attribute)</a>
+
+      <ul>
+        <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.image_blob_names">(model_api.models.image_model.ImageModel attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.image_info_blob_names">image_info_blob_names (model_api.models.image_model.ImageModel attribute)</a>
+</li>
+      <li><a href="cpp/models/input_data.html#_CPPv414ImageInputData">ImageInputData (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/input_data.html#_CPPv4N14ImageInputData14ImageInputDataERKN2cv3MatE">ImageInputData::ImageInputData (C++ function)</a>, <a href="cpp/models/input_data.html#_CPPv4N14ImageInputData14ImageInputDataEv">[1]</a>
+</li>
+      <li><a href="cpp/models/input_data.html#_CPPv4N14ImageInputData10inputImageE">ImageInputData::inputImage (C++ member)</a>
+</li>
+      <li><a href="cpp/models/image_model.html#_CPPv410ImageModel">ImageModel (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel">(class in model_api.models.image_model)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/image_model.html#_CPPv4N10ImageModel15embedProcessingERNSt10shared_ptrIN2ov5ModelEEERKNSt6stringERKN2ov6LayoutE11RESIZE_MODEKN2cv18InterpolationFlagsERKN2ov5ShapeE7uint8_tbRKNSt6vectorIfEERKNSt6vectorIfEERKNSt9type_infoE">ImageModel::embedProcessing (C++ function)</a>
+</li>
+      <li><a href="cpp/models/image_model.html#_CPPv4N10ImageModel10ImageModelERKNSt6stringERKNSt6stringEbRKNSt6stringE">ImageModel::ImageModel (C++ function)</a>, <a href="cpp/models/image_model.html#_CPPv4N10ImageModel10ImageModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">[1]</a>, <a href="cpp/models/image_model.html#_CPPv4N10ImageModel10ImageModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[2]</a>
+</li>
+      <li><a href="cpp/models/image_model.html#_CPPv4N10ImageModel10inferAsyncERK14ImageInputDataRKN2ov6AnyMapE">ImageModel::inferAsync (C++ function)</a>
+</li>
+      <li><a href="cpp/models/image_model.html#_CPPv4N10ImageModel15inferBatchImageERKNSt6vectorI14ImageInputDataEE">ImageModel::inferBatchImage (C++ function)</a>
+</li>
+      <li><a href="cpp/models/image_model.html#_CPPv4N10ImageModel10inferImageERK14ImageInputData">ImageModel::inferImage (C++ function)</a>
+</li>
+      <li><a href="cpp/models/image_model.html#_CPPv4N10ImageModel10loadLabelsERKNSt6stringE">ImageModel::loadLabels (C++ function)</a>
+</li>
+      <li><a href="cpp/models/image_model.html#_CPPv4N10ImageModel9ModelBaseERKNSt6stringERKNSt6stringE">ImageModel::ModelBase (C++ function)</a>, <a href="cpp/models/image_model.html#_CPPv4N10ImageModel9ModelBaseERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">[1]</a>, <a href="cpp/models/image_model.html#_CPPv4N10ImageModel9ModelBaseERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[2]</a>
+</li>
+      <li><a href="cpp/models/image_model.html#_CPPv4N10ImageModel10preprocessERK9InputDataR14InferenceInput">ImageModel::preprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv411ImageResult">ImageResult (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N11ImageResult11ImageResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">ImageResult::ImageResult (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N11ImageResultcvNSt6stringEEv">ImageResult::operator std::string (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N11ImageResultlsERNSt7ostreamERK11ImageResult">ImageResult::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N11ImageResult11resultImageE">ImageResult::resultImage (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv429ImageResultWithSoftPrediction">ImageResultWithSoftPrediction (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.ImageResultWithSoftPrediction">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N29ImageResultWithSoftPrediction14feature_vectorE">ImageResultWithSoftPrediction::feature_vector (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N29ImageResultWithSoftPrediction29ImageResultWithSoftPredictionE7int64_tRKNSt10shared_ptrI8MetaDataEE">ImageResultWithSoftPrediction::ImageResultWithSoftPrediction (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N29ImageResultWithSoftPredictionlsERNSt7ostreamERK29ImageResultWithSoftPrediction">ImageResultWithSoftPrediction::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N29ImageResultWithSoftPrediction12saliency_mapE">ImageResultWithSoftPrediction::saliency_map (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N29ImageResultWithSoftPrediction15soft_predictionE">ImageResultWithSoftPrediction::soft_prediction (C++ member)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMLearnableVisualPrompter.infer">infer() (model_api.models.visual_prompting.SAMLearnableVisualPrompter method)</a>
+
+      <ul>
+        <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMVisualPrompter.infer">(model_api.models.visual_prompting.SAMVisualPrompter method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.infer_async">infer_async() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.infer_async">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.infer_async">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.infer_async">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.infer_async">(model_api.models.model.Model method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.infer_async_raw">infer_async_raw() (model_api.models.model.Model method)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.infer_batch">infer_batch() (model_api.models.model.Model method)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.infer_sync">infer_sync() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.infer_sync">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.infer_sync">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.infer_sync">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.infer_sync">(model_api.models.model.Model method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.inference_adapter">inference_adapter (model_api.models.model.Model attribute)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv416InferenceAdapter">InferenceAdapter (C++ class)</a>
+
+      <ul>
+        <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter">(class in model_api.adapters.inference_adapter)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N16InferenceAdapter8awaitAllEv">InferenceAdapter::awaitAll (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N16InferenceAdapter8awaitAnyEv">InferenceAdapter::awaitAny (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK16InferenceAdapter13getInputNamesEv">InferenceAdapter::getInputNames (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK16InferenceAdapter13getInputShapeERKNSt6stringE">InferenceAdapter::getInputShape (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK16InferenceAdapter14getModelConfigEv">InferenceAdapter::getModelConfig (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK16InferenceAdapter20getNumAsyncExecutorsEv">InferenceAdapter::getNumAsyncExecutors (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK16InferenceAdapter14getOutputNamesEv">InferenceAdapter::getOutputNames (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N16InferenceAdapter5inferERK14InferenceInput">InferenceAdapter::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N16InferenceAdapter10inferAsyncERK14InferenceInput12CallbackData">InferenceAdapter::inferAsync (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N16InferenceAdapter7isReadyEv">InferenceAdapter::isReady (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N16InferenceAdapter9loadModelERKNSt10shared_ptrIKN2ov5ModelEEERN2ov4CoreERKNSt6stringERKN2ov6AnyMapE6size_t">InferenceAdapter::loadModel (C++ function)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/adapters/index.html#_CPPv4N16InferenceAdapter11setCallbackENSt8functionIFvN2ov12InferRequestE12CallbackDataEEE">InferenceAdapter::setCallback (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N16InferenceAdapterD0Ev">InferenceAdapter::~InferenceAdapter (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv415InferenceResult">InferenceResult (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15InferenceResult20getFirstOutputTensorEv">InferenceResult::getFirstOutputTensor (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15InferenceResult17internalModelDataE">InferenceResult::internalModelData (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15InferenceResult7IsEmptyEv">InferenceResult::IsEmpty (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15InferenceResult11outputsDataE">InferenceResult::outputsData (C++ member)</a>
+</li>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.input_transform">input_transform (model_api.models.action_classification.ActionClassificationModel attribute)</a>
+
+      <ul>
+        <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.input_transform">(model_api.models.image_model.ImageModel attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/input_data.html#_CPPv49InputData">InputData (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/input_data.html#_CPPv4I0EN9InputData5asRefER1Tv">InputData::asRef (C++ function)</a>, <a href="cpp/models/input_data.html#_CPPv4I0ENK9InputData5asRefERK1Tv">[1]</a>
+</li>
+      <li><a href="cpp/models/input_data.html#_CPPv4N9InputDataD0Ev">InputData::~InputData (C++ function)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.inputs">inputs (model_api.models.model.Model attribute)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv414InputTransform">InputTransform (C++ class)</a>
+
+      <ul>
+        <li><a href="python/adapters/utils.html#model_api.adapters.utils.InputTransform">(class in model_api.adapters.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N14InputTransform14InputTransformEbRKNSt6stringERKNSt6stringE">InputTransform::InputTransform (C++ function)</a>, <a href="cpp/utils/ocv_common.html#_CPPv4N14InputTransform14InputTransformEv">[1]</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N14InputTransform9isTrivialE">InputTransform::isTrivial (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N14InputTransform5meansE">InputTransform::means (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N14InputTransformclERKN2cv3MatE">InputTransform::operator() (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N14InputTransform20reverseInputChannelsE">InputTransform::reverseInputChannels (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N14InputTransform12setPrecisionERN2ov10preprocess16PrePostProcessorERKNSt6stringE">InputTransform::setPrecision (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N14InputTransform9stdScalesE">InputTransform::stdScales (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv426InstanceSegmentationResult">InstanceSegmentationResult (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.InstanceSegmentationResult">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N26InstanceSegmentationResult14feature_vectorE">InstanceSegmentationResult::feature_vector (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N26InstanceSegmentationResult26InstanceSegmentationResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">InstanceSegmentationResult::InstanceSegmentationResult (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N26InstanceSegmentationResult12saliency_mapE">InstanceSegmentationResult::saliency_map (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N26InstanceSegmentationResult16segmentedObjectsE">InstanceSegmentationResult::segmentedObjects (C++ member)</a>
+</li>
+      <li><a href="cpp/tilers/instance_segmentation.html#_CPPv425InstanceSegmentationTiler">InstanceSegmentationTiler (C++ class)</a>
+
+      <ul>
+        <li><a href="python/tilers/instance_segmentation.html#model_api.tilers.instance_segmentation.InstanceSegmentationTiler">(class in model_api.tilers.instance_segmentation)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/tilers/instance_segmentation.html#_CPPv4N25InstanceSegmentationTiler25InstanceSegmentationTilerENSt10shared_ptrI10ImageModelEERKN2ov6AnyMapE">InstanceSegmentationTiler::InstanceSegmentationTiler (C++ function)</a>
+</li>
+      <li><a href="cpp/tilers/instance_segmentation.html#_CPPv4N25InstanceSegmentationTiler26postprocess_semantic_masksE">InstanceSegmentationTiler::postprocess_semantic_masks (C++ member)</a>
+</li>
+      <li><a href="cpp/tilers/instance_segmentation.html#_CPPv4N25InstanceSegmentationTiler3runERK14ImageInputData">InstanceSegmentationTiler::run (C++ function)</a>
+</li>
+      <li><a href="cpp/tilers/instance_segmentation.html#_CPPv4N25InstanceSegmentationTilerD0Ev">InstanceSegmentationTiler::~InstanceSegmentationTiler (C++ function)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv422InternalImageModelData">InternalImageModelData (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv4N22InternalImageModelData14inputImgHeightE">InternalImageModelData::inputImgHeight (C++ member)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv4N22InternalImageModelData13inputImgWidthE">InternalImageModelData::inputImgWidth (C++ member)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv4N22InternalImageModelData22InternalImageModelDataEii">InternalImageModelData::InternalImageModelData (C++ function)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv417InternalModelData">InternalModelData (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv4I0EN17InternalModelData5asRefER1Tv">InternalModelData::asRef (C++ function)</a>, <a href="cpp/models/internal_model_data.html#_CPPv4I0ENK17InternalModelData5asRefERK1Tv">[1]</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv4N17InternalModelDataD0Ev">InternalModelData::~InternalModelData (C++ function)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv417InternalScaleData">InternalScaleData (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv4N17InternalScaleData17InternalScaleDataEiiff">InternalScaleData::InternalScaleData (C++ function)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv4N17InternalScaleData6scaleXE">InternalScaleData::scaleX (C++ member)</a>
+</li>
+      <li><a href="cpp/models/internal_model_data.html#_CPPv4N17InternalScaleData6scaleYE">InternalScaleData::scaleY (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv417IntervalCondition">IntervalCondition (C++ struct)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N17IntervalCondition16ConditionCheckerE">IntervalCondition::ConditionChecker (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N17IntervalCondition7DimTypeE">IntervalCondition::DimType (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N17IntervalCondition4implE">IntervalCondition::impl (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4N17IntervalCondition9IndexTypeE">IntervalCondition::IndexType (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4I0EN17IntervalCondition17IntervalConditionE9IndexType9IndexType4Cond">IntervalCondition::IntervalCondition (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4NK17IntervalConditionclE9IndexTypeRKN2ov12PartialShapeE">IntervalCondition::operator() (C++ function)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.iou_predictions">iou_predictions (model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.is_ready">is_ready() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.is_ready">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.is_ready">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.is_ready">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.is_ready">(model_api.models.model.Model method)</a>
+</li>
+        <li><a href="python/pipelines/async_pipeline.html#model_api.pipelines.async_pipeline.AsyncPipeline.is_ready">(model_api.pipelines.async_pipeline.AsyncPipeline method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/models/keypoint_detection.html#_CPPv422KeypointDetectionModel">KeypointDetectionModel (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/keypoint_detection.html#model_api.models.keypoint_detection.KeypointDetectionModel">(class in model_api.models.keypoint_detection)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/keypoint_detection.html#_CPPv4N22KeypointDetectionModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE">KeypointDetectionModel::create_model (C++ function)</a>, <a href="cpp/models/keypoint_detection.html#_CPPv4N22KeypointDetectionModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE">[1]</a>
+</li>
+      <li><a href="cpp/models/keypoint_detection.html#_CPPv4N22KeypointDetectionModel5inferERK14ImageInputData">KeypointDetectionModel::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/models/keypoint_detection.html#_CPPv4N22KeypointDetectionModel10inferBatchERKNSt6vectorI14ImageInputDataEE">KeypointDetectionModel::inferBatch (C++ function)</a>
+</li>
+      <li><a href="cpp/models/keypoint_detection.html#_CPPv4N22KeypointDetectionModel22KeypointDetectionModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">KeypointDetectionModel::KeypointDetectionModel (C++ function)</a>, <a href="cpp/models/keypoint_detection.html#_CPPv4N22KeypointDetectionModel22KeypointDetectionModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/keypoint_detection.html#_CPPv4N22KeypointDetectionModel9ModelTypeE">KeypointDetectionModel::ModelType (C++ member)</a>
+</li>
+      <li><a href="cpp/models/keypoint_detection.html#_CPPv4N22KeypointDetectionModel11postprocessER15InferenceResult">KeypointDetectionModel::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv423KeypointDetectionResult">KeypointDetectionResult (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N23KeypointDetectionResult23KeypointDetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">KeypointDetectionResult::KeypointDetectionResult (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N23KeypointDetectionResult5posesE">KeypointDetectionResult::poses (C++ member)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.DetectedKeypoints.keypoints">keypoints (model_api.models.utils.DetectedKeypoints attribute)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv411KuhnMunkres">KuhnMunkres (C++ class)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres21CheckIfOptimumIsFoundEv">KuhnMunkres::CheckIfOptimumIsFound (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres3dm_E">KuhnMunkres::dm_ (C++ member)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres9FindInColEii">KuhnMunkres::FindInCol (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres9FindInRowEii">KuhnMunkres::FindInRow (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres22FindUncoveredMinValPosEv">KuhnMunkres::FindUncoveredMinValPos (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres7greedy_E">KuhnMunkres::greedy_ (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres15is_col_visited_E">KuhnMunkres::is_col_visited_ (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres15is_row_visited_E">KuhnMunkres::is_row_visited_ (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres6kPrimeE">KuhnMunkres::kPrime (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres5kStarE">KuhnMunkres::kStar (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres11KuhnMunkresEb">KuhnMunkres::KuhnMunkres (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres7marked_E">KuhnMunkres::marked_ (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres2n_E">KuhnMunkres::n_ (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres7points_E">KuhnMunkres::points_ (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres3RunEv">KuhnMunkres::Run (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres5SolveERKN2cv3MatE">KuhnMunkres::Solve (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres13TrySimpleCaseEv">KuhnMunkres::TrySimpleCase (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/kuhn_munkres.html#_CPPv4N11KuhnMunkres25UpdateDissimilarityMatrixEf">KuhnMunkres::UpdateDissimilarityMatrix (C++ function)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/utils.html#model_api.models.utils.Contour.label">label (model_api.models.utils.Contour attribute)</a>
+
+      <ul>
+        <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.Prompt.label">(model_api.models.visual_prompting.Prompt attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.labels">labels (model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.Layout">Layout (class in model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.Metadata.layout">layout (model_api.adapters.inference_adapter.Metadata attribute)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv415LayoutCondition">LayoutCondition (C++ type)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMLearnableVisualPrompter.learn">learn() (model_api.models.visual_prompting.SAMLearnableVisualPrompter method)</a>
+</li>
+      <li><a href="python/models/types.html#model_api.models.types.ListValue">ListValue (class in model_api.models.types)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.load">load() (model_api.models.model.Model method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.load_labels">load_labels() (in module model_api.models.utils)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.load_model">load_model() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.load_model">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.load_model">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.load_model">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.load_parameters_from_onnx">load_parameters_from_onnx() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.log_layers_info">log_layers_info() (model_api.models.model.Model method)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.log_runtime_settings">log_runtime_settings() (model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+      <li><a href="cpp/utils/common.html#_CPPv417logBasicModelInfoRKNSt10shared_ptrIN2ov5ModelEEE">logBasicModelInfo (C++ function)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.logger">logger (model_api.models.model.Model attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.low_res_masks">low_res_masks (model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv4II0E0DpE8makeCond17IntervalConditionDpRR4Args">makeCond (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv425makeGuesLayoutFrom4DShapeRKN2ov12PartialShapeE">makeGuesLayoutFrom4DShape (C++ function)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.PredictedMask.mask">mask (model_api.models.utils.PredictedMask attribute)</a>
+</li>
+      <li><a href="cpp/models/instance_segmentation.html#_CPPv413MaskRCNNModel">MaskRCNNModel (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/instance_segmentation.html#model_api.models.instance_segmentation.MaskRCNNModel">(class in model_api.models.instance_segmentation)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE">MaskRCNNModel::create_model (C++ function)</a>, <a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE">[1]</a>
+</li>
+      <li><a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel5inferERK14ImageInputData">MaskRCNNModel::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel10inferBatchERKNSt6vectorI14ImageInputDataEE">MaskRCNNModel::inferBatch (C++ function)</a>
+</li>
+      <li><a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel13MaskRCNNModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">MaskRCNNModel::MaskRCNNModel (C++ function)</a>, <a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel13MaskRCNNModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel9ModelTypeE">MaskRCNNModel::ModelType (C++ member)</a>
+</li>
+      <li><a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel11postprocessER15InferenceResult">MaskRCNNModel::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/instance_segmentation.html#_CPPv4N13MaskRCNNModel26postprocess_semantic_masksE">MaskRCNNModel::postprocess_semantic_masks (C++ member)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.Metadata.meta">meta (model_api.adapters.inference_adapter.Metadata attribute)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.Metadata">Metadata (class in model_api.adapters.inference_adapter)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model">Model (class in model_api.models.model)</a>
+</li>
+      <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler.model">model (model_api.tilers.tiler.Tiler attribute)</a>
+</li>
+      <li>
+    model_api.adapters.inference_adapter
+
+      <ul>
+        <li><a href="python/adapters/inference_adapter.html#module-model_api.adapters.inference_adapter">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.adapters.onnx_adapter
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#module-model_api.adapters.onnx_adapter">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.adapters.openvino_adapter
+
+      <ul>
+        <li><a href="python/adapters/openvino_adapter.html#module-model_api.adapters.openvino_adapter">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.adapters.ovms_adapter
+
+      <ul>
+        <li><a href="python/adapters/ovms_adapter.html#module-model_api.adapters.ovms_adapter">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.adapters.utils
+
+      <ul>
+        <li><a href="python/adapters/utils.html#module-model_api.adapters.utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.action_classification
+
+      <ul>
+        <li><a href="python/models/action_classification.html#module-model_api.models.action_classification">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.anomaly
+
+      <ul>
+        <li><a href="python/models/anomaly.html#module-model_api.models.anomaly">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.classification
+
+      <ul>
+        <li><a href="python/models/classification.html#module-model_api.models.classification">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.detection_model
+
+      <ul>
+        <li><a href="python/models/detection_model.html#module-model_api.models.detection_model">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.image_model
+
+      <ul>
+        <li><a href="python/models/image_model.html#module-model_api.models.image_model">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.instance_segmentation
+
+      <ul>
+        <li><a href="python/models/instance_segmentation.html#module-model_api.models.instance_segmentation">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.keypoint_detection
+
+      <ul>
+        <li><a href="python/models/keypoint_detection.html#module-model_api.models.keypoint_detection">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.model
+
+      <ul>
+        <li><a href="python/models/model.html#module-model_api.models.model">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.sam_models
+
+      <ul>
+        <li><a href="python/models/sam_models.html#module-model_api.models.sam_models">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.segmentation
+
+      <ul>
+        <li><a href="python/models/segmentation.html#module-model_api.models.segmentation">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.ssd
+
+      <ul>
+        <li><a href="python/models/ssd.html#module-model_api.models.ssd">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.types
+
+      <ul>
+        <li><a href="python/models/types.html#module-model_api.models.types">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.utils
+
+      <ul>
+        <li><a href="python/models/utils.html#module-model_api.models.utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.visual_prompting
+
+      <ul>
+        <li><a href="python/models/visual_prompting.html#module-model_api.models.visual_prompting">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.models.yolo
+
+      <ul>
+        <li><a href="python/models/yolo.html#module-model_api.models.yolo">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.pipelines.async_pipeline
+
+      <ul>
+        <li><a href="python/pipelines/async_pipeline.html#module-model_api.pipelines.async_pipeline">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.tilers.detection
+
+      <ul>
+        <li><a href="python/tilers/detection.html#module-model_api.tilers.detection">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.tilers.instance_segmentation
+
+      <ul>
+        <li><a href="python/tilers/instance_segmentation.html#module-model_api.tilers.instance_segmentation">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.tilers.semantic_segmentation
+
+      <ul>
+        <li><a href="python/tilers/semantic_segmentation.html#module-model_api.tilers.semantic_segmentation">module</a>
+</li>
+      </ul></li>
+      <li>
+    model_api.tilers.tiler
+
+      <ul>
+        <li><a href="python/tilers/tiler.html#module-model_api.tilers.tiler">module</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.model_loaded">model_loaded (model_api.models.model.Model attribute)</a>
+
+      <ul>
+        <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler.model_loaded">(model_api.tilers.tiler.Tiler attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/model_base.html#_CPPv49ModelBase">ModelBase (C++ class)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase8awaitAllEv">ModelBase::awaitAll (C++ function)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase8awaitAnyEv">ModelBase::awaitAny (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase19getInferenceAdapterEv">ModelBase::getInferenceAdapter (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4NK9ModelBase13getinputNamesEv">ModelBase::getinputNames (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase8getModelEv">ModelBase::getModel (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4NK9ModelBase20getNumAsyncExecutorsEv">ModelBase::getNumAsyncExecutors (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4NK9ModelBase14getoutputNamesEv">ModelBase::getoutputNames (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase5inferERK9InputData">ModelBase::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase10inferAsyncERK9InputDataRKN2ov6AnyMapE">ModelBase::inferAsync (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase10inferBatchERKNSt6vectorI9InputDataEE">ModelBase::inferBatch (C++ function)</a>, <a href="cpp/models/model_base.html#_CPPv4N9ModelBase10inferBatchERKNSt6vectorINSt17reference_wrapperIK9InputDataEEEE">[1]</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase7isReadyEv">ModelBase::isReady (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase4loadERN2ov4CoreERKNSt6stringE6size_t">ModelBase::load (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase9ModelBaseERKNSt6stringERKNSt6stringE">ModelBase::ModelBase (C++ function)</a>, <a href="cpp/models/model_base.html#_CPPv4N9ModelBase9ModelBaseERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">[1]</a>, <a href="cpp/models/model_base.html#_CPPv4N9ModelBase9ModelBaseERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[2]</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase11postprocessER15InferenceResult">ModelBase::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase7prepareEv">ModelBase::prepare (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase10preprocessERK9InputDataR14InferenceInput">ModelBase::preprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBase11setCallbackENSt8functionIFvNSt10unique_ptrI10ResultBaseEERKN2ov6AnyMapEEEE">ModelBase::setCallback (C++ function)</a>
+</li>
+      <li><a href="cpp/models/model_base.html#_CPPv4N9ModelBaseD0Ev">ModelBase::~ModelBase (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model_ssd.html#_CPPv48ModelSSD">ModelSSD (C++ class)</a>
+</li>
+      <li><a href="cpp/models/detection_model_ssd.html#_CPPv4N8ModelSSD14DetectionModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">ModelSSD::DetectionModel (C++ function)</a>, <a href="cpp/models/detection_model_ssd.html#_CPPv4N8ModelSSD14DetectionModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/detection_model_ssd.html#_CPPv4N8ModelSSD9ModelTypeE">ModelSSD::ModelType (C++ member)</a>
+</li>
+      <li><a href="cpp/models/detection_model_ssd.html#_CPPv4N8ModelSSD11postprocessER15InferenceResult">ModelSSD::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model_ssd.html#_CPPv4N8ModelSSD10preprocessERK9InputDataR14InferenceInput">ModelSSD::preprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv49ModelYolo">ModelYolo (C++ class)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo9ModelYoloERNSt10shared_ptrI16InferenceAdapterEE">ModelYolo::ModelYolo (C++ function)</a>, <a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo9ModelYoloERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo11postprocessER15InferenceResult">ModelYolo::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo11YoloVersionE">ModelYolo::YoloVersion (C++ enum)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo11YoloVersion9YOLO_V1V2E">ModelYolo::YoloVersion::YOLO_V1V2 (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo11YoloVersion7YOLO_V3E">ModelYolo::YoloVersion::YOLO_V3 (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo11YoloVersion7YOLO_V4E">ModelYolo::YoloVersion::YOLO_V4 (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo11YoloVersion12YOLO_V4_TINYE">ModelYolo::YoloVersion::YOLO_V4_TINY (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolo.html#_CPPv4N9ModelYolo11YoloVersion5YOLOFE">ModelYolo::YoloVersion::YOLOF (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolov3_onnx.html#_CPPv415ModelYoloV3ONNX">ModelYoloV3ONNX (C++ class)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolov3_onnx.html#_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">ModelYoloV3ONNX::DetectionModel (C++ function)</a>, <a href="cpp/models/detection_model_yolov3_onnx.html#_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolov3_onnx.html#_CPPv4N15ModelYoloV3ONNX15ModelYoloV3ONNXERNSt10shared_ptrI16InferenceAdapterEE">ModelYoloV3ONNX::ModelYoloV3ONNX (C++ function)</a>, <a href="cpp/models/detection_model_yolov3_onnx.html#_CPPv4N15ModelYoloV3ONNX15ModelYoloV3ONNXERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolov3_onnx.html#_CPPv4N15ModelYoloV3ONNX11postprocessER15InferenceResult">ModelYoloV3ONNX::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolov3_onnx.html#_CPPv4N15ModelYoloV3ONNX10preprocessERK9InputDataR14InferenceInput">ModelYoloV3ONNX::preprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolox.html#_CPPv410ModelYoloX">ModelYoloX (C++ class)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolox.html#_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrI16InferenceAdapterEE">ModelYoloX::DetectionModelExt (C++ function)</a>, <a href="cpp/models/detection_model_yolox.html#_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolox.html#_CPPv4N10ModelYoloX9ModelTypeE">ModelYoloX::ModelType (C++ member)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolox.html#_CPPv4N10ModelYoloX10ModelYoloXERNSt10shared_ptrI16InferenceAdapterEE">ModelYoloX::ModelYoloX (C++ function)</a>, <a href="cpp/models/detection_model_yolox.html#_CPPv4N10ModelYoloX10ModelYoloXERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolox.html#_CPPv4N10ModelYoloX11postprocessER15InferenceResult">ModelYoloX::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/detection_model_yolox.html#_CPPv4N10ModelYoloX10preprocessERK9InputDataR14InferenceInput">ModelYoloX::preprocess (C++ function)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="python/adapters/inference_adapter.html#module-model_api.adapters.inference_adapter">model_api.adapters.inference_adapter</a>
+</li>
+        <li><a href="python/adapters/onnx_adapter.html#module-model_api.adapters.onnx_adapter">model_api.adapters.onnx_adapter</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#module-model_api.adapters.openvino_adapter">model_api.adapters.openvino_adapter</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#module-model_api.adapters.ovms_adapter">model_api.adapters.ovms_adapter</a>
+</li>
+        <li><a href="python/adapters/utils.html#module-model_api.adapters.utils">model_api.adapters.utils</a>
+</li>
+        <li><a href="python/models/action_classification.html#module-model_api.models.action_classification">model_api.models.action_classification</a>
+</li>
+        <li><a href="python/models/anomaly.html#module-model_api.models.anomaly">model_api.models.anomaly</a>
+</li>
+        <li><a href="python/models/classification.html#module-model_api.models.classification">model_api.models.classification</a>
+</li>
+        <li><a href="python/models/detection_model.html#module-model_api.models.detection_model">model_api.models.detection_model</a>
+</li>
+        <li><a href="python/models/image_model.html#module-model_api.models.image_model">model_api.models.image_model</a>
+</li>
+        <li><a href="python/models/instance_segmentation.html#module-model_api.models.instance_segmentation">model_api.models.instance_segmentation</a>
+</li>
+        <li><a href="python/models/keypoint_detection.html#module-model_api.models.keypoint_detection">model_api.models.keypoint_detection</a>
+</li>
+        <li><a href="python/models/model.html#module-model_api.models.model">model_api.models.model</a>
+</li>
+        <li><a href="python/models/sam_models.html#module-model_api.models.sam_models">model_api.models.sam_models</a>
+</li>
+        <li><a href="python/models/segmentation.html#module-model_api.models.segmentation">model_api.models.segmentation</a>
+</li>
+        <li><a href="python/models/ssd.html#module-model_api.models.ssd">model_api.models.ssd</a>
+</li>
+        <li><a href="python/models/types.html#module-model_api.models.types">model_api.models.types</a>
+</li>
+        <li><a href="python/models/utils.html#module-model_api.models.utils">model_api.models.utils</a>
+</li>
+        <li><a href="python/models/visual_prompting.html#module-model_api.models.visual_prompting">model_api.models.visual_prompting</a>
+</li>
+        <li><a href="python/models/yolo.html#module-model_api.models.yolo">model_api.models.yolo</a>
+</li>
+        <li><a href="python/pipelines/async_pipeline.html#module-model_api.pipelines.async_pipeline">model_api.pipelines.async_pipeline</a>
+</li>
+        <li><a href="python/tilers/detection.html#module-model_api.tilers.detection">model_api.tilers.detection</a>
+</li>
+        <li><a href="python/tilers/instance_segmentation.html#module-model_api.tilers.instance_segmentation">model_api.tilers.instance_segmentation</a>
+</li>
+        <li><a href="python/tilers/semantic_segmentation.html#module-model_api.tilers.semantic_segmentation">model_api.tilers.semantic_segmentation</a>
+</li>
+        <li><a href="python/tilers/tiler.html#module-model_api.tilers.tiler">model_api.tilers.tiler</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/utils/nms.html#_CPPv414multiclass_nmsRKNSt6vectorI13AnchorLabeledEERKNSt6vectorIfEEKfb6size_t">multiclass_nms (C++ function)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.multiclass_nms">multiclass_nms() (in module model_api.models.utils)</a>
+</li>
+      <li><a href="python/models/ssd.html#model_api.models.ssd.MultipleOutputParser">MultipleOutputParser (class in model_api.models.ssd)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.Metadata.names">names (model_api.adapters.inference_adapter.Metadata attribute)</a>
+</li>
+      <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.nchw_layout">nchw_layout (model_api.models.image_model.ImageModel attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/utils/nms.html#_CPPv4I0E3nmsNSt6vectorI6size_tEERKNSt6vectorI6AnchorEERKNSt6vectorIfEEKfb6size_t">nms (C++ function)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.nms">nms() (in module model_api.models.utils)</a>
+</li>
+      <li><a href="python/models/types.html#model_api.models.types.NumericalValue">NumericalValue (class in model_api.models.types)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter">ONNXRuntimeAdapter (class in model_api.adapters.onnx_adapter)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter">OpenvinoAdapter (class in model_api.adapters.openvino_adapter)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv424OpenVINOInferenceAdapter">OpenVINOInferenceAdapter (C++ class)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N24OpenVINOInferenceAdapter8awaitAllEv">OpenVINOInferenceAdapter::awaitAll (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N24OpenVINOInferenceAdapter8awaitAnyEv">OpenVINOInferenceAdapter::awaitAny (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK24OpenVINOInferenceAdapter13getInputNamesEv">OpenVINOInferenceAdapter::getInputNames (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK24OpenVINOInferenceAdapter13getInputShapeERKNSt6stringE">OpenVINOInferenceAdapter::getInputShape (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK24OpenVINOInferenceAdapter14getModelConfigEv">OpenVINOInferenceAdapter::getModelConfig (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK24OpenVINOInferenceAdapter20getNumAsyncExecutorsEv">OpenVINOInferenceAdapter::getNumAsyncExecutors (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4NK24OpenVINOInferenceAdapter14getOutputNamesEv">OpenVINOInferenceAdapter::getOutputNames (C++ function)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/adapters/index.html#_CPPv4N24OpenVINOInferenceAdapter5inferERK14InferenceInput">OpenVINOInferenceAdapter::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N24OpenVINOInferenceAdapter10inferAsyncERK14InferenceInputK12CallbackData">OpenVINOInferenceAdapter::inferAsync (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N24OpenVINOInferenceAdapter7isReadyEv">OpenVINOInferenceAdapter::isReady (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N24OpenVINOInferenceAdapter9loadModelERKNSt10shared_ptrIKN2ov5ModelEEERN2ov4CoreERKNSt6stringERKN2ov6AnyMapE6size_t">OpenVINOInferenceAdapter::loadModel (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N24OpenVINOInferenceAdapter24OpenVINOInferenceAdapterEv">OpenVINOInferenceAdapter::OpenVINOInferenceAdapter (C++ function)</a>
+</li>
+      <li><a href="cpp/adapters/index.html#_CPPv4N24OpenVINOInferenceAdapter11setCallbackENSt8functionIFvN2ov12InferRequestEK12CallbackDataEEE">OpenVINOInferenceAdapter::setCallback (C++ function)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.operations_by_type">operations_by_type() (model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.outputs">outputs (model_api.models.model.Model attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.OutputTransform">OutputTransform (class in model_api.models.utils)</a>
+</li>
+      <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter">OVMSAdapter (class in model_api.adapters.ovms_adapter)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.parameters">parameters() (model_api.models.action_classification.ActionClassificationModel class method)</a>
+
+      <ul>
+        <li><a href="python/models/anomaly.html#model_api.models.anomaly.AnomalyDetection.parameters">(model_api.models.anomaly.AnomalyDetection class method)</a>
+</li>
+        <li><a href="python/models/classification.html#model_api.models.classification.ClassificationModel.parameters">(model_api.models.classification.ClassificationModel class method)</a>
+</li>
+        <li><a href="python/models/detection_model.html#model_api.models.detection_model.DetectionModel.parameters">(model_api.models.detection_model.DetectionModel class method)</a>
+</li>
+        <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.parameters">(model_api.models.image_model.ImageModel class method)</a>
+</li>
+        <li><a href="python/models/instance_segmentation.html#model_api.models.instance_segmentation.MaskRCNNModel.parameters">(model_api.models.instance_segmentation.MaskRCNNModel class method)</a>
+</li>
+        <li><a href="python/models/keypoint_detection.html#model_api.models.keypoint_detection.KeypointDetectionModel.parameters">(model_api.models.keypoint_detection.KeypointDetectionModel class method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.parameters">(model_api.models.model.Model class method)</a>
+</li>
+        <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMDecoder.parameters">(model_api.models.sam_models.SAMDecoder class method)</a>
+</li>
+        <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMImageEncoder.parameters">(model_api.models.sam_models.SAMImageEncoder class method)</a>
+</li>
+        <li><a href="python/models/segmentation.html#model_api.models.segmentation.SegmentationModel.parameters">(model_api.models.segmentation.SegmentationModel class method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YOLO.parameters">(model_api.models.yolo.YOLO class method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOF.parameters">(model_api.models.yolo.YOLOF class method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YoloV3ONNX.parameters">(model_api.models.yolo.YoloV3ONNX class method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YoloV4.parameters">(model_api.models.yolo.YoloV4 class method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOv5.parameters">(model_api.models.yolo.YOLOv5 class method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOX.parameters">(model_api.models.yolo.YOLOX class method)</a>
+</li>
+        <li><a href="python/tilers/detection.html#model_api.tilers.detection.DetectionTiler.parameters">(model_api.tilers.detection.DetectionTiler class method)</a>
+</li>
+        <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler.parameters">(model_api.tilers.tiler.Tiler class method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.parse_devices">parse_devices() (in module model_api.adapters.openvino_adapter)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.Layout.parse_layouts">parse_layouts() (model_api.adapters.utils.Layout static method)</a>
+</li>
+      <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.parse_value_per_device">parse_value_per_device() (in module model_api.adapters.openvino_adapter)</a>
+</li>
+      <li><a href="cpp/utils/args_helper.html#_CPPv412parseDevicesRKNSt6stringE">parseDevices (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/args_helper.html#_CPPv417parseLayoutStringRKNSt6stringE">parseLayoutString (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/args_helper.html#_CPPv419parseValuePerDeviceRKNSt3setINSt6stringEEERKNSt6stringE">parseValuePerDevice (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv418PerformanceMetrics">PerformanceMetrics (C++ class)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics5ClockE">PerformanceMetrics::Clock (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics22currentMovingStatisticE">PerformanceMetrics::currentMovingStatistic (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics8DurationE">PerformanceMetrics::Duration (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics19firstFrameProcessedE">PerformanceMetrics::firstFrameProcessed (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4NK18PerformanceMetrics7getLastEv">PerformanceMetrics::getLast (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4NK18PerformanceMetrics8getTotalEv">PerformanceMetrics::getTotal (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics19lastMovingStatisticE">PerformanceMetrics::lastMovingStatistic (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics14lastUpdateTimeE">PerformanceMetrics::lastUpdateTime (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4NK18PerformanceMetrics8logTotalEv">PerformanceMetrics::logTotal (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics7MetricsE">PerformanceMetrics::Metrics (C++ struct)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics7Metrics3fpsE">PerformanceMetrics::Metrics::fps (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics7Metrics7latencyE">PerformanceMetrics::Metrics::latency (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics11MetricTypesE">PerformanceMetrics::MetricTypes (C++ enum)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics11MetricTypes3ALLE">PerformanceMetrics::MetricTypes::ALL (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics11MetricTypes3FPSE">PerformanceMetrics::MetricTypes::FPS (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics11MetricTypes7LATENCYE">PerformanceMetrics::MetricTypes::LATENCY (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics2MsE">PerformanceMetrics::Ms (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4NK18PerformanceMetrics12paintMetricsERKN2cv3MatEN2cv5PointEidN2cv6ScalarEi11MetricTypes">PerformanceMetrics::paintMetrics (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics18PerformanceMetricsE8Duration">PerformanceMetrics::PerformanceMetrics (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics3SecE">PerformanceMetrics::Sec (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics9StatisticE">PerformanceMetrics::Statistic (C++ struct)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics9Statistic7combineERK9Statistic">PerformanceMetrics::Statistic::combine (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics9Statistic10frameCountE">PerformanceMetrics::Statistic::frameCount (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics9Statistic7latencyE">PerformanceMetrics::Statistic::latency (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics9Statistic6periodE">PerformanceMetrics::Statistic::period (C++ member)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics9Statistic9StatisticEv">PerformanceMetrics::Statistic::Statistic (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics9TimePointE">PerformanceMetrics::TimePoint (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics14timeWindowSizeE">PerformanceMetrics::timeWindowSize (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics14totalStatisticE">PerformanceMetrics::totalStatistic (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics6updateE9TimePoint">PerformanceMetrics::update (C++ function)</a>, <a href="cpp/utils/performance_metrics.html#_CPPv4N18PerformanceMetrics6updateE9TimePointRKN2cv3MatEN2cv5PointEidN2cv6ScalarEi11MetricTypes">[1]</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.permute_to_N_HWA_K">permute_to_N_HWA_K() (in module model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.PredictedMask.points">points (model_api.models.utils.PredictedMask attribute)</a>
+</li>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.postprocess">postprocess() (model_api.models.action_classification.ActionClassificationModel method)</a>
+
+      <ul>
+        <li><a href="python/models/anomaly.html#model_api.models.anomaly.AnomalyDetection.postprocess">(model_api.models.anomaly.AnomalyDetection method)</a>
+</li>
+        <li><a href="python/models/classification.html#model_api.models.classification.ClassificationModel.postprocess">(model_api.models.classification.ClassificationModel method)</a>
+</li>
+        <li><a href="python/models/instance_segmentation.html#model_api.models.instance_segmentation.MaskRCNNModel.postprocess">(model_api.models.instance_segmentation.MaskRCNNModel method)</a>
+</li>
+        <li><a href="python/models/keypoint_detection.html#model_api.models.keypoint_detection.KeypointDetectionModel.postprocess">(model_api.models.keypoint_detection.KeypointDetectionModel method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.postprocess">(model_api.models.model.Model method)</a>
+</li>
+        <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMDecoder.postprocess">(model_api.models.sam_models.SAMDecoder method)</a>
+</li>
+        <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMImageEncoder.postprocess">(model_api.models.sam_models.SAMImageEncoder method)</a>
+</li>
+        <li><a href="python/models/segmentation.html#model_api.models.segmentation.SalientObjectDetectionModel.postprocess">(model_api.models.segmentation.SalientObjectDetectionModel method)</a>
+</li>
+        <li><a href="python/models/segmentation.html#model_api.models.segmentation.SegmentationModel.postprocess">(model_api.models.segmentation.SegmentationModel method)</a>
+</li>
+        <li><a href="python/models/ssd.html#model_api.models.ssd.SSD.postprocess">(model_api.models.ssd.SSD method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YOLO.postprocess">(model_api.models.yolo.YOLO method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YoloV3ONNX.postprocess">(model_api.models.yolo.YoloV3ONNX method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOv5.postprocess">(model_api.models.yolo.YOLOv5 method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOX.postprocess">(model_api.models.yolo.YOLOX method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.Metadata.precision">precision (model_api.adapters.inference_adapter.Metadata attribute)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.precisions">precisions (model_api.adapters.inference_adapter.InferenceAdapter attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.AnomalyResult.pred_boxes">pred_boxes (model_api.models.utils.AnomalyResult attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.AnomalyResult.pred_label">pred_label (model_api.models.utils.AnomalyResult attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.AnomalyResult.pred_mask">pred_mask (model_api.models.utils.AnomalyResult attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.AnomalyResult.pred_score">pred_score (model_api.models.utils.AnomalyResult attribute)</a>
+</li>
+      <li><a href="python/models/keypoint_detection.html#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict">predict() (model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline method)</a>
+</li>
+      <li><a href="python/models/keypoint_detection.html#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict_crops">predict_crops() (model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.PredictedMask">PredictedMask (class in model_api.models.utils)</a>
+</li>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.preprocess">preprocess() (model_api.models.action_classification.ActionClassificationModel method)</a>
+
+      <ul>
+        <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.preprocess">(model_api.models.image_model.ImageModel method)</a>
+</li>
+        <li><a href="python/models/instance_segmentation.html#model_api.models.instance_segmentation.MaskRCNNModel.preprocess">(model_api.models.instance_segmentation.MaskRCNNModel method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.preprocess">(model_api.models.model.Model method)</a>
+</li>
+        <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMDecoder.preprocess">(model_api.models.sam_models.SAMDecoder method)</a>
+</li>
+        <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMImageEncoder.preprocess">(model_api.models.sam_models.SAMImageEncoder method)</a>
+</li>
+        <li><a href="python/models/ssd.html#model_api.models.ssd.SSD.preprocess">(model_api.models.ssd.SSD method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YoloV3ONNX.preprocess">(model_api.models.yolo.YoloV3ONNX method)</a>
+</li>
+        <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOX.preprocess">(model_api.models.yolo.YOLOX method)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/classification_model.html#_CPPv427ProbabilisticLabelsResolver">ProbabilisticLabelsResolver (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/classification.html#model_api.models.classification.ProbabilisticLabelsResolver">(class in model_api.models.classification)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4NK27ProbabilisticLabelsResolver21add_missing_ancestorsERKNSt13unordered_mapINSt6stringEfEE">ProbabilisticLabelsResolver::add_missing_ancestors (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N27ProbabilisticLabelsResolver27ProbabilisticLabelsResolverERK18HierarchicalConfig">ProbabilisticLabelsResolver::ProbabilisticLabelsResolver (C++ function)</a>, <a href="cpp/models/classification_model.html#_CPPv4N27ProbabilisticLabelsResolver27ProbabilisticLabelsResolverEv">[1]</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4NK27ProbabilisticLabelsResolver24resolve_exclusive_labelsERKNSt13unordered_mapINSt6stringEfEE">ProbabilisticLabelsResolver::resolve_exclusive_labels (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N27ProbabilisticLabelsResolver14resolve_labelsERKNSt6vectorINSt17reference_wrapperINSt6stringEEEEERKNSt6vectorIfEE">ProbabilisticLabelsResolver::resolve_labels (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N27ProbabilisticLabelsResolver26suppress_descendant_outputERNSt3mapINSt6stringEfEE">ProbabilisticLabelsResolver::suppress_descendant_output (C++ function)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.Contour.probability">probability (model_api.models.utils.Contour attribute)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.process_callback">process_callback() (model_api.models.model.Model static method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.processed_mask">processed_mask (model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.Prompt">Prompt (class in model_api.models.visual_prompting)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/model.html#model_api.models.model.Model.raise_error">raise_error() (model_api.models.model.Model class method)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMLearnableVisualPrompter.reference_features">reference_features (model_api.models.visual_prompting.SAMLearnableVisualPrompter property)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMLearnableVisualPrompter.reset_reference_info">reset_reference_info() (model_api.models.visual_prompting.SAMLearnableVisualPrompter method)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.reshape">reshape() (model_api.models.model.Model method)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter.reshape_model">reshape_model() (model_api.adapters.inference_adapter.InferenceAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.reshape_model">(model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+</li>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.reshape_model">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.reshape_model">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.resize">resize (model_api.models.action_classification.ActionClassificationModel attribute)</a>
+
+      <ul>
+        <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.resize">(model_api.models.image_model.ImageModel attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/utils.html#model_api.models.utils.OutputTransform.resize">resize() (model_api.models.utils.OutputTransform method)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.resize_image">resize_image() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.resize_image_graph">resize_image_graph() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.resize_image_letterbox">resize_image_letterbox() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.resize_image_letterbox_graph">resize_image_letterbox_graph() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.resize_image_letterbox_ocv">resize_image_letterbox_ocv() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.resize_image_ocv">resize_image_ocv() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.resize_image_with_aspect">resize_image_with_aspect() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="python/adapters/utils.html#model_api.adapters.utils.resize_image_with_aspect_ocv">resize_image_with_aspect_ocv() (in module model_api.adapters.utils)</a>
+</li>
+      <li><a href="cpp/utils/image_utils.html#_CPPv411RESIZE_MODE">RESIZE_MODE (C++ enum)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/utils/image_utils.html#_CPPv4N11RESIZE_MODE9NO_RESIZEE">RESIZE_MODE::NO_RESIZE (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/utils/image_utils.html#_CPPv4N11RESIZE_MODE11RESIZE_CROPE">RESIZE_MODE::RESIZE_CROP (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/utils/image_utils.html#_CPPv4N11RESIZE_MODE11RESIZE_FILLE">RESIZE_MODE::RESIZE_FILL (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/utils/image_utils.html#_CPPv4N11RESIZE_MODE18RESIZE_KEEP_ASPECTE">RESIZE_MODE::RESIZE_KEEP_ASPECT (C++ enumerator)</a>
+</li>
+      <li><a href="cpp/utils/image_utils.html#_CPPv4N11RESIZE_MODE28RESIZE_KEEP_ASPECT_LETTERBOXE">RESIZE_MODE::RESIZE_KEEP_ASPECT_LETTERBOX (C++ enumerator)</a>
+</li>
+      <li><a href="python/models/action_classification.html#model_api.models.action_classification.ActionClassificationModel.resize_type">resize_type (model_api.models.action_classification.ActionClassificationModel attribute)</a>
+
+      <ul>
+        <li><a href="python/models/image_model.html#model_api.models.image_model.ImageModel.resize_type">(model_api.models.image_model.ImageModel attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/utils/image_utils.html#_CPPv414resizeImageExtRKN2cv3MatEii11RESIZE_MODEN2cv18InterpolationFlagsEPN2cv4RectEN2cv6ScalarE">resizeImageExt (C++ function)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.GreedyLabelsResolver.resolve_labels">resolve_labels() (model_api.models.classification.GreedyLabelsResolver method)</a>
+
+      <ul>
+        <li><a href="python/models/classification.html#model_api.models.classification.ProbabilisticLabelsResolver.resolve_labels">(model_api.models.classification.ProbabilisticLabelsResolver method)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv410ResultBase">ResultBase (C++ struct)</a>, <a href="cpp/models/results.html#_CPPv410ResultBase">[1]</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4I0EN10ResultBase5asRefER1Tv">ResultBase::asRef (C++ function)</a>, <a href="cpp/models/results.html#_CPPv4I0EN10ResultBase5asRefER1Tv">[1]</a>, <a href="cpp/models/results.html#_CPPv4I0ENK10ResultBase5asRefERK1Tv">[2]</a>, <a href="cpp/models/results.html#_CPPv4I0ENK10ResultBase5asRefERK1Tv">[3]</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N10ResultBase7frameIdE">ResultBase::frameId (C++ member)</a>, <a href="cpp/models/results.html#_CPPv4N10ResultBase7frameIdE">[1]</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N10ResultBase7IsEmptyEv">ResultBase::IsEmpty (C++ function)</a>, <a href="cpp/models/results.html#_CPPv4N10ResultBase7IsEmptyEv">[1]</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N10ResultBase8metaDataE">ResultBase::metaData (C++ member)</a>, <a href="cpp/models/results.html#_CPPv4N10ResultBase8metaDataE">[1]</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N10ResultBase10ResultBaseE7int64_tRKNSt10shared_ptrI8MetaDataEE">ResultBase::ResultBase (C++ function)</a>, <a href="cpp/models/results.html#_CPPv4N10ResultBase10ResultBaseE7int64_tRKNSt10shared_ptrI8MetaDataEE">[1]</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N10ResultBaseD0Ev">ResultBase::~ResultBase (C++ function)</a>, <a href="cpp/models/results.html#_CPPv4N10ResultBaseD0Ev">[1]</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.ImageResultWithSoftPrediction.resultImage">resultImage (model_api.models.utils.ImageResultWithSoftPrediction attribute)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv425RetinaFaceDetectionResult">RetinaFaceDetectionResult (C++ struct)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N25RetinaFaceDetectionResult9landmarksE">RetinaFaceDetectionResult::landmarks (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N25RetinaFaceDetectionResult25RetinaFaceDetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">RetinaFaceDetectionResult::RetinaFaceDetectionResult (C++ function)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/utils.html#model_api.models.utils.ImageResultWithSoftPrediction.saliency_map">saliency_map (model_api.models.utils.ImageResultWithSoftPrediction attribute)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.InstanceSegmentationResult.saliency_map">(model_api.models.utils.InstanceSegmentationResult attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/segmentation.html#model_api.models.segmentation.SalientObjectDetectionModel">SalientObjectDetectionModel (class in model_api.models.segmentation)</a>
+</li>
+      <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMDecoder">SAMDecoder (class in model_api.models.sam_models)</a>
+</li>
+      <li><a href="python/models/sam_models.html#model_api.models.sam_models.SAMImageEncoder">SAMImageEncoder (class in model_api.models.sam_models)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMLearnableVisualPrompter">SAMLearnableVisualPrompter (class in model_api.models.visual_prompting)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.SAMVisualPrompter">SAMVisualPrompter (class in model_api.models.visual_prompting)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.Model.save">save() (model_api.models.model.Model method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.OutputTransform.scale">scale() (model_api.models.utils.OutputTransform method)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.DetectedKeypoints.scores">scores (model_api.models.utils.DetectedKeypoints attribute)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.PredictedMask.scores">(model_api.models.utils.PredictedMask attribute)</a>
+</li>
+        <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.scores">(model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/segmentation_model.html#_CPPv417SegmentationModel">SegmentationModel (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/segmentation.html#model_api.models.segmentation.SegmentationModel">(class in model_api.models.segmentation)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE">SegmentationModel::create_model (C++ function)</a>, <a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE">[1]</a>
+</li>
+      <li><a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel11getContoursERK29ImageResultWithSoftPrediction">SegmentationModel::getContours (C++ function)</a>
+</li>
+      <li><a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel5inferERK14ImageInputData">SegmentationModel::infer (C++ function)</a>
+</li>
+      <li><a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel10inferBatchERKNSt6vectorI14ImageInputDataEE">SegmentationModel::inferBatch (C++ function)</a>
+</li>
+      <li><a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel9ModelTypeE">SegmentationModel::ModelType (C++ member)</a>
+</li>
+      <li><a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel11postprocessER15InferenceResult">SegmentationModel::postprocess (C++ function)</a>
+</li>
+      <li><a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel17SegmentationModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">SegmentationModel::SegmentationModel (C++ function)</a>, <a href="cpp/models/segmentation_model.html#_CPPv4N17SegmentationModel17SegmentationModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">[1]</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv415SegmentedObject">SegmentedObject (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.SegmentedObject">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N15SegmentedObject4maskE">SegmentedObject::mask (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N15SegmentedObjectlsERNSt7ostreamERK15SegmentedObject">SegmentedObject::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.InstanceSegmentationResult.segmentedObjects">segmentedObjects (model_api.models.utils.InstanceSegmentationResult attribute)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv424SegmentedObjectWithRects">SegmentedObjectWithRects (C++ struct)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.SegmentedObjectWithRects">(class in model_api.models.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/results.html#_CPPv4N24SegmentedObjectWithRectslsERNSt7ostreamERK24SegmentedObjectWithRects">SegmentedObjectWithRects::operator&lt;&lt; (C++ function)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N24SegmentedObjectWithRects12rotated_rectE">SegmentedObjectWithRects::rotated_rect (C++ member)</a>
+</li>
+      <li><a href="cpp/models/results.html#_CPPv4N24SegmentedObjectWithRects24SegmentedObjectWithRectsERK15SegmentedObject">SegmentedObjectWithRects::SegmentedObjectWithRects (C++ function)</a>
+</li>
+      <li><a href="cpp/tilers/semantic_segmentation.html#_CPPv425SemanticSegmentationTiler">SemanticSegmentationTiler (C++ class)</a>
+
+      <ul>
+        <li><a href="python/tilers/semantic_segmentation.html#model_api.tilers.semantic_segmentation.SemanticSegmentationTiler">(class in model_api.tilers.semantic_segmentation)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/tilers/semantic_segmentation.html#_CPPv4N25SemanticSegmentationTiler3runERK14ImageInputData">SemanticSegmentationTiler::run (C++ function)</a>
+</li>
+      <li><a href="cpp/tilers/semantic_segmentation.html#_CPPv4N25SemanticSegmentationTiler25SemanticSegmentationTilerENSt10shared_ptrI10ImageModelEERKN2ov6AnyMapE">SemanticSegmentationTiler::SemanticSegmentationTiler (C++ function)</a>
+</li>
+      <li><a href="cpp/tilers/semantic_segmentation.html#_CPPv4N25SemanticSegmentationTilerD0Ev">SemanticSegmentationTiler::~SemanticSegmentationTiler (C++ function)</a>
+</li>
+      <li><a href="python/adapters/onnx_adapter.html#model_api.adapters.onnx_adapter.ONNXRuntimeAdapter.set_callback">set_callback() (model_api.adapters.onnx_adapter.ONNXRuntimeAdapter method)</a>
+
+      <ul>
+        <li><a href="python/adapters/openvino_adapter.html#model_api.adapters.openvino_adapter.OpenvinoAdapter.set_callback">(model_api.adapters.openvino_adapter.OpenvinoAdapter method)</a>
+</li>
+        <li><a href="python/adapters/ovms_adapter.html#model_api.adapters.ovms_adapter.OVMSAdapter.set_callback">(model_api.adapters.ovms_adapter.OVMSAdapter method)</a>
+</li>
+        <li><a href="python/models/model.html#model_api.models.model.Model.set_callback">(model_api.models.model.Model method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOX.set_strides_grids">set_strides_grids() (model_api.models.yolo.YOLOX method)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.Metadata.shape">shape (model_api.adapters.inference_adapter.Metadata attribute)</a>
+
+      <ul>
+        <li><a href="python/models/utils.html#model_api.models.utils.Contour.shape">(model_api.models.utils.Contour attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.sigmoid">sigmoid() (in module model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.sigmoid_numpy">sigmoid_numpy() (in module model_api.models.classification)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv417SimpleLabelsGraph">SimpleLabelsGraph (C++ class)</a>
+
+      <ul>
+        <li><a href="python/models/classification.html#model_api.models.classification.SimpleLabelsGraph">(class in model_api.models.classification)</a>
+</li>
+      </ul></li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N17SimpleLabelsGraph8add_edgeERKNSt6stringERKNSt6stringE">SimpleLabelsGraph::add_edge (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4NK17SimpleLabelsGraph13get_ancestorsERKNSt6stringE">SimpleLabelsGraph::get_ancestors (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4NK17SimpleLabelsGraph12get_childrenERKNSt6stringE">SimpleLabelsGraph::get_children (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N17SimpleLabelsGraph31get_labels_in_topological_orderEv">SimpleLabelsGraph::get_labels_in_topological_order (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4NK17SimpleLabelsGraph10get_parentERKNSt6stringE">SimpleLabelsGraph::get_parent (C++ function)</a>
+</li>
+      <li><a href="cpp/models/classification_model.html#_CPPv4N17SimpleLabelsGraph17SimpleLabelsGraphERKNSt6vectorINSt6stringEEE">SimpleLabelsGraph::SimpleLabelsGraph (C++ function)</a>, <a href="cpp/models/classification_model.html#_CPPv4N17SimpleLabelsGraph17SimpleLabelsGraphEv">[1]</a>
+</li>
+      <li><a href="python/models/ssd.html#model_api.models.ssd.SingleOutputParser">SingleOutputParser (class in model_api.models.ssd)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv44slog">slog (C++ type)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog9boolalphaE">slog::boolalpha (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog4endlE">slog::endl (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog9LogStreamE">slog::LogStream (C++ class)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog9LogStream11_log_streamE">slog::LogStream::_log_stream (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog9LogStream9_new_lineE">slog::LogStream::_new_line (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog9LogStream7_prefixE">slog::LogStream::_prefix (C++ member)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog9LogStream9LogStreamERKNSt6stringERNSt7ostreamE">slog::LogStream::LogStream (C++ function)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4I0EN4slog9LogStreamlsER9LogStreamRK1T">slog::LogStream::operator&lt;&lt; (C++ function)</a>, <a href="cpp/utils/slog.html#_CPPv4II00E00EN4slog9LogStreamlsER9LogStreamRK9ContainerI1TNSt9allocatorI1TEEE">[1]</a>, <a href="cpp/utils/slog.html#_CPPv4N4slog9LogStreamlsERK16LogStreamEndLine">[2]</a>, <a href="cpp/utils/slog.html#_CPPv4N4slog9LogStreamlsERK18LogStreamBoolAlpha">[3]</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog18LogStreamBoolAlphaE">slog::LogStreamBoolAlpha (C++ class)</a>
+</li>
+      <li><a href="cpp/utils/slog.html#_CPPv4N4slog16LogStreamEndLineE">slog::LogStreamEndLine (C++ class)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.ImageResultWithSoftPrediction.soft_prediction">soft_prediction (model_api.models.utils.ImageResultWithSoftPrediction attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.soft_predictions">soft_predictions (model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.softmax">softmax() (in module model_api.models.utils)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.softmax_numpy">softmax_numpy() (in module model_api.models.classification)</a>
+</li>
+      <li><a href="cpp/utils/args_helper.html#_CPPv45splitRKNSt6stringEc">split (C++ function)</a>
+</li>
+      <li><a href="python/models/ssd.html#model_api.models.ssd.SSD">SSD (class in model_api.models.ssd)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv413string2ScalarRKNSt6stringE">string2Scalar (C++ function)</a>
+</li>
+      <li><a href="python/models/types.html#model_api.models.types.StringValue">StringValue (class in model_api.models.types)</a>
+</li>
+      <li><a href="python/pipelines/async_pipeline.html#model_api.pipelines.async_pipeline.AsyncPipeline.submit_data">submit_data() (model_api.pipelines.async_pipeline.AsyncPipeline method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/tilers/tiler.html#model_api.tilers.tiler.Tiler">Tiler (class in model_api.tilers.tiler)</a>
+</li>
+      <li><a href="cpp/tilers/tiler_base.html#_CPPv49TilerBase">TilerBase (C++ class)</a>
+</li>
+      <li><a href="cpp/tilers/tiler_base.html#_CPPv4N9TilerBase9TilerBaseERKNSt10shared_ptrI10ImageModelEERKN2ov6AnyMapE13ExecutionMode">TilerBase::TilerBase (C++ function)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/tilers/tiler_base.html#_CPPv4N9TilerBaseD0Ev">TilerBase::~TilerBase (C++ function)</a>
+</li>
+      <li><a href="python/models/keypoint_detection.html#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline">TopDownKeypointDetectionPipeline (class in model_api.models.keypoint_detection)</a>
+</li>
+      <li><a href="python/models/classification.html#model_api.models.classification.SimpleLabelsGraph.topological_sort">topological_sort() (model_api.models.classification.SimpleLabelsGraph method)</a>
+</li>
+      <li><a href="python/adapters/inference_adapter.html#model_api.adapters.inference_adapter.Metadata.type">type (model_api.adapters.inference_adapter.Metadata attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/types.html#model_api.models.types.BaseValue.update_default_value">update_default_value() (model_api.models.types.BaseValue method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult.upscaled_masks">upscaled_masks (model_api.models.utils.VisualPromptingResult attribute)</a>
+</li>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.VisualPromptingFeatures.used_indices">used_indices (model_api.models.visual_prompting.VisualPromptingFeatures attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/types.html#model_api.models.types.BaseValue.validate">validate() (model_api.models.types.BaseValue method)</a>
+
+      <ul>
+        <li><a href="python/models/types.html#model_api.models.types.BooleanValue.validate">(model_api.models.types.BooleanValue method)</a>
+</li>
+        <li><a href="python/models/types.html#model_api.models.types.DictValue.validate">(model_api.models.types.DictValue method)</a>
+</li>
+        <li><a href="python/models/types.html#model_api.models.types.ListValue.validate">(model_api.models.types.ListValue method)</a>
+</li>
+        <li><a href="python/models/types.html#model_api.models.types.NumericalValue.validate">(model_api.models.types.NumericalValue method)</a>
+</li>
+        <li><a href="python/models/types.html#model_api.models.types.StringValue.validate">(model_api.models.types.StringValue method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/visual_prompting.html#model_api.models.visual_prompting.VisualPromptingFeatures">VisualPromptingFeatures (class in model_api.models.visual_prompting)</a>
+</li>
+      <li><a href="python/models/utils.html#model_api.models.utils.VisualPromptingResult">VisualPromptingResult (class in model_api.models.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.DetectionBox.w">w (model_api.models.yolo.DetectionBox attribute)</a>
+</li>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv431wrap_saliency_map_tensor_to_matRN2ov6TensorE6size_t6size_t">wrap_saliency_map_tensor_to_mat (C++ function)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cpp/utils/ocv_common.html#_CPPv414wrapMat2TensorRKN2cv3MatE">wrapMat2Tensor (C++ function)</a>
+</li>
+      <li><a href="python/models/model.html#model_api.models.model.WrapperError">WrapperError</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.DetectionBox.x">x (model_api.models.yolo.DetectionBox attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.xywh2xyxy">xywh2xyxy() (in module model_api.models.yolo)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Y">Y</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.DetectionBox.y">y (model_api.models.yolo.DetectionBox attribute)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YOLO">YOLO (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YOLO.Params">YOLO.Params (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOF">YOLOF (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOF.Params">YOLOF.Params (class in model_api.models.yolo)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YoloV3ONNX">YoloV3ONNX (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YoloV4">YoloV4 (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YoloV4.Params">YoloV4.Params (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOv5">YOLOv5 (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOv8">YOLOv8 (class in model_api.models.yolo)</a>
+</li>
+      <li><a href="python/models/yolo.html#model_api.models.yolo.YOLOX">YOLOX (class in model_api.models.yolo)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Z">Z</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="python/models/utils.html#model_api.models.utils.ZSLVisualPromptingResult">ZSLVisualPromptingResult (class in model_api.models.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Intel OpenVINO.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

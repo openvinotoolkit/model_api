@@ -1,0 +1,723 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Performance Metrics &#8212; InferenceSDK 2024 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../../_static/documentation_options.js?v=6fefd858"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=6dbb43f8"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cpp/utils/performance_metrics';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Async Infer Queue" href="async_infer_queue.html" />
+    <link rel="prev" title="Image Utils" href="image_utils.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">InferenceSDK 2024 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../python/index.html">
+    Python API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    C++ API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guides/index.html">
+    Guides
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../python/index.html">
+    Python API Reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    C++ API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../guides/index.html">
+    Guides
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Classes</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../adapters/index.html">Adapters</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../models/index.html">Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../models/model_base.html">Model Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model.html">Detection Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/image_model.html">Image Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/internal_model_data.html">Internal Model Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/keypoint_detection.html">Keypoint Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_yolov3_onnx.html">Detection Model Yolov3 ONNX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/anomaly_model.html">Anomaly Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_ext.html">Detection Model Ext</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/segmentation_model.html">Segmentation Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_yolox.html">Detection Model YoloX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_ssd.html">Detection Model SSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/results.html">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/instance_segmentation.html">Instance Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/input_data.html">Input Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/detection_model_yolo.html">Detection Model Yolo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../models/classification_model.html">Classification Model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tilers/index.html">Tilers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tilers/tiler_base.html">Tiler Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tilers/instance_segmentation.html">Instance Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tilers/detection.html">Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tilers/semantic_segmentation.html">Semantic Segmentation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Utils</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ocv_common.html">Ocv Common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common.html">Common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="args_helper.html">Args Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="slog.html">Slog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nms.html">Nms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_utils.html">Image Utils</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Performance Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="async_infer_queue.html">Async Infer Queue</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kuhn_munkres.html">Kuhn Munkres</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">C++ API Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Utils</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Performance Metrics</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="performance-metrics">
+<h1>Performance Metrics<a class="headerlink" href="#performance-metrics" title="Link to this heading">#</a></h1>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv418PerformanceMetrics">
+<span class="target" id="classPerformanceMetrics"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PerformanceMetrics</span></span></span><a class="headerlink" href="#_CPPv418PerformanceMetrics" title="Link to this definition">#</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics11MetricTypesE">
+<span class="target" id="classPerformanceMetrics_1a4f927ca6270a01b3432889f807aaa4db"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MetricTypes</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics11MetricTypesE" title="Link to this definition">#</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics11MetricTypes3ALLE">
+<span class="target" id="classPerformanceMetrics_1a4f927ca6270a01b3432889f807aaa4dba21ddc82f64ca092ed6931a5b94f3d710"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ALL</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics11MetricTypes3ALLE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics11MetricTypes3FPSE">
+<span class="target" id="classPerformanceMetrics_1a4f927ca6270a01b3432889f807aaa4dbad60ea4b0c84c67d3fc0c9a7166e84080"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FPS</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics11MetricTypes3FPSE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics11MetricTypes7LATENCYE">
+<span class="target" id="classPerformanceMetrics_1a4f927ca6270a01b3432889f807aaa4dbad96aa3bf3cc2e846860e2f294242518c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LATENCY</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics11MetricTypes7LATENCYE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics5ClockE">
+<span class="target" id="classPerformanceMetrics_1a9038b886c93f49c717a22d9e57e9dab0"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Clock</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">steady_clock</span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics5ClockE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics9TimePointE">
+<span class="target" id="classPerformanceMetrics_1afe78ff56e03c6c0f774f9ac37cdc67e0"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TimePoint</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">time_point</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics5ClockE" title="PerformanceMetrics::Clock"><span class="n"><span class="pre">Clock</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics9TimePointE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics8DurationE">
+<span class="target" id="classPerformanceMetrics_1ae95ac8931530064485daffd51afee06c"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Duration</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics5ClockE" title="PerformanceMetrics::Clock"><span class="n"><span class="pre">Clock</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">duration</span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics8DurationE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics2MsE">
+<span class="target" id="classPerformanceMetrics_1aa2109fe4e1b5aeeca5a3ec787ab9aebe"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Ms</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">&lt;</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1000</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics2MsE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics3SecE">
+<span class="target" id="classPerformanceMetrics_1a16a4112944659a3ac695418c3f94911e"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Sec</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">&lt;</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics3SecE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics18PerformanceMetricsE8Duration">
+<span class="target" id="classPerformanceMetrics_1a0e5daf85566cc6ecdc45de7a9a7d3cab"></span><span class="sig-name descname"><span class="n"><span class="pre">PerformanceMetrics</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics8DurationE" title="PerformanceMetrics::Duration"><span class="n"><span class="pre">Duration</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">timeWindow</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">chrono</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">seconds</span></span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">1</span></span><span class="p"><span class="pre">)</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics18PerformanceMetricsE8Duration" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics6updateE9TimePointRKN2cv3MatEN2cv5PointEidN2cv6ScalarEi11MetricTypes">
+<span class="target" id="classPerformanceMetrics_1adb9702a26ebb72f1c956ba00592fe1bb"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">update</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics9TimePointE" title="PerformanceMetrics::TimePoint"><span class="n"><span class="pre">TimePoint</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">lastRequestStartTime</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">frame</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Point</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">position</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">15</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">30</span></span><span class="p"><span class="pre">}</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fontFace</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">FONT_HERSHEY_COMPLEX</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fontScale</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.75</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Scalar</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">color</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">200</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">}</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">thickness</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span>, <a class="reference internal" href="#_CPPv4N18PerformanceMetrics11MetricTypesE" title="PerformanceMetrics::MetricTypes"><span class="n"><span class="pre">MetricTypes</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">metricType</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics11MetricTypes3ALLE" title="PerformanceMetrics::ALL"><span class="n"><span class="pre">ALL</span></span></a><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics6updateE9TimePointRKN2cv3MatEN2cv5PointEidN2cv6ScalarEi11MetricTypes" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics6updateE9TimePoint">
+<span class="target" id="classPerformanceMetrics_1a8cefe081cf35a4601cd2cf42978fa6ca"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">update</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics9TimePointE" title="PerformanceMetrics::TimePoint"><span class="n"><span class="pre">TimePoint</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">lastRequestStartTime</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics6updateE9TimePoint" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18PerformanceMetrics12paintMetricsERKN2cv3MatEN2cv5PointEidN2cv6ScalarEi11MetricTypes">
+<span class="target" id="classPerformanceMetrics_1a32d926e48b3505d9c40ab49ba1f13840"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">paintMetrics</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">frame</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Point</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">position</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">15</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">30</span></span><span class="p"><span class="pre">}</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fontFace</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">FONT_HERSHEY_COMPLEX</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fontScale</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0.75</span></span>, <span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Scalar</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">color</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="m"><span class="pre">200</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">10</span></span><span class="p"><span class="pre">}</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">thickness</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span>, <a class="reference internal" href="#_CPPv4N18PerformanceMetrics11MetricTypesE" title="PerformanceMetrics::MetricTypes"><span class="n"><span class="pre">MetricTypes</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">metricType</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics11MetricTypes3ALLE" title="PerformanceMetrics::ALL"><span class="n"><span class="pre">ALL</span></span></a><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18PerformanceMetrics12paintMetricsERKN2cv3MatEN2cv5PointEidN2cv6ScalarEi11MetricTypes" title="Link to this definition">#</a><br /></dt>
+<dd><p>Paints metrics over provided mat </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> – frame to paint over </p></li>
+<li><p><strong>position</strong> – left top corner of text block </p></li>
+<li><p><strong>fontScale</strong> – font scale </p></li>
+<li><p><strong>color</strong> – font color </p></li>
+<li><p><strong>thickness</strong> – font thickness </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18PerformanceMetrics7getLastEv">
+<span class="target" id="classPerformanceMetrics_1ad6c5ac86c55f26592665dfffcc4b598c"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics7MetricsE" title="PerformanceMetrics::Metrics"><span class="n"><span class="pre">Metrics</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getLast</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18PerformanceMetrics7getLastEv" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18PerformanceMetrics8getTotalEv">
+<span class="target" id="classPerformanceMetrics_1aaac231d7d795e8ef4e240b4b33344e5a"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics7MetricsE" title="PerformanceMetrics::Metrics"><span class="n"><span class="pre">Metrics</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getTotal</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18PerformanceMetrics8getTotalEv" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK18PerformanceMetrics8logTotalEv">
+<span class="target" id="classPerformanceMetrics_1adfb4d66c70de7d5e6fb8baf1063a3263"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logTotal</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK18PerformanceMetrics8logTotalEv" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics14timeWindowSizeE">
+<span class="target" id="classPerformanceMetrics_1a6c9ed1fe1a649b7d9e2d12c3bb208fdb"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics8DurationE" title="PerformanceMetrics::Duration"><span class="n"><span class="pre">Duration</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">timeWindowSize</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics14timeWindowSizeE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics19lastMovingStatisticE">
+<span class="target" id="classPerformanceMetrics_1a2a0380c7846c5657d73d44227073dcfc"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics9StatisticE" title="PerformanceMetrics::Statistic"><span class="n"><span class="pre">Statistic</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lastMovingStatistic</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics19lastMovingStatisticE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics22currentMovingStatisticE">
+<span class="target" id="classPerformanceMetrics_1a50027cbeff8b008a1baec8014de3d2d5"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics9StatisticE" title="PerformanceMetrics::Statistic"><span class="n"><span class="pre">Statistic</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">currentMovingStatistic</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics22currentMovingStatisticE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics14totalStatisticE">
+<span class="target" id="classPerformanceMetrics_1aec0c8316f115a42f7fa29eb54cd50b2d"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics9StatisticE" title="PerformanceMetrics::Statistic"><span class="n"><span class="pre">Statistic</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">totalStatistic</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics14totalStatisticE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics14lastUpdateTimeE">
+<span class="target" id="classPerformanceMetrics_1acd5f41bc53792d638b5028d9aed6afad"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics9TimePointE" title="PerformanceMetrics::TimePoint"><span class="n"><span class="pre">TimePoint</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lastUpdateTime</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics14lastUpdateTimeE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics19firstFrameProcessedE">
+<span class="target" id="classPerformanceMetrics_1a3e97b2c25585482618ae48dda74abf45"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">firstFrameProcessed</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics19firstFrameProcessedE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics7MetricsE">
+<span class="target" id="structPerformanceMetrics_1_1Metrics"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Metrics</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics7MetricsE" title="Link to this definition">#</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics7Metrics7latencyE">
+<span class="target" id="structPerformanceMetrics_1_1Metrics_1ad41d75e1e86d83c30f06d61dc3fb3f41"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">latency</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics7Metrics7latencyE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics7Metrics3fpsE">
+<span class="target" id="structPerformanceMetrics_1_1Metrics_1a847897fac5df90508dc0ebcfbbb247fe"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fps</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics7Metrics3fpsE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics9StatisticE">
+<span class="target" id="structPerformanceMetrics_1_1Statistic"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Statistic</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics9StatisticE" title="Link to this definition">#</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics9Statistic9StatisticEv">
+<span class="target" id="structPerformanceMetrics_1_1Statistic_1a6f40980e90b258356abb4c09893c40cc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Statistic</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics9Statistic9StatisticEv" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics9Statistic7combineERK9Statistic">
+<span class="target" id="structPerformanceMetrics_1_1Statistic_1af9b9c03e6dc34ea25ef1424bea6bcf72"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">combine</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics9StatisticE" title="PerformanceMetrics::Statistic"><span class="n"><span class="pre">Statistic</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics9Statistic7combineERK9Statistic" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics9Statistic7latencyE">
+<span class="target" id="structPerformanceMetrics_1_1Statistic_1a85beba9c108157b6755ac3f17483f075"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics8DurationE" title="PerformanceMetrics::Duration"><span class="n"><span class="pre">Duration</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">latency</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics9Statistic7latencyE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics9Statistic6periodE">
+<span class="target" id="structPerformanceMetrics_1_1Statistic_1a3af226f6b62adbb4c9275469dd7afb69"></span><a class="reference internal" href="#_CPPv4N18PerformanceMetrics8DurationE" title="PerformanceMetrics::Duration"><span class="n"><span class="pre">Duration</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">period</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics9Statistic6periodE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N18PerformanceMetrics9Statistic10frameCountE">
+<span class="target" id="structPerformanceMetrics_1_1Statistic_1a076afb67b5807f9707153547de6a36b6"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">frameCount</span></span></span><a class="headerlink" href="#_CPPv4N18PerformanceMetrics9Statistic10frameCountE" title="Link to this definition">#</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="image_utils.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Image Utils</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="async_infer_queue.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Async Infer Queue</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv418PerformanceMetrics"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics11MetricTypesE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::MetricTypes</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics11MetricTypes3ALLE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::MetricTypes::ALL</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics11MetricTypes3FPSE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::MetricTypes::FPS</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics11MetricTypes7LATENCYE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::MetricTypes::LATENCY</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics5ClockE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Clock</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics9TimePointE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::TimePoint</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics8DurationE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Duration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics2MsE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Ms</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics3SecE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Sec</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics18PerformanceMetricsE8Duration"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::PerformanceMetrics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics6updateE9TimePointRKN2cv3MatEN2cv5PointEidN2cv6ScalarEi11MetricTypes"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics6updateE9TimePoint"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK18PerformanceMetrics12paintMetricsERKN2cv3MatEN2cv5PointEidN2cv6ScalarEi11MetricTypes"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::paintMetrics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK18PerformanceMetrics7getLastEv"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::getLast()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK18PerformanceMetrics8getTotalEv"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::getTotal()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK18PerformanceMetrics8logTotalEv"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::logTotal()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics14timeWindowSizeE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::timeWindowSize</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics19lastMovingStatisticE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::lastMovingStatistic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics22currentMovingStatisticE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::currentMovingStatistic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics14totalStatisticE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::totalStatistic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics14lastUpdateTimeE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::lastUpdateTime</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics19firstFrameProcessedE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::firstFrameProcessed</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics7MetricsE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Metrics</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics7Metrics7latencyE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Metrics::latency</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics7Metrics3fpsE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Metrics::fps</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics9StatisticE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Statistic</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics9Statistic9StatisticEv"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Statistic::Statistic()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics9Statistic7combineERK9Statistic"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Statistic::combine()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics9Statistic7latencyE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Statistic::latency</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics9Statistic6periodE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Statistic::period</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N18PerformanceMetrics9Statistic10frameCountE"><code class="docutils literal notranslate"><span class="pre">PerformanceMetrics::Statistic::frameCount</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/cpp/utils/performance_metrics.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Intel OpenVINO.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
