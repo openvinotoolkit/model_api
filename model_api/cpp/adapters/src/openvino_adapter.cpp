@@ -49,8 +49,18 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
     }
 }
 
-void OpenVINOInferenceAdapter::infer(const InferenceInput&, InferenceOutput&) {
-    throw std::runtime_error("Not implemented");
+void OpenVINOInferenceAdapter::infer(const InferenceInput& input, InferenceOutput& output) {
+    auto request = asyncQueue->operator[](asyncQueue->get_idle_request_id());
+    for (const auto& [name, tensor] : input) {
+        request.set_tensor(name, tensor);
+    }
+    for (const auto& [name, tensor] : output) {
+        request.set_tensor(name, tensor);
+    }
+    request.infer();
+    for (const auto& name : outputNames) {
+        output[name] = request.get_tensor(name);
+    }
 }
 
 InferenceOutput OpenVINOInferenceAdapter::infer(const InferenceInput& input) {
@@ -100,7 +110,7 @@ ov::PartialShape OpenVINOInferenceAdapter::getInputShape(const std::string& inpu
     return compiledModel.input(inputName).get_partial_shape();
 }
 ov::PartialShape OpenVINOInferenceAdapter::getOutputShape(const std::string& outputName) const {
-    return compiledModel.output(outputName).get_shape();
+    return compiledModel.output(outputName).get_partial_shape();
 }
 
 void OpenVINOInferenceAdapter::initInputsOutputs() {
