@@ -569,7 +569,6 @@ class YOLOX(DetectionModel):
                     y_maxs[keep_nms],
                     scores[keep_nms],
                     j[keep_nms],
-                    strict=False,
                 ),
             )
         )
@@ -584,7 +583,7 @@ class YOLOX(DetectionModel):
         hsizes = [self.h // stride for stride in strides]
         wsizes = [self.w // stride for stride in strides]
 
-        for hsize, wsize, stride in zip(hsizes, wsizes, strides, strict=False):
+        for hsize, wsize, stride in zip(hsizes, wsizes, strides):
             xv, yv = np.meshgrid(np.arange(wsize), np.arange(hsize))
             grid = np.stack((xv, yv), 2).reshape(1, -1, 2)
             grids.append(grid)
@@ -720,9 +719,7 @@ class YoloV3ONNX(DetectionModel):
         x_maxs = transposed_boxes[3]
         y_maxs = transposed_boxes[2]
 
-        detections = list(
-            starmap(Detection, zip(x_mins, y_mins, x_maxs, y_maxs, out_scores, out_classes, strict=False))
-        )
+        detections = list(starmap(Detection, zip(x_mins, y_mins, x_maxs, y_maxs, out_scores, out_classes)))
 
         return detections
 

@@ -185,7 +185,7 @@ class MaskRCNNModel(ImageModel):
             saliency_maps = [[] for _ in range(len(self.labels))]
         else:
             saliency_maps = []
-        for box, confidence, cls, raw_mask in zip(boxes, scores, labels, masks, strict=False):
+        for box, confidence, cls, raw_mask in zip(boxes, scores, labels, masks):
             x1, y1, x2, y2 = box
             if (x2 - x1) * (y2 - y1) < 1 or (confidence <= self.confidence_threshold and not has_feature_vector_name):
                 continue

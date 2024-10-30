@@ -122,7 +122,7 @@ class MultipleOutputParser:
         bboxes = outputs[self.bboxes_layer][0]
         scores = outputs[self.scores_layer][0]
         labels = outputs[self.labels_layer][0]
-        return [Detection(*bbox, score, label) for label, score, bbox in zip(labels, scores, bboxes, strict=False)]
+        return [Detection(*bbox, score, label) for label, score, bbox in zip(labels, scores, bboxes)]
 
 
 class BoxesLabelsParser:
@@ -162,9 +162,7 @@ class BoxesLabelsParser:
             labels = np.full(len(bboxes), self.default_label, dtype=bboxes.dtype)
         labels = labels.squeeze(0)
 
-        detections = [
-            Detection(*bbox, score, label) for label, score, bbox in zip(labels, scores, bboxes, strict=False)
-        ]
+        detections = [Detection(*bbox, score, label) for label, score, bbox in zip(labels, scores, bboxes)]
         return detections
 
 

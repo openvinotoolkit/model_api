@@ -262,7 +262,7 @@ class ClassificationModel(ImageModel):
                     predicted_labels.append(label_str)
                     predicted_scores.append(head_logits[i])
 
-        predictions = zip(predicted_labels, predicted_scores, strict=False)
+        predictions = zip(predicted_labels, predicted_scores)
         return self.labels_resolver.resolve_labels(predictions)
 
     def get_multilabel_predictions(self, logits: np.ndarray):
@@ -275,7 +275,7 @@ class ClassificationModel(ImageModel):
                 scores.append(logits[i])
         labels = [self.labels[i] if self.labels else "" for i in indices]
 
-        return list(zip(indices, labels, scores, strict=False))
+        return list(zip(indices, labels, scores))
 
     def get_multiclass_predictions(self, outputs):
         if self.embedded_topk:
@@ -286,7 +286,7 @@ class ClassificationModel(ImageModel):
             scoresTensor = softmax_numpy(outputs[self.out_layer_names[0]][0])
             indicesTensor = [np.argmax(scoresTensor)]
             labels = [self.labels[i] if self.labels else "" for i in indicesTensor]
-        return list(zip(indicesTensor, labels, scoresTensor, strict=False))
+        return list(zip(indicesTensor, labels, scoresTensor))
 
 
 def addOrFindSoftmaxAndTopkOutputs(inference_adapter, topk, output_raw_scores):

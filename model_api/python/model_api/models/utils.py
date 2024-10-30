@@ -286,7 +286,7 @@ class DetectionWithLandmarks(Detection):
     def __init__(self, xmin, ymin, xmax, ymax, score, id, landmarks_x, landmarks_y):
         super().__init__(xmin, ymin, xmax, ymax, score, id)
         self.landmarks = []
-        for x, y in zip(landmarks_x, landmarks_y, strict=False):
+        for x, y in zip(landmarks_x, landmarks_y):
             self.landmarks.append((x, y))
 
 

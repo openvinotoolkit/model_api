@@ -137,7 +137,7 @@ class SAMDecoder(SegmentationModel):
             ) is None:
                 continue
 
-            for prompt, label in zip(prompts, labels, strict=False):
+            for prompt, label in zip(prompts, labels):
                 if prompt_name == "bboxes":
                     point_coords = self.apply_coords(
                         prompt.reshape(-1, 2, 2),
