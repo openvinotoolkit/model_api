@@ -11,34 +11,17 @@ from model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 from model_api.adapters.utils import load_parameters_from_onnx
 from model_api.models import (
     ActionClassificationModel,
-    AnomalyDetection,
     AnomalyResult,
-    ClassificationModel,
     ClassificationResult,
     DetectedKeypoints,
-    DetectionModel,
     DetectionResult,
-    ImageModel,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
-    KeypointDetectionModel,
-    MaskRCNNModel,
-    PredictedMask,
     Prompt,
-    SAMDecoder,
-    SAMImageEncoder,
-    SAMLearnableVisualPrompter,
-    SAMVisualPrompter,
-    SegmentationModel,
     VisualPromptingResult,
     ZSLVisualPromptingResult,
     add_rotated_rects,
     get_contours,
-)
-from model_api.tilers import (
-    DetectionTiler,
-    InstanceSegmentationTiler,
-    SemanticSegmentationTiler,
 )
 
 
