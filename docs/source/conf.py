@@ -15,10 +15,10 @@ module_path = Path(__file__).parent.parent / "model_api" / "python"
 # Insert the path to sys.path
 sys.path.insert(0, str(module_path.resolve()))
 
-project = 'InferenceSDK'
-copyright = '2024, Intel OpenVINO'
-author = 'Intel OpenVINO'
-release = '2024'
+project = "InferenceSDK"
+copyright = "2024, Intel OpenVINO"
+author = "Intel OpenVINO"
+release = "2024"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -33,7 +33,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
-    "sphinx.ext.graphviz"
+    "sphinx.ext.graphviz",
 ]
 
 myst_enable_extensions = [
@@ -41,7 +41,7 @@ myst_enable_extensions = [
     # other MyST extensions...
 ]
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
 
 # Automatic exclusion of prompts from the copies
@@ -52,11 +52,11 @@ copybutton_exclude = ".linenos, .gp, .go"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "pydata_sphinx_theme"
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
-breathe_projects = {"InferenceSDK":  Path(__file__).parent.parent/"build_cpp"/ "xml"}
+breathe_projects = {"InferenceSDK": Path(__file__).parent.parent / "build_cpp" / "xml"}
 breathe_default_project = "InferenceSDK"
-breathe_default_members = ('members', 'undoc-members', 'private-members')
+breathe_default_members = ("members", "undoc-members", "private-members")
 
 autodoc_docstring_signature = True
 autodoc_member_order = "bysource"

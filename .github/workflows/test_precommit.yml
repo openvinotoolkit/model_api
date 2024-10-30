@@ -5,31 +5,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 jobs:
-  Python-Code-Quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-          cache: pip
-      - name: Create and start a virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-      - name: Install dependencies
-        run: |
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install isort black
-      - name: Check style with black
-        run: |
-          source venv/bin/activate
-          black --check .
-      - name: Check style with isort
-        run: |
-          source venv/bin/activate
-          isort --check .
   Python-Precommit:
     runs-on: ubuntu-latest
     steps:

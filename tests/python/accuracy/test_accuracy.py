@@ -6,9 +6,13 @@ import cv2
 import numpy as np
 import onnx
 import pytest
+
 from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
 from model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 from model_api.adapters.utils import load_parameters_from_onnx
+
+# TODO refactor this test so that it does not use eval
+# flake8: noqa: F401
 from model_api.models import (
     ActionClassificationModel,
     AnomalyDetection,
