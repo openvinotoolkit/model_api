@@ -133,7 +133,7 @@ class OpenvinoAdapter(InferenceAdapter):
         self.is_onnx_file = False
         self.onnx_metadata = {}
 
-        if isinstance(self.model_path, (str, Path)):
+        if isinstance(self.model_path, str | Path):
             if Path(self.model_path).suffix == ".onnx" and weights_path:
                 log.warning(
                     'For model in ONNX format should set only "model_path" parameter.'
@@ -301,7 +301,7 @@ class OpenvinoAdapter(InferenceAdapter):
     def _get_meta_from_ngraph(self, layers_info):
         for node in self.model.get_ordered_ops():
             layer_name = node.get_friendly_name()
-            if layer_name not in layers_info.keys():
+            if layer_name not in layers_info:
                 continue
             layers_info[layer_name].meta = node.get_attributes()
             layers_info[layer_name].type = node.get_type_name()

@@ -69,13 +69,12 @@ class NumericalValue(BaseValue):
                 ),
             )
             return errors
-        if len(self.choices):
-            if value not in self.choices:
-                errors.append(
-                    ConfigurableValueError(
-                        f"Incorrect value {value}: out of allowable list - {self.choices}",
-                    ),
-                )
+        if len(self.choices) and value not in self.choices:
+            errors.append(
+                ConfigurableValueError(
+                    f"Incorrect value {value}: out of allowable list - {self.choices}",
+                ),
+            )
         if self.min is not None and value < self.min:
             errors.append(
                 ConfigurableValueError(
@@ -188,7 +187,7 @@ class ListValue(BaseValue):
         errors = super().validate(value)
         if not value:
             return errors
-        if not isinstance(value, (tuple, list)):
+        if not isinstance(value, tuple | list):
             errors.append(
                 ConfigurableValueError(
                     f"Incorrect value type - {type(value)}: should be list or tuple",

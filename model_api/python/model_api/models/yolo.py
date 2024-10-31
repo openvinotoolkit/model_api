@@ -318,7 +318,7 @@ class YOLO(DetectionModel):
 
     def _parse_outputs(self, outputs, meta):
         detections = []
-        for layer_name in self.yolo_layer_params.keys():
+        for layer_name in self.yolo_layer_params:
             out_blob = outputs[layer_name]
             layer_params = self.yolo_layer_params[layer_name]
             out_blob.shape = layer_params[0]
