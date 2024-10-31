@@ -1,17 +1,16 @@
-"""
- Copyright (C) 2020-2024 Intel Corporation
+"""Copyright (C) 2020-2024 Intel Corporation
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 """
 
 import logging as log
@@ -62,7 +61,7 @@ class Model(ABC):
         model_loaded (bool): a flag whether the model is loaded to device
     """
 
-    __model__ :str
+    __model__: str
 
     def __init__(self, inference_adapter, configuration=dict(), preload=False):
         """Model constructor
@@ -80,7 +79,8 @@ class Model(ABC):
         self.logger = log.getLogger()
         self.inference_adapter = inference_adapter
         if isinstance(
-            self.inference_adapter, ONNXRuntimeAdapter
+            self.inference_adapter,
+            ONNXRuntimeAdapter,
         ) and self.__model__ not in {
             "Classification",
             "MaskRCNN",
@@ -88,7 +88,7 @@ class Model(ABC):
             "Segmentation",
         }:
             self.raise_error(
-                "this type of wrapper only supports OpenVINO and OVMS inference adapters"
+                "this type of wrapper only supports OpenVINO and OVMS inference adapters",
             )
 
         self.inputs = self.inference_adapter.get_input_layers()
@@ -110,9 +110,7 @@ class Model(ABC):
 
     @classmethod
     def get_model_class(cls, name):
-        subclasses = [
-            subclass for subclass in cls.get_subclasses() if subclass.__model__
-        ]
+        subclasses = [subclass for subclass in cls.get_subclasses() if subclass.__model__]
         if cls.__model__:
             subclasses.append(cls)
         for subclass in subclasses:
@@ -120,8 +118,9 @@ class Model(ABC):
                 return subclass
         cls.raise_error(
             'There is no model with name "{}" in list: {}'.format(
-                name, ", ".join([subclass.__model__ for subclass in subclasses])
-            )
+                name,
+                ", ".join([subclass.__model__ for subclass in subclasses]),
+            ),
         )
 
     @classmethod
@@ -142,8 +141,7 @@ class Model(ABC):
         download_dir=None,
         cache_dir=None,
     ):
-        """
-        Create an instance of the Model API model
+        """Create an instance of the Model API model
 
         Args:
             model (str): model name from OpenVINO Model Zoo, path to model, OVMS URL
@@ -167,7 +165,7 @@ class Model(ABC):
         if isinstance(model, InferenceAdapter):
             inference_adapter = model
         elif isinstance(model, str) and re.compile(
-            r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*"
+            r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*",
         ).fullmatch(model):
             inference_adapter = OVMSAdapter(model)
         else:
@@ -188,7 +186,7 @@ class Model(ABC):
             )
         if model_type is None:
             model_type = inference_adapter.get_rt_info(
-                ["model_info", "model_type"]
+                ["model_info", "model_type"],
             ).astype(str)
         Model = cls.get_model_class(model_type)
         return Model(inference_adapter, configuration, preload)
@@ -205,9 +203,7 @@ class Model(ABC):
     def available_wrappers(cls):
         available_classes = [cls] if cls.__model__ else []
         available_classes.extend(cls.get_subclasses())
-        return [
-            subclass.__model__ for subclass in available_classes if subclass.__model__
-        ]
+        return [subclass.__model__ for subclass in available_classes if subclass.__model__]
 
     @classmethod
     def parameters(cls):
@@ -246,24 +242,19 @@ class Model(ABC):
             then the default value of the parameter will be updated. If some key presented
             in the config is not introduced in `parameters`, it will be omitted.
 
-         Raises:
+        Raises:
             WrapperError: if the configuration is incorrect
         """
         parameters = self.parameters()
         for name, param in parameters.items():
             try:
                 value = param.from_str(
-                    self.inference_adapter.get_rt_info(["model_info", name]).astype(str)
+                    self.inference_adapter.get_rt_info(["model_info", name]).astype(str),
                 )
                 self.__setattr__(name, value)
             except RuntimeError as error:
-                missing_rt_info = (
-                    "Cannot get runtime attribute. Path to runtime attribute is incorrect."
-                    in str(error)
-                )
-                is_OVMSAdapter = (
-                    str(error) == "OVMSAdapter does not support RT info getting"
-                )
+                missing_rt_info = "Cannot get runtime attribute. Path to runtime attribute is incorrect." in str(error)
+                is_OVMSAdapter = str(error) == "OVMSAdapter does not support RT info getting"
                 if not missing_rt_info and not is_OVMSAdapter:
                     raise
 
@@ -281,7 +272,7 @@ class Model(ABC):
                 self.__setattr__(name, value)
             else:
                 self.logger.warning(
-                    f'The parameter "{name}" not found in {self.__model__} wrapper, will be omitted'
+                    f'The parameter "{name}" not found in {self.__model__} wrapper, will be omitted',
                 )
 
     @classmethod
@@ -349,18 +340,17 @@ class Model(ABC):
                         "s" if number_of_inputs != 1 else "",
                         len(self.inputs),
                         ", ".join(self.inputs),
-                    )
+                    ),
                 )
-        else:
-            if len(self.inputs) not in number_of_inputs:
-                self.raise_error(
-                    "Expected {} or {} input blobs, but {} found: {}".format(
-                        ", ".join(str(n) for n in number_of_inputs[:-1]),
-                        int(number_of_inputs[-1]),
-                        len(self.inputs),
-                        ", ".join(self.inputs),
-                    )
-                )
+        elif len(self.inputs) not in number_of_inputs:
+            self.raise_error(
+                "Expected {} or {} input blobs, but {} found: {}".format(
+                    ", ".join(str(n) for n in number_of_inputs[:-1]),
+                    int(number_of_inputs[-1]),
+                    len(self.inputs),
+                    ", ".join(self.inputs),
+                ),
+            )
 
         if not isinstance(number_of_outputs, tuple):
             if len(self.outputs) != number_of_outputs and number_of_outputs != -1:
@@ -370,22 +360,20 @@ class Model(ABC):
                         "s" if number_of_outputs != 1 else "",
                         len(self.outputs),
                         ", ".join(self.outputs),
-                    )
+                    ),
                 )
-        else:
-            if len(self.outputs) not in number_of_outputs:
-                self.raise_error(
-                    "Expected {} or {} output blobs, but {} found: {}".format(
-                        ", ".join(str(n) for n in number_of_outputs[:-1]),
-                        int(number_of_outputs[-1]),
-                        len(self.outputs),
-                        ", ".join(self.outputs),
-                    )
-                )
+        elif len(self.outputs) not in number_of_outputs:
+            self.raise_error(
+                "Expected {} or {} output blobs, but {} found: {}".format(
+                    ", ".join(str(n) for n in number_of_outputs[:-1]),
+                    int(number_of_outputs[-1]),
+                    len(self.outputs),
+                    ", ".join(self.outputs),
+                ),
+            )
 
     def __call__(self, inputs):
-        """
-        Applies preprocessing, synchronous inference, postprocessing routines while one call.
+        """Applies preprocessing, synchronous inference, postprocessing routines while one call.
 
         Args:
             inputs: raw input data, the data type is defined by wrapper
@@ -398,8 +386,7 @@ class Model(ABC):
         return self.postprocess(raw_result, input_meta)
 
     def infer_batch(self, inputs):
-        """
-        Applies preprocessing, asynchronous inference, postprocessing routines to a collection of inputs.
+        """Applies preprocessing, asynchronous inference, postprocessing routines to a collection of inputs.
 
         Args:
             inputs (list): a list of inputs for inference
@@ -451,7 +438,7 @@ class Model(ABC):
         if not self.model_loaded:
             self.raise_error(
                 "The model is not loaded to the device. Please, create the wrapper "
-                "with preload=True option or call load() method before infer_sync()"
+                "with preload=True option or call load() method before infer_sync()",
             )
         return self.inference_adapter.infer_sync(dict_data)
 
@@ -459,7 +446,7 @@ class Model(ABC):
         if not self.model_loaded:
             self.raise_error(
                 "The model is not loaded to the device. Please, create the wrapper "
-                "with preload=True option or call load() method before infer_async()"
+                "with preload=True option or call load() method before infer_async()",
             )
         self.inference_adapter.infer_async(dict_data, callback_data)
 
@@ -467,7 +454,7 @@ class Model(ABC):
         if not self.model_loaded:
             self.raise_error(
                 "The model is not loaded to the device. Please, create the wrapper "
-                "with preload=True option or call load() method before infer_async()"
+                "with preload=True option or call load() method before infer_async()",
             )
         dict_data, meta = self.preprocess(input_data)
         self.inference_adapter.infer_async(
@@ -505,17 +492,12 @@ class Model(ABC):
         """Prints the shape, precision and layout for all model inputs/outputs."""
         for name, metadata in self.inputs.items():
             self.logger.info(
-                "\tInput layer: {}, shape: {}, precision: {}, layout: {}".format(
-                    name, metadata.shape, metadata.precision, metadata.layout
-                )
+                f"\tInput layer: {name}, shape: {metadata.shape}, precision: {metadata.precision}, layout: {metadata.layout}",
             )
         for name, metadata in self.outputs.items():
             self.logger.info(
-                "\tOutput layer: {}, shape: {}, precision: {}, layout: {}".format(
-                    name, metadata.shape, metadata.precision, metadata.layout
-                )
+                f"\tOutput layer: {name}, shape: {metadata.shape}, precision: {metadata.precision}, layout: {metadata.layout}",
             )
-
 
     def save(self, xml_path, bin_path="", version="UNSPECIFIED"):
         import openvino

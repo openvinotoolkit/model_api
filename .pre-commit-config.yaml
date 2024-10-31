@@ -13,6 +13,16 @@ repos:
       - id: debug-statements
       - id: detect-private-key
 
+  # Ruff version.
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.6.2"
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: ["--fix"]
+      # Run the formatter
+      - id: ruff-format
+
   # python static type checking
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.11.2"
