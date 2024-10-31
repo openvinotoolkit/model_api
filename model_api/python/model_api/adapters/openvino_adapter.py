@@ -339,9 +339,9 @@ class OpenvinoAdapter(InferenceAdapter):
         ppp = PrePostProcessor(self.model)
 
         # Change the input type to the 8-bit image
-        if dtype == int:
+        if dtype is int:
             ppp.input(input_idx).tensor().set_element_type(Type.u8)
-        elif dtype == float:
+        elif dtype is float:
             ppp.input(input_idx).tensor().set_element_type(Type.f32)
 
         ppp.input(input_idx).tensor().set_layout(ov.Layout("NHWC")).set_color_format(

@@ -7,7 +7,7 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 
 import math
 from functools import partial
-from typing import Callable, Optional
+from typing import Callable
 
 import cv2
 import numpy as np

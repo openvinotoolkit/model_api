@@ -630,7 +630,10 @@ class YoloV3ONNX(DetectionModel):
                 )
         if self.outputs[bboxes_blob_name].shape[1] != self.outputs[scores_blob_name].shape[2]:
             self.raise_error(
-                f"Expected the same dimension for boxes and scores, but got {self.outputs[bboxes_blob_name].shape[1]} and {self.outputs[scores_blob_name].shape[2]}",
+                (
+                    f"Expected the same dimension for boxes and scores, but got "
+                    f"{self.outputs[bboxes_blob_name].shape[1]} and {self.outputs[scores_blob_name].shape[2]}"
+                ),
             )
         return bboxes_blob_name, scores_blob_name, indices_blob_name
 
@@ -745,7 +748,10 @@ class YOLOv5(DetectionModel):
         parameters.update(
             {
                 "agnostic_nms": BooleanValue(
-                    description="If True, the model is agnostic to the number of classes, and all classes are considered as one",
+                    description=(
+                        "If True, the model is agnostic to the number of classes, "
+                        "and all classes are considered as one"
+                    ),
                     default_value=False,
                 ),
                 "iou_threshold": NumericalValue(

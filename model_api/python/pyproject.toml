@@ -91,7 +91,7 @@ preview = true
 # Enable rules
 lint.select = [
     # "F",    # Pyflakes (`F`)
-    # "E",    # pycodestyle error (`E`)
+    "E",    # pycodestyle error (`E`)
     # "W",    # pycodestyle warning (`W`)
     # "C90",  # mccabe (`C90`)
     "I",    # isort (`I`)
