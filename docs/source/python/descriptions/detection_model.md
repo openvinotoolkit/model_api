@@ -10,7 +10,6 @@ Detection model aims to detect objects in an image. The model outputs a list of 
 
 A single input image of shape (H, W, 3) where H and W are the height and width of the image, respectively.
 
-
 ### Outputs
 
 Detection model outputs a list of detection objects (i.e `list[Detection]`) wrapped in `DetectionResult`, each object containing the following attributes:

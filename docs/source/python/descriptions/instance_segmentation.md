@@ -23,7 +23,6 @@ Instance segmentation model outputs a list of segmented objects (i.e `list[Segme
 - `xmax` (int) - X-coordinate of the bottom-right corner of the bounding box.
 - `ymax` (int) - Y-coordinate of the bottom-right corner of the bounding box.
 
-
 ## Example
 
 ```python
