@@ -415,6 +415,12 @@ in OpenVINO format, meta (optional)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="model_api.adapters.ovms_adapter.OVMSAdapter.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_model" title="Link to this definition">#</a></dt>
+<dd><p>Return the reference to the GrpcClient.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.ovms_adapter.OVMSAdapter.get_output_layers">
 <span class="sig-name descname"><span class="pre">get_output_layers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_output_layers" title="Link to this definition">#</a></dt>
 <dd><dl class="simple">
@@ -457,7 +463,6 @@ of inference from the model.</p>
 </div></blockquote>
 <p>}</p>
 </p></li>
-<li><p><strong>callback_fn</strong> (<em>-</em>) – the callback function, which is defined outside the adapter</p></li>
 <li><p><strong>callback_data</strong> (<em>-</em>) – the data for callback, that will be taken after the model inference is ended</p></li>
 </ul>
 </dd>
@@ -605,6 +610,7 @@ list of new shape as values in the following format:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.await_any"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.await_any()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.embed_preprocessing"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.embed_preprocessing()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_input_layers"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_input_layers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_model"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_output_layers"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_output_layers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_rt_info"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_rt_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.infer_async"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.infer_async()</span></code></a></li>

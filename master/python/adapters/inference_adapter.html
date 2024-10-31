@@ -375,7 +375,8 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.adapters.inference_adapter.</span></span><span class="sig-name descname"><span class="pre">InferenceAdapter</span></span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>An abstract Model Adapter with the following interface:</p>
-<ul class="simple">
+<blockquote>
+<div><ul class="simple">
 <li><p>Reading the model from disk or other place</p></li>
 <li><p>Loading the model to the device</p></li>
 <li><p>Accessing the information about inputs/outputs</p></li>
@@ -383,6 +384,7 @@
 <li><p>Synchronous model inference</p></li>
 <li><p>Asynchronous model inference</p></li>
 </ul>
+</div></blockquote>
 <p>An abstract Model Adapter constructor.
 Reads the model from disk or other place.</p>
 <dl class="py method">
@@ -424,6 +426,12 @@ in OpenVINO format, meta (optional)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.get_model">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.get_model" title="Link to this definition">#</a></dt>
+<dd><p>Get the model.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.get_output_layers">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_output_layers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.get_output_layers" title="Link to this definition">#</a></dt>
 <dd><dl class="simple">
@@ -449,7 +457,7 @@ in OpenVINO format, meta (optional)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.infer_async">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">infer_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.infer_async" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">infer_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.infer_async" title="Link to this definition">#</a></dt>
 <dd><p>Performs the asynchronous model inference and sets
 the callback for inference completion. Also, it should
 define get_raw_result() function, which handles the result
@@ -466,7 +474,6 @@ of inference from the model.</p>
 </div></blockquote>
 <p>}</p>
 </p></li>
-<li><p><strong>callback_fn</strong> (<em>-</em>) – the callback function, which is defined outside the adapter</p></li>
 <li><p><strong>callback_data</strong> (<em>-</em>) – the data for callback, that will be taken after the model inference is ended</p></li>
 </ul>
 </dd>
@@ -650,6 +657,7 @@ list of new shape as values in the following format:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.await_any"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.await_any()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.embed_preprocessing"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.embed_preprocessing()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.get_input_layers"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.get_input_layers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.get_model"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.get_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.get_output_layers"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.get_output_layers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.get_rt_info"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.get_rt_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.infer_async"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.infer_async()</span></code></a></li>
