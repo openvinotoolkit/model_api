@@ -25,7 +25,7 @@ class WrapperError(Exception):
         super().__init__(f"{wrapper_name}: {message}")
 
 
-class Model(ABC):
+class Model:
     """An abstract model wrapper
 
     The abstract model wrapper is free from any executor dependencies.
@@ -51,7 +51,7 @@ class Model(ABC):
         model_loaded (bool): a flag whether the model is loaded to device
     """
 
-    __model__: str
+    __model__: str = "Model"
 
     def __init__(self, inference_adapter, configuration=dict(), preload=False):
         """Model constructor
@@ -150,7 +150,7 @@ class Model(ABC):
             cache_dir (:obj:`str`, optional): directory where to store compiled models to reduce the load time before the inference
 
         Returns:
-            Model objcet
+            Model object
         """
         if isinstance(model, InferenceAdapter):
             inference_adapter = model
