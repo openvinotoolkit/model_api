@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2022-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #include <adapters/openvino_adapter.h>
 #include <gtest/gtest.h>
 #include <models/anomaly_model.h>
