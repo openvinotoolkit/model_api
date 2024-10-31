@@ -24,6 +24,8 @@ from typing import Any
 import cv2
 import numpy as np
 
+from model_api.adapters.inference_adapter import InferenceAdapter
+
 from .image_model import ImageModel
 from .types import ListValue, NumericalValue, StringValue
 from .utils import AnomalyResult
@@ -32,7 +34,7 @@ from .utils import AnomalyResult
 class AnomalyDetection(ImageModel):
     __model__ = "AnomalyDetection"
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(self, inference_adapter:InferenceAdapter, configuration:dict=dict(), preload:bool=False) -> None:
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 1)
         self.normalization_scale: float
@@ -41,7 +43,7 @@ class AnomalyDetection(ImageModel):
         self.task: str
         self.labels: list[str]
 
-    def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]):
+    def postprocess(self, outputs: dict[str, np.ndarray], meta: dict[str, Any]) -> AnomalyResult:
         """Post-processes the outputs and returns the results.
 
         Args:

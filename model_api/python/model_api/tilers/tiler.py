@@ -149,8 +149,8 @@ class Tiler(metaclass=abc.ABCMeta):
                 errors = parameters[name].validate(value)
                 if errors:
                     self.logger.error(f'Error with "{name}" parameter:')
-                    for error in errors:
-                        self.logger.error(f"\t{error}")
+                    for _error in errors:
+                        self.logger.error(f"\t{_error}")
                     raise RuntimeError("Incorrect user configuration")
                 value = parameters[name].get_value(value)
                 self.__setattr__(name, value)

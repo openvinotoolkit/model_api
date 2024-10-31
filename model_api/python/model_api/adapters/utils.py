@@ -16,7 +16,7 @@
 
 import math
 from functools import partial
-from typing import Optional
+from typing import Callable, Optional
 
 import cv2
 import numpy as np
@@ -492,7 +492,7 @@ def crop_resize_ocv(image, size):
     return cv2.resize(cropped_frame, size)
 
 
-RESIZE_TYPES = {
+RESIZE_TYPES:dict[str, Callable] = {
     "crop": crop_resize_ocv,
     "standard": resize_image_ocv,
     "fit_to_window": resize_image_with_aspect_ocv,

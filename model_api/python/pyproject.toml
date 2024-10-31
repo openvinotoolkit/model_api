@@ -65,3 +65,15 @@ Repository = "https://github.com/openvinotoolkit/model_api.git"
 
 [tool.setuptools.packages.find]
 include = ["model_api*"]
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# MYPY CONFIGURATION.                                                         #
+[tool.mypy]
+ignore_missing_imports = true
+show_error_codes = true
+
+
+[[tool.mypy.overrides]]
+follow_imports = "skip"
+follow_imports_for_stubs = true

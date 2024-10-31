@@ -14,9 +14,9 @@
  limitations under the License.
 """
 
-import abc
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 
 @dataclass
@@ -29,7 +29,7 @@ class Metadata:
     meta: Dict = field(default_factory=dict)
 
 
-class InferenceAdapter(metaclass=abc.ABCMeta):
+class InferenceAdapter(ABC):
     """
     An abstract Model Adapter with the following interface:
 
@@ -43,20 +43,25 @@ class InferenceAdapter(metaclass=abc.ABCMeta):
 
     precisions = ("FP32", "I32", "FP16", "I16", "I8", "U8")
 
-    @abc.abstractmethod
-    def __init__(self):
+    @abstractmethod
+    def __init__(self) -> None:
         """
         An abstract Model Adapter constructor.
         Reads the model from disk or other place.
         """
+        self.model: Any
 
-    @abc.abstractmethod
+    @abstractmethod
     def load_model(self):
         """
         Loads the model on the device.
         """
 
-    @abc.abstractmethod
+    @abstractmethod
+    def get_model(self):
+        """Get the model."""
+
+    @abstractmethod
     def get_input_layers(self):
         """
         Gets the names of model inputs and for each one creates the Metadata structure,
@@ -67,7 +72,7 @@ class InferenceAdapter(metaclass=abc.ABCMeta):
             - the dict containing Metadata for all inputs
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def get_output_layers(self):
         """
         Gets the names of model outputs and for each one creates the Metadata structure,
@@ -78,7 +83,7 @@ class InferenceAdapter(metaclass=abc.ABCMeta):
             - the dict containing Metadata for all outputs
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def reshape_model(self, new_shape):
         """
         Reshapes the model inputs to fit the new input shape.
@@ -93,7 +98,7 @@ class InferenceAdapter(metaclass=abc.ABCMeta):
                 }
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def infer_sync(self, dict_data):
         """
         Performs the synchronous model inference. The infer is a blocking method.
@@ -115,8 +120,8 @@ class InferenceAdapter(metaclass=abc.ABCMeta):
                 }
         """
 
-    @abc.abstractmethod
-    def infer_async(self, dict_data, callback_fn, callback_data):
+    @abstractmethod
+    def infer_async(self, dict_data, callback_data):
         """
         Performs the asynchronous model inference and sets
         the callback for inference completion. Also, it should
@@ -130,11 +135,10 @@ class InferenceAdapter(metaclass=abc.ABCMeta):
                     'input_layer_name_2': data_2,
                     ...
                 }
-            - callback_fn: the callback function, which is defined outside the adapter
             - callback_data: the data for callback, that will be taken after the model inference is ended
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def is_ready(self):
         """
         In case of asynchronous execution checks if one can submit input data
@@ -145,27 +149,27 @@ class InferenceAdapter(metaclass=abc.ABCMeta):
                 submitted to the model for inference or not
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def await_all(self):
         """
         In case of asynchronous execution waits the completion of all
         busy infer requests.
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def await_any(self):
         """
         In case of asynchronous execution waits the completion of any
         busy infer request until it becomes available for the data submission.
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def get_rt_info(self, path):
         """
         Forwards to openvino.Model.get_rt_info(path)
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def embed_preprocessing(
         self,
         layout,

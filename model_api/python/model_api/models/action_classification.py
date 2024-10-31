@@ -19,6 +19,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
+
 from model_api.adapters.utils import RESIZE_TYPES, InputTransform
 
 from .model import Model
@@ -74,6 +75,14 @@ class ActionClassificationModel(Model):
         self.image_blob_names = self._get_inputs()
         self.image_blob_name = self.image_blob_names[0]
         self.nscthw_layout = "NSCTHW" in self.inputs[self.image_blob_name].layout
+        self.labels: list[str]
+        self.path_to_labels: str
+        self.mean_values:list[int|float]
+        self.pad_value: int
+        self.resize_type: str
+        self.reverse_input_channels: bool
+        self.scale_values: list[int|float]
+
         if self.nscthw_layout:
             self.n, self.s, self.c, self.t, self.h, self.w = self.inputs[
                 self.image_blob_name
@@ -129,7 +138,7 @@ class ActionClassificationModel(Model):
         )
         return parameters
 
-    def _get_inputs(self) -> tuple[list[str], list[str]]:
+    def _get_inputs(self) -> list[str]:
         """Defines the model inputs for images and additional info.
 
         Raises:

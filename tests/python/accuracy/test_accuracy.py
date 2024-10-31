@@ -6,39 +6,23 @@ import cv2
 import numpy as np
 import onnx
 import pytest
+
 from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
 from model_api.adapters.openvino_adapter import OpenvinoAdapter, create_core
 from model_api.adapters.utils import load_parameters_from_onnx
 from model_api.models import (
     ActionClassificationModel,
-    AnomalyDetection,
     AnomalyResult,
-    ClassificationModel,
     ClassificationResult,
     DetectedKeypoints,
-    DetectionModel,
     DetectionResult,
-    ImageModel,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
-    KeypointDetectionModel,
-    MaskRCNNModel,
-    PredictedMask,
     Prompt,
-    SAMDecoder,
-    SAMImageEncoder,
-    SAMLearnableVisualPrompter,
-    SAMVisualPrompter,
-    SegmentationModel,
     VisualPromptingResult,
     ZSLVisualPromptingResult,
     add_rotated_rects,
     get_contours,
-)
-from model_api.tilers import (
-    DetectionTiler,
-    InstanceSegmentationTiler,
-    SemanticSegmentationTiler,
 )
 
 
@@ -65,19 +49,16 @@ def create_models(model_type, model_path, download_dir, force_onnx_adapter=False
     ]
     if model_path.endswith(".xml"):
         wrapper_type = model_type.get_model_class(
-            create_models.core.read_model(model_path)
+            create_core().read_model(model_path)
             .get_rt_info(["model_info", "model_type"])
             .astype(str)
         )
         model = wrapper_type(
-            OpenvinoAdapter(create_models.core, model_path, device="CPU")
+            OpenvinoAdapter(create_core(), model_path, device="CPU")
         )
         model.load()
         models.append(model)
     return models
-
-
-create_models.core = create_core()
 
 
 @pytest.fixture(scope="session")
@@ -262,7 +243,7 @@ def test_image_models(data, dump, result, model_data):
             model.save(data + "/serialized/" + save_name)
             if model_data.get("check_extra_rt_info", False):
                 assert (
-                    create_models.core.read_model(data + "/serialized/" + save_name)
+                    create_core().read_model(data + "/serialized/" + save_name)
                     .get_rt_info(["model_info", "label_ids"])
                     .astype(str)
                 )
