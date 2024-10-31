@@ -1,5 +1,32 @@
 # InferenceSDK Documentation
 
+## Model Description
+
+::::{grid} 1 2 2 3
+:margin: 1 1 0 0
+:gutter: 1
+
+:::{grid-item-card} Instance Segmentation
+:link: ./python/descriptions/instance_segmentation
+:link-type: doc
+[TODO]
+:::
+
+:::{grid-item-card} Detection
+:link: ./python/descriptions/detection_model
+:link-type: doc
+[TODO]
+:::
+
+:::{grid-item-card} Keypoint Detection
+:link: ./python/descriptions/keypoint_detection
+:link-type: doc
+[TODO]
+:::
+
+
+::::
+
 ## Python API Reference
 
 ::::{grid} 1 2 2 3
