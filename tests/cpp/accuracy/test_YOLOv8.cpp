@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2020-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #include <gtest/gtest.h>
 #include <models/detection_model.h>
 #include <models/input_data.h>
