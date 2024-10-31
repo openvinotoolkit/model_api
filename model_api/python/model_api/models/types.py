@@ -187,7 +187,7 @@ class ListValue(BaseValue):
         errors = super().validate(value)
         if not value:
             return errors
-        if not isinstance(value, tuple | list):
+        if not isinstance(value, (tuple, list)):
             errors.append(
                 ConfigurableValueError(
                     f"Incorrect value type - {type(value)}: should be list or tuple",
