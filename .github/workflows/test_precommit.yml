@@ -9,11 +9,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 jobs:
-  Python-Precommit:
-    runs-on: ubuntu-latest
+  Python-Functional-Tests:
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: CHECKOUT REPOSITORY
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
           cache: pip
@@ -25,7 +27,7 @@ jobs:
         run: |
           source venv/bin/activate
           python -m pip install --upgrade pip
-          pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
+          pip install model_api/python/[tests,ovms] --extra-index-url https://download.pytorch.org/whl/cpu
       - name: Prepare test data
         run: |
           source venv/bin/activate
@@ -33,7 +35,7 @@ jobs:
       - name: Run test
         run: |
           source venv/bin/activate
-          pytest tests/python/precommit
+          pytest tests/python/funtional
   CPP-Code-Quality:
     name: CPP-Code-Quality
     runs-on: ubuntu-latest
