@@ -133,7 +133,7 @@ class OpenvinoAdapter(InferenceAdapter):
         self.is_onnx_file = False
         self.onnx_metadata = {}
 
-        if isinstance(self.model_path, str | Path):
+        if isinstance(self.model_path, (str, Path)):
             if Path(self.model_path).suffix == ".onnx" and weights_path:
                 log.warning(
                     'For model in ONNX format should set only "model_path" parameter.'
