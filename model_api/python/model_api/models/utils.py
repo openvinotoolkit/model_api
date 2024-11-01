@@ -15,7 +15,7 @@ def add_rotated_rects(segmented_objects):
     objects_with_rects = []
     for segmented_object in segmented_objects:
         mask = segmented_object.mask.astype(np.uint8)
-        contours, hierarchies = cv2.findContours(
+        contours, _ = cv2.findContours(
             mask,
             cv2.RETR_EXTERNAL,
             cv2.CHAIN_APPROX_SIMPLE,

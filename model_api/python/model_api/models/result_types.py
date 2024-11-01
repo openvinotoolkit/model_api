@@ -198,7 +198,11 @@ class DetectedKeypoints(NamedTuple):
     scores: np.ndarray
 
     def __str__(self):
-        return f"keypoints: {self.keypoints.shape}, keypoints_x_sum: {np.sum(self.keypoints[:, :1]):.3f}, scores: {self.scores.shape}"
+        return (
+            f"keypoints: {self.keypoints.shape}, "
+            f"keypoints_x_sum: {np.sum(self.keypoints[:, :1]):.3f}, "
+            f"scores: {self.scores.shape}"
+        )
 
 
 class Contour(NamedTuple):
@@ -229,7 +233,11 @@ class ImageResultWithSoftPrediction(NamedTuple):
         for i, count in enumerate(outHist):
             if count > 0:
                 hist += f"{i}: {count[0] / self.resultImage.size:.3f}, "
-        return f"{hist}{_array_shape_to_str(self.soft_prediction)}, {_array_shape_to_str(self.saliency_map)}, {_array_shape_to_str(self.feature_vector)}"
+        return (
+            f"{hist}{_array_shape_to_str(self.soft_prediction)}, "
+            f"{_array_shape_to_str(self.saliency_map)}, "
+            f"{_array_shape_to_str(self.feature_vector)}"
+        )
 
 
 def _array_shape_to_str(array: np.ndarray | None) -> str:
