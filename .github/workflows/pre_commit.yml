@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 22
       - name: Install clang-format
-        run: sudo apt-get install -y clang-format-10
+        run: sudo apt-get install -y clang-format-13
       - name: Install dependencies
         run: pip install 'model_api/python/.[full]'
       - name: Run pre-commit checks
