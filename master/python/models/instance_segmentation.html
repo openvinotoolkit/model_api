@@ -368,9 +368,53 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-model_api.models.instance_segmentation">
-<span id="instance-segmentation"></span><h1>Instance Segmentation<a class="headerlink" href="#module-model_api.models.instance_segmentation" title="Link to this heading">#</a></h1>
-<dl class="py class">
+  <section id="instance-segmentation">
+<h1>Instance Segmentation<a class="headerlink" href="#instance-segmentation" title="Link to this heading">#</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<p>Instance segmentation model aims to detect and segment objects in an image. It is an extension of object detection, where each object is segmented into a separate mask. The model outputs a list of segmented objects, each containing a mask, bounding box, score and class label.</p>
+</section>
+<section id="openvino-model-specifications">
+<h2>OpenVINO Model Specifications<a class="headerlink" href="#openvino-model-specifications" title="Link to this heading">#</a></h2>
+<section id="inputs">
+<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h3>
+<p>A single input image of shape (H, W, 3) where H and W are the height and width of the image, respectively.</p>
+</section>
+<section id="outputs">
+<h3>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h3>
+<p>Instance segmentation model outputs a list of segmented objects (i.e <code class="docutils literal notranslate"><span class="pre">list[SegmentedObject]</span></code>)wrapped in <code class="docutils literal notranslate"><span class="pre">InstanceSegmentationResult.segmentedObjects</span></code>, each containing the following attributes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mask</span></code> (numpy.ndarray) - A binary mask of the object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">score</span></code> (float) - Confidence score of the object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code> (int) - Class label of the object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str_label</span></code> (str) - String label of the object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xmin</span></code> (int) - X-coordinate of the top-left corner of the bounding box.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ymin</span></code> (int) - Y-coordinate of the top-left corner of the bounding box.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xmax</span></code> (int) - X-coordinate of the bottom-right corner of the bounding box.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ymax</span></code> (int) - Y-coordinate of the bottom-right corner of the bounding box.</p></li>
+</ul>
+</section>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">model_api.models</span> <span class="kn">import</span> <span class="n">MaskRCNNModel</span>
+
+<span class="c1"># Load the model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">MaskRCNNModel</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;model.xml&quot;</span><span class="p">)</span>
+
+<span class="c1"># Forward pass</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+<span class="c1"># Iterate over the segmented objects</span>
+<span class="k">for</span> <span class="n">pred_obj</span> <span class="ow">in</span> <span class="n">predictions</span><span class="o">.</span><span class="n">segmentedObjects</span><span class="p">:</span>
+    <span class="n">pred_mask</span> <span class="o">=</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">mask</span>
+    <span class="n">pred_score</span> <span class="o">=</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">score</span>
+    <span class="n">label_id</span> <span class="o">=</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">id</span>
+    <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="n">pred_obj</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">ymax</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="py class" id="module-model_api.models.instance_segmentation">
 <dt class="sig sig-object py" id="model_api.models.instance_segmentation.MaskRCNNModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.models.instance_segmentation.</span></span><span class="sig-name descname"><span class="pre">MaskRCNNModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_adapter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.instance_segmentation.MaskRCNNModel" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="image_model.html#model_api.models.image_model.ImageModel" title="model_api.models.image_model.ImageModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageModel</span></code></a></p>
@@ -491,6 +535,7 @@ additional supported inputs, the <cite>preprocess</cite> should be overloaded in
 </dd></dl>
 
 </section>
+</section>
 
 
                 </article>
@@ -539,10 +584,19 @@ additional supported inputs, the <cite>preprocess</cite> should be overloaded in
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.instance_segmentation.MaskRCNNModel"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.instance_segmentation.MaskRCNNModel.parameters"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel.parameters()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.instance_segmentation.MaskRCNNModel.postprocess"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel.postprocess()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.instance_segmentation.MaskRCNNModel.preprocess"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel.preprocess()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openvino-model-specifications">OpenVINO Model Specifications</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.instance_segmentation.MaskRCNNModel"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.instance_segmentation.MaskRCNNModel.parameters"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel.parameters()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.instance_segmentation.MaskRCNNModel.postprocess"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel.postprocess()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.instance_segmentation.MaskRCNNModel.preprocess"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel.preprocess()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

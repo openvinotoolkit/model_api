@@ -368,9 +368,61 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-model_api.models.keypoint_detection">
-<span id="keypoint-detection"></span><h1>Keypoint Detection<a class="headerlink" href="#module-model_api.models.keypoint_detection" title="Link to this heading">#</a></h1>
-<dl class="py class">
+  <section id="keypoint-detection">
+<h1>Keypoint Detection<a class="headerlink" href="#keypoint-detection" title="Link to this heading">#</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<p>Keypoint detection model aims to detect a set of pre-defined keypoints on a cropped object.
+If a crop is not tight enough, quality of keypoints degrades. Having this model and an
+object detector, one can organize keypoint detection for all objects of interest presented on an image (top-down approach).</p>
+</section>
+<section id="models">
+<h2>Models<a class="headerlink" href="#models" title="Link to this heading">#</a></h2>
+<p>Top-down keypoint detection pipeline uses detections that come from any appropriate detector,
+and a keypoints regression model acting on crops.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<p>The following parameters can be provided via python API or RT Info embedded into OV model:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">labels</span></code>(<code class="docutils literal notranslate"><span class="pre">list(str)</span></code>) : a list of keypoints names.</p></li>
+</ul>
+</section>
+</section>
+<section id="openvino-model-specifications">
+<h2>OpenVINO Model Specifications<a class="headerlink" href="#openvino-model-specifications" title="Link to this heading">#</a></h2>
+<section id="inputs">
+<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h3>
+<p>A single <code class="docutils literal notranslate"><span class="pre">NCHW</span></code> tensor representing a batch of images.</p>
+</section>
+<section id="outputs">
+<h3>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h3>
+<p>Two vectors in Simple Coordinate Classification Perspective (<a class="reference external" href="https://arxiv.org/abs/2107.03332">SimCC</a>) format:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pred_x</span></code> (B, N, D1) - <code class="docutils literal notranslate"><span class="pre">x</span></code> coordinate representation, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of keypoints.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pred_y</span></code> (B, N, D2) - <code class="docutils literal notranslate"><span class="pre">y</span></code> coordinate representation, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of keypoints.</p></li>
+</ul>
+</section>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">model_api.models</span> <span class="kn">import</span> <span class="n">TopDownKeypointDetectionPipeline</span><span class="p">,</span> <span class="n">Detection</span><span class="p">,</span> <span class="n">KeypointDetectionModel</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">KeypointDetectionModel</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;kp_model.xml&quot;</span><span class="p">)</span>
+<span class="c1"># a list of detections in (x_min, y_min, x_max, y_max, score, class_id) format</span>
+<span class="n">detections</span> <span class="o">=</span> <span class="p">[</span><span class="n">Detection</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+<span class="n">top_down_pipeline</span> <span class="o">=</span> <span class="n">TopDownKeypointDetectionPipeline</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">top_down_detector</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">detections</span><span class="p">)</span>
+
+<span class="c1"># iterating over a list of DetectedKeypoints. Each of the items corresponds to a detection</span>
+<span class="k">for</span> <span class="n">obj_keypoints</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">obj_keypoints</span><span class="o">.</span><span class="n">keypoints</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">):</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
+            <span class="n">image</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">5</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py class" id="module-model_api.models.keypoint_detection">
 <dt class="sig sig-object py" id="model_api.models.keypoint_detection.KeypointDetectionModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.models.keypoint_detection.</span></span><span class="sig-name descname"><span class="pre">KeypointDetectionModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_adapter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.keypoint_detection.KeypointDetectionModel" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="image_model.html#model_api.models.image_model.ImageModel" title="model_api.models.image_model.ImageModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageModel</span></code></a></p>
@@ -481,6 +533,7 @@ the type, default value and description must be provided.</p>
 </dd></dl>
 
 </section>
+</section>
 
 
                 </article>
@@ -529,14 +582,27 @@ the type, default value and description must be provided.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.KeypointDetectionModel"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionModel</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.KeypointDetectionModel.parameters"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionModel.parameters()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.KeypointDetectionModel.postprocess"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionModel.postprocess()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#models">Models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline"><code class="docutils literal notranslate"><span class="pre">TopDownKeypointDetectionPipeline</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict"><code class="docutils literal notranslate"><span class="pre">TopDownKeypointDetectionPipeline.predict()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict_crops"><code class="docutils literal notranslate"><span class="pre">TopDownKeypointDetectionPipeline.predict_crops()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openvino-model-specifications">OpenVINO Model Specifications</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.KeypointDetectionModel"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.KeypointDetectionModel.parameters"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionModel.parameters()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.KeypointDetectionModel.postprocess"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionModel.postprocess()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline"><code class="docutils literal notranslate"><span class="pre">TopDownKeypointDetectionPipeline</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict"><code class="docutils literal notranslate"><span class="pre">TopDownKeypointDetectionPipeline.predict()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict_crops"><code class="docutils literal notranslate"><span class="pre">TopDownKeypointDetectionPipeline.predict_crops()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
