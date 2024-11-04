@@ -605,9 +605,8 @@ class SimpleLabelsGraph:
                     nodes_deque.append(node)
 
         if len(ordered) != len(self._v):
-            raise RuntimeError(
-                "Topological sort failed: input graph has been" "changed during the sorting or contains a cycle",
-            )
+            msg = "Topological sort failed: input graph has been changed during the sorting or contains a cycle"
+            raise RuntimeError(msg)
 
         return ordered
 

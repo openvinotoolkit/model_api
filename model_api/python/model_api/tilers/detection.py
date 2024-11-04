@@ -66,7 +66,8 @@ class DetectionTiler(Tiler):
         elif hasattr(predictions, "segmentedObjects"):
             detections = _detection2array(predictions.segmentedObjects)
         else:
-            raise RuntimeError("Unsupported model predictions format")
+            msg = "Unsupported model predictions format"
+            raise RuntimeError(msg)
 
         output_dict["saliency_map"] = predictions.saliency_map
         output_dict["features"] = predictions.feature_vector

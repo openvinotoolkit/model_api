@@ -774,9 +774,11 @@ class YOLOv5(DetectionModel):
             self.raise_error("the output must be of precision f32")
         out_shape = prediction.shape
         if len(out_shape) != 3:
-            raise RuntimeError("the output must be of rank 3")
+            msg = "the output must be of rank 3"
+            raise RuntimeError(msg)
         if out_shape[0] != 1:
-            raise RuntimeError("the first dim of the output must be 1")
+            msg = "the first dim of the output must be 1"
+            raise RuntimeError(msg)
         LABELS_START = 4
         filtered = prediction[0].T[(prediction[:, LABELS_START:] > self.confidence_threshold).any(1)[0]]
         confidences = filtered[:, LABELS_START:]
