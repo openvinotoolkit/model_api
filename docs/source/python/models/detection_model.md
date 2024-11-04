@@ -41,7 +41,6 @@ for pred_obj in predictions.objects:
     bbox = [pred_obj.xmin, pred_obj.ymin, pred_obj.xmax, pred_obj.ymax]
 ```
 
-
 ```{eval-rst}
 .. automodule:: model_api.models.detection_model
    :members:
