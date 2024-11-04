@@ -345,7 +345,7 @@ class SAMLearnableVisualPrompter:
             if self._used_indices is None:
                 raise RuntimeError(
                     "Used indices are not defined. This parameter can be passed via "
-                    "SAMLearnableVisualPrompter constructor, or as an argument of infer() method"
+                    "SAMLearnableVisualPrompter constructor, or as an argument of infer() method",
                 )
             used_idx = self._used_indices
         else:
@@ -400,7 +400,9 @@ class SAMLearnableVisualPrompter:
                 inputs_decoder["image_embeddings"] = image_embeddings
 
                 _prediction: dict[str, np.ndarray] = self._predict_masks(
-                    inputs_decoder, original_shape, apply_masks_refinement
+                    inputs_decoder,
+                    original_shape,
+                    apply_masks_refinement,
                 )
                 _prediction.update({"scores": points_score[-1]})
 

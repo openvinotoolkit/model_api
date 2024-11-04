@@ -12,7 +12,7 @@ from .result_types import Detection, DetectionResult
 class SSD(DetectionModel):
     __model__ = "SSD"
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(self, inference_adapter, configuration: dict = {}, preload=False):
         super().__init__(inference_adapter, configuration, preload)
         self.image_info_blob_name = self.image_info_blob_names[0] if len(self.image_info_blob_names) == 1 else None
         self.output_parser = self._get_output_parser(self.image_blob_name)

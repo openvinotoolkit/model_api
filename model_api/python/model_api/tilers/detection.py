@@ -19,7 +19,7 @@ class DetectionTiler(Tiler):
     or one `DetectionResult` object.
     """
 
-    def __init__(self, model, configuration=dict(), execution_mode="async"):
+    def __init__(self, model, configuration: dict = {}, execution_mode="async"):
         super().__init__(model, configuration, execution_mode)
 
     @classmethod

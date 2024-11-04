@@ -350,7 +350,7 @@ class YoloV4(YOLO):
             self.anchors = masked_anchors
             self.use_input_size = True
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(self, inference_adapter, configuration: dict = {}, preload=False):
         super().__init__(inference_adapter, configuration, preload)
 
     def _get_output_info(self):
@@ -431,7 +431,7 @@ class YOLOF(YOLO):
             self.output_layout = "NCHW"
             self.use_input_size = True
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(self, inference_adapter, configuration: dict = {}, preload=False):
         super().__init__(inference_adapter, configuration, preload)
 
     def _get_output_info(self):
@@ -478,13 +478,13 @@ class YOLOF(YOLO):
 class YOLOX(DetectionModel):
     __model__ = "YOLOX"
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(self, inference_adapter, configuration: dict = {}, preload=False):
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 1)
         self.output_blob_name = next(iter(self.outputs))
 
-        self.expanded_strides = []
-        self.grids = []
+        self.expanded_strides: list = []
+        self.grids: list = []
         self.set_strides_grids()
 
     @classmethod
@@ -564,7 +564,7 @@ class YOLOX(DetectionModel):
                     scores[keep_nms],
                     j[keep_nms],
                 ),
-            )
+            ),
         )
         return clip_detections(detections, meta["original_shape"])
 
@@ -591,7 +591,7 @@ class YOLOX(DetectionModel):
 class YoloV3ONNX(DetectionModel):
     __model__ = "YOLOv3-ONNX"
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(self, inference_adapter, configuration: dict = {}, preload=False):
         super().__init__(inference_adapter, configuration, preload)
         self.image_info_blob_name = self.image_info_blob_names[0] if len(self.image_info_blob_names) == 1 else None
         self._check_io_number(2, 3)
@@ -602,7 +602,7 @@ class YoloV3ONNX(DetectionModel):
             self.indices_blob_name,
         ) = self._get_outputs()
 
-        if self.embed_preprocessing:
+        if self.embedded_processing:
             layout = "NHWC" if self.nchw_layout else "NCHW"
             inference_adapter.embed_preprocessing(
                 image_layout=layout,
@@ -650,7 +650,7 @@ class YoloV3ONNX(DetectionModel):
         dict_inputs = {}
         meta = {"original_shape": image.shape}
 
-        if self.embed_preprocessing:
+        if self.embedded_processing:
             meta.update({"resized_shape": (self.w, self.h)})
 
             dict_inputs = {

@@ -24,7 +24,7 @@ from .types import BooleanValue, ListValue, NumericalValue, StringValue
 class ClassificationModel(ImageModel):
     __model__ = "Classification"
 
-    def __init__(self, inference_adapter: InferenceAdapter, configuration: dict = dict(), preload: bool = False):
+    def __init__(self, inference_adapter: InferenceAdapter, configuration: dict = {}, preload: bool = False):
         super().__init__(inference_adapter, configuration, preload=False)
         self.topk: int
         self.labels: list[str]
