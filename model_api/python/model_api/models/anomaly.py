@@ -15,10 +15,9 @@ import cv2
 import numpy as np
 
 from model_api.adapters.inference_adapter import InferenceAdapter
-
-from .image_model import ImageModel
-from .result_types import AnomalyResult
-from .types import ListValue, NumericalValue, StringValue
+from model_api.models.image_model import ImageModel
+from model_api.models.result_types import AnomalyResult
+from model_api.models.types import ListValue, NumericalValue, StringValue
 
 
 class AnomalyDetection(ImageModel):

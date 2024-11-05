@@ -3,10 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-from model_api.adapters.utils import RESIZE_TYPES, InputTransform
+import numpy as np
 
-from .model import Model
-from .types import BooleanValue, ListValue, NumericalValue, StringValue
+from model_api.adapters.utils import RESIZE_TYPES, InputTransform
+from model_api.models.model import Model
+from model_api.models.types import BooleanValue, ListValue, NumericalValue, StringValue
 
 
 class ImageModel(Model):
@@ -89,7 +90,7 @@ class ImageModel(Model):
             self.orig_height, self.orig_width = self.h, self.w
 
     @classmethod
-    def parameters(cls):
+    def parameters(cls) -> dict:
         parameters = super().parameters()
         parameters.update(
             {
@@ -169,7 +170,7 @@ class ImageModel(Model):
             )
         return image_blob_names, image_info_blob_names
 
-    def preprocess(self, inputs):
+    def preprocess(self, inputs) -> list[dict]:
         """Data preprocess method
 
         It performs basic preprocessing of a single image:
@@ -194,10 +195,13 @@ class ImageModel(Model):
                 }
             - the input metadata, which might be used in `postprocess` method
         """
-        return {self.image_blob_name: inputs[None]}, {
-            "original_shape": inputs.shape,
-            "resized_shape": (self.w, self.h, self.c),
-        }
+        return [
+            {self.image_blob_name: inputs[None]},
+            {
+                "original_shape": inputs.shape,
+                "resized_shape": (self.w, self.h, self.c),
+            },
+        ]
 
     def _change_layout(self, image):
         """Changes the input image layout to fit the layout of the model input layer.
