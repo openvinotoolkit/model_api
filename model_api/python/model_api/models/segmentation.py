@@ -10,10 +10,11 @@ from collections.abc import Iterable
 import cv2
 import numpy as np
 
-from .image_model import ImageModel
-from .result_types import Contour, ImageResultWithSoftPrediction
-from .types import BooleanValue, ListValue, NumericalValue, StringValue
-from .utils import load_labels
+from model_api.adapters.inference_adapter import InferenceAdapter
+from model_api.models.image_model import ImageModel
+from model_api.models.result_types import Contour, ImageResultWithSoftPrediction
+from model_api.models.types import BooleanValue, ListValue, NumericalValue, StringValue
+from model_api.models.utils import load_labels
 
 
 def create_hard_prediction_from_soft_prediction(
@@ -51,16 +52,20 @@ def create_hard_prediction_from_soft_prediction(
 class SegmentationModel(ImageModel):
     __model__ = "Segmentation"
 
-    def __init__(self, inference_adapter, configuration: dict = {}, preload=False):
+    def __init__(self, inference_adapter: InferenceAdapter, configuration: dict = {}, preload: bool = False) -> None:
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, (1, 2))
+        self.labels: list[str]
         self.path_to_labels: str
+        self.blur_strength: int
+        self.soft_threshold: float
+        self.return_soft_prediction: bool
         if self.path_to_labels:
             self.labels = load_labels(self.path_to_labels)
 
         self.output_blob_name = self._get_outputs()
 
-    def _get_outputs(self):
+    def _get_outputs(self) -> str:
         out_name = ""
         for name, output in self.outputs.items():
             if _feature_vector_name not in output.names:
@@ -86,7 +91,7 @@ class SegmentationModel(ImageModel):
         return out_name
 
     @classmethod
-    def parameters(cls):
+    def parameters(cls) -> dict:
         parameters = super().parameters()
         parameters.update(
             {
@@ -115,7 +120,7 @@ class SegmentationModel(ImageModel):
         )
         return parameters
 
-    def postprocess(self, outputs, meta):
+    def postprocess(self, outputs: dict, meta: dict) -> ImageResultWithSoftPrediction | cv2.Mat:
         input_image_height = meta["original_shape"][0]
         input_image_width = meta["original_shape"][1]
         predictions = outputs[self.output_blob_name].squeeze()
@@ -204,7 +209,7 @@ class SegmentationModel(ImageModel):
 class SalientObjectDetectionModel(SegmentationModel):
     __model__ = "Salient_Object_Detection"
 
-    def postprocess(self, outputs, meta):
+    def postprocess(self, outputs: dict, meta: dict) -> cv2.Mat:
         input_image_height = meta["original_shape"][0]
         input_image_width = meta["original_shape"][1]
         result = outputs[self.output_blob_name].squeeze()
@@ -221,7 +226,7 @@ class SalientObjectDetectionModel(SegmentationModel):
 _feature_vector_name = "feature_vector"
 
 
-def _get_activation_map(features: np.ndarray | Iterable | int | float):
+def _get_activation_map(features: np.ndarray | Iterable | int | float) -> np.ndarray:
     """Getter activation_map functions."""
     min_soft_score = np.min(features)
     max_soft_score = np.max(features)

@@ -51,11 +51,11 @@ class SAMImageEncoder(ImageModel):
     def preprocess(
         self,
         inputs: np.ndarray,
-    ) -> tuple[dict[str, np.ndarray], dict[str, Any]]:
+    ) -> list[dict]:
         """Update meta for image encoder."""
         dict_inputs, meta = super().preprocess(inputs)
         meta["resize_type"] = self.resize_type
-        return dict_inputs, meta
+        return [dict_inputs, meta]
 
     def postprocess(
         self,
@@ -123,7 +123,7 @@ class SAMDecoder(SegmentationModel):
     def _get_outputs(self) -> str:
         return "upscaled_masks"
 
-    def preprocess(self, inputs: dict[str, Any]) -> list[dict[str, Any]]:
+    def preprocess(self, inputs: dict[str, Any]) -> list[dict]:
         """Preprocess prompts."""
         processed_prompts: list[dict[str, Any]] = []
         for prompt_name in ["bboxes", "points"]:
