@@ -12,9 +12,10 @@ from typing import Any, NamedTuple
 import cv2
 import numpy as np
 
-from model_api.models import SAMDecoder, SAMImageEncoder
-from model_api.models.utils import (
+from model_api.models import (
     PredictedMask,
+    SAMDecoder,
+    SAMImageEncoder,
     VisualPromptingResult,
     ZSLVisualPromptingResult,
 )
@@ -143,7 +144,8 @@ class SAMLearnableVisualPrompter:
             encoder_model (SAMImageEncoder): initialized decoder wrapper
             decoder_model (SAMDecoder): initialized encoder wrapper
             reference_features (VisualPromptingFeatures | None, optional): Previously generated reference features.
-             Once the features are passed, one can skip learn() method, and start predicting masks right away. Defaults to None.
+                Once the features are passed, one can skip learn() method, and start predicting masks right away.
+                Defaults to None.
             threshold (float, optional): Threshold to match vs reference features on infer(). Greater value means a
             stricter matching. Defaults to 0.65.
         """
@@ -213,7 +215,8 @@ class SAMLearnableVisualPrompter:
             reset_features (bool, optional): Forces learning from scratch. Defaults to False.
 
         Returns:
-            tuple[VisualPromptingFeatures, np.ndarray]: return values are the updated VPT reference features and reference masks.
+            tuple[VisualPromptingFeatures, np.ndarray]: return values are the updated VPT reference features and
+                reference masks.
             The shape of the reference mask is N_labels x H x W, where H and W are the same as in the input image.
         """
         if boxes is None and points is None and polygons is None:
@@ -317,26 +320,32 @@ class SAMLearnableVisualPrompter:
 
         Args:
             image (np.ndarray): HWC-shaped image
-            reference_features (VisualPromptingFeatures | None, optional): Reference features object obtained during previous learn() calls.
-            If not passed, object internal state is used, which reflects the last learn() call. Defaults to None.
-            apply_masks_refinement (bool, optional): Flag controlling additional refinement stage on inference. Once enabled, decoder will
-            be launched 2 extra times to refine the masks obtained with the first decoder call. Defaults to True.
+            reference_features (VisualPromptingFeatures | None, optional): Reference features object obtained during
+                previous learn() calls. If not passed, object internal state is used, which reflects the last learn()
+                call. Defaults to None.
+            apply_masks_refinement (bool, optional): Flag controlling additional refinement stage on inference.
+            Once enabled, decoder will be launched 2 extra times to refine the masks obtained with the first decoder
+            call. Defaults to True.
 
         Returns:
-            ZSLVisualPromptingResult: Mapping label -> predicted mask. Each mask object contains a list of binary masks, and a list of
-            related prompts. Each binary mask corresponds to one prompt point. Class mask can be obtained by applying OR operation to all
-            mask corresponding to one label.
+            ZSLVisualPromptingResult: Mapping label -> predicted mask. Each mask object contains a list of binary masks,
+                and a list of related prompts. Each binary mask corresponds to one prompt point. Class mask can be
+                obtained by applying OR operation to all mask corresponding to one label.
         """
         if reference_features is None:
             if self._reference_features is None:
                 raise RuntimeError(
-                    "Reference features are not defined. This parameter can be passed via SAMLearnableVisualPrompter constructor, or as an argument of infer() method",
+                    (
+                        "Reference features are not defined. This parameter can be passed via "
+                        "SAMLearnableVisualPrompter constructor, or as an argument of infer() method"
+                    ),
                 )
             reference_feats = self._reference_features
 
             if self._used_indices is None:
                 raise RuntimeError(
-                    "Used indices are not defined. This parameter can be passed via SAMLearnableVisualPrompter constructor, or as an argument of infer() method",
+                    "Used indices are not defined. This parameter can be passed via "
+                    "SAMLearnableVisualPrompter constructor, or as an argument of infer() method"
                 )
             used_idx = self._used_indices
         else:

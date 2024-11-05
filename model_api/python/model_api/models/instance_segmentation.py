@@ -7,8 +7,9 @@ import cv2
 import numpy as np
 
 from .image_model import ImageModel
+from .result_types import InstanceSegmentationResult, SegmentedObject
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
-from .utils import InstanceSegmentationResult, SegmentedObject, load_labels
+from .utils import load_labels
 
 
 class MaskRCNNModel(ImageModel):
@@ -207,9 +208,8 @@ class MaskRCNNModel(ImageModel):
                         output_mask,
                     ),
                 )
-            if has_feature_vector_name:
-                if confidence > self.confidence_threshold:
-                    saliency_maps[cls - 1].append(resized_mask)
+            if has_feature_vector_name and confidence > self.confidence_threshold:
+                saliency_maps[cls - 1].append(resized_mask)
         return InstanceSegmentationResult(
             objects,
             _average_and_normalize(saliency_maps),
