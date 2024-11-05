@@ -32,6 +32,10 @@ include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
+file(DOWNLOAD
+    https://raw.githubusercontent.com/openvinotoolkit/model_server/refs/heads/main/src/ovms.h
+    ${CMAKE_SOURCE_DIR}/external/model_server/ovms.h)
+
 file(GLOB MODELS_SOURCES ./models/src/*.cpp)
 file(GLOB MODELS_HEADERS ./models/include/models/*.h)
 file(GLOB_RECURSE UTILS_HEADERS ./utils/include/*)
@@ -40,6 +44,7 @@ file(GLOB_RECURSE ADAPTERS_HEADERS ./adapters/include/*)
 file(GLOB_RECURSE ADAPTERS_SOURCES ./adapters/src/*.cpp)
 file(GLOB_RECURSE TILERS_HEADERS ./tilers/include/tilers/*.h)
 file(GLOB_RECURSE TILERS_SOURCES ./tilers/src/*.cpp)
+file(GLOB_RECURSE MODEL_SERVER_SOURCES ./external/model_server/*.h)
 
 # Create named folders for the sources within the .vcproj
 # Empty name lists them directly under the .vcproj
@@ -51,9 +56,10 @@ source_group("adapters/src" FILES ${ADAPTERS_SOURCES})
 source_group("adapters/include" FILES ${ADAPTERS_HEADERS})
 source_group("tilers/src" FILES ${TILERS_SOURCES})
 source_group("tilers/include" FILES ${TILERS_HEADERS})
+source_group("model_server" FILES ${MODEL_SERVER_SOURCES})
 
 add_library(model_api STATIC ${MODELS_SOURCES} ${UTILS_SOURCES} ${ADAPTERS_SOURCES} ${TILERS_SOURCES})
-target_include_directories(model_api PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/models/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/utils/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/adapters/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tilers/include>" "$<INSTALL_INTERFACE:include>")
+target_include_directories(model_api PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/models/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/utils/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/adapters/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tilers/include>" "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/model_server>" "$<INSTALL_INTERFACE:include>")
 target_link_libraries(model_api PUBLIC openvino::runtime opencv_core opencv_imgproc)
 target_link_libraries(model_api PRIVATE $<BUILD_LOCAL_INTERFACE:nlohmann_json::nlohmann_json>)
 set_target_properties(model_api PROPERTIES CXX_STANDARD 17)
