@@ -2,7 +2,7 @@
 
 The `SegmentationModel` is the OpenVINO wrapper for models exported from [OpenVINO Training Extensions](https://github.com/openvinotoolkit/training_extensions). It produces a segmentation mask for the input image.
 
-## OpenVINO Model Specifications
+## Model Specifications
 
 ### Inputs
 
