@@ -4,6 +4,9 @@
 #
 
 
+from typing import Any
+
+
 class ConfigurableValueError(ValueError):
     def __init__(self, message, prefix=None):
         self.message = f"{prefix}: {message}" if prefix else message
@@ -13,8 +16,8 @@ class ConfigurableValueError(ValueError):
 class BaseValue:
     def __init__(
         self,
-        description="No description available",
-        default_value=None,
+        description: str = "No description available",
+        default_value: Any | None = None,
     ) -> None:
         self.default_value = default_value
         self.description = description
@@ -45,10 +48,10 @@ class BaseValue:
 class NumericalValue(BaseValue):
     def __init__(
         self,
-        value_type=float,
-        choices=(),
-        min=None,
-        max=None,
+        value_type: Any = float,
+        choices: tuple[Any, ...] = (),
+        min: Any | None = None,
+        max: Any | None = None,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -57,7 +60,7 @@ class NumericalValue(BaseValue):
         self.max = max
         self.value_type = value_type
 
-    def from_str(self, value):
+    def from_str(self, value: str) -> Any:
         return self.value_type(value)
 
     def validate(self, value):
@@ -102,10 +105,10 @@ class NumericalValue(BaseValue):
 class StringValue(BaseValue):
     def __init__(
         self,
-        choices=(),
-        description="No description available",
-        default_value="",
-    ):
+        choices: tuple[Any, ...] = (),
+        description: str = "No description available",
+        default_value: str = "",
+    ) -> None:
         super().__init__(description, default_value)
         self.choices = choices
         for choice in self.choices:
@@ -113,7 +116,7 @@ class StringValue(BaseValue):
                 msg = f"Incorrect option in choice list - {choice}."
                 raise ValueError(msg)
 
-    def from_str(self, value):
+    def from_str(self, value: str) -> str:
         return value
 
     def validate(self, value):
@@ -147,7 +150,7 @@ class BooleanValue(BaseValue):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
-    def from_str(self, value):
+    def from_str(self, value: str) -> bool:
         return value == "YES" or value == "True"
 
     def validate(self, value):
@@ -166,14 +169,14 @@ class BooleanValue(BaseValue):
 class ListValue(BaseValue):
     def __init__(
         self,
-        value_type=None,
-        description="No description available",
-        default_value=[],
+        value_type: Any | None = None,
+        description: str = "No description available",
+        default_value: list[Any] = [],
     ) -> None:
         super().__init__(description, default_value)
         self.value_type = value_type
 
-    def from_str(self, value):
+    def from_str(self, value: str) -> list[Any]:
         try:
             floats = [float(i) for i in value.split()]
             try:
@@ -224,7 +227,7 @@ class DictValue(BaseValue):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
-    def from_str(self, value):
+    def from_str(self, value: str):
         raise NotImplementedError
 
     def validate(self, value):
