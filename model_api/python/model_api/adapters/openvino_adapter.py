@@ -338,7 +338,7 @@ class OpenvinoAdapter(InferenceAdapter):
         layout: str,
         resize_mode: str,
         interpolation_mode: str,
-        target_shape: tuple[int],
+        target_shape: tuple[int, ...],
         pad_value: int,
         dtype: type = int,
         brg2rgb: bool = False,

@@ -169,7 +169,7 @@ class InferenceAdapter(ABC):
         layout,
         resize_mode: str,
         interpolation_mode,
-        target_shape: tuple[int],
+        target_shape: tuple[int, ...],
         pad_value,
         dtype: type = int,
         brg2rgb=False,
