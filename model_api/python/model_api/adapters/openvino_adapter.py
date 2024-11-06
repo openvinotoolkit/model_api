@@ -5,6 +5,9 @@
 
 import logging as log
 from pathlib import Path
+from typing import Any
+
+from numpy import ndarray
 
 try:
     import openvino.runtime as ov
@@ -12,6 +15,7 @@ try:
         AsyncInferQueue,
         Core,
         Dimension,
+        OVAny,
         PartialShape,
         Type,
         get_version,
@@ -35,7 +39,7 @@ from .utils import (
 )
 
 
-def create_core():
+def create_core() -> Core:
     if openvino_absent:
         msg = "The OpenVINO package is not installed"
         raise ImportError(msg)
@@ -45,7 +49,7 @@ def create_core():
     return Core()
 
 
-def parse_devices(device_string):
+def parse_devices(device_string: str) -> tuple[str] | list[str]:
     colon_position = device_string.find(":")
     if colon_position != -1:
         device_type = device_string[:colon_position]
@@ -111,17 +115,17 @@ class OpenvinoAdapter(InferenceAdapter):
 
     def __init__(
         self,
-        core,
-        model,
-        weights_path="",
-        model_parameters={},
-        device="CPU",
-        plugin_config=None,
-        max_num_requests=0,
-        precision="FP16",
-        download_dir=None,
-        cache_dir=None,
-    ):
+        core: Core,
+        model: str,
+        weights_path: str = "",
+        model_parameters: dict[str, Any] = {},
+        device: str = "CPU",
+        plugin_config: dict[str, Any] | None = None,
+        max_num_requests: int = 0,
+        precision: str = "FP16",
+        download_dir: None = None,
+        cache_dir: None = None,
+    ) -> None:
         """precision, download_dir and cache_dir are ignored if model is a path to a file"""
         self.core = core
         self.model_path = model
@@ -179,7 +183,7 @@ class OpenvinoAdapter(InferenceAdapter):
         msg = "Model must be bytes, a file or existing OMZ model name"
         raise RuntimeError(msg)
 
-    def load_model(self):
+    def load_model(self) -> None:
         self.compiled_model = self.core.compile_model(
             self.model,
             self.device,
@@ -201,7 +205,7 @@ class OpenvinoAdapter(InferenceAdapter):
         )
         self.log_runtime_settings()
 
-    def log_runtime_settings(self):
+    def log_runtime_settings(self) -> None:
         devices = set(parse_devices(self.device))
         if "AUTO" not in devices:
             for device in devices:
@@ -222,7 +226,7 @@ class OpenvinoAdapter(InferenceAdapter):
                     pass
         log.info(f"\tNumber of model infer requests: {len(self.async_queue)}")
 
-    def get_input_layers(self):
+    def get_input_layers(self) -> dict[str, Metadata]:
         inputs = {}
         for input in self.model.inputs:
             input_shape = get_input_shape(input)
@@ -235,7 +239,11 @@ class OpenvinoAdapter(InferenceAdapter):
             )
         return self._get_meta_from_ngraph(inputs)
 
-    def get_layout_for_input(self, input, shape=None) -> str:
+    def get_layout_for_input(
+        self,
+        input: ov.Output,
+        shape: list[int] | tuple[int, int, int, int] | None = None,
+    ) -> str:
         input_layout = ""
         if self.model_parameters["input_layouts"]:
             input_layout = Layout.from_user_layouts(
@@ -251,7 +259,7 @@ class OpenvinoAdapter(InferenceAdapter):
                 )
         return input_layout
 
-    def get_output_layers(self):
+    def get_output_layers(self) -> dict[str, Metadata]:
         outputs = {}
         for i, output in enumerate(self.model.outputs):
             output_shape = output.partial_shape.get_min_shape() if self.model.is_dynamic() else output.shape
@@ -273,13 +281,13 @@ class OpenvinoAdapter(InferenceAdapter):
         }
         self.model.reshape(new_shape)
 
-    def get_raw_result(self, request):
+    def get_raw_result(self, request: ov.InferRequest) -> dict[str, ndarray]:
         return {key: request.get_tensor(key).data for key in self.get_output_layers()}
 
     def copy_raw_result(self, request):
         return {key: request.get_tensor(key).data.copy() for key in self.get_output_layers()}
 
-    def infer_sync(self, dict_data):
+    def infer_sync(self, dict_data: dict[str, ndarray]) -> dict[str, ndarray]:
         self.infer_request = self.async_queue[self.async_queue.get_idle_request_id()]
         self.infer_request.infer(dict_data)
         return self.get_raw_result(self.infer_request)
@@ -299,7 +307,7 @@ class OpenvinoAdapter(InferenceAdapter):
     def await_any(self) -> None:
         self.async_queue.get_idle_request_id()
 
-    def _get_meta_from_ngraph(self, layers_info):
+    def _get_meta_from_ngraph(self, layers_info: dict[str, Metadata]) -> dict[str, Metadata]:
         for node in self.model.get_ordered_ops():
             layer_name = node.get_friendly_name()
             if layer_name not in layers_info:
@@ -319,24 +327,24 @@ class OpenvinoAdapter(InferenceAdapter):
                 )
         return layers_info
 
-    def get_rt_info(self, path):
+    def get_rt_info(self, path: list[str]) -> OVAny:
         if self.is_onnx_file:
             return get_rt_info_from_dict(self.onnx_metadata, path)
         return self.model.get_rt_info(path)
 
     def embed_preprocessing(
         self,
-        layout,
+        layout: str,
         resize_mode: str,
-        interpolation_mode,
+        interpolation_mode: str,
         target_shape: tuple[int],
-        pad_value,
+        pad_value: int,
         dtype: type = int,
-        brg2rgb=False,
-        mean=None,
-        scale=None,
-        input_idx=0,
-    ):
+        brg2rgb: bool = False,
+        mean: list[Any] | None = None,
+        scale: list[Any] | None = None,
+        input_idx: int = 0,
+    ) -> None:
         ppp = PrePostProcessor(self.model)
 
         # Change the input type to the 8-bit image
@@ -407,7 +415,7 @@ class OpenvinoAdapter(InferenceAdapter):
         return self.model
 
 
-def get_input_shape(input_tensor):
+def get_input_shape(input_tensor: ov.Output) -> list[int]:
     def string_to_tuple(string, casting_type=int):
         processed = string.replace(" ", "").replace("(", "").replace(")", "").split(",")
         processed = filter(lambda x: x, processed)
@@ -428,4 +436,4 @@ def get_input_shape(input_tensor):
             else:
                 shape_list.append(int(dim))
         return shape_list
-    return string_to_tuple(preprocessed)
+    return list(string_to_tuple(preprocessed))
