@@ -5,16 +5,20 @@
 
 from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
-from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
 
-from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.models.image_model import ImageModel
 from model_api.models.result_types import Contour, ImageResultWithSoftPrediction
 from model_api.models.types import BooleanValue, ListValue, NumericalValue, StringValue
 from model_api.models.utils import load_labels
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 def create_hard_prediction_from_soft_prediction(

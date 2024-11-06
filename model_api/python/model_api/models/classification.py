@@ -7,9 +7,8 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 
 import copy
 import json
-from collections import defaultdict
 from pathlib import Path
-from typing import List, Tuple
+from typing import TYPE_CHECKING, List, Tuple
 
 import numpy as np
 from numpy import float32
@@ -17,10 +16,13 @@ from openvino.preprocess import PrePostProcessor
 from openvino.runtime import Model, Type
 from openvino.runtime import opset10 as opset
 
-from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.models.image_model import ImageModel
 from model_api.models.result_types import ClassificationResult
 from model_api.models.types import BooleanValue, ListValue, NumericalValue, StringValue
+from model_api.models.utils import softmax
+
+if TYPE_CHECKING:
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class ClassificationModel(ImageModel):
@@ -231,7 +233,7 @@ class ClassificationModel(ImageModel):
             cls_heads_info = self.hierarchical_info["cls_heads_info"]
             for i in range(cls_heads_info["num_multiclass_heads"]):
                 logits_begin, logits_end = cls_heads_info["head_idx_to_logits_range"][str(i)]
-                probs[logits_begin:logits_end] = softmax_numpy(
+                probs[logits_begin:logits_end] = softmax(
                     logits[logits_begin:logits_end],
                 )
 
@@ -241,7 +243,7 @@ class ClassificationModel(ImageModel):
         elif self.embedded_topk:
             probs = logits.reshape(-1)
         else:
-            probs = softmax_numpy(logits.reshape(-1))
+            probs = softmax(logits.reshape(-1))
         return probs
 
     def get_hierarchical_predictions(self, logits: np.ndarray):
@@ -251,7 +253,7 @@ class ClassificationModel(ImageModel):
         for i in range(cls_heads_info["num_multiclass_heads"]):
             logits_begin, logits_end = cls_heads_info["head_idx_to_logits_range"][str(i)]
             head_logits = logits[logits_begin:logits_end]
-            head_logits = softmax_numpy(head_logits)
+            head_logits = softmax(head_logits)
             j = np.argmax(head_logits)
             label_str = cls_heads_info["all_groups"][i][j]
             predicted_labels.append(label_str)
@@ -289,7 +291,7 @@ class ClassificationModel(ImageModel):
             scoresTensor = outputs[self.out_layer_names[1]][0]
             labels = [self.labels[i] if self.labels else "" for i in indicesTensor]
         else:
-            scoresTensor = softmax_numpy(outputs[self.out_layer_names[0]][0])
+            scoresTensor = softmax(outputs[self.out_layer_names[0]][0])
             indicesTensor = [np.argmax(scoresTensor)]
             labels = [self.labels[i] if self.labels else "" for i in indicesTensor]
         return list(zip(indicesTensor, labels, scoresTensor))
@@ -349,11 +351,6 @@ def addOrFindSoftmaxAndTopkOutputs(inference_adapter: InferenceAdapter, topk: in
 
 def sigmoid_numpy(x: np.ndarray) -> np.ndarray:
     return 1.0 / (1.0 + np.exp(-x))
-
-
-def softmax_numpy(x: np.ndarray, eps: float = 1e-9) -> np.ndarray:
-    x = np.exp(x - np.max(x))
-    return x / (np.sum(x) + eps)
 
 
 class GreedyLabelsResolver:
