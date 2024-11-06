@@ -192,8 +192,8 @@ class SAMDecoder(SegmentationModel):
 
     def _check_io_number(
         self,
-        number_of_inputs: int | tuple[int],
-        number_of_outputs: int | tuple[int],
+        number_of_inputs: int | tuple[int, ...],
+        number_of_outputs: int | tuple[int, ...],
     ) -> None:
         pass
 

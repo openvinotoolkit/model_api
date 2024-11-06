@@ -4,6 +4,7 @@
 #
 
 import logging as log
+from os import PathLike
 from pathlib import Path
 from typing import Any
 
@@ -86,7 +87,7 @@ def parse_value_per_device(devices: set[str], values_string: str) -> dict[str, i
 def get_user_config(
     flags_d: str,
     flags_nstreams: str,
-    flags_nthreads: int,
+    flags_nthreads: int | None = None,
 ) -> dict[str, str]:
     config = {}
 
@@ -117,14 +118,14 @@ class OpenvinoAdapter(InferenceAdapter):
         self,
         core: Core,
         model: str,
-        weights_path: str = "",
+        weights_path: PathLike | None = None,
         model_parameters: dict[str, Any] = {},
         device: str = "CPU",
         plugin_config: dict[str, Any] | None = None,
         max_num_requests: int = 0,
         precision: str = "FP16",
-        download_dir: None = None,
-        cache_dir: None = None,
+        download_dir: PathLike | None = None,
+        cache_dir: PathLike | None = None,
     ) -> None:
         """precision, download_dir and cache_dir are ignored if model is a path to a file"""
         self.core = core
