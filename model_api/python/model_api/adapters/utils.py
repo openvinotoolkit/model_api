@@ -6,8 +6,8 @@
 from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
 import math
-from collections.abc import Callable
 from functools import partial
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
@@ -15,6 +15,9 @@ from openvino import Model, OVAny, Type, layout_helpers
 from openvino.runtime import Output
 from openvino.runtime import opset10 as opset
 from openvino.runtime.utils.decorators import custom_preprocess_function
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class Layout:

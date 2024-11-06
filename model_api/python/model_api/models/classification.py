@@ -7,9 +7,8 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 
 import copy
 import json
-from collections import defaultdict
 from pathlib import Path
-from typing import List, Tuple
+from typing import TYPE_CHECKING, List, Tuple
 
 import numpy as np
 from numpy import float32
@@ -17,10 +16,12 @@ from openvino.preprocess import PrePostProcessor
 from openvino.runtime import Model, Type
 from openvino.runtime import opset10 as opset
 
-from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.models.image_model import ImageModel
 from model_api.models.result_types import ClassificationResult
 from model_api.models.types import BooleanValue, ListValue, NumericalValue, StringValue
+
+if TYPE_CHECKING:
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class ClassificationModel(ImageModel):

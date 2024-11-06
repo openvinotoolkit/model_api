@@ -6,7 +6,7 @@
 from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
 from copy import deepcopy
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -15,6 +15,9 @@ from model_api.models.types import BooleanValue, NumericalValue
 
 from .image_model import ImageModel
 from .segmentation import SegmentationModel
+
+if TYPE_CHECKING:
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class SAMImageEncoder(ImageModel):
