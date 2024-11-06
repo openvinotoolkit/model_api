@@ -49,7 +49,7 @@ def create_core() -> Core:
     return Core()
 
 
-def parse_devices(device_string: str) -> tuple[str] | list[str]:
+def parse_devices(device_string: str) -> list[str]:
     colon_position = device_string.find(":")
     if colon_position != -1:
         device_type = device_string[:colon_position]
@@ -61,7 +61,7 @@ def parse_devices(device_string: str) -> tuple[str] | list[str]:
                 if parenthesis_position != -1:
                     device = device[:parenthesis_position]
             return devices
-    return (device_string,)
+    return [device_string]
 
 
 def parse_value_per_device(devices: set[str], values_string: str) -> dict[str, int]:
