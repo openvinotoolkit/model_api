@@ -7,12 +7,12 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 
 import math
 from functools import partial
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import cv2
 import numpy as np
 from openvino import Model, OVAny, Type, layout_helpers
-from openvino.runtime import Output
+from openvino.runtime import Input, Node, Output
 from openvino.runtime import opset10 as opset
 from openvino.runtime.utils.decorators import custom_preprocess_function
 
@@ -21,11 +21,11 @@ if TYPE_CHECKING:
 
 
 class Layout:
-    def __init__(self, layout="") -> None:
+    def __init__(self, layout: str = "") -> None:
         self.layout = layout
 
     @staticmethod
-    def from_shape(shape):
+    def from_shape(shape: list[int] | tuple[int, ...]) -> str:
         """Create Layout from given shape"""
         if len(shape) == 2:
             return "NC"
@@ -40,7 +40,7 @@ class Layout:
         raise RuntimeError(msg)
 
     @staticmethod
-    def from_openvino(input):
+    def from_openvino(input: Input):
         """Create Layout from openvino input"""
         return layout_helpers.get_layout(input).to_string().strip("[]").replace(",", "")
 
@@ -75,7 +75,7 @@ class Layout:
         return user_layouts
 
 
-def resize_image_letterbox_graph(input: Output, size, interpolation, pad_value):
+def resize_image_letterbox_graph(input: Output, size: tuple[int, int], interpolation: str, pad_value: int) -> Node:
     if not isinstance(pad_value, int):
         msg = "pad_value must be int"
         raise RuntimeError(msg)
@@ -157,7 +157,7 @@ def resize_image_letterbox_graph(input: Output, size, interpolation, pad_value):
     )
 
 
-def crop_resize_graph(input: Output, size):
+def crop_resize_graph(input: Output, size: tuple[int, int]) -> Node:
     h_axis = 1
     w_axis = 2
     desired_aspect_ratio = size[1] / size[0]  # width / height
@@ -288,11 +288,11 @@ def crop_resize_graph(input: Output, size):
 
 def resize_image_graph(
     input: Output,
-    size,
-    keep_aspect_ratio,
-    interpolation,
-    pad_value,
-):
+    size: tuple[int, int],
+    keep_aspect_ratio: bool,
+    interpolation: str,
+    pad_value: int,
+) -> Node:
     if not isinstance(pad_value, int):
         msg = "pad_value must be int"
         raise RuntimeError(msg)
@@ -365,7 +365,7 @@ def resize_image_graph(
     )
 
 
-def resize_image(size, interpolation, pad_value):
+def resize_image(size: tuple[int, int], interpolation: str, pad_value: int) -> Callable:
     return custom_preprocess_function(
         partial(
             resize_image_graph,
@@ -377,7 +377,7 @@ def resize_image(size, interpolation, pad_value):
     )
 
 
-def resize_image_with_aspect(size, interpolation, pad_value):
+def resize_image_with_aspect(size: tuple[int, int], interpolation: str, pad_value: int) -> Callable:
     return custom_preprocess_function(
         partial(
             resize_image_graph,
@@ -389,11 +389,11 @@ def resize_image_with_aspect(size, interpolation, pad_value):
     )
 
 
-def crop_resize(size, interpolation, pad_value):
+def crop_resize(size: tuple[int, int], interpolation: str, pad_value: int) -> Callable:
     return custom_preprocess_function(partial(crop_resize_graph, size=size))
 
 
-def resize_image_letterbox(size, interpolation, pad_value):
+def resize_image_letterbox(size: tuple[int, int], interpolation: str, pad_value: int) -> Callable:
     return custom_preprocess_function(
         partial(
             resize_image_letterbox_graph,
@@ -404,8 +404,8 @@ def resize_image_letterbox(size, interpolation, pad_value):
     )
 
 
-def load_parameters_from_onnx(onnx_model):
-    parameters = {}
+def load_parameters_from_onnx(onnx_model: Any) -> dict[str, Any]:
+    parameters: dict[str, Any] = {}
 
     def insert_hierarchical(keys, val, root_dict):
         if len(keys) == 1:
@@ -423,7 +423,7 @@ def load_parameters_from_onnx(onnx_model):
     return parameters
 
 
-def get_rt_info_from_dict(rt_info_dict, path):
+def get_rt_info_from_dict(rt_info_dict: dict[str, Any], path: list[str]) -> OVAny:
     value = rt_info_dict
     try:
         value = rt_info_dict
@@ -436,13 +436,13 @@ def get_rt_info_from_dict(rt_info_dict, path):
 
 
 def resize_image_ocv(
-    image,
-    size,
-    keep_aspect_ratio=False,
-    is_pad=False,
-    pad_value=0,
-    interpolation=cv2.INTER_LINEAR,
-):
+    image: np.ndarray,
+    size: tuple[int, int],
+    keep_aspect_ratio: bool = False,
+    is_pad: bool = False,
+    pad_value: int = 0,
+    interpolation: int = cv2.INTER_LINEAR,
+) -> np.ndarray:
     if keep_aspect_ratio:
         h, w = image.shape[:2]
         scale = min(size[1] / h, size[0] / w)
@@ -460,7 +460,11 @@ def resize_image_ocv(
     return cv2.resize(image, size, interpolation=interpolation)
 
 
-def resize_image_with_aspect_ocv(image, size, interpolation=cv2.INTER_LINEAR):
+def resize_image_with_aspect_ocv(
+    image: np.ndarray,
+    size: tuple[int, int],
+    interpolation: int = cv2.INTER_LINEAR,
+) -> np.ndarray:
     return resize_image_ocv(
         image,
         size,
@@ -472,11 +476,11 @@ def resize_image_with_aspect_ocv(image, size, interpolation=cv2.INTER_LINEAR):
 
 
 def resize_image_letterbox_ocv(
-    image,
-    size,
-    interpolation=cv2.INTER_LINEAR,
-    pad_value=0,
-):
+    image: np.ndarray,
+    size: tuple[int, int],
+    interpolation: int = cv2.INTER_LINEAR,
+    pad_value: int = 0,
+) -> np.ndarray:
     ih, iw = image.shape[0:2]
     w, h = size
     scale = min(w / iw, h / ih)
@@ -493,7 +497,7 @@ def resize_image_letterbox_ocv(
     )
 
 
-def crop_resize_ocv(image, size):
+def crop_resize_ocv(image: np.ndarray, size: tuple[int, int]) -> np.ndarray:
     desired_aspect_ratio = size[1] / size[0]  # width / height
     if desired_aspect_ratio == 1:
         if image.shape[0] > image.shape[1]:
@@ -522,7 +526,7 @@ RESIZE_TYPES: dict[str, Callable] = {
 }
 
 
-INTERPOLATION_TYPES = {
+INTERPOLATION_TYPES: dict[str, int] = {
     "LINEAR": cv2.INTER_LINEAR,
     "CUBIC": cv2.INTER_CUBIC,
     "NEAREST": cv2.INTER_NEAREST,
@@ -533,9 +537,9 @@ INTERPOLATION_TYPES = {
 class InputTransform:
     def __init__(
         self,
-        reverse_input_channels=False,
-        mean_values=None,
-        scale_values=None,
+        reverse_input_channels: bool = False,
+        mean_values: list[float] | None = None,
+        scale_values: list[float] | None = None,
     ):
         self.reverse_input_channels = reverse_input_channels
         self.is_trivial = not (reverse_input_channels or mean_values or scale_values)

@@ -380,7 +380,7 @@ class OpenvinoAdapter(InferenceAdapter):
                 ppp.input(input_idx).tensor().set_shape(input_shape)
                 ppp.input(input_idx).preprocess().custom(
                     RESIZE_MODE_MAP[resize_mode](
-                        target_shape,
+                        (target_shape[0], target_shape[1]),
                         INTERPOLATION_MODE_MAP[interpolation_mode],
                         pad_value,
                     ),
