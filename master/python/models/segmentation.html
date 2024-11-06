@@ -368,9 +368,24 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-model_api.models.segmentation">
-<span id="segmentation"></span><h1>Segmentation<a class="headerlink" href="#module-model_api.models.segmentation" title="Link to this heading">#</a></h1>
-<dl class="py class">
+  <section id="segmentation">
+<h1>Segmentation<a class="headerlink" href="#segmentation" title="Link to this heading">#</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">SegmentationModel</span></code> is the OpenVINO wrapper for models exported from <a class="reference external" href="https://github.com/openvinotoolkit/training_extensions">OpenVINO Training Extensions</a>. It produces a segmentation mask for the input image.</p>
+<section id="model-specifications">
+<h2>Model Specifications<a class="headerlink" href="#model-specifications" title="Link to this heading">#</a></h2>
+<section id="inputs">
+<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h3>
+<p>A single input image of shape (H, W, 3) where H and W are the height and width of the image, respectively.</p>
+</section>
+<section id="outputs">
+<h3>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">resultImage</span></code>: Image with the segmentation mask.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">soft_prediction</span></code>: Soft prediction of the segmentation model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">saliency_map</span></code>: Saliency map of the input image.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_vector</span></code>: Feature vector of the input image. This is useful for Active Learning.</p></li>
+</ul>
+<dl class="py class" id="module-model_api.models.segmentation">
 <dt class="sig sig-object py" id="model_api.models.segmentation.SalientObjectDetectionModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.models.segmentation.</span></span><span class="sig-name descname"><span class="pre">SalientObjectDetectionModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_adapter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.segmentation.SalientObjectDetectionModel" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#model_api.models.segmentation.SegmentationModel" title="model_api.models.segmentation.SegmentationModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SegmentationModel</span></code></a></p>
@@ -424,6 +439,27 @@ initialization. If <cite>preload=False</cite>, the model must be loaded via <cit
 <dt class="sig sig-object py" id="model_api.models.segmentation.SegmentationModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.models.segmentation.</span></span><span class="sig-name descname"><span class="pre">SegmentationModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_adapter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.segmentation.SegmentationModel" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="image_model.html#model_api.models.image_model.ImageModel" title="model_api.models.image_model.ImageModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageModel</span></code></a></p>
+<p>Segmentation Model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inference_adapter</strong> (<a class="reference internal" href="../adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter" title="model_api.adapters.inference_adapter.InferenceAdapter"><em>InferenceAdapter</em></a>) – Inference adapter</p></li>
+<li><p><strong>configuration</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration parameters. Defaults to {}.</p></li>
+<li><p><strong>preload</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to preload the model. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model_api.models</span> <span class="kn">import</span> <span class="n">SegmentationModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">SegmentationModel</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;./path_to_model.xml&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;path_to_image.jpg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go">ImageResultWithSoftPrediction(</span>
+<span class="go">    ...</span>
+<span class="go">)</span>
+</pre></div>
+</div>
 <p>Image model constructor</p>
 <p>It extends the <cite>Model</cite> constructor.</p>
 <dl class="field-list simple">
@@ -533,6 +569,8 @@ segmentation output will be, but less accurate</p></li>
 </dd></dl>
 
 </section>
+</section>
+</section>
 
 
                 </article>
@@ -581,17 +619,24 @@ segmentation output will be, but less accurate</p></li>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SalientObjectDetectionModel"><code class="docutils literal notranslate"><span class="pre">SalientObjectDetectionModel</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SalientObjectDetectionModel.postprocess"><code class="docutils literal notranslate"><span class="pre">SalientObjectDetectionModel.postprocess()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-specifications">Model Specifications</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SalientObjectDetectionModel"><code class="docutils literal notranslate"><span class="pre">SalientObjectDetectionModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SalientObjectDetectionModel.postprocess"><code class="docutils literal notranslate"><span class="pre">SalientObjectDetectionModel.postprocess()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SegmentationModel"><code class="docutils literal notranslate"><span class="pre">SegmentationModel</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SegmentationModel.get_contours"><code class="docutils literal notranslate"><span class="pre">SegmentationModel.get_contours()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SegmentationModel.parameters"><code class="docutils literal notranslate"><span class="pre">SegmentationModel.parameters()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SegmentationModel.postprocess"><code class="docutils literal notranslate"><span class="pre">SegmentationModel.postprocess()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SegmentationModel"><code class="docutils literal notranslate"><span class="pre">SegmentationModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SegmentationModel.get_contours"><code class="docutils literal notranslate"><span class="pre">SegmentationModel.get_contours()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SegmentationModel.parameters"><code class="docutils literal notranslate"><span class="pre">SegmentationModel.parameters()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.SegmentationModel.postprocess"><code class="docutils literal notranslate"><span class="pre">SegmentationModel.postprocess()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.create_hard_prediction_from_soft_prediction"><code class="docutils literal notranslate"><span class="pre">create_hard_prediction_from_soft_prediction()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.segmentation.create_hard_prediction_from_soft_prediction"><code class="docutils literal notranslate"><span class="pre">create_hard_prediction_from_soft_prediction()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

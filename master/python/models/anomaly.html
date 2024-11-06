@@ -368,14 +368,56 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-model_api.models.anomaly">
-<span id="anomaly"></span><h1>Anomaly<a class="headerlink" href="#module-model_api.models.anomaly" title="Link to this heading">#</a></h1>
-<p>Definition for anomaly models.</p>
+  <section id="anomaly">
+<h1>Anomaly<a class="headerlink" href="#anomaly" title="Link to this heading">#</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">AnomalyModel</span></code> is a generic OpenVINO model that aims to provide a single interface for all the exported models based on <a class="reference external" href="https://github.com/openvinotoolkit/anomalib">Anomalib</a>.</p>
+<p>Currently, the <code class="docutils literal notranslate"><span class="pre">AnomalyModel</span></code> supports the following models:</p>
+<ul class="simple">
+<li><p>Padim</p></li>
+<li><p>STFPM</p></li>
+</ul>
+<p id="module-model_api.models.anomaly">Definition for anomaly models.</p>
 <p>Note: This file will change when anomalib is upgraded in OTX. CVS-114640</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="model_api.models.anomaly.AnomalyDetection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.models.anomaly.</span></span><span class="sig-name descname"><span class="pre">AnomalyDetection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_adapter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.anomaly.AnomalyDetection" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="image_model.html#model_api.models.image_model.ImageModel" title="model_api.models.image_model.ImageModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageModel</span></code></a></p>
+<p>Anomaly Detection model.</p>
+<p>Generic anomaly detection model that acts as an inference wrapper for all the exported models from
+Anomalib.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inference_adapter</strong> (<a class="reference internal" href="../adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter" title="model_api.adapters.inference_adapter.InferenceAdapter"><em>InferenceAdapter</em></a>) – Inference adapter</p></li>
+<li><p><strong>configuration</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration parameters. Defaults to {}.</p></li>
+<li><p><strong>preload</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to preload the model. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model_api.models</span> <span class="kn">import</span> <span class="n">AnomalyDetection</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">AnomalyDetection</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;./path_to_model.xml&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;path_to_image.jpg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go">    AnomalyResult(anomaly_map=array([[150, 150, 150, ..., 138, 138, 138],</span>
+<span class="go">        [150, 150, 150, ..., 138, 138, 138],</span>
+<span class="go">        [150, 150, 150, ..., 138, 138, 138],</span>
+<span class="go">        ...,</span>
+<span class="go">        [134, 134, 134, ..., 138, 138, 138],</span>
+<span class="go">        [134, 134, 134, ..., 138, 138, 138],</span>
+<span class="go">        [134, 134, 134, ..., 138, 138, 138]], dtype=uint8),</span>
+<span class="go">        pred_boxes=None, pred_label=&#39;Anomaly&#39;,</span>
+<span class="go">        pred_mask=array([[1, 1, 1, ..., 1, 1, 1],</span>
+<span class="go">            [1, 1, 1, ..., 1, 1, 1],</span>
+<span class="go">            [1, 1, 1, ..., 1, 1, 1],</span>
+<span class="go">            ...,</span>
+<span class="go">            [1, 1, 1, ..., 1, 1, 1],</span>
+<span class="go">            [1, 1, 1, ..., 1, 1, 1],</span>
+<span class="go">            [1, 1, 1, ..., 1, 1, 1]], dtype=uint8),</span>
+<span class="go">            pred_score=0.8536462108391619)</span>
+</pre></div>
+</div>
 <p>Image model constructor</p>
 <p>It extends the <cite>Model</cite> constructor.</p>
 <dl class="field-list simple">

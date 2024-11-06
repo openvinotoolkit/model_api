@@ -368,12 +368,55 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-model_api.models.classification">
-<span id="classification"></span><h1>Classification<a class="headerlink" href="#module-model_api.models.classification" title="Link to this heading">#</a></h1>
-<dl class="py class">
+  <section id="classification">
+<h1>Classification<a class="headerlink" href="#classification" title="Link to this heading">#</a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">ClassificationModel</span></code> is the OpenVINO wrapper for models exported from <a class="reference external" href="https://github.com/openvinotoolkit/training_extensions">OpenVINO Training Extensions</a>. It supports multi-label classification as well as hierarchical classification.</p>
+</section>
+<section id="model-specifications">
+<h2>Model Specifications<a class="headerlink" href="#model-specifications" title="Link to this heading">#</a></h2>
+</section>
+<section id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h2>
+<p>A single input image of shape (H, W, 3) where H and W are the height and width of the image, respectively.</p>
+</section>
+<section id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">top_labels</span></code>: List of tuples containing the top labels of the classification model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">saliency_map</span></code>: Saliency map of the input image.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">feature_vector</span></code>: Feature vector of the input image. This is useful for Active Learning.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">raw_scores</span></code>: Raw scores of the classification model.</p></li>
+</ul>
+<dl class="py class" id="module-model_api.models.classification">
 <dt class="sig sig-object py" id="model_api.models.classification.ClassificationModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.models.classification.</span></span><span class="sig-name descname"><span class="pre">ClassificationModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_adapter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.classification.ClassificationModel" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="image_model.html#model_api.models.image_model.ImageModel" title="model_api.models.image_model.ImageModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageModel</span></code></a></p>
+<p>Classification Model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inference_adapter</strong> (<a class="reference internal" href="../adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter" title="model_api.adapters.inference_adapter.InferenceAdapter"><em>InferenceAdapter</em></a>) – Inference adapter</p></li>
+<li><p><strong>configuration</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration parameters. Defaults to {}.</p></li>
+<li><p><strong>preload</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to preload the model. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">model_api.models</span> <span class="kn">import</span> <span class="n">ClassificationModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ClassificationModel</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;./path_to_model.xml&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;path_to_image.jpg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go">ClassificationResult(</span>
+<span class="go">    top_labels=[(1, &#39;bicycle&#39;, 0.90176445), (6, &#39;car&#39;, 0.85433626), (7, &#39;cat&#39;, 0.60699755)],</span>
+<span class="go">    saliency_map=array([], dtype=float64),</span>
+<span class="go">    feature_vector=array([], dtype=float64),</span>
+<span class="go">    raw_scores=array([], dtype=float64)</span>
+<span class="go">)</span>
+</pre></div>
+</div>
 <p>Image model constructor</p>
 <p>It extends the <cite>Model</cite> constructor.</p>
 <dl class="field-list simple">
@@ -579,6 +622,7 @@ like adding edges, getting children and parents.</p>
 <dd></dd></dl>
 
 </section>
+</section>
 
 
                 </article>
@@ -627,37 +671,43 @@ like adding edges, getting children and parents.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel"><code class="docutils literal notranslate"><span class="pre">ClassificationModel</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_all_probs"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_all_probs()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_hierarchical_predictions"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_hierarchical_predictions()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_multiclass_predictions"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_multiclass_predictions()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_multilabel_predictions"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_multilabel_predictions()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_saliency_maps"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_saliency_maps()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.parameters"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.parameters()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.postprocess"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.postprocess()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-specifications">Model Specifications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel"><code class="docutils literal notranslate"><span class="pre">ClassificationModel</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_all_probs"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_all_probs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_hierarchical_predictions"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_hierarchical_predictions()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_multiclass_predictions"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_multiclass_predictions()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_multilabel_predictions"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_multilabel_predictions()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.get_saliency_maps"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.get_saliency_maps()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.parameters"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.parameters()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ClassificationModel.postprocess"><code class="docutils literal notranslate"><span class="pre">ClassificationModel.postprocess()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.GreedyLabelsResolver"><code class="docutils literal notranslate"><span class="pre">GreedyLabelsResolver</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.GreedyLabelsResolver.resolve_labels"><code class="docutils literal notranslate"><span class="pre">GreedyLabelsResolver.resolve_labels()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.GreedyLabelsResolver"><code class="docutils literal notranslate"><span class="pre">GreedyLabelsResolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.GreedyLabelsResolver.resolve_labels"><code class="docutils literal notranslate"><span class="pre">GreedyLabelsResolver.resolve_labels()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ProbabilisticLabelsResolver"><code class="docutils literal notranslate"><span class="pre">ProbabilisticLabelsResolver</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ProbabilisticLabelsResolver.resolve_labels"><code class="docutils literal notranslate"><span class="pre">ProbabilisticLabelsResolver.resolve_labels()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ProbabilisticLabelsResolver"><code class="docutils literal notranslate"><span class="pre">ProbabilisticLabelsResolver</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.ProbabilisticLabelsResolver.resolve_labels"><code class="docutils literal notranslate"><span class="pre">ProbabilisticLabelsResolver.resolve_labels()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.add_edge"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.add_edge()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.clear_topological_cache"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.clear_topological_cache()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.get_ancestors"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.get_ancestors()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.get_children"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.get_children()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.get_labels_in_topological_order"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.get_labels_in_topological_order()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.get_parent"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.get_parent()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.topological_sort"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.topological_sort()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.add_edge"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.add_edge()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.clear_topological_cache"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.clear_topological_cache()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.get_ancestors"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.get_ancestors()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.get_children"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.get_children()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.get_labels_in_topological_order"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.get_labels_in_topological_order()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.get_parent"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.get_parent()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.SimpleLabelsGraph.topological_sort"><code class="docutils literal notranslate"><span class="pre">SimpleLabelsGraph.topological_sort()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.addOrFindSoftmaxAndTopkOutputs"><code class="docutils literal notranslate"><span class="pre">addOrFindSoftmaxAndTopkOutputs()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.sigmoid_numpy"><code class="docutils literal notranslate"><span class="pre">sigmoid_numpy()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.softmax_numpy"><code class="docutils literal notranslate"><span class="pre">softmax_numpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.addOrFindSoftmaxAndTopkOutputs"><code class="docutils literal notranslate"><span class="pre">addOrFindSoftmaxAndTopkOutputs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.sigmoid_numpy"><code class="docutils literal notranslate"><span class="pre">sigmoid_numpy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.classification.softmax_numpy"><code class="docutils literal notranslate"><span class="pre">softmax_numpy()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
