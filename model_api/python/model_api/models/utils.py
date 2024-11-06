@@ -167,7 +167,7 @@ def multiclass_nms(
     offsets = labels.astype(boxes.dtype) * (max_coordinate + 1)
     boxes_for_nms = boxes + offsets[:, None]
 
-    keep = nms(*boxes_for_nms.T, scores=scores, thresh=iou_threshold)
+    keep = nms(*boxes_for_nms.T, scores=scores, thresh=iou_threshold)  # type: ignore[misc]
     if max_num > 0:
         keep = keep[:max_num]
     keep = np.array(keep)

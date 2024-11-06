@@ -6,11 +6,13 @@
 from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
 import logging as log
-from os import PathLike
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from numpy import ndarray
+if TYPE_CHECKING:
+    from os import PathLike
+
+    from numpy import ndarray
 
 try:
     import openvino.runtime as ov

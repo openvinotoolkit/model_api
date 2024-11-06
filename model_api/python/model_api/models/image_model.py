@@ -5,14 +5,16 @@
 
 from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import numpy as np
-
-from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.adapters.utils import RESIZE_TYPES, InputTransform
 from model_api.models.model import Model
 from model_api.models.types import BooleanValue, ListValue, NumericalValue, StringValue
+
+if TYPE_CHECKING:
+    import numpy as np
+
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class ImageModel(Model):

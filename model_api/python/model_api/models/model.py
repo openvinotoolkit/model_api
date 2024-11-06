@@ -8,12 +8,8 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 import logging as log
 import re
 from contextlib import contextmanager
-from os import PathLike
-from typing import Any, NoReturn, Type
+from typing import TYPE_CHECKING, Any, NoReturn, Type
 
-from numpy import ndarray
-
-from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
 from model_api.adapters.openvino_adapter import (
     OpenvinoAdapter,
@@ -21,6 +17,13 @@ from model_api.adapters.openvino_adapter import (
     get_user_config,
 )
 from model_api.adapters.ovms_adapter import OVMSAdapter
+
+if TYPE_CHECKING:
+    from os import PathLike
+
+    from numpy import ndarray
+
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class WrapperError(Exception):
