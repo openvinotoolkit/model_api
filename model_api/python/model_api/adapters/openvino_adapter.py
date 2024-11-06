@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
+
 import logging as log
 from os import PathLike
 from pathlib import Path
