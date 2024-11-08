@@ -131,6 +131,7 @@ class OVMSAdapter(InferenceAdapter):
         msg = "OVMSAdapter does not support saving a model"
         raise NotImplementedError(msg)
 
+
 _tf2ov_precision = {
     "DT_INT64": "I64",
     "DT_UINT64": "U64",

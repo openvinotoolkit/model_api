@@ -69,8 +69,10 @@ def test_onnx_save(tmp_path):
     )
 
     assert (
-        load_parameters_from_onnx(cls_model.get_model())
-        ["model_info"]["embedded_processing"] == "True"
+        load_parameters_from_onnx(cls_model.get_model())["model_info"][
+            "embedded_processing"
+        ]
+        == "True"
     )
 
     onnx_path = str(tmp_path / "a.onnx")
