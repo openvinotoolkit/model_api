@@ -119,6 +119,9 @@ class OVMSAdapter(InferenceAdapter):
         msg = "OVMSAdapter does not support RT info getting"
         raise NotImplementedError(msg)
 
+    def update_model_info(self, model_info: dict[str, str]):
+        msg = "OVMSAdapter does not support updating model info"
+        raise NotImplementedError(msg)
 
 _tf2ov_precision = {
     "DT_INT64": "I64",

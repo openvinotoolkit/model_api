@@ -148,6 +148,10 @@ class InferenceAdapter(ABC):
         """Forwards to openvino.Model.get_rt_info(path)"""
 
     @abstractmethod
+    def update_model_info(self, model_info: dict[str, str]):
+        """Updates model with the provided model info."""
+
+    @abstractmethod
     def embed_preprocessing(
         self,
         layout,

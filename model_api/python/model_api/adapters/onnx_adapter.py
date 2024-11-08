@@ -53,6 +53,7 @@ class ONNXRuntimeAdapter(InferenceAdapter):
             inferred_model.SerializeToString(),
             **ort_options,
         )
+        self.model = inferred_model
         self.output_names = [o.name for o in self.session.get_outputs()]
         self.onnx_metadata = load_parameters_from_onnx(inferred_model)
         self.preprocessor = lambda arg: arg
@@ -164,7 +165,7 @@ class ONNXRuntimeAdapter(InferenceAdapter):
 
     def get_model(self):
         """Return the reference to the ONNXRuntime session."""
-        return self.session
+        return self.model
 
     def reshape_model(self, new_shape):
         raise NotImplementedError
@@ -172,6 +173,12 @@ class ONNXRuntimeAdapter(InferenceAdapter):
     def get_rt_info(self, path):
         return get_rt_info_from_dict(self.onnx_metadata, path)
 
+    def update_model_info(self, model_info: dict[str, str]):
+        for item in model_info:
+            meta = self.model.metadata_props.add()
+            attr_path = "model_info " + item
+            meta.key = attr_path.strip()
+            meta.value = model_info[item]
 
 _onnx2ov_precision = {
     "tensor(float)": "f32",

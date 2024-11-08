@@ -91,11 +91,15 @@ class Model:
         self.callback_fn = lambda _: None
 
     def get_model(self):
-        model = self.inference_adapter.get_model()
-        model.set_rt_info(self.__model__, ["model_info", "model_type"])
+        model_info = {
+            "model_type": self.__model__,
+        }
         for name in self.parameters():
-            model.set_rt_info(getattr(self, name), ["model_info", name])
-        return model
+            model_info[name] = getattr(self, name)
+
+        self.inference_adapter.update_model_info(model_info)
+
+        return self.inference_adapter.get_model()
 
     @classmethod
     def get_model_class(cls, name):
