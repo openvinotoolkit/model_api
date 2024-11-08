@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
+
 import sys
 from functools import partial, reduce
 from typing import Any
@@ -122,6 +124,9 @@ class ONNXRuntimeAdapter(InferenceAdapter):
         pass
 
     def await_any(self):
+        pass
+
+    def get_raw_result(self, infer_result):
         pass
 
     def embed_preprocessing(
