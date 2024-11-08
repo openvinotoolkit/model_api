@@ -4,6 +4,7 @@
 #
 
 import re
+from typing import Any
 
 import numpy as np
 
@@ -119,8 +120,12 @@ class OVMSAdapter(InferenceAdapter):
         msg = "OVMSAdapter does not support RT info getting"
         raise NotImplementedError(msg)
 
-    def update_model_info(self, model_info: dict[str, str]):
+    def update_model_info(self, model_info: dict[str, Any]):
         msg = "OVMSAdapter does not support updating model info"
+        raise NotImplementedError(msg)
+
+    def save_model(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+        msg = "OVMSAdapter does not support saving a model"
         raise NotImplementedError(msg)
 
 _tf2ov_precision = {

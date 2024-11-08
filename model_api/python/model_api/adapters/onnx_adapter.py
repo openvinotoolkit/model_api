@@ -5,6 +5,7 @@
 
 import sys
 from functools import partial, reduce
+from typing import Any
 
 import numpy as np
 
@@ -173,12 +174,19 @@ class ONNXRuntimeAdapter(InferenceAdapter):
     def get_rt_info(self, path):
         return get_rt_info_from_dict(self.onnx_metadata, path)
 
-    def update_model_info(self, model_info: dict[str, str]):
+    def update_model_info(self, model_info: dict[str, Any]):
         for item in model_info:
             meta = self.model.metadata_props.add()
             attr_path = "model_info " + item
             meta.key = attr_path.strip()
-            meta.value = model_info[item]
+            if isinstance(model_info[item], list):
+                meta.value = " ".join(str(x) for x in model_info[item])
+            else:
+                meta.value = str(model_info[item])
+
+    def save_model(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+        onnx.save(self.model, path)
+
 
 _onnx2ov_precision = {
     "tensor(float)": "f32",

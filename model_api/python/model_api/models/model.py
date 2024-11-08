@@ -494,7 +494,5 @@ class Model:
                 f"precision: {metadata.precision}, layout: {metadata.layout}",
             )
 
-    def save(self, xml_path, bin_path="", version="UNSPECIFIED"):
-        import openvino
-
-        openvino.serialize(self.get_model(), xml_path, bin_path, version)
+    def save(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+        self.inference_adapter.save_model(path, weights_path, version)

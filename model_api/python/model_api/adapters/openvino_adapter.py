@@ -5,6 +5,7 @@
 
 import logging as log
 from pathlib import Path
+from typing import Any
 
 try:
     import openvino.runtime as ov
@@ -406,7 +407,7 @@ class OpenvinoAdapter(InferenceAdapter):
         """
         return self.model
 
-    def update_model_info(self, model_info: dict[str, str]):
+    def update_model_info(self, model_info: dict[str, Any]):
         """
         Populates OV IR RT info with the given model info.
 
@@ -415,6 +416,9 @@ class OpenvinoAdapter(InferenceAdapter):
         """
         for name in model_info:
             self.model.set_rt_info(model_info[name], ["model_info", name])
+
+    def save_model(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+        ov.serialize(self.get_model(), path, weights_path, version)
 
 
 def get_input_shape(input_tensor):
