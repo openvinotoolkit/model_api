@@ -10,8 +10,8 @@ import re
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, NoReturn, Type
 
-from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
 from model_api.adapters.inference_adapter import InferenceAdapter
+from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
 from model_api.adapters.openvino_adapter import (
     OpenvinoAdapter,
     create_core,
@@ -23,7 +23,6 @@ if TYPE_CHECKING:
     from os import PathLike
 
     from numpy import ndarray
-
 
 
 class WrapperError(Exception):
