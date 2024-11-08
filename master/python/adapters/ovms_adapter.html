@@ -439,6 +439,33 @@ in OpenVINO format, meta (optional)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="model_api.adapters.ovms_adapter.OVMSAdapter.get_raw_result">
+<span class="sig-name descname"><span class="pre">get_raw_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_raw_result" title="Link to this definition">#</a></dt>
+<dd><p>Gets raw results from the internal inference framework representation as a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>infer_result</strong> (<em>-</em>) – framework-specific result of inference from the model</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>{</dt><dd><p>‘output_layer_name_1’: raw_result_1,
+‘output_layer_name_2’: raw_result_2,
+…</p>
+</dd>
+</dl>
+<p>}</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>raw result (dict) - model raw output in the following format</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.ovms_adapter.OVMSAdapter.get_rt_info">
 <span class="sig-name descname"><span class="pre">get_rt_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_rt_info" title="Link to this definition">#</a></dt>
 <dd><p>Forwards to openvino.Model.get_rt_info(path)</p>
@@ -612,6 +639,7 @@ list of new shape as values in the following format:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_input_layers"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_input_layers()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_model"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_output_layers"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_output_layers()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_raw_result"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_raw_result()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.get_rt_info"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.get_rt_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.infer_async"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.infer_async()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.ovms_adapter.OVMSAdapter.infer_sync"><code class="docutils literal notranslate"><span class="pre">OVMSAdapter.infer_sync()</span></code></a></li>

@@ -372,7 +372,7 @@
 <span id="openvino-adapter"></span><h1>Openvino Adapter<a class="headerlink" href="#module-model_api.adapters.openvino_adapter" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.adapters.openvino_adapter.</span></span><span class="sig-name descname"><span class="pre">OpenvinoAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">core</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CPU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plugin_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_requests</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FP16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">model_api.adapters.openvino_adapter.</span></span><span class="sig-name descname"><span class="pre">OpenvinoAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">core</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CPU'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plugin_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_requests</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FP16'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter" title="model_api.adapters.inference_adapter.InferenceAdapter"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceAdapter</span></code></a></p>
 <p>Works with OpenVINO model</p>
 <p>precision, download_dir and cache_dir are ignored if model is a path to a file</p>
@@ -409,6 +409,11 @@ busy infer request until it becomes available for the data submission.</p>
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.embed_preprocessing">
 <span class="sig-name descname"><span class="pre">embed_preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'int'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brg2rgb=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_idx=0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.embed_preprocessing" title="Link to this definition">#</a></dt>
 <dd><p>Embeds preprocessing into the model using OpenVINO preprocessing API</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -420,8 +425,11 @@ in OpenVINO format, meta (optional)</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="inference_adapter.html#model_api.adapters.inference_adapter.Metadata" title="model_api.adapters.inference_adapter.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p>the dict containing Metadata for all inputs</p></li>
 </ul>
 </p>
@@ -459,8 +467,11 @@ in OpenVINO format, meta (optional)</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="inference_adapter.html#model_api.adapters.inference_adapter.Metadata" title="model_api.adapters.inference_adapter.Metadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metadata</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p>the dict containing Metadata for all outputs</p></li>
 </ul>
 </p>
@@ -471,12 +482,39 @@ in OpenVINO format, meta (optional)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.get_raw_result">
 <span class="sig-name descname"><span class="pre">get_raw_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_raw_result" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Gets raw results from the internal inference framework representation as a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>infer_result</strong> (<em>-</em>) – framework-specific result of inference from the model</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>{</dt><dd><p>‘output_layer_name_1’: raw_result_1,
+‘output_layer_name_2’: raw_result_2,
+…</p>
+</dd>
+</dl>
+<p>}</p>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>raw result (dict) - model raw output in the following format</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.get_rt_info">
 <span class="sig-name descname"><span class="pre">get_rt_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_rt_info" title="Link to this definition">#</a></dt>
 <dd><p>Forwards to openvino.Model.get_rt_info(path)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">OVAny</span></code></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -568,12 +606,22 @@ to the model for inference, or all infer requests are busy.</p>
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.load_model">
 <span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.load_model" title="Link to this definition">#</a></dt>
 <dd><p>Loads the model on the device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.log_runtime_settings">
 <span class="sig-name descname"><span class="pre">log_runtime_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.log_runtime_settings" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.operations_by_type">
@@ -610,16 +658,26 @@ list of new shape as values in the following format:
 <dl class="py function">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.create_core">
 <span class="sig-prename descclassname"><span class="pre">model_api.adapters.openvino_adapter.</span></span><span class="sig-name descname"><span class="pre">create_core</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.create_core" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Core</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.get_input_shape">
 <span class="sig-prename descclassname"><span class="pre">model_api.adapters.openvino_adapter.</span></span><span class="sig-name descname"><span class="pre">get_input_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.get_input_shape" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.get_user_config">
-<span class="sig-prename descclassname"><span class="pre">model_api.adapters.openvino_adapter.</span></span><span class="sig-name descname"><span class="pre">get_user_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flags_d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags_nstreams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags_nthreads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.get_user_config" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">model_api.adapters.openvino_adapter.</span></span><span class="sig-name descname"><span class="pre">get_user_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flags_d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags_nstreams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flags_nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.get_user_config" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
@@ -630,7 +688,12 @@ list of new shape as values in the following format:
 <dl class="py function">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.parse_devices">
 <span class="sig-prename descclassname"><span class="pre">model_api.adapters.openvino_adapter.</span></span><span class="sig-name descname"><span class="pre">parse_devices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.parse_devices" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.parse_value_per_device">
