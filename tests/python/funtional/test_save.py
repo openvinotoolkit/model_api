@@ -2,6 +2,9 @@
 # Copyright (C) 2020-2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
+
+from pathlib import Path
+
 from model_api.models import Model
 from model_api.adapters import ONNXRuntimeAdapter
 from model_api.adapters.utils import load_parameters_from_onnx
@@ -60,9 +63,9 @@ def test_segmentor_save(tmp_path):
         assert getattr(downloaded, attr) == getattr(deserialized, attr)
 
 
-def test_onnx_save(tmp_path):
+def test_onnx_save(tmp_path, data):
     cls_model = Model.create_model(
-        ONNXRuntimeAdapter("data/otx_models/cls_mobilenetv3_large_cars.onnx"),
+        ONNXRuntimeAdapter(Path(data) / "otx_models/cls_mobilenetv3_large_cars.onnx"),
         model_type="Classification",
         preload=True,
         configuration={"reverse_input_channels": True, "topk": 6},
