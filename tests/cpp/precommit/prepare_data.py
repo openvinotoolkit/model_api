@@ -5,17 +5,23 @@ from pathlib import Path
 from urllib.request import urlopen, urlretrieve
 
 
-def retrieve_otx_model(data_dir, model_name):
-    destenation_folder = os.path.join(data_dir, "otx_models")
-    os.makedirs(destenation_folder, exist_ok=True)
-    urlretrieve(
-        f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
-        f"{destenation_folder}/{model_name}.xml",
-    )
-    urlretrieve(
-        f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
-        f"{destenation_folder}/{model_name}.bin",
-    )
+def retrieve_otx_model(data_dir, model_name, format="xml"):
+    destination_folder = os.path.join(data_dir, "otx_models")
+    os.makedirs(destination_folder, exist_ok=True)
+    if format == "onnx":
+        urlretrieve(
+            f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/model.onnx",
+            f"{destination_folder}/{model_name}.onnx",
+        )
+    else:
+        urlretrieve(
+            f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.xml",
+            f"{destination_folder}/{model_name}.xml",
+        )
+        urlretrieve(
+            f"https://storage.openvinotoolkit.org/repositories/model_api/test/otx_models/{model_name}/openvino.bin",
+            f"{destination_folder}/{model_name}.bin",
+        )
 
 
 def prepare_model(
@@ -72,3 +78,4 @@ if __name__ == "__main__":
     prepare_data(args.data_dir)
     retrieve_otx_model(args.data_dir, "mlc_mobilenetv3_large_voc")
     retrieve_otx_model(args.data_dir, "tinynet_imagenet")
+    retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars", "onnx")
