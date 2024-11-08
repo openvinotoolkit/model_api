@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 from model_api.models import Model
+from model_api.adapters import ONNXRuntimeAdapter
+from model_api.adapters.utils import load_parameters_from_onnx
 
 
 def test_detector_save(tmp_path):
@@ -56,3 +58,25 @@ def test_segmentor_save(tmp_path):
     assert type(downloaded) is type(deserialized)
     for attr in downloaded.parameters():
         assert getattr(downloaded, attr) == getattr(deserialized, attr)
+
+
+def test_onnx_save(tmp_path):
+    cls_model = Model.create_model(
+        ONNXRuntimeAdapter("data/otx_models/cls_mobilenetv3_large_cars.onnx"),
+        model_type="Classification",
+        preload=True,
+        configuration={"reverse_input_channels": True, "topk": 6},
+    )
+
+    assert (
+        load_parameters_from_onnx(cls_model.get_model())
+        ["model_info"]["embedded_processing"] == "True"
+    )
+
+    onnx_path = str(tmp_path / "a.onnx")
+    cls_model.save(onnx_path)
+
+    deserialized = Model.create_model(onnx_path)
+    assert type(cls_model) is type(deserialized)
+    for attr in cls_model.parameters():
+        assert getattr(cls_model, attr) == getattr(deserialized, attr)
