@@ -30,7 +30,7 @@ def prepare_model(
         public_scope = json.load(f)
 
     for model in public_scope:
-        if model["name"].endswith(".xml"):
+        if model["name"].endswith(".xml") or model["name"].endswith(".onnx"):
             continue
         model = eval(model["type"]).create_model(model["name"], download_dir=data_dir)
 
