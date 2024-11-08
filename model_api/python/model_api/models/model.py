@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any, NoReturn, Type
 
 from model_api.adapters.onnx_adapter import ONNXRuntimeAdapter
+from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.adapters.openvino_adapter import (
     OpenvinoAdapter,
     create_core,
@@ -23,7 +24,6 @@ if TYPE_CHECKING:
 
     from numpy import ndarray
 
-    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class WrapperError(Exception):
@@ -126,7 +126,7 @@ class Model:
     @classmethod
     def create_model(
         cls,
-        model: str,
+        model: str | InferenceAdapter,
         model_type: Any | None = None,
         configuration: dict[str, Any] = {},
         preload: bool = True,
@@ -144,7 +144,7 @@ class Model:
         """Create an instance of the Model API model
 
         Args:
-            model (str): model name from OpenVINO Model Zoo, path to model, OVMS URL
+            model (str| InferenceAdapter): model name from OpenVINO Model Zoo, path to model, OVMS URL, or an adapter
             configuration (:obj:`dict`, optional): dictionary of model config with model properties, for example
                 confidence_threshold, labels
             model_type (:obj:`str`, optional): name of model wrapper to create (e.g. "ssd")
@@ -166,7 +166,9 @@ class Model:
             Model object
         """
         inference_adapter: InferenceAdapter
-        if isinstance(model, str) and re.compile(
+        if isinstance(model, InferenceAdapter):
+            inference_adapter = model
+        elif isinstance(model, str) and re.compile(
             r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*",
         ).fullmatch(model):
             inference_adapter = OVMSAdapter(model)
