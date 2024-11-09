@@ -99,14 +99,6 @@ class Model:
         self.callback_fn = lambda _: None
 
     def get_model(self):
-        model_info = {
-            "model_type": self.__model__,
-        }
-        for name in self.parameters():
-            model_info[name] = getattr(self, name)
-
-        self.inference_adapter.update_model_info(model_info)
-
         return self.inference_adapter.get_model()
 
     @classmethod
@@ -493,4 +485,11 @@ class Model:
             )
 
     def save(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+        model_info = {
+            "model_type": self.__model__,
+        }
+        for name in self.parameters():
+            model_info[name] = getattr(self, name)
+
+        self.inference_adapter.update_model_info(model_info)
         self.inference_adapter.save_model(path, weights_path, version)
