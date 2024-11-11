@@ -506,7 +506,7 @@ initialization. If <cite>preload=False</cite>, the model must be loaded via <cit
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>str</em>) – model name from OpenVINO Model Zoo, path to model, OVMS URL</p></li>
+<li><p><strong>model</strong> (<em>str</em><em>| </em><a class="reference internal" href="../adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter" title="model_api.adapters.inference_adapter.InferenceAdapter"><em>InferenceAdapter</em></a>) – model name from OpenVINO Model Zoo, path to model, OVMS URL, or an adapter</p></li>
 <li><p><strong>configuration</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>, optional) – dictionary of model config with model properties, for example
 confidence_threshold, labels</p></li>
 <li><p><strong>model_type</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – name of model wrapper to create (e.g. “ssd”)</p></li>
@@ -729,7 +729,7 @@ the type, default value and description must be provided.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.models.model.Model.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'UNSPECIFIED'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.model.Model.save" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'UNSPECIFIED'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.model.Model.save" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">

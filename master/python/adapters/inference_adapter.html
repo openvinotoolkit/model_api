@@ -587,6 +587,18 @@ list of new shape as values in the following format:
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.save_model">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.save_model" title="Link to this definition">#</a></dt>
+<dd><p>Serializes model to the filesystem.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.update_model_info">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_model_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.update_model_info" title="Link to this definition">#</a></dt>
+<dd><p>Updates model with the provided model info.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.precisions">
 <span class="sig-name descname"><span class="pre">precisions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('FP32',</span> <span class="pre">'I32',</span> <span class="pre">'FP16',</span> <span class="pre">'I16',</span> <span class="pre">'I8',</span> <span class="pre">'U8')</span></em><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.precisions" title="Link to this definition">#</a></dt>
@@ -693,6 +705,8 @@ list of new shape as values in the following format:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.is_ready"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.is_ready()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.load_model"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.load_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.reshape_model"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.reshape_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.save_model"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.save_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.update_model_info"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.update_model_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.precisions"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.precisions</span></code></a></li>
 </ul>
 </li>

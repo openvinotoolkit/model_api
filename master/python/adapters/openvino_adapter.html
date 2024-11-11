@@ -649,9 +649,26 @@ list of new shape as values in the following format:
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.save_model">
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'UNSPECIFIED'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.save_model" title="Link to this definition">#</a></dt>
+<dd><p>Serializes model to the filesystem.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.set_callback">
 <span class="sig-name descname"><span class="pre">set_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback_fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.set_callback" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.update_model_info">
+<span class="sig-name descname"><span class="pre">update_model_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.update_model_info" title="Link to this definition">#</a></dt>
+<dd><p>Populates OV IR RT info with the given model info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_info</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – a dict representing the serialized parameters.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -773,7 +790,9 @@ list of new shape as values in the following format:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.log_runtime_settings"><code class="docutils literal notranslate"><span class="pre">OpenvinoAdapter.log_runtime_settings()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.operations_by_type"><code class="docutils literal notranslate"><span class="pre">OpenvinoAdapter.operations_by_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.reshape_model"><code class="docutils literal notranslate"><span class="pre">OpenvinoAdapter.reshape_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.save_model"><code class="docutils literal notranslate"><span class="pre">OpenvinoAdapter.save_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.set_callback"><code class="docutils literal notranslate"><span class="pre">OpenvinoAdapter.set_callback()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.update_model_info"><code class="docutils literal notranslate"><span class="pre">OpenvinoAdapter.update_model_info()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.openvino_adapter.create_core"><code class="docutils literal notranslate"><span class="pre">create_core()</span></code></a></li>
