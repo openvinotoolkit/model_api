@@ -25,8 +25,8 @@ class SegmentedObject:
         ymax: int,
         score: float,
         id: int,
+        str_label: str,
         mask: np.ndarray,
-        str_label: str | None = None,
     ) -> None:
         self.xmin = xmin
         self.ymin = ymin
