@@ -57,30 +57,31 @@ class Visualizer:
     def _generate_simple(self, image: Image, result: VisualizeMixin) -> Image:
         """Return a single image with stacked visualizations."""
         # 1. Use Overlay
+        _image = image.copy()
         if result.has_overlays:
             overlays = result.get_overlays()
             for overlay in overlays:
-                image = overlay.compute(image)
+                image = overlay.compute(_image)
 
         elif result.has_polygons:  # 2. else use polygons
             polygons = result.get_polygons()
             for polygon in polygons:
-                image = polygon.compute(image)
+                image = polygon.compute(_image)
 
         elif result.has_bounding_boxes:  # 3. else use bounding boxes
             bounding_boxes = result.get_bounding_boxes()
             for bounding_box in bounding_boxes:
-                image = bounding_box.compute(image)
+                image = bounding_box.compute(_image)
 
         # Finally add labels
         if result.has_labels:
             labels = result.get_labels()
             label_images = []
             for label in labels:
-                label_images.append(label.compute(image, overlay_on_image=False))
-            image = Label.overlay_labels(image, label_images)
+                label_images.append(label.compute(_image, overlay_on_image=False))
+            _image = Label.overlay_labels(_image, label_images)
 
-        return image
+        return _image
 
     def _generate_full(self, image: Image, result: VisualizeMixin) -> Image:
         """Return a single image with visualizations side by side."""

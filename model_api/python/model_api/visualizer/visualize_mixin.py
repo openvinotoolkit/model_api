@@ -11,11 +11,12 @@ from .primitives import BoundingBoxes, Label, Overlay, Polygon, Primitive
 class VisualizeMixin(ABC):
     """Mixin for visualization."""
 
-    _labels: list[Label] = []
-    _polygons: list[Polygon] = []
-    _overlays: list[Overlay] = []
-    _bounding_boxes: list[BoundingBoxes] = []
-    _registered_primitives: bool = False
+    def __init__(self) -> None:
+        self._labels = []
+        self._polygons = []
+        self._overlays = []
+        self._bounding_boxes = []
+        self._registered_primitives = False
 
     @abstractmethod
     def _register_primitives(self) -> None:

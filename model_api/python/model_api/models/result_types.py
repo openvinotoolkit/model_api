@@ -30,6 +30,7 @@ class AnomalyResult(Result):
         pred_mask: np.ndarray | None = None,
         pred_score: float | None = None,
     ) -> None:
+        super().__init__()
         self.anomaly_map = anomaly_map
         self.pred_boxes = pred_boxes
         self.pred_label = pred_label
@@ -73,6 +74,7 @@ class ClassificationResult(Result):
         feature_vector: np.ndarray | None = None,
         raw_scores: np.ndarray | None = None,
     ) -> None:
+        super().__init__()
         self.top_labels = top_labels
         self.saliency_map = saliency_map
         self.feature_vector = feature_vector
@@ -87,7 +89,9 @@ class ClassificationResult(Result):
         )
 
     def _register_primitives(self) -> None:
-        pass
+        # TODO add saliency map
+        for idx, label, confidence in self.top_labels:
+            self._add_primitive(Label(f"Rank: {idx}, {label}: {confidence:.3f}"))
 
 
 class Detection:
