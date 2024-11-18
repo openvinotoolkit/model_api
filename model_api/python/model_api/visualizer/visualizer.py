@@ -6,11 +6,14 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from PIL import Image
 
 from model_api.visualizer.primitives import Label
-from model_api.visualizer.visualize_mixin import VisualizeMixin
+
+if TYPE_CHECKING:
+    from model_api.visualizer.visualize_mixin import VisualizeMixin
 
 
 class VisualizationType(Enum):
@@ -47,12 +50,12 @@ class Visualizer:
         result.save(path)
 
     def _generate(self, image: Image, result: VisualizeMixin, visualization_type: VisualizationType) -> Image:
-        result: Image
+        _result: Image
         if visualization_type == VisualizationType.SIMPLE:
-            result = self._generate_simple(image, result)
+            _result = self._generate_simple(image, result)
         else:
-            result = self._generate_full(image, result)
-        return result
+            _result = self._generate_full(image, result)
+        return _result
 
     def _generate_simple(self, image: Image, result: VisualizeMixin) -> Image:
         """Return a single image with stacked visualizations."""

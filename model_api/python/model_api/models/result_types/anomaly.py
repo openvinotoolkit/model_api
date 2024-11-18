@@ -5,10 +5,15 @@
 
 from __future__ import annotations
 
+import cv2
 import numpy as np
 
+from model_api.visualizer.primitives import BoundingBoxes, Label, Overlay, Polygon
 
-class AnomalyResult:
+from .base import Result
+
+
+class AnomalyResult(Result):
     """Results for anomaly models."""
 
     def __init__(
@@ -19,6 +24,7 @@ class AnomalyResult:
         pred_mask: np.ndarray | None = None,
         pred_score: float | None = None,
     ) -> None:
+        super().__init__()
         self.anomaly_map = anomaly_map
         self.pred_boxes = pred_boxes
         self.pred_label = pred_label
@@ -40,3 +46,14 @@ class AnomalyResult:
             f"pred_label:{self.pred_label};"
             f"pred_mask min:{pred_mask_min} max:{pred_mask_max};"
         )
+
+    def _register_primitives(self) -> None:
+        """Converts the result to primitives."""
+        anomaly_map = cv2.applyColorMap(self.anomaly_map, cv2.COLORMAP_JET)
+        self._add_primitive(Overlay(anomaly_map))
+        for box in self.pred_boxes:
+            self._add_primitive(BoundingBoxes(*box))
+        if self.pred_label is not None:
+            self._add_primitive(Label(self.pred_label, bg_color="red" if self.pred_label == "Anomaly" else "green"))
+        self._add_primitive(Label(f"Score: {self.pred_score}"))
+        self._add_primitive(Polygon(mask=self.pred_mask))
