@@ -38,7 +38,10 @@ class SegmentedObject:
         self.mask = mask
 
     def __str__(self):
-        return f"{super().__str__()}, {(self.mask > 0.5).sum()}"
+        return (
+            f"{self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.id} ({self.str_label}): {self.score:.3f}"
+            f", {(self.mask > 0.5).sum()}"
+        )
 
 
 class SegmentedObjectWithRects(SegmentedObject):
