@@ -3,22 +3,22 @@
 cpp:
   - changed-files:
       - any-glob-to-any-file:
-          - model_api/cpp/*
+          - model_api/cpp/**
 
 python:
   - changed-files:
       - any-glob-to-any-file:
-          - model_api/python/*
+          - model_api/python/**
 
 tests:
   - changed-files:
       - any-glob-to-any-file:
-          - tests/*
+          - tests/**
 
 docs:
   - changed-files:
       - any-glob-to-any-file:
-          - docs/*
+          - docs/**
           - "**/*.md"
           - "LICENSE"
 
