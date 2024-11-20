@@ -6,11 +6,15 @@
 from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
 
-from model_api.models.result_types import Contour, Detection, SegmentedObject, SegmentedObjectWithRects
+from model_api.models.result_types import Contour, SegmentedObject, SegmentedObjectWithRects
+
+if TYPE_CHECKING:
+    from model_api.models.result_types.detection import DetectionResult
 
 
 def add_rotated_rects(segmented_objects: list[SegmentedObject]) -> list[SegmentedObjectWithRects]:
@@ -49,12 +53,18 @@ def get_contours(
     return combined_contours
 
 
-def clip_detections(detections: list[Detection], size: tuple[int, int]) -> list[Detection]:
-    for detection in detections:
-        detection.xmin = min(max(round(detection.xmin), 0), size[1])
-        detection.ymin = min(max(round(detection.ymin), 0), size[0])
-        detection.xmax = min(max(round(detection.xmax), 0), size[1])
-        detection.ymax = min(max(round(detection.ymax), 0), size[0])
+def clip_detections(detections: DetectionResult, size: tuple[int, int]) -> DetectionResult:
+    """Clip bounding boxes to image size.
+
+    Args:
+        detections (DetectionResult): detection results including boxes, labels and scores.
+        size (tuple[int, int]): image size of format (height, width).
+
+    Returns:
+        DetectionResult: clipped detection results.
+    """
+    detections.bboxes[:, 0::2] = np.clip(detections.bboxes[:, 0::2], 0, size[1])
+    detections.bboxes[:, 1::2] = np.clip(detections.bboxes[:, 1::2], 0, size[0])
     return detections
 
 
