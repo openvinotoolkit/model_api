@@ -8,6 +8,7 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
+from model_api.visualizer.layout import Flatten, Layout
 from model_api.visualizer.primitives import BoundingBoxes, Label, Overlay, Polygon
 
 from .base import Result
@@ -57,3 +58,11 @@ class AnomalyResult(Result):
             self._add_primitive(Label(self.pred_label, bg_color="red" if self.pred_label == "Anomaly" else "green"))
         self._add_primitive(Label(f"Score: {self.pred_score}"))
         self._add_primitive(Polygon(mask=self.pred_mask))
+
+    @property
+    def default_layout(self) -> Layout:
+        return Flatten(
+            Overlay,
+            Polygon,
+            Label,
+        )

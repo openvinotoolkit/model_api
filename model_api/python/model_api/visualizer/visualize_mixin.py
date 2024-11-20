@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from abc import ABC, abstractmethod
+from typing import Type
 
+from .layout import Layout
 from .primitives import BoundingBoxes, Label, Overlay, Polygon, Primitive
 
 
@@ -22,6 +24,11 @@ class VisualizeMixin(ABC):
     def _register_primitives(self) -> None:
         """Convert result entities to primitives."""
 
+    @property
+    @abstractmethod
+    def default_layout(self) -> Layout:
+        """Default layout."""
+
     def _add_primitive(self, primitive: Primitive) -> None:
         """Add primitive."""
         if isinstance(primitive, Label):
@@ -33,49 +40,32 @@ class VisualizeMixin(ABC):
         elif isinstance(primitive, BoundingBoxes):
             self._bounding_boxes.append(primitive)
 
-    @property
-    def has_labels(self) -> bool:
-        """Check if there are labels."""
+    def has_primitive(self, primitive: Type[Primitive]) -> bool:
+        """Check if the primitive type is registered."""
         self._register_primitives_if_needed()
-        return bool(self._labels)
+        if primitive == Label:
+            return bool(self._labels)
+        if primitive == Polygon:
+            return bool(self._polygons)
+        if primitive == Overlay:
+            return bool(self._overlays)
+        if primitive == BoundingBoxes:
+            return bool(self._bounding_boxes)
+        return False
 
-    @property
-    def has_bounding_boxes(self) -> bool:
-        """Check if there are bounding boxes."""
+    def get_primitive(self, primitive: Type[Primitive]) -> Primitive:
+        """Get primitive."""
         self._register_primitives_if_needed()
-        return bool(self._bounding_boxes)
-
-    @property
-    def has_polygons(self) -> bool:
-        """Check if there are polygons."""
-        self._register_primitives_if_needed()
-        return bool(self._polygons)
-
-    @property
-    def has_overlays(self) -> bool:
-        """Check if there are overlays."""
-        self._register_primitives_if_needed()
-        return bool(self._overlays)
-
-    def get_labels(self) -> list[Label]:
-        """Get labels."""
-        self._register_primitives_if_needed()
-        return self._labels
-
-    def get_polygons(self) -> list[Polygon]:
-        """Get polygons."""
-        self._register_primitives_if_needed()
-        return self._polygons
-
-    def get_overlays(self) -> list[Overlay]:
-        """Get overlays."""
-        self._register_primitives_if_needed()
-        return self._overlays
-
-    def get_bounding_boxes(self) -> list[BoundingBoxes]:
-        """Get bounding boxes."""
-        self._register_primitives_if_needed()
-        return self._bounding_boxes
+        if primitive == Label:
+            return self._labels
+        if primitive == Polygon:
+            return self._polygons
+        if primitive == Overlay:
+            return self._overlays
+        if primitive == BoundingBoxes:
+            return self._bounding_boxes
+        msg = f"Primitive {primitive} not found"
+        raise ValueError(msg)
 
     def _register_primitives_if_needed(self):
         if not self._registered_primitives:
