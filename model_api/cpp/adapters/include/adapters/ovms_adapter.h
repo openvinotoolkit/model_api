@@ -26,13 +26,15 @@
 #include "adapters/inference_adapter.h"
 #include <openvino/openvino.hpp>
 
+#include "ovms.h"  // NOLINT
+
 // here we need to decide if we have several calculators (1 for OVMS repository, 1-N inside mediapipe)
 // for the one inside OVMS repo it makes sense to reuse code from ovms lib
 
 class OVMS_Server_;
 typedef struct OVMS_Server_ OVMS_Server;
-namespace mediapipe {
-namespace ovms {
+
+namespace mediapipe::ovms {
 
 using InferenceOutput = std::map<std::string, ov::Tensor>;
 using InferenceInput = std::map<std::string, ov::Tensor>;
@@ -47,12 +49,25 @@ class OVMSInferenceAdapter : public ::InferenceAdapter {
     std::vector<std::string> inputNames;
     std::vector<std::string> outputNames;
     shapes_min_max_t inShapesMinMaxes;
+    shapes_min_max_t outShapesMinMaxes;
+    std::unordered_map<std::string, ov::element::Type_t> inputDatatypes;
+    std::unordered_map<std::string, ov::element::Type_t> outputDatatypes;
     ov::AnyMap modelConfig;
 
 public:
-    OVMSInferenceAdapter(const std::string& servableName, uint32_t servableVersion = 0, OVMS_Server* server = nullptr);
+    // TODO Windows: Fix definition in header - does not compile in cpp.
+    OVMSInferenceAdapter(const std::string& servableName, uint32_t servableVersion = 0, OVMS_Server* server = nullptr) :
+        servableName(servableName),
+        servableVersion(servableVersion) {
+        if (nullptr != server) {
+            this->cserver = server;
+        } else {
+            OVMS_ServerNew(&this->cserver);
+        }
+    }
     virtual ~OVMSInferenceAdapter();
     InferenceOutput infer(const InferenceInput& input) override;
+    void infer(const InferenceInput& input, InferenceOutput& output) override;
     void loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
         const std::string& device, const ov::AnyMap& compilationConfig, size_t max_num_requests = 1) override;
     void inferAsync(const InferenceInput& input, const CallbackData callback_args) override;
@@ -62,9 +77,11 @@ public:
     void awaitAny();
     size_t getNumAsyncExecutors() const;
     ov::PartialShape getInputShape(const std::string& inputName) const override;
+    ov::PartialShape getOutputShape(const std::string& outputName) const override;
+    ov::element::Type_t getInputDatatype(const std::string& inputName) const override;
+    ov::element::Type_t getOutputDatatype(const std::string& outputName) const override;
     std::vector<std::string> getInputNames() const override;
     std::vector<std::string> getOutputNames() const override;
     const ov::AnyMap& getModelConfig() const override;
 };
-}  // namespace ovms
-}  // namespace mediapipe
+}  // namespace mediapipe::ovms
