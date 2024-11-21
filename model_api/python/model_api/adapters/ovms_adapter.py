@@ -24,9 +24,8 @@ class OVMSAdapter(InferenceAdapter):
         )
         self.client = httpclient.InferenceServerClient(service_url)
         if not self.client.is_model_ready(self.model_name, self.model_version):
-            raise RuntimeError(
-                f"Requested model: {self.model_name}, version: {self.model_version} is not accessible"
-            )
+            msg = f"Requested model: {self.model_name}, version: {self.model_version} is not accessible"
+            raise RuntimeError(msg)
 
         self.metadata = self.client.get_model_metadata(
             model_name=self.model_name,
@@ -58,7 +57,9 @@ class OVMSAdapter(InferenceAdapter):
     def infer_sync(self, dict_data):
         inputs = _prepare_inputs(dict_data, self.inputs)
         raw_result = self.client.infer(
-            model_name=self.model_name, model_version=self.model_version, inputs=inputs
+            model_name=self.model_name,
+            model_version=self.model_version,
+            inputs=inputs,
         )
 
         inference_results = {}
@@ -70,7 +71,9 @@ class OVMSAdapter(InferenceAdapter):
     def infer_async(self, dict_data, callback_data):
         inputs = _prepare_inputs(dict_data, self.inputs)
         raw_result = self.client.infer(
-            model_name=self.model_name, model_version=self.model_version, inputs=inputs
+            model_name=self.model_name,
+            model_version=self.model_version,
+            inputs=inputs,
         )
         inference_results = {}
         for output in self.metadata["outputs"]:
@@ -161,7 +164,8 @@ def _parse_model_arg(target_model: str):
         return service_url, model_spec[0], ""
     if len(model_spec) == 2:
         return service_url, model_spec[0], model_spec[1]
-    raise ValueError("invalid target_model format")
+    msg = "Invalid target_model format"
+    raise ValueError(msg)
 
 
 def _prepare_inputs(dict_data, inputs_meta):
@@ -180,7 +184,9 @@ def _prepare_inputs(dict_data, inputs_meta):
             input_data = np.array(input_data, dtype=model_precision)
 
         infer_input = httpclient.InferInput(
-            input_name, input_data.shape, input_info.precision
+            input_name,
+            input_data.shape,
+            input_info.precision,
         )
         infer_input.set_data_from_numpy(input_data)
         inputs.append(infer_input)
