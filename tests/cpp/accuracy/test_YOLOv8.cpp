@@ -1,8 +1,11 @@
+/*
+ * Copyright (C) 2020-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
+#include <gtest/gtest.h>
 #include <models/detection_model.h>
 #include <models/input_data.h>
 #include <models/results.h>
-
-#include <gtest/gtest.h>
 
 #include <filesystem>
 #include <fstream>
@@ -54,22 +57,26 @@ TEST_P(AccuracySuit, TestDetector) {
     ifstream file{param.refpath};
     stringstream ss;
     ss << file.rdbuf();
-    EXPECT_EQ(ss.str(), string{*cached_model(param.model_name)->infer(cv::imread(data() + "/coco128/images/train2017/" + param.refpath.stem().string() + ".jpg"))});
+    EXPECT_EQ(ss.str(),
+              string{*cached_model(param.model_name)
+                          ->infer(cv::imread(data() + "/coco128/images/train2017/" + param.refpath.stem().string() +
+                                             ".jpg"))});
 }
 
-INSTANTIATE_TEST_SUITE_P(YOLOv8, AccuracySuit, testing::ValuesIn([]{
-    std::vector<Param> params;
-    for (const char* model_name : {"yolov5mu_openvino_model", "yolov8l_openvino_model"}) {
-        vector<filesystem::path> refpaths;
-        for (auto const& dir_entry : filesystem::directory_iterator{model_path(model_name) + "/ref/"}) {
-            refpaths.push_back(dir_entry.path());
-        }
-        EXPECT_GT(refpaths.size(), 0);
-        sort(refpaths.begin(), refpaths.end());
-        for (const filesystem::path& refpath : refpaths) {
-            params.push_back({model_name, refpath});
-        }
-    }
-    return params;
-}()));
-}
+INSTANTIATE_TEST_SUITE_P(YOLOv8, AccuracySuit, testing::ValuesIn([] {
+                             std::vector<Param> params;
+                             for (const char* model_name : {"yolov5mu_openvino_model", "yolov8l_openvino_model"}) {
+                                 vector<filesystem::path> refpaths;
+                                 for (auto const& dir_entry :
+                                      filesystem::directory_iterator{model_path(model_name) + "/ref/"}) {
+                                     refpaths.push_back(dir_entry.path());
+                                 }
+                                 EXPECT_GT(refpaths.size(), 0);
+                                 sort(refpaths.begin(), refpaths.end());
+                                 for (const filesystem::path& refpath : refpaths) {
+                                     params.push_back({model_name, refpath});
+                                 }
+                             }
+                             return params;
+                         }()));
+}  // namespace

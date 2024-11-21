@@ -1,29 +1,21 @@
-"""
- Copyright (C) 2024 Intel Corporation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
+
 from model_api.adapters.utils import RESIZE_TYPES, InputTransform
+from model_api.models.result_types import Label
 
 from .model import Model
+from .result_types import ClassificationResult
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
-from .utils import ClassificationResult, load_labels
+from .utils import load_labels
 
 if TYPE_CHECKING:
     from model_api.adapters.inference_adapter import InferenceAdapter
@@ -55,7 +47,7 @@ class ActionClassificationModel(Model):
     def __init__(
         self,
         inference_adapter: InferenceAdapter,
-        configuration: dict[str, Any] = dict(),
+        configuration: dict[str, Any] = {},
         preload: bool = False,
     ) -> None:
         """Action classaification model constructor
@@ -74,17 +66,23 @@ class ActionClassificationModel(Model):
         self.image_blob_names = self._get_inputs()
         self.image_blob_name = self.image_blob_names[0]
         self.nscthw_layout = "NSCTHW" in self.inputs[self.image_blob_name].layout
+        self.labels: list[str]
+        self.path_to_labels: str
+        self.mean_values: list[int | float]
+        self.pad_value: int
+        self.resize_type: str
+        self.reverse_input_channels: bool
+        self.scale_values: list[int | float]
+
         if self.nscthw_layout:
-            self.n, self.s, self.c, self.t, self.h, self.w = self.inputs[
-                self.image_blob_name
-            ].shape
+            self.n, self.s, self.c, self.t, self.h, self.w = self.inputs[self.image_blob_name].shape
         else:
-            self.n, self.s, self.t, self.h, self.w, self.c = self.inputs[
-                self.image_blob_name
-            ].shape
+            self.n, self.s, self.t, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
         self.input_transform = InputTransform(
-            self.reverse_input_channels, self.mean_values, self.scale_values
+            self.reverse_input_channels,
+            self.mean_values,
+            self.scale_values,
         )
         if self.path_to_labels:
             self.labels = load_labels(self.path_to_labels)
@@ -100,10 +98,13 @@ class ActionClassificationModel(Model):
             {
                 "labels": ListValue(description="List of class labels"),
                 "path_to_labels": StringValue(
-                    description="Path to file with labels. Overrides the labels, if they sets via 'labels' parameter"
+                    description="Path to file with labels. Overrides the labels, if they sets via 'labels' parameter",
                 ),
                 "mean_values": ListValue(
-                    description="Normalization values, which will be subtracted from image channels for image-input layer during preprocessing",
+                    description=(
+                        "Normalization values, which will be subtracted from image channels "
+                        "for image-input layer during preprocessing"
+                    ),
                     default_value=[],
                 ),
                 "pad_value": NumericalValue(
@@ -119,17 +120,18 @@ class ActionClassificationModel(Model):
                     description="Type of input image resizing",
                 ),
                 "reverse_input_channels": BooleanValue(
-                    default_value=False, description="Reverse the input channel order"
+                    default_value=False,
+                    description="Reverse the input channel order",
                 ),
                 "scale_values": ListValue(
                     default_value=[],
                     description="Normalization values, which will divide the image channels for image-input layer",
                 ),
-            }
+            },
         )
         return parameters
 
-    def _get_inputs(self) -> tuple[list[str], list[str]]:
+    def _get_inputs(self) -> list[str]:
         """Defines the model inputs for images and additional info.
 
         Raises:
@@ -145,16 +147,17 @@ class ActionClassificationModel(Model):
                 image_blob_names.append(name)
             else:
                 self.raise_error(
-                    "Failed to identify the input for ImageModel: only 4D and 6D input layer supported"
+                    "Failed to identify the input for ImageModel: only 4D and 6D input layer supported",
                 )
         if not image_blob_names:
             self.raise_error(
-                "Failed to identify the input for the image: no 6D input layer found"
+                "Failed to identify the input for the image: no 6D input layer found",
             )
         return image_blob_names
 
     def preprocess(
-        self, inputs: np.ndarray
+        self,
+        inputs: np.ndarray,
     ) -> tuple[dict[str, np.ndarray], dict[str, tuple[int, ...]]]:
         """Data preprocess method
 
@@ -191,12 +194,9 @@ class ActionClassificationModel(Model):
             "original_shape": inputs.shape,
             "resized_shape": (self.n, self.s, self.c, self.t, self.h, self.w),
         }
-        resized_inputs = [
-            self.resize(frame, (self.w, self.h), pad_value=self.pad_value)
-            for frame in inputs
-        ]
+        resized_inputs = [self.resize(frame, (self.w, self.h), pad_value=self.pad_value) for frame in inputs]
         np_frames = self._change_layout(
-            [self.input_transform(inputs) for inputs in resized_inputs]
+            [self.input_transform(inputs) for inputs in resized_inputs],
         )
         dict_inputs = {self.image_blob_name: np_frames}
         return dict_inputs, meta
@@ -216,13 +216,15 @@ class ActionClassificationModel(Model):
         return np_inputs
 
     def postprocess(
-        self, outputs: dict[str, np.ndarray], meta: dict[str, Any]
+        self,
+        outputs: dict[str, np.ndarray],
+        meta: dict[str, Any],
     ) -> ClassificationResult:
         """Post-process."""
         logits = next(iter(outputs.values())).squeeze()
         index = np.argmax(logits)
         return ClassificationResult(
-            [(index, self.labels[index], logits[index])],
+            [Label(int(index), self.labels[index], logits[index])],
             np.ndarray(0),
             np.ndarray(0),
             np.ndarray(0),

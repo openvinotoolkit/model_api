@@ -1,20 +1,10 @@
-"""
- Copyright (c) 2021-2024 Intel Corporation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
 import re
+from typing import Any
 
 import numpy as np
 
@@ -23,16 +13,14 @@ from .utils import Layout, get_rt_info_from_dict
 
 
 class OVMSAdapter(InferenceAdapter):
-    """
-    Class that allows working with models served by the OpenVINO Model Server
-    """
+    """Class that allows working with models served by the OpenVINO Model Server"""
 
     def __init__(self, target_model: str):
         """Expected format: <address>:<port>/models/<model_name>[:<model_version>]"""
         import tritonclient.http as httpclient
 
         service_url, self.model_name, self.model_version = _parse_model_arg(
-            target_model
+            target_model,
         )
         self.client = httpclient.InferenceServerClient(service_url)
         if not self.client.is_model_ready(self.model_name, self.model_version):
@@ -41,7 +29,8 @@ class OVMSAdapter(InferenceAdapter):
             )
 
         self.metadata = self.client.get_model_metadata(
-            model_name=self.model_name, model_version=self.model_version
+            model_name=self.model_name,
+            model_version=self.model_version,
         )
         self.inputs = self.get_input_layers()
 
@@ -98,10 +87,17 @@ class OVMSAdapter(InferenceAdapter):
     def load_model(self):
         pass
 
+    def get_model(self):
+        """Return the reference to the GrpcClient."""
+        return self.client
+
     def await_all(self):
         pass
 
     def await_any(self):
+        pass
+
+    def get_raw_result(self, infer_result):
         pass
 
     def embed_preprocessing(
@@ -125,6 +121,14 @@ class OVMSAdapter(InferenceAdapter):
     def get_rt_info(self, path):
         return get_rt_info_from_dict(self.metadata["rt_info"], path)
 
+    def update_model_info(self, model_info: dict[str, Any]):
+        msg = "OVMSAdapter does not support updating model info"
+        raise NotImplementedError(msg)
+
+    def save_model(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+        msg = "OVMSAdapter does not support saving a model"
+        raise NotImplementedError(msg)
+
 
 _triton2np_precision = {
     "INT64": np.int64,
@@ -141,12 +145,15 @@ _triton2np_precision = {
 
 def _parse_model_arg(target_model: str):
     if not isinstance(target_model, str):
-        raise TypeError("target_model must be str")
+        msg = "target_model must be str"
+        raise TypeError(msg)
     # Expected format: <address>:<port>/models/<model_name>[:<model_version>]
     if not re.fullmatch(
-        r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*", target_model
+        r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*",
+        target_model,
     ):
-        raise ValueError("invalid --model option format")
+        msg = "invalid --model option format"
+        raise ValueError(msg)
     service_url, _, model = target_model.split("/")
     model_spec = model.split(":")
     if len(model_spec) == 1:
@@ -162,8 +169,9 @@ def _prepare_inputs(dict_data, inputs_meta):
 
     inputs = []
     for input_name, input_data in dict_data.items():
-        if input_name not in inputs_meta.keys():
-            raise ValueError("Input data does not match model inputs")
+        if input_name not in inputs_meta:
+            msg = "Input data does not match model inputs"
+            raise ValueError(msg)
         input_info = inputs_meta[input_name]
         model_precision = _triton2np_precision[input_info.precision]
         if isinstance(input_data, np.ndarray) and input_data.dtype != model_precision:

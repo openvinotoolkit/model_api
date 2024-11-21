@@ -1,0 +1,31 @@
+# See help here: https://github.com/marketplace/actions/labeler
+
+cpp:
+  - changed-files:
+      - any-glob-to-any-file:
+          - model_api/cpp/**
+
+python:
+  - changed-files:
+      - any-glob-to-any-file:
+          - model_api/python/**
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - tests/**
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/**
+          - "**/*.md"
+          - "LICENSE"
+
+build:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**/*"
+          - ".pre-commit-config.yaml"
+          - "pyproject.toml"
+          - "**/CMakeLists.txt"

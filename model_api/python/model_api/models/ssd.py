@@ -1,35 +1,20 @@
-"""
- Copyright (C) 2020-2024 Intel Corporation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
 import numpy as np
 
 from .detection_model import DetectionModel
-from .utils import Detection, DetectionResult
+from .result_types import Detection, DetectionResult
 
 
 class SSD(DetectionModel):
     __model__ = "SSD"
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(self, inference_adapter, configuration: dict = {}, preload=False):
         super().__init__(inference_adapter, configuration, preload)
-        self.image_info_blob_name = (
-            self.image_info_blob_names[0]
-            if len(self.image_info_blob_names) == 1
-            else None
-        )
+        self.image_info_blob_name = self.image_info_blob_names[0] if len(self.image_info_blob_names) == 1 else None
         self.output_parser = self._get_output_parser(self.image_blob_name)
 
     def preprocess(self, inputs):
@@ -41,6 +26,7 @@ class SSD(DetectionModel):
     def postprocess(self, outputs, meta):
         detections = self._parse_outputs(outputs)
         detections = self._resize_detections(detections, meta)
+        detections = self._filter_detections(detections, _bbox_area_threshold)
         detections = self._add_label_names(detections)
         return DetectionResult(
             detections,
@@ -49,7 +35,11 @@ class SSD(DetectionModel):
         )
 
     def _get_output_parser(
-        self, image_blob_name, bboxes="bboxes", labels="labels", scores="scores"
+        self,
+        image_blob_name,
+        bboxes="bboxes",
+        labels="labels",
+        scores="scores",
     ):
         try:
             parser = SingleOutputParser(self.outputs)
@@ -71,20 +61,22 @@ class SSD(DetectionModel):
             return parser
         except ValueError:
             pass
-        self.raise_error("Unsupported model outputs")
+        msg = "Unsupported model outputs"
+        raise ValueError(msg)
 
     def _parse_outputs(self, outputs):
-        detections = self.output_parser(outputs)
-        return [d for d in detections if d.score > self.confidence_threshold]
+        return self.output_parser(outputs)
 
 
 def find_layer_by_name(name, layers):
     suitable_layers = [layer_name for layer_name in layers if name in layer_name]
     if not suitable_layers:
-        raise ValueError('Suitable layer for "{}" output is not found'.format(name))
+        msg = f'Suitable layer for "{name}" output is not found'
+        raise ValueError(msg)
 
     if len(suitable_layers) > 1:
-        raise ValueError('More than 1 layer matched to "{}" output'.format(name))
+        msg = f'More than 1 layer matched to "{name}" output'
+        raise ValueError(msg)
 
     return suitable_layers[0]
 
@@ -92,21 +84,18 @@ def find_layer_by_name(name, layers):
 class SingleOutputParser:
     def __init__(self, all_outputs):
         if len(all_outputs) != 1:
-            raise ValueError("Network must have only one output.")
+            msg = "Network must have only one output."
+            raise ValueError(msg)
         self.output_name, output_data = next(iter(all_outputs.items()))
         last_dim = output_data.shape[-1]
         if last_dim != 7:
-            raise ValueError(
-                "The last dimension of the output blob must be equal to 7, "
-                "got {} instead.".format(last_dim)
-            )
+            msg = f"The last dimension of the output blob must be equal to 7, got {last_dim} instead."
+            raise ValueError(msg)
 
     def __call__(self, outputs):
         return [
             Detection(xmin, ymin, xmax, ymax, score, label)
-            for _, label, score, xmin, ymin, xmax, ymax in outputs[self.output_name][0][
-                0
-            ]
+            for _, label, score, xmin, ymin, xmax, ymax in outputs[self.output_name][0][0]
         ]
 
 
@@ -126,10 +115,7 @@ class MultipleOutputParser:
         bboxes = outputs[self.bboxes_layer][0]
         scores = outputs[self.scores_layer][0]
         labels = outputs[self.labels_layer][0]
-        return [
-            Detection(*bbox, score, label)
-            for label, score, bbox in zip(labels, scores, bboxes)
-        ]
+        return [Detection(*bbox, score, label) for label, score, bbox in zip(labels, scores, bboxes)]
 
 
 class BoxesLabelsParser:
@@ -151,9 +137,11 @@ class BoxesLabelsParser:
             if (len(data.shape) == 2 or len(data.shape) == 3) and data.shape[-1] == 5
         ]
         if not filter_outputs:
-            raise ValueError("Suitable output with bounding boxes is not found")
+            msg = "Suitable output with bounding boxes is not found"
+            raise ValueError(msg)
         if len(filter_outputs) > 1:
-            raise ValueError("More than 1 candidate for output with bounding boxes.")
+            msg = "More than 1 candidate for output with bounding boxes."
+            raise ValueError(msg)
         return filter_outputs[0]
 
     def __call__(self, outputs):
@@ -169,12 +157,9 @@ class BoxesLabelsParser:
             labels = np.full(len(bboxes), self.default_label, dtype=bboxes.dtype)
         labels = labels.squeeze(0)
 
-        detections = [
-            Detection(*bbox, score, label)
-            for label, score, bbox in zip(labels, scores, bboxes)
-        ]
-        return detections
+        return [Detection(*bbox, score, label) for label, score, bbox in zip(labels, scores, bboxes)]
 
 
+_bbox_area_threshold = 1.0
 _saliency_map_name = "saliency_map"
 _feature_vector_name = "feature_vector"

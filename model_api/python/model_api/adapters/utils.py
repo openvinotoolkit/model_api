@@ -1,40 +1,32 @@
-"""
- Copyright (C) 2022-2024 Intel Corporation
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
 import math
 from functools import partial
-from typing import Optional
+from typing import TYPE_CHECKING, Any
 
 import cv2
 import numpy as np
 from openvino import Model, OVAny, Type, layout_helpers
-from openvino.runtime import Output
+from openvino.runtime import Input, Node, Output
 from openvino.runtime import opset10 as opset
 from openvino.runtime.utils.decorators import custom_preprocess_function
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 class Layout:
-    def __init__(self, layout="") -> None:
+    def __init__(self, layout: str = "") -> None:
         self.layout = layout
 
     @staticmethod
-    def from_shape(shape):
-        """
-        Create Layout from given shape
-        """
+    def from_shape(shape: list[int] | tuple[int, ...]) -> str:
+        """Create Layout from given shape"""
         if len(shape) == 2:
             return "NC"
         if len(shape) == 3:
@@ -44,37 +36,28 @@ class Layout:
         if len(shape) == 6:
             return "NSTHWC" if shape[5] in range(1, 5) else "NSCTHW"
 
-        raise RuntimeError(
-            "Get layout from shape method doesn't support {}D shape".format(len(shape))
-        )
+        msg = f"Get layout from shape method doesn't support {len(shape)}D shape"
+        raise RuntimeError(msg)
 
     @staticmethod
-    def from_openvino(input):
-        """
-        Create Layout from openvino input
-        """
+    def from_openvino(input: Input):
+        """Create Layout from openvino input"""
         return layout_helpers.get_layout(input).to_string().strip("[]").replace(",", "")
 
     @staticmethod
     def from_user_layouts(input_names: set, user_layouts: dict):
-        """
-        Create Layout for input based on user info
-        """
+        """Create Layout for input based on user info"""
         for input_name in input_names:
             if input_name in user_layouts:
                 return user_layouts[input_name]
         return user_layouts.get("", "")
 
     @staticmethod
-    def parse_layouts(layout_string: str) -> Optional[dict]:
-        """
-        Parse layout parameter in format "input0:NCHW,input1:NC" or "NCHW" (applied to all inputs)
-        """
+    def parse_layouts(layout_string: str) -> dict | None:
+        """Parse layout parameter in format "input0:NCHW,input1:NC" or "NCHW" (applied to all inputs)"""
         if not layout_string:
             return None
-        search_string = (
-            layout_string if layout_string.rfind(":") != -1 else ":" + layout_string
-        )
+        search_string = layout_string if layout_string.rfind(":") != -1 else ":" + layout_string
         colon_pos = search_string.rfind(":")
         user_layouts = {}
         while colon_pos != -1:
@@ -92,11 +75,13 @@ class Layout:
         return user_layouts
 
 
-def resize_image_letterbox_graph(input: Output, size, interpolation, pad_value):
+def resize_image_letterbox_graph(input: Output, size: tuple[int, int], interpolation: str, pad_value: int) -> Node:
     if not isinstance(pad_value, int):
-        raise RuntimeError("pad_value must be int")
+        msg = "pad_value must be int"
+        raise RuntimeError(msg)
     if not 0 <= pad_value <= 255:
-        raise RuntimeError("pad_value must be in range [0, 255]")
+        msg = "pad_value must be in range [0, 255]"
+        raise RuntimeError(msg)
     w, h = size
     h_axis = 1
     w_axis = 2
@@ -113,10 +98,12 @@ def resize_image_letterbox_graph(input: Output, size, interpolation, pad_value):
     h_ratio = opset.divide(opset.constant(h, dtype=Type.f32), ih)
     scale = opset.minimum(w_ratio, h_ratio)
     nw = opset.convert(
-        opset.round(opset.multiply(iw, scale), "half_to_even"), destination_type="i32"
+        opset.round(opset.multiply(iw, scale), "half_to_even"),
+        destination_type="i32",
     )
     nh = opset.convert(
-        opset.round(opset.multiply(ih, scale), "half_to_even"), destination_type="i32"
+        opset.round(opset.multiply(ih, scale), "half_to_even"),
+        destination_type="i32",
     )
     new_size = opset.concat([opset.unsqueeze(nh, 0), opset.unsqueeze(nw, 0)], axis=0)
     image = opset.interpolate(
@@ -136,10 +123,12 @@ def resize_image_letterbox_graph(input: Output, size, interpolation, pad_value):
         opset.constant(2, dtype=np.int32),
     )
     dx_border = opset.subtract(
-        opset.subtract(opset.constant(w, dtype=np.int32), nw), dx
+        opset.subtract(opset.constant(w, dtype=np.int32), nw),
+        dx,
     )
     dy_border = opset.subtract(
-        opset.subtract(opset.constant(h, dtype=np.int32), nh), dy
+        opset.subtract(opset.constant(h, dtype=np.int32), nh),
+        dy,
     )
     pads_begin = opset.concat(
         [
@@ -168,7 +157,7 @@ def resize_image_letterbox_graph(input: Output, size, interpolation, pad_value):
     )
 
 
-def crop_resize_graph(input: Output, size):
+def crop_resize_graph(input: Output, size: tuple[int, int]) -> Node:
     h_axis = 1
     w_axis = 2
     desired_aspect_ratio = size[1] / size[0]  # width / height
@@ -194,11 +183,17 @@ def crop_resize_graph(input: Output, size):
         )
         then_stop = opset.add(then_offset, iw_t)
         then_cropped_frame = opset.slice(
-            image_t, start=then_offset, stop=then_stop, step=[1], axes=[h_axis]
+            image_t,
+            start=then_offset,
+            stop=then_stop,
+            step=[1],
+            axes=[h_axis],
         )
         then_body_res_1 = opset.result(then_cropped_frame)
         then_body = Model(
-            [then_body_res_1], [image_t, iw_t, ih_t], "then_body_function"
+            [then_body_res_1],
+            [image_t, iw_t, ih_t],
+            "then_body_function",
         )
 
         # else_body
@@ -211,11 +206,17 @@ def crop_resize_graph(input: Output, size):
         )
         else_stop = opset.add(else_offset, ih_e)
         else_cropped_frame = opset.slice(
-            image_e, start=else_offset, stop=else_stop, step=[1], axes=[w_axis]
+            image_e,
+            start=else_offset,
+            stop=else_stop,
+            step=[1],
+            axes=[w_axis],
         )
         else_body_res_1 = opset.result(else_cropped_frame)
         else_body = Model(
-            [else_body_res_1], [image_e, iw_e, ih_e], "else_body_function"
+            [else_body_res_1],
+            [image_e, iw_e, ih_e],
+            "else_body_function",
         )
 
         # if
@@ -231,39 +232,51 @@ def crop_resize_graph(input: Output, size):
     elif desired_aspect_ratio < 1:
         new_width = opset.floor(
             opset.multiply(
-                opset.convert(ih, destination_type="f32"), desired_aspect_ratio
-            )
+                opset.convert(ih, destination_type="f32"),
+                desired_aspect_ratio,
+            ),
         )
         offset = opset.unsqueeze(
             opset.divide(
-                opset.subtract(iw, new_width), opset.constant(2, dtype=np.int32)
+                opset.subtract(iw, new_width),
+                opset.constant(2, dtype=np.int32),
             ),
             0,
         )
         stop = opset.add(offset, new_width)
         cropped_frame = opset.slice(
-            input, start=offset, stop=stop, step=[1], axes=[w_axis]
+            input,
+            start=offset,
+            stop=stop,
+            step=[1],
+            axes=[w_axis],
         )
     elif desired_aspect_ratio > 1:
         new_hight = opset.floor(
             opset.multiply(
-                opset.convert(iw, destination_type="f32"), desired_aspect_ratio
-            )
+                opset.convert(iw, destination_type="f32"),
+                desired_aspect_ratio,
+            ),
         )
         offset = opset.unsqueeze(
             opset.divide(
-                opset.subtract(ih, new_hight), opset.constant(2, dtype=np.int32)
+                opset.subtract(ih, new_hight),
+                opset.constant(2, dtype=np.int32),
             ),
             0,
         )
         stop = opset.add(offset, new_hight)
         cropped_frame = opset.slice(
-            input, start=offset, stop=stop, step=[1], axes=[h_axis]
+            input,
+            start=offset,
+            stop=stop,
+            step=[1],
+            axes=[h_axis],
         )
 
     target_size = list(size)
     target_size.reverse()
-    resized_image = opset.interpolate(
+    return opset.interpolate(
         cropped_frame,
         target_size,
         scales=np.array([0.0, 0.0], dtype=np.float32),
@@ -271,16 +284,21 @@ def crop_resize_graph(input: Output, size):
         mode="linear",
         shape_calculation_mode="sizes",
     )
-    return resized_image
 
 
 def resize_image_graph(
-    input: Output, size, keep_aspect_ratio, interpolation, pad_value
-):
+    input: Output,
+    size: tuple[int, int],
+    keep_aspect_ratio: bool,
+    interpolation: str,
+    pad_value: int,
+) -> Node:
     if not isinstance(pad_value, int):
-        raise RuntimeError("pad_value must be int")
+        msg = "pad_value must be int"
+        raise RuntimeError(msg)
     if not 0 <= pad_value <= 255:
-        raise RuntimeError("pad_value must be in range [0, 255]")
+        msg = "pad_value must be in range [0, 255]"
+        raise RuntimeError(msg)
     h_axis = 1
     w_axis = 2
     w, h = size
@@ -310,10 +328,12 @@ def resize_image_graph(
     h_ratio = opset.divide(np.float32(h), ih)
     scale = opset.minimum(w_ratio, h_ratio)
     nw = opset.convert(
-        opset.round(opset.multiply(iw, scale), "half_to_even"), destination_type="i32"
+        opset.round(opset.multiply(iw, scale), "half_to_even"),
+        destination_type="i32",
     )
     nh = opset.convert(
-        opset.round(opset.multiply(ih, scale), "half_to_even"), destination_type="i32"
+        opset.round(opset.multiply(ih, scale), "half_to_even"),
+        destination_type="i32",
     )
     new_size = opset.concat([opset.unsqueeze(nh, 0), opset.unsqueeze(nw, 0)], axis=0)
     image = opset.interpolate(
@@ -345,7 +365,7 @@ def resize_image_graph(
     )
 
 
-def resize_image(size, interpolation, pad_value):
+def resize_image(size: tuple[int, int], interpolation: str, pad_value: int) -> Callable:
     return custom_preprocess_function(
         partial(
             resize_image_graph,
@@ -353,11 +373,11 @@ def resize_image(size, interpolation, pad_value):
             keep_aspect_ratio=False,
             interpolation=interpolation,
             pad_value=pad_value,
-        )
+        ),
     )
 
 
-def resize_image_with_aspect(size, interpolation, pad_value):
+def resize_image_with_aspect(size: tuple[int, int], interpolation: str, pad_value: int) -> Callable:
     return custom_preprocess_function(
         partial(
             resize_image_graph,
@@ -365,27 +385,27 @@ def resize_image_with_aspect(size, interpolation, pad_value):
             keep_aspect_ratio=True,
             interpolation=interpolation,
             pad_value=pad_value,
-        )
+        ),
     )
 
 
-def crop_resize(size, interpolation, pad_value):
+def crop_resize(size: tuple[int, int], interpolation: str, pad_value: int) -> Callable:
     return custom_preprocess_function(partial(crop_resize_graph, size=size))
 
 
-def resize_image_letterbox(size, interpolation, pad_value):
+def resize_image_letterbox(size: tuple[int, int], interpolation: str, pad_value: int) -> Callable:
     return custom_preprocess_function(
         partial(
             resize_image_letterbox_graph,
             size=size,
             interpolation=interpolation,
             pad_value=pad_value,
-        )
+        ),
     )
 
 
-def load_parameters_from_onnx(onnx_model):
-    parameters = {}
+def load_parameters_from_onnx(onnx_model: Any) -> dict[str, Any]:
+    parameters: dict[str, Any] = {}
 
     def insert_hierarchical(keys, val, root_dict):
         if len(keys) == 1:
@@ -403,7 +423,7 @@ def load_parameters_from_onnx(onnx_model):
     return parameters
 
 
-def get_rt_info_from_dict(rt_info_dict, path):
+def get_rt_info_from_dict(rt_info_dict: dict[str, Any], path: list[str]) -> OVAny:
     value = rt_info_dict
     try:
         value = rt_info_dict
@@ -411,19 +431,18 @@ def get_rt_info_from_dict(rt_info_dict, path):
             value = value[item]
         return OVAny(value)
     except KeyError:
-        raise RuntimeError(
-            "Cannot get runtime attribute. Path to runtime attribute is incorrect."
-        )
+        msg = "Cannot get runtime attribute. Path to runtime attribute is incorrect."
+        raise RuntimeError(msg)
 
 
 def resize_image_ocv(
-    image,
-    size,
-    keep_aspect_ratio=False,
-    is_pad=False,
-    pad_value=0,
-    interpolation=cv2.INTER_LINEAR,
-):
+    image: np.ndarray,
+    size: tuple[int, int],
+    keep_aspect_ratio: bool = False,
+    is_pad: bool = False,
+    pad_value: int = 0,
+    interpolation: int = cv2.INTER_LINEAR,
+) -> np.ndarray:
     if keep_aspect_ratio:
         h, w = image.shape[:2]
         scale = min(size[1] / h, size[0] / w)
@@ -441,7 +460,11 @@ def resize_image_ocv(
     return cv2.resize(image, size, interpolation=interpolation)
 
 
-def resize_image_with_aspect_ocv(image, size, interpolation=cv2.INTER_LINEAR):
+def resize_image_with_aspect_ocv(
+    image: np.ndarray,
+    size: tuple[int, int],
+    interpolation: int = cv2.INTER_LINEAR,
+) -> np.ndarray:
     return resize_image_ocv(
         image,
         size,
@@ -453,8 +476,11 @@ def resize_image_with_aspect_ocv(image, size, interpolation=cv2.INTER_LINEAR):
 
 
 def resize_image_letterbox_ocv(
-    image, size, interpolation=cv2.INTER_LINEAR, pad_value=0
-):
+    image: np.ndarray,
+    size: tuple[int, int],
+    interpolation: int = cv2.INTER_LINEAR,
+    pad_value: int = 0,
+) -> np.ndarray:
     ih, iw = image.shape[0:2]
     w, h = size
     scale = min(w / iw, h / ih)
@@ -471,7 +497,7 @@ def resize_image_letterbox_ocv(
     )
 
 
-def crop_resize_ocv(image, size):
+def crop_resize_ocv(image: np.ndarray, size: tuple[int, int]) -> np.ndarray:
     desired_aspect_ratio = size[1] / size[0]  # width / height
     if desired_aspect_ratio == 1:
         if image.shape[0] > image.shape[1]:
@@ -492,7 +518,7 @@ def crop_resize_ocv(image, size):
     return cv2.resize(cropped_frame, size)
 
 
-RESIZE_TYPES = {
+RESIZE_TYPES: dict[str, Callable] = {
     "crop": crop_resize_ocv,
     "standard": resize_image_ocv,
     "fit_to_window": resize_image_with_aspect_ocv,
@@ -500,7 +526,7 @@ RESIZE_TYPES = {
 }
 
 
-INTERPOLATION_TYPES = {
+INTERPOLATION_TYPES: dict[str, int] = {
     "LINEAR": cv2.INTER_LINEAR,
     "CUBIC": cv2.INTER_CUBIC,
     "NEAREST": cv2.INTER_NEAREST,
@@ -510,20 +536,15 @@ INTERPOLATION_TYPES = {
 
 class InputTransform:
     def __init__(
-        self, reverse_input_channels=False, mean_values=None, scale_values=None
+        self,
+        reverse_input_channels: bool = False,
+        mean_values: list[float] | None = None,
+        scale_values: list[float] | None = None,
     ):
         self.reverse_input_channels = reverse_input_channels
         self.is_trivial = not (reverse_input_channels or mean_values or scale_values)
-        self.means = (
-            np.array(mean_values, dtype=np.float32)
-            if mean_values
-            else np.array([0.0, 0.0, 0.0])
-        )
-        self.std_scales = (
-            np.array(scale_values, dtype=np.float32)
-            if scale_values
-            else np.array([1.0, 1.0, 1.0])
-        )
+        self.means = np.array(mean_values, dtype=np.float32) if mean_values else np.array([0.0, 0.0, 0.0])
+        self.std_scales = np.array(scale_values, dtype=np.float32) if scale_values else np.array([1.0, 1.0, 1.0])
 
     def __call__(self, inputs):
         if self.is_trivial:

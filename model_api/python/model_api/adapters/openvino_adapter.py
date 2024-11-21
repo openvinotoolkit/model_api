@@ -1,22 +1,18 @@
-"""
- Copyright (c) 2021-2024 Intel Corporation
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
 import logging as log
 from pathlib import Path
-from typing import Dict, Set, Tuple
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from os import PathLike
+
+    from numpy import ndarray
 
 try:
     import openvino.runtime as ov
@@ -24,6 +20,7 @@ try:
         AsyncInferQueue,
         Core,
         Dimension,
+        OVAny,
         PartialShape,
         Type,
         get_version,
@@ -47,16 +44,17 @@ from .utils import (
 )
 
 
-def create_core():
+def create_core() -> Core:
     if openvino_absent:
-        raise ImportError("The OpenVINO package is not installed")
+        msg = "The OpenVINO package is not installed"
+        raise ImportError(msg)
 
     log.info("OpenVINO Runtime")
-    log.info("\tbuild: {}".format(get_version()))
+    log.info(f"\tbuild: {get_version()}")
     return Core()
 
 
-def parse_devices(device_string):
+def parse_devices(device_string: str) -> list[str]:
     colon_position = device_string.find(":")
     if colon_position != -1:
         device_type = device_string[:colon_position]
@@ -68,10 +66,10 @@ def parse_devices(device_string):
                 if parenthesis_position != -1:
                     device = device[:parenthesis_position]
             return devices
-    return (device_string,)
+    return [device_string]
 
 
-def parse_value_per_device(devices: Set[str], values_string: str) -> Dict[str, int]:
+def parse_value_per_device(devices: set[str], values_string: str) -> dict[str, int]:
     """Format: <device1>:<value1>,<device2>:<value2> or just <value>"""
     values_string_upper = values_string.upper()
     result = {}
@@ -85,13 +83,16 @@ def parse_value_per_device(devices: Set[str], values_string: str) -> Dict[str, i
             for device in devices:
                 result[device] = int(device_value_list[0])
         elif device_value_list[0] != "":
-            raise RuntimeError(f"Unknown string format: {values_string}")
+            msg = f"Unknown string format: {values_string}"
+            raise RuntimeError(msg)
     return result
 
 
 def get_user_config(
-    flags_d: str, flags_nstreams: str, flags_nthreads: int
-) -> Dict[str, str]:
+    flags_d: str,
+    flags_nstreams: str,
+    flags_nthreads: int | None = None,
+) -> dict[str, str]:
     config = {}
 
     devices = set(parse_devices(flags_d))
@@ -104,17 +105,9 @@ def get_user_config(
                 config["INFERENCE_NUM_THREADS"] = str(flags_nthreads)
 
             # for CPU execution, more throughput-oriented execution via streams
-            config["NUM_STREAMS"] = (
-                str(device_nstreams[device])
-                if device in device_nstreams
-                else "NUM_STREAMS_AUTO"
-            )
+            config["NUM_STREAMS"] = str(device_nstreams[device]) if device in device_nstreams else "NUM_STREAMS_AUTO"
         elif device == "GPU":
-            config["NUM_STREAMS"] = (
-                str(device_nstreams[device])
-                if device in device_nstreams
-                else "NUM_STREAMS_AUTO"
-            )
+            config["NUM_STREAMS"] = str(device_nstreams[device]) if device in device_nstreams else "NUM_STREAMS_AUTO"
             if "MULTI" in flags_d and "CPU" in devices:
                 # multi-device execution with the CPU + GPU performs best with GPU throttling hint,
                 # which releases another CPU thread (that is otherwise used by the GPU driver for active polling)
@@ -123,26 +116,22 @@ def get_user_config(
 
 
 class OpenvinoAdapter(InferenceAdapter):
-    """
-    Works with OpenVINO model
-    """
+    """Works with OpenVINO model"""
 
     def __init__(
         self,
-        core,
-        model,
-        weights_path="",
-        model_parameters={},
-        device="CPU",
-        plugin_config=None,
-        max_num_requests=0,
-        precision="FP16",
-        download_dir=None,
-        cache_dir=None,
-    ):
-        """
-        precision, download_dir and cache_dir are ignored if model is a path to a file
-        """
+        core: Core,
+        model: str,
+        weights_path: PathLike | None = None,
+        model_parameters: dict[str, Any] = {},
+        device: str = "CPU",
+        plugin_config: dict[str, Any] | None = None,
+        max_num_requests: int = 0,
+        precision: str = "FP16",
+        download_dir: PathLike | None = None,
+        cache_dir: PathLike | None = None,
+    ) -> None:
+        """precision, download_dir and cache_dir are ignored if model is a path to a file"""
         self.core = core
         self.model_path = model
         self.device = device
@@ -150,7 +139,7 @@ class OpenvinoAdapter(InferenceAdapter):
         self.max_num_requests = max_num_requests
         self.model_parameters = model_parameters
         self.model_parameters["input_layouts"] = Layout.parse_layouts(
-            self.model_parameters.get("input_layouts", None)
+            self.model_parameters.get("input_layouts", None),
         )
         self.is_onnx_file = False
         self.onnx_metadata = {}
@@ -159,25 +148,26 @@ class OpenvinoAdapter(InferenceAdapter):
             if Path(self.model_path).suffix == ".onnx" and weights_path:
                 log.warning(
                     'For model in ONNX format should set only "model_path" parameter.'
-                    'The "weights_path" will be omitted'
+                    'The "weights_path" will be omitted',
                 )
             if Path(self.model_path).suffix == ".onnx" and not weights_path:
                 import onnx
 
                 self.is_onnx_file = True
                 self.onnx_metadata = load_parameters_from_onnx(
-                    onnx.load(self.model_path)
+                    onnx.load(self.model_path),
                 )
 
         self.model_from_buffer = isinstance(self.model_path, bytes) and isinstance(
-            weights_path, bytes
+            weights_path,
+            bytes,
         )
         model_from_file = not self.model_from_buffer and Path(self.model_path).is_file()
         if model_from_file or self.model_from_buffer:
             log.info(
                 "Reading model {}".format(
-                    "from buffer" if self.model_from_buffer else self.model_path
-                )
+                    "from buffer" if self.model_from_buffer else self.model_path,
+                ),
             )
             self.model = core.read_model(self.model_path, weights_path)
             return
@@ -195,49 +185,53 @@ class OpenvinoAdapter(InferenceAdapter):
                 log.info(f"Reading model {self.model_path}")
                 self.model = core.read_model(self.model_path)
                 return
-        raise RuntimeError("Model must be bytes, a file or existing OMZ model name")
+        msg = "Model must be bytes, a file or existing OMZ model name"
+        raise RuntimeError(msg)
 
-    def load_model(self):
+    def load_model(self) -> None:
         self.compiled_model = self.core.compile_model(
-            self.model, self.device, self.plugin_config
+            self.model,
+            self.device,
+            self.plugin_config,
         )
         self.async_queue = AsyncInferQueue(self.compiled_model, self.max_num_requests)
         if self.max_num_requests == 0:
             # +1 to use it as a buffer of the pipeline
             self.async_queue = AsyncInferQueue(
-                self.compiled_model, len(self.async_queue) + 1
+                self.compiled_model,
+                len(self.async_queue) + 1,
             )
 
         log.info(
             "The model {} is loaded to {}".format(
                 "from buffer" if self.model_from_buffer else self.model_path,
                 self.device,
-            )
+            ),
         )
         self.log_runtime_settings()
 
-    def log_runtime_settings(self):
+    def log_runtime_settings(self) -> None:
         devices = set(parse_devices(self.device))
         if "AUTO" not in devices:
             for device in devices:
                 try:
                     nstreams = self.compiled_model.get_property(
-                        device + "_THROUGHPUT_STREAMS"
+                        device + "_THROUGHPUT_STREAMS",
                     )
-                    log.info("\tDevice: {}".format(device))
-                    log.info("\t\tNumber of streams: {}".format(nstreams))
+                    log.info(f"\tDevice: {device}")
+                    log.info(f"\t\tNumber of streams: {nstreams}")
                     if device == "CPU":
                         nthreads = self.compiled_model.get_property("CPU_THREADS_NUM")
                         log.info(
                             "\t\tNumber of threads: {}".format(
-                                nthreads if int(nthreads) else "AUTO"
-                            )
+                                nthreads if int(nthreads) else "AUTO",
+                            ),
                         )
                 except RuntimeError:
                     pass
-        log.info("\tNumber of model infer requests: {}".format(len(self.async_queue)))
+        log.info(f"\tNumber of model infer requests: {len(self.async_queue)}")
 
-    def get_input_layers(self):
+    def get_input_layers(self) -> dict[str, Metadata]:
         inputs = {}
         for input in self.model.inputs:
             input_shape = get_input_shape(input)
@@ -248,32 +242,32 @@ class OpenvinoAdapter(InferenceAdapter):
                 input_layout,
                 input.get_element_type().get_type_name(),
             )
-        inputs = self._get_meta_from_ngraph(inputs)
-        return inputs
+        return self._get_meta_from_ngraph(inputs)
 
-    def get_layout_for_input(self, input, shape=None) -> str:
+    def get_layout_for_input(
+        self,
+        input: ov.Output,
+        shape: list[int] | tuple[int, int, int, int] | None = None,
+    ) -> str:
         input_layout = ""
         if self.model_parameters["input_layouts"]:
             input_layout = Layout.from_user_layouts(
-                input.get_names(), self.model_parameters["input_layouts"]
+                input.get_names(),
+                self.model_parameters["input_layouts"],
             )
         if not input_layout:
             if not layout_helpers.get_layout(input).empty:
                 input_layout = Layout.from_openvino(input)
             else:
                 input_layout = Layout.from_shape(
-                    shape if shape is not None else input.shape
+                    shape if shape is not None else input.shape,
                 )
         return input_layout
 
-    def get_output_layers(self):
+    def get_output_layers(self) -> dict[str, Metadata]:
         outputs = {}
         for i, output in enumerate(self.model.outputs):
-            output_shape = (
-                output.partial_shape.get_min_shape()
-                if self.model.is_dynamic()
-                else output.shape
-            )
+            output_shape = output.partial_shape.get_min_shape() if self.model.is_dynamic() else output.shape
 
             output_name = output.get_any_name() if output.get_names() else output
             outputs[output_name] = Metadata(
@@ -281,34 +275,24 @@ class OpenvinoAdapter(InferenceAdapter):
                 list(output_shape),
                 precision=output.get_element_type().get_type_name(),
             )
-        outputs = self._get_meta_from_ngraph(outputs)
-        return outputs
+        return self._get_meta_from_ngraph(outputs)
 
     def reshape_model(self, new_shape):
         new_shape = {
             name: PartialShape(
-                [
-                    (
-                        Dimension(dim)
-                        if not isinstance(dim, tuple)
-                        else Dimension(dim[0], dim[1])
-                    )
-                    for dim in shape
-                ]
+                [(Dimension(dim) if not isinstance(dim, tuple) else Dimension(dim[0], dim[1])) for dim in shape],
             )
             for name, shape in new_shape.items()
         }
         self.model.reshape(new_shape)
 
-    def get_raw_result(self, request):
+    def get_raw_result(self, request: ov.InferRequest) -> dict[str, ndarray]:
         return {key: request.get_tensor(key).data for key in self.get_output_layers()}
 
     def copy_raw_result(self, request):
-        return {
-            key: request.get_tensor(key).data.copy() for key in self.get_output_layers()
-        }
+        return {key: request.get_tensor(key).data.copy() for key in self.get_output_layers()}
 
-    def infer_sync(self, dict_data):
+    def infer_sync(self, dict_data: dict[str, ndarray]) -> dict[str, ndarray]:
         self.infer_request = self.async_queue[self.async_queue.get_idle_request_id()]
         self.infer_request.infer(dict_data)
         return self.get_raw_result(self.infer_request)
@@ -328,10 +312,10 @@ class OpenvinoAdapter(InferenceAdapter):
     def await_any(self) -> None:
         self.async_queue.get_idle_request_id()
 
-    def _get_meta_from_ngraph(self, layers_info):
+    def _get_meta_from_ngraph(self, layers_info: dict[str, Metadata]) -> dict[str, Metadata]:
         for node in self.model.get_ordered_ops():
             layer_name = node.get_friendly_name()
-            if layer_name not in layers_info.keys():
+            if layer_name not in layers_info:
                 continue
             layers_info[layer_name].meta = node.get_attributes()
             layers_info[layer_name].type = node.get_type_name()
@@ -343,38 +327,39 @@ class OpenvinoAdapter(InferenceAdapter):
             if node.get_type_name() == operation_type:
                 layer_name = node.get_friendly_name()
                 layers_info[layer_name] = Metadata(
-                    type=node.get_type_name(), meta=node.get_attributes()
+                    type=node.get_type_name(),
+                    meta=node.get_attributes(),
                 )
         return layers_info
 
-    def get_rt_info(self, path):
+    def get_rt_info(self, path: list[str]) -> OVAny:
         if self.is_onnx_file:
             return get_rt_info_from_dict(self.onnx_metadata, path)
         return self.model.get_rt_info(path)
 
     def embed_preprocessing(
         self,
-        layout,
+        layout: str,
         resize_mode: str,
-        interpolation_mode,
-        target_shape: Tuple[int],
-        pad_value,
+        interpolation_mode: str,
+        target_shape: tuple[int, ...],
+        pad_value: int,
         dtype: type = int,
-        brg2rgb=False,
-        mean=None,
-        scale=None,
-        input_idx=0,
-    ):
+        brg2rgb: bool = False,
+        mean: list[Any] | None = None,
+        scale: list[Any] | None = None,
+        input_idx: int = 0,
+    ) -> None:
         ppp = PrePostProcessor(self.model)
 
         # Change the input type to the 8-bit image
-        if dtype == int:
+        if dtype is int:
             ppp.input(input_idx).tensor().set_element_type(Type.u8)
-        elif dtype == float:
+        elif dtype is float:
             ppp.input(input_idx).tensor().set_element_type(Type.f32)
 
         ppp.input(input_idx).tensor().set_layout(ov.Layout("NHWC")).set_color_format(
-            ColorFormat.BGR
+            ColorFormat.BGR,
         )
 
         INTERPOLATION_MODE_MAP = {
@@ -399,16 +384,15 @@ class OpenvinoAdapter(InferenceAdapter):
                 ppp.input(input_idx).tensor().set_shape(input_shape)
                 ppp.input(input_idx).preprocess().custom(
                     RESIZE_MODE_MAP[resize_mode](
-                        target_shape,
+                        (target_shape[0], target_shape[1]),
                         INTERPOLATION_MODE_MAP[interpolation_mode],
                         pad_value,
-                    )
+                    ),
                 )
 
             else:
-                raise ValueError(
-                    f"Upsupported resize type in model preprocessing: {resize_mode}"
-                )
+                msg = f"Upsupported resize type in model preprocessing: {resize_mode}"
+                raise ValueError(msg)
 
         # Handle layout
         ppp.input(input_idx).model().set_layout(ov.Layout(layout))
@@ -435,8 +419,21 @@ class OpenvinoAdapter(InferenceAdapter):
         """
         return self.model
 
+    def update_model_info(self, model_info: dict[str, Any]):
+        """
+        Populates OV IR RT info with the given model info.
 
-def get_input_shape(input_tensor):
+        Args:
+            model_info (dict[str, Any]): a dict representing the serialized parameters.
+        """
+        for name in model_info:
+            self.model.set_rt_info(model_info[name], ["model_info", name])
+
+    def save_model(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+        ov.serialize(self.get_model(), path, weights_path, version)
+
+
+def get_input_shape(input_tensor: ov.Output) -> list[int]:
     def string_to_tuple(string, casting_type=int):
         processed = string.replace(" ", "").replace("(", "").replace(")", "").split(",")
         processed = filter(lambda x: x, processed)
@@ -457,4 +454,4 @@ def get_input_shape(input_tensor):
             else:
                 shape_list.append(int(dim))
         return shape_list
-    return string_to_tuple(preprocessed)
+    return list(string_to_tuple(preprocessed))

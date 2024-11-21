@@ -1,63 +1,36 @@
-"""
- Copyright (C) 2021-2024 Intel Corporation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
 from .action_classification import ActionClassificationModel
 from .anomaly import AnomalyDetection
-from .background_matting import (
-    ImageMattingWithBackground,
-    PortraitBackgroundMatting,
-    VideoBackgroundMatting,
-)
-from .bert import BertEmbedding, BertNamedEntityRecognition, BertQuestionAnswering
-from .centernet import CenterNet
 from .classification import ClassificationModel
-from .ctpn import CTPN
-from .deblurring import Deblurring
 from .detection_model import DetectionModel
-from .detr import DETR
-from .faceboxes import FaceBoxes
-from .hpe_associative_embedding import HpeAssociativeEmbedding
 from .image_model import ImageModel
-from .instance_segmentation import MaskRCNNModel, YolactModel
+from .instance_segmentation import MaskRCNNModel
 from .keypoint_detection import KeypointDetectionModel, TopDownKeypointDetectionPipeline
 from .model import Model
-from .monodepth import MonoDepthModel
-from .nanodet import NanoDet, NanoDetPlus
-from .open_pose import OpenPose
-from .retinaface import RetinaFace, RetinaFacePyTorch
-from .sam_models import SAMDecoder, SAMImageEncoder
-from .segmentation import SalientObjectDetectionModel, SegmentationModel
-from .ssd import SSD
-from .ultra_lightweight_face_detection import UltraLightweightFaceDetection
-from .utils import (
+from .result_types import (
     AnomalyResult,
     ClassificationResult,
     Contour,
     DetectedKeypoints,
     Detection,
     DetectionResult,
-    DetectionWithLandmarks,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
-    OutputTransform,
     PredictedMask,
     SegmentedObject,
     SegmentedObjectWithRects,
     VisualPromptingResult,
     ZSLVisualPromptingResult,
+)
+from .sam_models import SAMDecoder, SAMImageEncoder
+from .segmentation import SalientObjectDetectionModel, SegmentationModel
+from .ssd import SSD
+from .utils import (
+    OutputTransform,
     add_rotated_rects,
     get_contours,
 )
@@ -87,20 +60,9 @@ __all__ = [
     "ActionClassificationModel",
     "AnomalyDetection",
     "AnomalyResult",
-    "BertEmbedding",
-    "BertNamedEntityRecognition",
-    "BertQuestionAnswering",
-    "CenterNet",
     "ClassificationModel",
     "Contour",
-    "CTPN",
-    "Deblurring",
     "DetectionModel",
-    "DetectionWithLandmarks",
-    "DETR",
-    "FaceBoxes",
-    "HpeAssociativeEmbedding",
-    "ImageMattingWithBackground",
     "ImageModel",
     "ImageResultWithSoftPrediction",
     "InstanceSegmentationResult",
@@ -113,20 +75,10 @@ __all__ = [
     "TopDownKeypointDetectionPipeline",
     "MaskRCNNModel",
     "Model",
-    "MonoDepthModel",
-    "NanoDet",
-    "NanoDetPlus",
-    "OpenPose",
     "OutputTransform",
-    "PortraitBackgroundMatting",
-    "RetinaFace",
-    "RetinaFacePyTorch",
     "SalientObjectDetectionModel",
     "SegmentationModel",
     "SSD",
-    "UltraLightweightFaceDetection",
-    "VideoBackgroundMatting",
-    "YolactModel",
     "YOLO",
     "YoloV3ONNX",
     "YoloV4",
@@ -140,7 +92,6 @@ __all__ = [
     "Prompt",
     "Detection",
     "DetectionResult",
-    "DetectionWithLandmarks",
     "DetectedKeypoints",
     "classification_models",
     "detection_models",

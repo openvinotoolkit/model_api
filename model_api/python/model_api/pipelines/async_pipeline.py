@@ -1,22 +1,11 @@
-"""
- Copyright (C) 2020-2024 Intel Corporation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
 from time import perf_counter
 
-from ..performance_metrics import PerformanceMetrics
+from model_api.performance_metrics import PerformanceMetrics
 
 
 class AsyncPipeline:
@@ -41,7 +30,7 @@ class AsyncPipeline:
                 preprocessing_meta,
                 start_time,
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 TODO: Figure out the exact exception that might be raised
             self.callback_exceptions.append(e)
 
     def submit_data(self, inputs, id, meta={}):
@@ -65,10 +54,13 @@ class AsyncPipeline:
             self.inference_metrics.update(infer_start_time)
 
             postprocessing_start_time = perf_counter()
-            result = self.model.postprocess(raw_result, preprocess_meta), {
-                **meta,
-                **preprocess_meta,
-            }
+            result = (
+                self.model.postprocess(raw_result, preprocess_meta),
+                {
+                    **meta,
+                    **preprocess_meta,
+                },
+            )
             self.postprocess_metrics.update(postprocessing_start_time)
             return result
         return None

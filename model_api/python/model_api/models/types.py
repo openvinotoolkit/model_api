@@ -1,18 +1,11 @@
-"""
- Copyright (C) 2021-2024 Intel Corporation
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+from typing import Any
 
 
 class ConfigurableValueError(ValueError):
@@ -23,7 +16,9 @@ class ConfigurableValueError(ValueError):
 
 class BaseValue:
     def __init__(
-        self, description="No description available", default_value=None
+        self,
+        description: str = "No description available",
+        default_value: Any | None = None,
     ) -> None:
         self.default_value = default_value
         self.description = description
@@ -38,8 +33,10 @@ class BaseValue:
         errors = self.validate(value)
         if len(errors) == 0:
             return value if value is not None else self.default_value
+        msg = "Encountered errors during validation."
+        raise ValueError(msg)
 
-    def build_error():
+    def build_error(self) -> None:
         pass
 
     def __str__(self) -> str:
@@ -51,7 +48,12 @@ class BaseValue:
 
 class NumericalValue(BaseValue):
     def __init__(
-        self, value_type=float, choices=(), min=None, max=None, **kwargs
+        self,
+        value_type: Any = float,
+        choices: tuple[Any, ...] = (),
+        min: Any | None = None,
+        max: Any | None = None,
+        **kwargs,
     ) -> None:
         super().__init__(**kwargs)
         self.choices = choices
@@ -59,7 +61,7 @@ class NumericalValue(BaseValue):
         self.max = max
         self.value_type = value_type
 
-    def from_str(self, value):
+    def from_str(self, value: str) -> Any:
         return self.value_type(value)
 
     def validate(self, value):
@@ -69,28 +71,27 @@ class NumericalValue(BaseValue):
         if not isinstance(value, self.value_type):
             errors.append(
                 ConfigurableValueError(
-                    f"Incorrect value type {type(value)}: should be {self.value_type}"
-                )
+                    f"Incorrect value type {type(value)}: should be {self.value_type}",
+                ),
             )
             return errors
-        if len(self.choices):
-            if value not in self.choices:
-                errors.append(
-                    ConfigurableValueError(
-                        f"Incorrect value {value}: out of allowable list - {self.choices}"
-                    )
-                )
+        if len(self.choices) and value not in self.choices:
+            errors.append(
+                ConfigurableValueError(
+                    f"Incorrect value {value}: out of allowable list - {self.choices}",
+                ),
+            )
         if self.min is not None and value < self.min:
             errors.append(
                 ConfigurableValueError(
-                    f"Incorrect value {value}: less than minimum allowable {self.min}"
-                )
+                    f"Incorrect value {value}: less than minimum allowable {self.min}",
+                ),
             )
         if self.max is not None and value > self.max:
             errors.append(
                 ConfigurableValueError(
-                    f"Incorrect value {value}: bigger than maximum allowable {self.min}"
-                )
+                    f"Incorrect value {value}: bigger than maximum allowable {self.min}",
+                ),
             )
         return errors
 
@@ -104,15 +105,19 @@ class NumericalValue(BaseValue):
 
 class StringValue(BaseValue):
     def __init__(
-        self, choices=(), description="No description available", default_value=""
-    ):
+        self,
+        choices: tuple[Any, ...] = (),
+        description: str = "No description available",
+        default_value: str = "",
+    ) -> None:
         super().__init__(description, default_value)
         self.choices = choices
         for choice in self.choices:
             if not isinstance(choice, str):
-                raise ValueError("Incorrect option in choice list - {}.".format(choice))
+                msg = f"Incorrect option in choice list - {choice}."
+                raise ValueError(msg)
 
-    def from_str(self, value):
+    def from_str(self, value: str) -> str:
         return value
 
     def validate(self, value):
@@ -122,14 +127,14 @@ class StringValue(BaseValue):
         if not isinstance(value, str):
             errors.append(
                 ConfigurableValueError(
-                    f'Incorrect value type {type(value)}: should be "str"'
-                )
+                    f'Incorrect value type {type(value)}: should be "str"',
+                ),
             )
         if len(self.choices) > 0 and value not in self.choices:
             errors.append(
                 ConfigurableValueError(
-                    f"Incorrect value {value}: out of allowable list - {self.choices}"
-                )
+                    f"Incorrect value {value}: out of allowable list - {self.choices}",
+                ),
             )
         return errors
 
@@ -146,8 +151,8 @@ class BooleanValue(BaseValue):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
-    def from_str(self, value):
-        return "YES" == value or "True" == value
+    def from_str(self, value: str) -> bool:
+        return value == "YES" or value == "True"
 
     def validate(self, value):
         errors = super().validate(value)
@@ -156,20 +161,23 @@ class BooleanValue(BaseValue):
         if not isinstance(value, bool):
             errors.append(
                 ConfigurableValueError(
-                    f'Incorrect value type - {type(value)}: should be "bool"'
-                )
+                    f'Incorrect value type - {type(value)}: should be "bool"',
+                ),
             )
         return errors
 
 
 class ListValue(BaseValue):
     def __init__(
-        self, value_type=None, description="No description available", default_value=[]
+        self,
+        value_type: Any | None = None,
+        description: str = "No description available",
+        default_value: list[Any] = [],
     ) -> None:
         super().__init__(description, default_value)
         self.value_type = value_type
 
-    def from_str(self, value):
+    def from_str(self, value: str) -> list[Any]:
         try:
             floats = [float(i) for i in value.split()]
             try:
@@ -189,8 +197,8 @@ class ListValue(BaseValue):
         if not isinstance(value, (tuple, list)):
             errors.append(
                 ConfigurableValueError(
-                    f"Incorrect value type - {type(value)}: should be list or tuple"
-                )
+                    f"Incorrect value type - {type(value)}: should be list or tuple",
+                ),
             )
         if self.value_type:
             if isinstance(self.value_type, BaseValue):
@@ -200,18 +208,18 @@ class ListValue(BaseValue):
                         errors.extend(
                             [
                                 ConfigurableValueError(
-                                    f"Incorrect #{i} element of the list"
+                                    f"Incorrect #{i} element of the list",
                                 ),
                                 *temp_errors,
-                            ]
+                            ],
                         )
             else:
                 for i, element in enumerate(value):
                     if not isinstance(element, self.value_type):
                         errors.append(
                             ConfigurableValueError(
-                                f"Incorrect #{i} element type - {type(element)}: should be {self.value_type}"
-                            )
+                                f"Incorrect #{i} element type - {type(element)}: should be {self.value_type}",
+                            ),
                         )
         return errors
 
@@ -220,7 +228,7 @@ class DictValue(BaseValue):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
 
-    def from_str(self, value):
+    def from_str(self, value: str):
         raise NotImplementedError
 
     def validate(self, value):
@@ -230,7 +238,7 @@ class DictValue(BaseValue):
         if not isinstance(value, dict):
             errors.append(
                 ConfigurableValueError(
-                    f'Incorrect value type - {type(value)}: should be "dict"'
-                )
+                    f'Incorrect value type - {type(value)}: should be "dict"',
+                ),
             )
         return errors

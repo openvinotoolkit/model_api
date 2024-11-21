@@ -1,23 +1,20 @@
-"""
- Copyright (c) 2021-2024 Intel Corporation
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+from typing import TYPE_CHECKING, Any
 
 from model_api.adapters.utils import RESIZE_TYPES, InputTransform
+from model_api.models.model import Model
+from model_api.models.types import BooleanValue, ListValue, NumericalValue, StringValue
 
-from .model import Model
-from .types import BooleanValue, ListValue, NumericalValue, StringValue
+if TYPE_CHECKING:
+    import numpy as np
+
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 class ImageModel(Model):
@@ -41,7 +38,9 @@ class ImageModel(Model):
         input_transform (InputTransform): instance of the `InputTransform` for image normalization
     """
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    __model__ = "ImageModel"
+
+    def __init__(self, inference_adapter: InferenceAdapter, configuration: dict = {}, preload: bool = False) -> None:
         """Image model constructor
 
         It extends the `Model` constructor.
@@ -59,6 +58,15 @@ class ImageModel(Model):
         super().__init__(inference_adapter, configuration, preload)
         self.image_blob_names, self.image_info_blob_names = self._get_inputs()
         self.image_blob_name = self.image_blob_names[0]
+        self.orig_height: int
+        self.orig_width: int
+        self.pad_value: int
+        self.resize_type: str
+        self.mean_values: list
+        self.scale_values: list
+        self.reverse_input_channels: bool
+        self.embedded_processing: bool
+        self.labels: list[str]
 
         self.nchw_layout = self.inputs[self.image_blob_name].layout == "NCHW"
         if self.nchw_layout:
@@ -67,7 +75,9 @@ class ImageModel(Model):
             self.n, self.h, self.w, self.c = self.inputs[self.image_blob_name].shape
         self.resize = RESIZE_TYPES[self.resize_type]
         self.input_transform = InputTransform(
-            self.reverse_input_channels, self.mean_values, self.scale_values
+            self.reverse_input_channels,
+            self.mean_values,
+            self.scale_values,
         )
 
         layout = self.inputs[self.image_blob_name].layout
@@ -88,7 +98,7 @@ class ImageModel(Model):
             self.orig_height, self.orig_width = self.h, self.w
 
     @classmethod
-    def parameters(cls):
+    def parameters(cls) -> dict[str, Any]:
         parameters = super().parameters()
         parameters.update(
             {
@@ -97,14 +107,19 @@ class ImageModel(Model):
                     default_value=False,
                 ),
                 "mean_values": ListValue(
-                    description="Normalization values, which will be subtracted from image channels for image-input layer during preprocessing",
+                    description=(
+                        "Normalization values, which will be subtracted from image "
+                        "channels for image-input layer during preprocessing"
+                    ),
                     default_value=[],
                 ),
                 "orig_height": NumericalValue(
-                    int, description="Model input height before embedding processing"
+                    int,
+                    description="Model input height before embedding processing",
                 ),
                 "orig_width": NumericalValue(
-                    int, description="Model input width before embedding processing"
+                    int,
+                    description="Model input width before embedding processing",
                 ),
                 "pad_value": NumericalValue(
                     int,
@@ -119,24 +134,25 @@ class ImageModel(Model):
                     description="Type of input image resizing",
                 ),
                 "reverse_input_channels": BooleanValue(
-                    default_value=False, description="Reverse the input channel order"
+                    default_value=False,
+                    description="Reverse the input channel order",
                 ),
                 "scale_values": ListValue(
                     default_value=[],
                     description="Normalization values, which will divide the image channels for image-input layer",
                 ),
-            }
+            },
         )
         return parameters
 
-    def get_label_name(self, label_id):
+    def get_label_name(self, label_id: int) -> str:
         if self.labels is None:
             return f"#{label_id}"
         if label_id >= len(self.labels):
             return f"#{label_id}"
         return self.labels[label_id]
 
-    def _get_inputs(self):
+    def _get_inputs(self) -> tuple[list[str], ...]:
         """Defines the model inputs for images and additional info.
 
         Raises:
@@ -154,15 +170,15 @@ class ImageModel(Model):
                 image_info_blob_names.append(name)
             else:
                 self.raise_error(
-                    "Failed to identify the input for ImageModel: only 2D and 4D input layer supported"
+                    "Failed to identify the input for ImageModel: only 2D and 4D input layer supported",
                 )
         if not image_blob_names:
             self.raise_error(
-                "Failed to identify the input for the image: no 4D input layer found"
+                "Failed to identify the input for the image: no 4D input layer found",
             )
         return image_blob_names, image_info_blob_names
 
-    def preprocess(self, inputs):
+    def preprocess(self, inputs: np.ndarray) -> list[dict]:
         """Data preprocess method
 
         It performs basic preprocessing of a single image:
@@ -187,12 +203,15 @@ class ImageModel(Model):
                 }
             - the input metadata, which might be used in `postprocess` method
         """
-        return {self.image_blob_name: inputs[None]}, {
-            "original_shape": inputs.shape,
-            "resized_shape": (self.w, self.h, self.c),
-        }
+        return [
+            {self.image_blob_name: inputs[None]},
+            {
+                "original_shape": inputs.shape,
+                "resized_shape": (self.w, self.h, self.c),
+            },
+        ]
 
-    def _change_layout(self, image):
+    def _change_layout(self, image: np.ndarray) -> np.ndarray:
         """Changes the input image layout to fit the layout of the model input layer.
 
         Args:

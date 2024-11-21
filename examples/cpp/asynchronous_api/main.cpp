@@ -1,36 +1,21 @@
 /*
-// Copyright (C) 2024 Intel Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-*/
-
+ * Copyright (C) 2020-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
+#include <adapters/openvino_adapter.h>
+#include <models/detection_model.h>
+#include <models/results.h>
 #include <stddef.h>
 
 #include <cstdint>
 #include <exception>
 #include <iomanip>
 #include <iostream>
-#include <stdexcept>
-#include <string>
-
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <openvino/openvino.hpp>
-
-#include <adapters/openvino_adapter.h>
-#include <models/detection_model.h>
-#include <models/results.h>
-
+#include <stdexcept>
+#include <string>
 
 int main(int argc, char* argv[]) try {
     if (argc != 3) {
@@ -43,43 +28,47 @@ int main(int argc, char* argv[]) try {
     }
 
     // Instantiate Object Detection model
-    auto model = DetectionModel::create_model(argv[1], {}, "", false); // works with SSD models. Download it using Python Model API
-    //Define number of parallel infer requests. Is this number is set to 0, OpenVINO will determine it automatically to obtain optimal performance.
+    auto model = DetectionModel::create_model(argv[1],
+                                              {},
+                                              "",
+                                              false);  // works with SSD models. Download it using Python Model API
+    // Define number of parallel infer requests. Is this number is set to 0, OpenVINO will determine it automatically to
+    // obtain optimal performance.
     size_t num_requests = 0;
     static ov::Core core;
     model->load(core, "CPU", num_requests);
 
     std::cout << "Async inference will be carried out by " << model->getNumAsyncExecutors() << " parallel executors\n";
-    //Prepare batch data
+    // Prepare batch data
     std::vector<ImageInputData> data;
     for (size_t i = 0; i < 3; i++) {
         data.push_back(ImageInputData(image));
     }
 
-    //Batch inference is done by processing batch with num_requests parallel infer requests
+    // Batch inference is done by processing batch with num_requests parallel infer requests
     std::cout << "Starting batch inference\n";
     auto results = model->inferBatch(data);
 
     std::cout << "Batch mode inference results:\n";
     for (const auto& result : results) {
         for (auto& obj : result->objects) {
-            std::cout << " " << std::left << std::setw(9) << obj.confidence << " " << obj.label <<  "\n";
+            std::cout << " " << std::left << std::setw(9) << obj.confidence << " " << obj.label << "\n";
         }
         std::cout << std::string(10, '-') << "\n";
     }
     std::cout << "Batch mode inference done\n";
     std::cout << "Async mode inference results:\n";
 
-    //Set callback to grab results once the inference is done
-    model->setCallback([](std::unique_ptr<ResultBase> result, const ov::AnyMap& callback_args){
+    // Set callback to grab results once the inference is done
+    model->setCallback([](std::unique_ptr<ResultBase> result, const ov::AnyMap& callback_args) {
         auto det_result = std::unique_ptr<DetectionResult>(static_cast<DetectionResult*>(result.release()));
 
-        //callback_args can contain arbitrary data
+        // callback_args can contain arbitrary data
         size_t id = callback_args.find("id")->second.as<size_t>();
 
         std::cout << "Request with id " << id << " is finished\n";
         for (auto& obj : det_result->objects) {
-            std::cout << " " << std::left << std::setw(9) << obj.confidence << " " << obj.label <<  "\n";
+            std::cout << " " << std::left << std::setw(9) << obj.confidence << " " << obj.label << "\n";
         }
         std::cout << std::string(10, '-') << "\n";
     });
@@ -88,7 +77,6 @@ int main(int argc, char* argv[]) try {
         model->inferAsync(image, {{"id", i}});
     }
     model->awaitAll();
-
 } catch (const std::exception& error) {
     std::cerr << error.what() << '\n';
     return 1;

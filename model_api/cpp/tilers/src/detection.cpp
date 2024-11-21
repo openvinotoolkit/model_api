@@ -1,28 +1,16 @@
 /*
-// Copyright (C) 2023-2024 Intel Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-*/
+ * Copyright (C) 2020-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <models/results.h>
+#include <tilers/detection.h>
 
 #include <algorithm>
 #include <functional>
-#include <vector>
 #include <opencv2/core.hpp>
-
-#include <tilers/detection.h>
-#include <models/results.h>
 #include <utils/nms.hpp>
-
+#include <vector>
 
 namespace {
 
@@ -37,24 +25,25 @@ cv::Mat non_linear_normalization(cv::Mat& class_map) {
     return class_map;
 }
 
-}
+}  // namespace
 
-DetectionTiler::DetectionTiler(const std::shared_ptr<ImageModel>& _model, const ov::AnyMap& configuration) :
-    TilerBase(_model, configuration) {
-
+DetectionTiler::DetectionTiler(const std::shared_ptr<ImageModel>& _model,
+                               const ov::AnyMap& configuration,
+                               ExecutionMode exec_mode)
+    : TilerBase(_model, configuration, exec_mode) {
     ov::AnyMap extra_config;
     try {
         auto ov_model = model->getModel();
         extra_config = ov_model->get_rt_info<ov::AnyMap>("model_info");
-    }
-    catch (const std::runtime_error&) {
+    } catch (const std::runtime_error&) {
         extra_config = model->getInferenceAdapter()->getModelConfig();
     }
 
     max_pred_number = get_from_any_maps("max_pred_number", configuration, extra_config, max_pred_number);
 }
 
-std::unique_ptr<ResultBase> DetectionTiler::postprocess_tile(std::unique_ptr<ResultBase> tile_result, const cv::Rect& coord) {
+std::unique_ptr<ResultBase> DetectionTiler::postprocess_tile(std::unique_ptr<ResultBase> tile_result,
+                                                             const cv::Rect& coord) {
     DetectionResult* det_res = static_cast<DetectionResult*>(tile_result.get());
     for (auto& det : det_res->objects) {
         det.x += coord.x;
@@ -62,7 +51,8 @@ std::unique_ptr<ResultBase> DetectionTiler::postprocess_tile(std::unique_ptr<Res
     }
 
     if (det_res->feature_vector) {
-        auto tmp_feature_vector = ov::Tensor(det_res->feature_vector.get_element_type(), det_res->feature_vector.get_shape());
+        auto tmp_feature_vector =
+            ov::Tensor(det_res->feature_vector.get_element_type(), det_res->feature_vector.get_shape());
         det_res->feature_vector.copy_to(tmp_feature_vector);
         det_res->feature_vector = tmp_feature_vector;
     }
@@ -76,7 +66,9 @@ std::unique_ptr<ResultBase> DetectionTiler::postprocess_tile(std::unique_ptr<Res
     return tile_result;
 }
 
-std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std::unique_ptr<ResultBase>>& tiles_results, const cv::Size& image_size, const std::vector<cv::Rect>& tile_coords) {
+std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std::unique_ptr<ResultBase>>& tiles_results,
+                                                          const cv::Size& image_size,
+                                                          const std::vector<cv::Rect>& tile_coords) {
     DetectionResult* result = new DetectionResult();
     auto retVal = std::unique_ptr<ResultBase>(result);
 
@@ -103,7 +95,8 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
     if (tiles_results.size()) {
         DetectionResult* det_res = static_cast<DetectionResult*>(tiles_results.begin()->get());
         if (det_res->feature_vector) {
-            result->feature_vector = ov::Tensor(det_res->feature_vector.get_element_type(), det_res->feature_vector.get_shape());
+            result->feature_vector =
+                ov::Tensor(det_res->feature_vector.get_element_type(), det_res->feature_vector.get_shape());
         }
         if (det_res->saliency_map) {
             result->saliency_map = merge_saliency_maps(tiles_results, image_size, tile_coords);
@@ -133,7 +126,9 @@ std::unique_ptr<ResultBase> DetectionTiler::merge_results(const std::vector<std:
     return retVal;
 }
 
-ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr<ResultBase>>& tiles_results, const cv::Size& image_size, const std::vector<cv::Rect>& tile_coords) {
+ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr<ResultBase>>& tiles_results,
+                                               const cv::Size& image_size,
+                                               const std::vector<cv::Rect>& tile_coords) {
     std::vector<ov::Tensor> all_saliency_maps;
     all_saliency_maps.reserve(tiles_results.size());
     for (const auto& result : tiles_results) {
@@ -173,13 +168,19 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
             cv::Mat current_cls_map_mat_float;
             current_cls_map_mat.convertTo(current_cls_map_mat_float, CV_32F);
 
-            cv::Rect map_location(static_cast<int>(tile_coords[i].x * ratio_w),
-                                  static_cast<int>(tile_coords[i].y * ratio_h),
-                                  static_cast<int>(static_cast<int>(tile_coords[i].width + tile_coords[i].x) * ratio_w - static_cast<int>(tile_coords[i].x * ratio_w)),
-                                  static_cast<int>(static_cast<int>(tile_coords[i].height + tile_coords[i].y) * ratio_h - static_cast<int>(tile_coords[i].y * ratio_h)));
+            cv::Rect map_location(
+                static_cast<int>(tile_coords[i].x * ratio_w),
+                static_cast<int>(tile_coords[i].y * ratio_h),
+                static_cast<int>(static_cast<int>(tile_coords[i].width + tile_coords[i].x) * ratio_w -
+                                 static_cast<int>(tile_coords[i].x * ratio_w)),
+                static_cast<int>(static_cast<int>(tile_coords[i].height + tile_coords[i].y) * ratio_h -
+                                 static_cast<int>(tile_coords[i].y * ratio_h)));
 
-            if (current_cls_map_mat.rows > map_location.height && map_location.height > 0 && current_cls_map_mat.cols > map_location.width && map_location.width > 0) {
-                cv::resize(current_cls_map_mat_float, current_cls_map_mat_float, cv::Size(map_location.width, map_location.height));
+            if (current_cls_map_mat.rows > map_location.height && map_location.height > 0 &&
+                current_cls_map_mat.cols > map_location.width && map_location.width > 0) {
+                cv::resize(current_cls_map_mat_float,
+                           current_cls_map_mat_float,
+                           cv::Size(map_location.width, map_location.height));
             }
 
             auto class_map_roi = cv::Mat(merged_map_mat[class_idx], map_location);
@@ -187,9 +188,9 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
                 for (int col_i = 0; col_i < map_location.width; ++col_i) {
                     float merged_mixel = class_map_roi.at<float>(row_i, col_i);
                     if (merged_mixel > 0) {
-                        class_map_roi.at<float>(row_i, col_i) = 0.5f * (merged_mixel + current_cls_map_mat_float.at<float>(row_i, col_i));
-                    }
-                    else {
+                        class_map_roi.at<float>(row_i, col_i) =
+                            0.5f * (merged_mixel + current_cls_map_mat_float.at<float>(row_i, col_i));
+                    } else {
                         class_map_roi.at<float>(row_i, col_i) = current_cls_map_mat_float.at<float>(row_i, col_i);
                     }
                 }
@@ -200,8 +201,7 @@ ov::Tensor DetectionTiler::merge_saliency_maps(const std::vector<std::unique_ptr
     ov::Tensor merged_map;
     if (shape_shift) {
         merged_map = ov::Tensor(ov::element::Type("u8"), {1, num_classes, image_map_h, image_map_w});
-    }
-    else {
+    } else {
         merged_map = ov::Tensor(ov::element::Type("u8"), {num_classes, image_map_h, image_map_w});
     }
 

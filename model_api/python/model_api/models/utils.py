@@ -1,294 +1,61 @@
-"""
- Copyright (C) 2020-2024 Intel Corporation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
 from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
-from collections import namedtuple
-from typing import List, NamedTuple, Tuple, Union
+from pathlib import Path
 
 import cv2
 import numpy as np
 
-
-class AnomalyResult(NamedTuple):
-    """Results for anomaly models."""
-
-    anomaly_map: np.ndarray | None = None
-    pred_boxes: np.ndarray | None = None
-    pred_label: str | None = None
-    pred_mask: np.ndarray | None = None
-    pred_score: float | None = None
-
-    def _compute_min_max(self, tensor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        """Computes min and max values of the tensor."""
-        return tensor.min(), tensor.max()
-
-    def __str__(self) -> str:
-        assert self.anomaly_map is not None
-        assert self.pred_mask is not None
-        anomaly_map_min, anomaly_map_max = self._compute_min_max(self.anomaly_map)
-        pred_mask_min, pred_mask_max = self._compute_min_max(self.pred_mask)
-        return (
-            f"anomaly_map min:{anomaly_map_min} max:{anomaly_map_max};"
-            f"pred_score:{np.round(self.pred_score, 1)};"
-            f"pred_label:{self.pred_label};"
-            f"pred_mask min:{pred_mask_min} max:{pred_mask_max};"
-        )
+from model_api.models.result_types import Contour, Detection, SegmentedObject, SegmentedObjectWithRects
 
 
-class ClassificationResult(
-    namedtuple(
-        "ClassificationResult", "top_labels saliency_map feature_vector raw_scores"
-    )  # Contains "raw_scores", "saliency_map" and "feature_vector" model outputs if such exist
-):
-    def __str__(self):
-        labels = ", ".join(
-            f"{idx} ({label}): {confidence:.3f}"
-            for idx, label, confidence in self.top_labels
-        )
-        return (
-            f"{labels}, [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}], "
-            f"[{','.join(str(i) for i in self.raw_scores.shape)}]"
-        )
-
-
-class Detection:
-    def __init__(self, xmin, ymin, xmax, ymax, score, id, str_label=None):
-        self.xmin = xmin
-        self.ymin = ymin
-        self.xmax = xmax
-        self.ymax = ymax
-        self.score = score
-        self.id = int(id)
-        self.str_label = str_label
-
-    def __str__(self):
-        return f"{self.xmin}, {self.ymin}, {self.xmax}, {self.ymax}, {self.id} ({self.str_label}): {self.score:.3f}"
-
-
-class DetectionResult(
-    namedtuple(
-        "DetectionResult", "objects saliency_map feature_vector"
-    )  # Contan "saliency_map" and "feature_vector" model outputs if such exist
-):
-    def __str__(self):
-        obj_str = "; ".join(str(obj) for obj in self.objects)
-        if obj_str:
-            obj_str += "; "
-        return f"{obj_str}[{','.join(str(i) for i in self.saliency_map.shape)}]; [{','.join(str(i) for i in self.feature_vector.shape)}]"
-
-
-class SegmentedObject(Detection):
-    def __init__(self, xmin, ymin, xmax, ymax, score, id, str_label, mask):
-        super().__init__(xmin, ymin, xmax, ymax, score, id, str_label)
-        self.mask = mask
-
-    def __str__(self):
-        return f"{super().__str__()}, {(self.mask > 0.5).sum()}"
-
-
-class SegmentedObjectWithRects(SegmentedObject):
-    def __init__(self, segmented_object, rotated_rect):
-        super().__init__(
-            segmented_object.xmin,
-            segmented_object.ymin,
-            segmented_object.xmax,
-            segmented_object.ymax,
-            segmented_object.score,
-            segmented_object.id,
-            segmented_object.str_label,
-            segmented_object.mask,
-        )
-        self.rotated_rect = rotated_rect
-
-    def __str__(self):
-        res = super().__str__()
-        rect = self.rotated_rect
-        res += f", RotatedRect: {rect[0][0]:.3f} {rect[0][1]:.3f} {rect[1][0]:.3f} {rect[1][1]:.3f} {rect[2]:.3f}"
-        return res
-
-
-class InstanceSegmentationResult(NamedTuple):
-    segmentedObjects: List[Union[SegmentedObject, SegmentedObjectWithRects]]
-    # Contain per class saliency_maps and "feature_vector" model output if feature_vector exists
-    saliency_map: List[np.ndarray]
-    feature_vector: np.ndarray
-
-    def __str__(self):
-        obj_str = "; ".join(str(obj) for obj in self.segmentedObjects)
-        filled = 0
-        for cls_map in self.saliency_map:
-            if cls_map.size:
-                filled += 1
-        prefix = f"{obj_str}; " if len(obj_str) else ""
-        return (
-            prefix
-            + f"{filled}; [{','.join(str(i) for i in self.feature_vector.shape)}]"
-        )
-
-
-class VisualPromptingResult(NamedTuple):
-    upscaled_masks: List[np.ndarray] | None = None
-    processed_mask: List[np.ndarray] | None = None
-    low_res_masks: List[np.ndarray] | None = None
-    iou_predictions: List[np.ndarray] | None = None
-    scores: List[np.ndarray] | None = None
-    labels: List[np.ndarray] | None = None
-    hard_predictions: List[np.ndarray] | None = None
-    soft_predictions: List[np.ndarray] | None = None
-    best_iou: List[float] | None = None
-
-    def _compute_min_max(self, tensor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-        return tensor.min(), tensor.max()
-
-    def __str__(self) -> str:
-        assert self.hard_predictions is not None
-        assert self.upscaled_masks is not None
-        upscaled_masks_min, upscaled_masks_max = self._compute_min_max(
-            self.upscaled_masks[0]
-        )
-
-        return (
-            f"upscaled_masks min:{upscaled_masks_min:.3f} max:{upscaled_masks_max:.3f};"
-            f"hard_predictions shape:{self.hard_predictions[0].shape};"
-        )
-
-
-class PredictedMask(NamedTuple):
-    mask: list[np.ndarray]
-    points: list[np.ndarray] | np.ndarray
-    scores: list[float] | np.ndarray
-
-    def __str__(self) -> str:
-        obj_str = ""
-        obj_str += f"mask sum: {np.sum(sum(self.mask))}; "
-
-        if isinstance(self.points, list):
-            for i, point in enumerate(self.points):
-                obj_str += "["
-                obj_str += ", ".join(str(round(c, 2)) for c in point)
-                obj_str += "] "
-                obj_str += "iou: " + f"{float(self.scores[i]):.3f} "
-        else:
-            for i in range(self.points.shape[0]):
-                point = self.points[i]
-                obj_str += "["
-                obj_str += ", ".join(str(round(c, 2)) for c in point)
-                obj_str += "] "
-                obj_str += "iou: " + f"{float(self.scores[i]):.3f} "
-
-        return obj_str.strip()
-
-
-class ZSLVisualPromptingResult(NamedTuple):
-    data: dict[int, PredictedMask]
-
-    def __str__(self) -> str:
-        return ", ".join(str(self.data[k]) for k in self.data)
-
-    def get_mask(self, label: int) -> PredictedMask:
-        """Returns a mask belonging to a given label"""
-        return self.data[label]
-
-
-class DetectedKeypoints(NamedTuple):
-    keypoints: np.ndarray
-    scores: np.ndarray
-
-    def __str__(self):
-        return f"keypoints: {self.keypoints.shape}, keypoints_x_sum: {np.sum(self.keypoints[:,:1]):.3f}, scores: {self.scores.shape}"
-
-
-def add_rotated_rects(segmented_objects):
+def add_rotated_rects(segmented_objects: list[SegmentedObject]) -> list[SegmentedObjectWithRects]:
     objects_with_rects = []
     for segmented_object in segmented_objects:
         mask = segmented_object.mask.astype(np.uint8)
-        contours, hierarchies = cv2.findContours(
-            mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        contours, _ = cv2.findContours(
+            mask,
+            cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE,
         )
 
         contour = np.vstack(contours)
         objects_with_rects.append(
-            SegmentedObjectWithRects(segmented_object, cv2.minAreaRect(contour))
+            SegmentedObjectWithRects(segmented_object, cv2.minAreaRect(contour)),
         )
     return objects_with_rects
 
 
 def get_contours(
-    segmentedObjects: List[Union[SegmentedObject, SegmentedObjectWithRects]]
-):
+    segmentedObjects: list[SegmentedObject | SegmentedObjectWithRects],
+) -> list[Contour]:
     combined_contours = []
     for obj in segmentedObjects:
         contours, _ = cv2.findContours(
-            obj.mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+            obj.mask,
+            cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_NONE,
         )
         # Assuming one contour output for findContours. Based on OTX this is a safe
         # assumption
         if len(contours) != 1:
-            raise RuntimeError("findContours() must have returned only one contour")
-        combined_contours.append(Contour(obj.str_label, obj.score, contours[0]))
+            msg = "findContours() must have returned only one contour"
+            raise RuntimeError(msg)
+        combined_contours.append(Contour(label=str(obj.str_label), probability=obj.score, shape=contours[0]))
     return combined_contours
 
 
-def clip_detections(detections, size):
+def clip_detections(detections: list[Detection], size: tuple[int, int]) -> list[Detection]:
     for detection in detections:
         detection.xmin = min(max(round(detection.xmin), 0), size[1])
         detection.ymin = min(max(round(detection.ymin), 0), size[0])
         detection.xmax = min(max(round(detection.xmax), 0), size[1])
         detection.ymax = min(max(round(detection.ymax), 0), size[0])
     return detections
-
-
-class Contour(NamedTuple):
-    label: str
-    probability: float
-    shape: List[Tuple[int, int]]
-
-    def __str__(self):
-        return f"{self.label}: {self.probability:.3f}, {len(self.shape)}"
-
-
-class ImageResultWithSoftPrediction(NamedTuple):
-    resultImage: np.ndarray
-    soft_prediction: np.ndarray
-    # Contain per class saliency_maps and "feature_vector" model output if feature_vector exists
-    saliency_map: np.ndarray  # Requires return_soft_prediction==True
-    feature_vector: np.ndarray
-
-    def __str__(self):
-        outHist = cv2.calcHist(
-            [self.resultImage.astype(np.uint8)],
-            channels=None,
-            mask=None,
-            histSize=[256],
-            ranges=[0, 255],
-        )
-        hist = ""
-        for i, count in enumerate(outHist):
-            if count > 0:
-                hist += f"{i}: {count[0] / self.resultImage.size:.3f}, "
-        return f"{hist}[{','.join(str(i) for i in self.soft_prediction.shape)}], [{','.join(str(i) for i in self.saliency_map.shape)}], [{','.join(str(i) for i in self.feature_vector.shape)}]"
-
-
-class DetectionWithLandmarks(Detection):
-    def __init__(self, xmin, ymin, xmax, ymax, score, id, landmarks_x, landmarks_y):
-        super().__init__(xmin, ymin, xmax, ymax, score, id)
-        self.landmarks = []
-        for x, y in zip(landmarks_x, landmarks_y):
-            self.landmarks.append((x, y))
 
 
 class OutputTransform:
@@ -301,7 +68,8 @@ class OutputTransform:
         self.input_size = input_size
         size = self.input_size[::-1]
         self.scale_factor = min(
-            self.output_resolution[0] / size[0], self.output_resolution[1] / size[1]
+            self.output_resolution[0] / size[0],
+            self.output_resolution[1] / size[1],
         )
         return self.scale(size)
 
@@ -322,11 +90,20 @@ class OutputTransform:
 
 
 def load_labels(label_file):
-    with open(label_file, "r") as f:
+    with Path(label_file).open() as f:
         return [x.strip() for x in f]
 
 
-def nms(x1, y1, x2, y2, scores, thresh, include_boundaries=False, keep_top_k=0):
+def nms(
+    x1: np.ndarray,
+    y1: np.ndarray,
+    x2: np.ndarray,
+    y2: np.ndarray,
+    scores: np.ndarray,
+    thresh: float,
+    include_boundaries: bool = False,
+    keep_top_k: int = 0,
+) -> list[int]:
     b = 1 if include_boundaries else 0
     areas = (x2 - x1 + b) * (y2 - y1 + b)
     order = scores.argsort()[::-1]
@@ -362,9 +139,9 @@ def nms(x1, y1, x2, y2, scores, thresh, include_boundaries=False, keep_top_k=0):
 
 
 def multiclass_nms(
-    detections,
-    iou_threshold=0.45,
-    max_num=200,
+    detections: np.ndarray,
+    iou_threshold: float = 0.45,
+    max_num: int = 200,
 ):
     """Multi-class NMS.
 
@@ -390,7 +167,7 @@ def multiclass_nms(
     offsets = labels.astype(boxes.dtype) * (max_coordinate + 1)
     boxes_for_nms = boxes + offsets[:, None]
 
-    keep = nms(*boxes_for_nms.T, scores, iou_threshold)
+    keep = nms(*boxes_for_nms.T, scores=scores, thresh=iou_threshold)  # type: ignore[misc]
     if max_num > 0:
         keep = keep[:max_num]
     keep = np.array(keep)
@@ -398,6 +175,6 @@ def multiclass_nms(
     return det, keep
 
 
-def softmax(logits, axis=None, keepdims=False):
+def softmax(logits: np.ndarray, eps: float = 1e-9, axis=None, keepdims: bool = False) -> np.ndarray:
     exp = np.exp(logits - np.max(logits))
-    return exp / np.sum(exp, axis=axis, keepdims=keepdims)
+    return exp / (np.sum(exp, axis=axis, keepdims=keepdims) + eps)

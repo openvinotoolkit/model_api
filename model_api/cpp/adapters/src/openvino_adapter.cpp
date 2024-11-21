@@ -1,27 +1,20 @@
 /*
-// Copyright (C) 2021-2024 Intel Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-*/
+ * Copyright (C) 2020-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 #include "adapters/openvino_adapter.h"
+
 #include <openvino/openvino.hpp>
-#include <utils/slog.hpp>
 #include <stdexcept>
+#include <utils/slog.hpp>
 #include <vector>
 
-void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>& model, ov::Core& core,
-                                                            const std::string& device, const ov::AnyMap& compilationConfig, size_t max_num_requests) {
+void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>& model,
+                                         ov::Core& core,
+                                         const std::string& device,
+                                         const ov::AnyMap& compilationConfig,
+                                         size_t max_num_requests) {
     slog::info << "Loading model to the plugin" << slog::endl;
     ov::AnyMap customCompilationConfig(compilationConfig);
     if (max_num_requests != 1) {
@@ -33,8 +26,7 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
                 customCompilationConfig["PERFORMANCE_HINT_NUM_REQUESTS"] = ov::hint::num_requests(max_num_requests);
             }
         }
-    }
-    else {
+    } else {
         if (customCompilationConfig.find("PERFORMANCE_HINT") == customCompilationConfig.end()) {
             customCompilationConfig["PERFORMANCE_HINT"] = ov::hint::PerformanceMode::LATENCY;
         }
@@ -46,6 +38,20 @@ void OpenVINOInferenceAdapter::loadModel(const std::shared_ptr<const ov::Model>&
 
     if (model->has_rt_info({"model_info"})) {
         modelConfig = model->get_rt_info<ov::AnyMap>("model_info");
+    }
+}
+
+void OpenVINOInferenceAdapter::infer(const InferenceInput& input, InferenceOutput& output) {
+    auto request = asyncQueue->operator[](asyncQueue->get_idle_request_id());
+    for (const auto& [name, tensor] : input) {
+        request.set_tensor(name, tensor);
+    }
+    for (const auto& [name, tensor] : output) {
+        request.set_tensor(name, tensor);
+    }
+    request.infer();
+    for (const auto& name : outputNames) {
+        output[name] = request.get_tensor(name);
     }
 }
 
@@ -95,6 +101,9 @@ size_t OpenVINOInferenceAdapter::getNumAsyncExecutors() const {
 ov::PartialShape OpenVINOInferenceAdapter::getInputShape(const std::string& inputName) const {
     return compiledModel.input(inputName).get_partial_shape();
 }
+ov::PartialShape OpenVINOInferenceAdapter::getOutputShape(const std::string& outputName) const {
+    return compiledModel.output(outputName).get_partial_shape();
+}
 
 void OpenVINOInferenceAdapter::initInputsOutputs() {
     for (const auto& input : compiledModel.inputs()) {
@@ -104,6 +113,12 @@ void OpenVINOInferenceAdapter::initInputsOutputs() {
     for (const auto& output : compiledModel.outputs()) {
         outputNames.push_back(output.get_any_name());
     }
+}
+ov::element::Type_t OpenVINOInferenceAdapter::getInputDatatype(const std::string&) const {
+    throw std::runtime_error("Not implemented");
+}
+ov::element::Type_t OpenVINOInferenceAdapter::getOutputDatatype(const std::string&) const {
+    throw std::runtime_error("Not implemented");
 }
 
 std::vector<std::string> OpenVINOInferenceAdapter::getInputNames() const {

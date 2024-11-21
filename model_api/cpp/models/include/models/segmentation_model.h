@@ -1,18 +1,7 @@
 /*
-// Copyright (C) 2020-2024 Intel Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-*/
+ * Copyright (C) 2020-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 #pragma once
 #include <memory>
@@ -36,7 +25,10 @@ public:
     SegmentationModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration);
     SegmentationModel(std::shared_ptr<InferenceAdapter>& adapter, const ov::AnyMap& configuration = {});
 
-    static std::unique_ptr<SegmentationModel> create_model(const std::string& modelFile, const ov::AnyMap& configuration = {}, bool preload = true, const std::string& device = "AUTO");
+    static std::unique_ptr<SegmentationModel> create_model(const std::string& modelFile,
+                                                           const ov::AnyMap& configuration = {},
+                                                           bool preload = true,
+                                                           const std::string& device = "AUTO");
     static std::unique_ptr<SegmentationModel> create_model(std::shared_ptr<InferenceAdapter>& adapter);
 
     std::unique_ptr<ResultBase> postprocess(InferenceResult& infResult) override;
@@ -48,7 +40,6 @@ public:
     std::vector<Contour> getContours(const ImageResultWithSoftPrediction& imageResult);
 
 protected:
-
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void updateModelInfo() override;
     void init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority);
@@ -58,4 +49,6 @@ protected:
     bool return_soft_prediction = true;
 };
 
-cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_prediction, float soft_threshold, int blur_strength);
+cv::Mat create_hard_prediction_from_soft_prediction(const cv::Mat& soft_prediction,
+                                                    float soft_threshold,
+                                                    int blur_strength);

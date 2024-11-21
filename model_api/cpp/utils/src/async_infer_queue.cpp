@@ -1,21 +1,9 @@
 /*
-// Copyright (C) 2024 Intel Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-*/
+ * Copyright (C) 2020-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 #include "utils/async_infer_queue.hpp"
-
 
 AsyncInferQueue::AsyncInferQueue(ov::CompiledModel& model, size_t jobs) {
     if (jobs == 0) {
@@ -94,7 +82,8 @@ void AsyncInferQueue::set_default_callbacks() {
     }
 }
 
-void AsyncInferQueue::set_custom_callbacks(std::function<void(ov::InferRequest, std::shared_ptr<ov::AnyMap>)> f_callback) {
+void AsyncInferQueue::set_custom_callbacks(
+    std::function<void(ov::InferRequest, std::shared_ptr<ov::AnyMap>)> f_callback) {
     for (size_t handle = 0; handle < m_requests.size(); handle++) {
         m_requests[handle].set_callback([this, f_callback, handle](std::exception_ptr exception_ptr) {
             if (exception_ptr == nullptr) {
@@ -105,8 +94,7 @@ void AsyncInferQueue::set_custom_callbacks(std::function<void(ov::InferRequest, 
                     std::lock_guard<std::mutex> lock(m_mutex);
                     m_errors.push(std::make_shared<std::exception>(ex));
                 }
-            }
-            else {
+            } else {
                 try {
                     std::rethrow_exception(exception_ptr);
                 } catch (const std::exception& ex) {
@@ -144,7 +132,8 @@ void AsyncInferQueue::start_async(const ov::Tensor& input, std::shared_ptr<ov::A
     m_requests[handle].start_async();
 }
 
-void AsyncInferQueue::start_async(const std::map<std::string, ov::Tensor>& input, std::shared_ptr<ov::AnyMap> userdata) {
+void AsyncInferQueue::start_async(const std::map<std::string, ov::Tensor>& input,
+                                  std::shared_ptr<ov::AnyMap> userdata) {
     // getIdleRequestId function has an intention to block InferQueue
     // until there is at least one idle (free to use) InferRequest
     auto handle = get_idle_request_id();

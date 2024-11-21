@@ -1,15 +1,7 @@
-"""
- Copyright (C) 2024 Intel Corporation
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-      http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
 from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
@@ -19,9 +11,11 @@ from typing import Any, NamedTuple
 
 import cv2
 import numpy as np
-from model_api.models import SAMDecoder, SAMImageEncoder
-from model_api.models.utils import (
+
+from model_api.models import (
     PredictedMask,
+    SAMDecoder,
+    SAMImageEncoder,
     VisualPromptingResult,
     ZSLVisualPromptingResult,
 )
@@ -38,8 +32,7 @@ class Prompt(NamedTuple):
 
 
 class SAMVisualPrompter:
-    """
-    A wrapper that implements SAM Visual Prompter.
+    """A wrapper that implements SAM Visual Prompter.
 
     Segmentation results can be obtained by calling infer() method
     with corresponding parameters.
@@ -59,8 +52,7 @@ class SAMVisualPrompter:
         boxes: list[Prompt] | None = None,
         points: list[Prompt] | None = None,
     ) -> VisualPromptingResult:
-        """
-        Obtains segmentation masks using given prompts.
+        """Obtains segmentation masks using given prompts.
 
         Args:
             image (np.ndarray): HWC-shaped image
@@ -73,7 +65,8 @@ class SAMVisualPrompter:
             VisualPromptingResult: result object containing predicted masks and aux information.
         """
         if boxes is None and points is None:
-            raise RuntimeError("boxes or points prompts are required for inference")
+            msg = "boxes or points prompts are required for inference"
+            raise RuntimeError(msg)
 
         outputs: list[dict[str, Any]] = []
 
@@ -134,8 +127,7 @@ class SAMVisualPrompter:
 
 
 class SAMLearnableVisualPrompter:
-    """
-    A wrapper that provides ZSL Visual Prompting workflow.
+    """A wrapper that provides ZSL Visual Prompting workflow.
     To obtain segmentation results, one should run learn() first to obtain the reference features,
     or use previously generated ones.
     """
@@ -147,26 +139,25 @@ class SAMLearnableVisualPrompter:
         reference_features: VisualPromptingFeatures | None = None,
         threshold: float = 0.65,
     ):
-        """
-        Initializes ZSL pipeline.
+        """Initializes ZSL pipeline.
 
         Args:
             encoder_model (SAMImageEncoder): initialized decoder wrapper
             decoder_model (SAMDecoder): initialized encoder wrapper
             reference_features (VisualPromptingFeatures | None, optional): Previously generated reference features.
-             Once the features are passed, one can skip learn() method, and start predicting masks right away. Defaults to None.
+                Once the features are passed, one can skip learn() method, and start predicting masks right away.
+                Defaults to None.
             threshold (float, optional): Threshold to match vs reference features on infer(). Greater value means a
             stricter matching. Defaults to 0.65.
         """
         self.encoder = encoder_model
         self.decoder = decoder_model
+        self._used_indices: np.ndarray | None = None
+        self._reference_features: np.ndarray | None = None
 
         if reference_features is not None:
             self._reference_features = reference_features.feature_vectors
             self._used_indices = reference_features.used_indices
-        else:
-            self._reference_features = None
-            self._used_indices = None
 
         self._point_labels_box = np.array([[2, 3]], dtype=np.float32)
         self._has_mask_inputs = [np.array([[0.0]]), np.array([[1.0]])]
@@ -175,7 +166,8 @@ class SAMLearnableVisualPrompter:
         if 0 <= threshold <= 1:
             self._threshold: float = threshold
         else:
-            raise ValueError("Confidence threshold should belong to [0;1] range.")
+            msg = "Confidence threshold should belong to [0;1] range."
+            raise ValueError(msg)
         self._num_bg_points: int = 1
         self._default_threshold_target: float = 0.0
         self._image_size: int = self.encoder.image_size
@@ -183,23 +175,22 @@ class SAMLearnableVisualPrompter:
         self._default_threshold_reference: float = 0.3
 
     def has_reference_features(self) -> bool:
-        """
-        Checks if reference features are stored in the object state.
-        """
+        """Checks if reference features are stored in the object state."""
         return self._reference_features is not None and self._used_indices is not None
 
     @property
     def reference_features(self) -> VisualPromptingFeatures:
-        """
-        Property represents reference features. An exception is thrown if called when
+        """Property represents reference features. An exception is thrown if called when
         the features are not presented in the internal object state.
         """
         if self.has_reference_features():
             return VisualPromptingFeatures(
-                np.copy(self._reference_features), np.copy(self._used_indices)
+                np.copy(self._reference_features),
+                np.copy(self._used_indices),
             )
 
-        raise RuntimeError("Reference features are not generated")
+        msg = "Reference features are not generated"
+        raise RuntimeError(msg)
 
     def learn(
         self,
@@ -209,8 +200,7 @@ class SAMLearnableVisualPrompter:
         polygons: list[Prompt] | None = None,
         reset_features: bool = False,
     ) -> tuple[VisualPromptingFeatures, np.ndarray]:
-        """
-        Executes `learn` stage of SAM ZSL pipeline.
+        """Executes `learn` stage of SAM ZSL pipeline.
 
         Reference features are updated according to newly arrived prompts.
         Features corresponding to the same labels are overridden during
@@ -228,14 +218,13 @@ class SAMLearnableVisualPrompter:
             reset_features (bool, optional): Forces learning from scratch. Defaults to False.
 
         Returns:
-            tuple[VisualPromptingFeatures, np.ndarray]: return values are the updated VPT reference features and reference masks.
+            tuple[VisualPromptingFeatures, np.ndarray]: return values are the updated VPT reference features and
+                reference masks.
             The shape of the reference mask is N_labels x H x W, where H and W are the same as in the input image.
         """
-
         if boxes is None and points is None and polygons is None:
-            raise RuntimeError(
-                "boxes, polygons or points prompts are required for learning"
-            )
+            msg = "boxes, polygons or points prompts are required for learning"
+            raise RuntimeError(msg)
 
         if reset_features or not self.has_reference_features():
             self.reset_reference_info()
@@ -269,7 +258,8 @@ class SAMLearnableVisualPrompter:
 
         # get reference masks
         ref_masks: np.ndarray = np.zeros(
-            (largest_label + 1, *original_shape), dtype=np.uint8
+            (largest_label + 1, *original_shape),
+            dtype=np.uint8,
         )
         for label, input_prompts in processed_prompts_w_labels.items():
             ref_mask: np.ndarray = np.zeros(original_shape, dtype=np.uint8)
@@ -279,13 +269,16 @@ class SAMLearnableVisualPrompter:
                     # bboxes and points
                     inputs_decoder["image_embeddings"] = image_embeddings
                     prediction = self._predict_masks(
-                        inputs_decoder, original_shape, is_cascade=self._is_cascade
+                        inputs_decoder,
+                        original_shape,
+                        is_cascade=self._is_cascade,
                     )
                     masks = prediction["upscaled_masks"]
                 elif "polygon" in inputs_decoder:
                     masks = _polygon_to_mask(inputs_decoder["polygon"], *original_shape)
                 else:
-                    raise RuntimeError("Unsupported type of prompt")
+                    msg = "Unsupported type of prompt"
+                    raise RuntimeError(msg)
                 ref_mask = np.where(masks, 1, ref_mask)
 
             ref_feat: np.ndarray | None = None
@@ -299,10 +292,9 @@ class SAMLearnableVisualPrompter:
                 )
                 cur_default_threshold_reference -= 0.05
 
-            self._reference_features[label] = ref_feat
-            self._used_indices: np.ndarray = np.concatenate(
-                (self._used_indices, [label])
-            )
+            if self._reference_features is not None:
+                self._reference_features[label] = ref_feat
+            self._used_indices = np.concatenate((self._used_indices, [label]))
             ref_masks[label] = ref_mask
 
         self._used_indices = np.unique(self._used_indices)
@@ -324,38 +316,41 @@ class SAMLearnableVisualPrompter:
         reference_features: VisualPromptingFeatures | None = None,
         apply_masks_refinement: bool = True,
     ) -> ZSLVisualPromptingResult:
-        """
-        Obtains masks by already prepared reference features.
+        """Obtains masks by already prepared reference features.
 
         Reference features can be obtained with SAMLearnableVisualPrompter.learn() and passed as an argument.
         If the features are not passed, instance internal state will be used as a source of the features.
 
         Args:
             image (np.ndarray): HWC-shaped image
-            reference_features (VisualPromptingFeatures | None, optional): Reference features object obtained during previous learn() calls.
-            If not passed, object internal state is used, which reflects the last learn() call. Defaults to None.
-            apply_masks_refinement (bool, optional): Flag controlling additional refinement stage on inference. Once enabled, decoder will
-            be launched 2 extra times to refine the masks obtained with the first decoder call. Defaults to True.
+            reference_features (VisualPromptingFeatures | None, optional): Reference features object obtained during
+                previous learn() calls. If not passed, object internal state is used, which reflects the last learn()
+                call. Defaults to None.
+            apply_masks_refinement (bool, optional): Flag controlling additional refinement stage on inference.
+            Once enabled, decoder will be launched 2 extra times to refine the masks obtained with the first decoder
+            call. Defaults to True.
 
         Returns:
-            ZSLVisualPromptingResult: Mapping label -> predicted mask. Each mask object contains a list of binary masks, and a list of
-            related prompts. Each binary mask corresponds to one prompt point. Class mask can be obtained by applying OR operation to all
-            mask corresponding to one label.
+            ZSLVisualPromptingResult: Mapping label -> predicted mask. Each mask object contains a list of binary masks,
+                and a list of related prompts. Each binary mask corresponds to one prompt point. Class mask can be
+                obtained by applying OR operation to all mask corresponding to one label.
         """
         if reference_features is None:
             if self._reference_features is None:
-                raise RuntimeError(
-                    "Reference features are not defined. This parameter can be passed via SAMLearnableVisualPrompter constructor, or as an argument of infer() method"
+                msg = (
+                    "Reference features are not defined. This parameter can be passed via "
+                    "SAMLearnableVisualPrompter constructor, or as an argument of infer() method"
                 )
-            else:
-                reference_feats = self._reference_features
+                raise RuntimeError(msg)
+            reference_feats = self._reference_features
 
             if self._used_indices is None:
-                raise RuntimeError(
-                    "Used indices are not defined. This parameter can be passed via SAMLearnableVisualPrompter constructor, or as an argument of infer() method"
+                msg = (
+                    "Used indices are not defined. This parameter can be passed via "
+                    "SAMLearnableVisualPrompter constructor, or as an argument of infer() method"
                 )
-            else:
-                used_idx = self._used_indices
+                raise RuntimeError(msg)
+            used_idx = self._used_indices
         else:
             reference_feats, used_idx = reference_features
 
@@ -374,7 +369,7 @@ class SAMLearnableVisualPrompter:
             downsizing=self._downsizing,
         )
 
-        predicted_masks: defaultdict[int, list] = defaultdict(list)
+        predicted_masks: dict[int, list] = defaultdict(list)
         used_points: defaultdict[int, list] = defaultdict(list)
         for label in total_points_scores:
             points_scores = total_points_scores[label]
@@ -394,7 +389,9 @@ class SAMLearnableVisualPrompter:
                     continue
 
                 point_coords = np.concatenate(
-                    (np.array([[x, y]]), bg_coords), axis=0, dtype=np.float32
+                    (np.array([[x, y]]), bg_coords),
+                    axis=0,
+                    dtype=np.float32,
                 )
                 point_coords = self.decoder.apply_coords(point_coords, original_shape)
                 point_labels = np.array([1] + [0] * len(bg_coords), dtype=np.float32)
@@ -405,18 +402,20 @@ class SAMLearnableVisualPrompter:
                 }
                 inputs_decoder["image_embeddings"] = image_embeddings
 
-                prediction = self._predict_masks(
-                    inputs_decoder, original_shape, apply_masks_refinement
+                _prediction: dict[str, np.ndarray] = self._predict_masks(
+                    inputs_decoder,
+                    original_shape,
+                    apply_masks_refinement,
                 )
-                prediction.update({"scores": points_score[-1]})
+                _prediction.update({"scores": points_score[-1]})
 
-                predicted_masks[label].append(prediction[self.decoder.output_blob_name])
+                predicted_masks[label].append(_prediction[self.decoder.output_blob_name])
                 used_points[label].append(points_score)
 
         # check overlapping area between different label masks
         _inspect_overlapping_areas(predicted_masks, used_points)
 
-        prediction = {}
+        prediction: dict[int, PredictedMask] = {}
         for k in used_points:
             processed_points = []
             scores = []
@@ -430,7 +429,8 @@ class SAMLearnableVisualPrompter:
     def reset_reference_info(self) -> None:
         """Initialize reference information."""
         self._reference_features = np.zeros(
-            (0, 1, self.decoder.embed_dim), dtype=np.float32
+            (0, 1, self.decoder.embed_dim),
+            dtype=np.float32,
         )
         self._used_indices = np.array([], dtype=np.int64)
 
@@ -439,9 +439,8 @@ class SAMLearnableVisualPrompter:
         image_prompts: list[dict[str, np.ndarray]],
     ) -> dict[int, list[dict[str, np.ndarray]]]:
         """Gather prompts according to labels."""
-
         processed_prompts: defaultdict[int, list[dict[str, np.ndarray]]] = defaultdict(
-            list
+            list,
         )
         for prompt in image_prompts:
             processed_prompts[int(prompt["label"])].append(prompt)
@@ -451,7 +450,8 @@ class SAMLearnableVisualPrompter:
     def _expand_reference_info(self, new_largest_label: int) -> None:
         """Expand reference info dimensions if newly given processed prompts have more labels."""
         if self._reference_features is None:
-            raise RuntimeError("Can not expand non existing reference info")
+            msg = "Can not expand non existing reference info"
+            raise RuntimeError(msg)
 
         if new_largest_label > (cur_largest_label := len(self._reference_features) - 1):
             diff = new_largest_label - cur_largest_label
@@ -484,8 +484,11 @@ class SAMLearnableVisualPrompter:
             elif i == 1:
                 # Cascaded Post-refinement-1
                 mask_input, masks, _ = _decide_masks(
-                    masks, logits, scores, is_single=True
-                )  # noqa: F821
+                    masks,
+                    logits,
+                    scores,
+                    is_single=True,
+                )
                 if masks.sum() == 0:
                     return {"upscaled_masks": masks}
 
@@ -494,8 +497,10 @@ class SAMLearnableVisualPrompter:
             elif i == 2:
                 # Cascaded Post-refinement-2
                 mask_input, masks, _ = _decide_masks(
-                    masks, logits, scores
-                )  # noqa: F821
+                    masks,
+                    logits,
+                    scores,
+                )
                 if masks.sum() == 0:
                     return {"upscaled_masks": masks}
 
@@ -503,7 +508,8 @@ class SAMLearnableVisualPrompter:
                 y, x = np.nonzero(masks)
                 box_coords = self.decoder.apply_coords(
                     np.array(
-                        [[x.min(), y.min()], [x.max(), y.max()]], dtype=np.float32
+                        [[x.min(), y.min()], [x.max(), y.max()]],
+                        dtype=np.float32,
                     ),
                     original_size,
                 )
@@ -511,10 +517,12 @@ class SAMLearnableVisualPrompter:
                 inputs.update(
                     {
                         "point_coords": np.concatenate(
-                            (inputs["point_coords"], box_coords), axis=1
+                            (inputs["point_coords"], box_coords),
+                            axis=1,
                         ),
                         "point_labels": np.concatenate(
-                            (inputs["point_labels"], self._point_labels_box), axis=1
+                            (inputs["point_labels"], self._point_labels_box),
+                            axis=1,
                         ),
                     },
                 )
@@ -533,7 +541,9 @@ class SAMLearnableVisualPrompter:
 
 
 def _polygon_to_mask(
-    polygon: np.ndarray | list[np.ndarray], height: int, width: int
+    polygon: np.ndarray | list[np.ndarray],
+    height: int,
+    width: int,
 ) -> np.ndarray:
     """Converts a polygon represented as an array of 2D points into a mask"""
     if isinstance(polygon, np.ndarray) and np.issubdtype(polygon.dtype, np.integer):
@@ -541,8 +551,7 @@ def _polygon_to_mask(
     else:
         contour = [[int(point[0]), int(point[1])] for point in polygon]
     gt_mask = np.zeros((height, width), dtype=np.uint8)
-    gt_mask = cv2.drawContours(gt_mask, np.asarray([contour]), 0, 1, cv2.FILLED)
-    return gt_mask
+    return cv2.drawContours(gt_mask, np.asarray([contour]), 0, 1, cv2.FILLED)
 
 
 def _generate_masked_features(
@@ -609,13 +618,9 @@ def _decide_masks(
         scores, masks, logits = (x[:, 1:] for x in (scores, masks, logits))
 
         # filter zero masks
-        while (
-            len(scores[0]) > 0
-            and masks[0, (best_idx := np.argmax(scores[0]))].sum() == 0
-        ):
+        while len(scores[0]) > 0 and masks[0, (best_idx := np.argmax(scores[0]))].sum() == 0:
             scores, masks, logits = (
-                np.concatenate((x[:, :best_idx], x[:, best_idx + 1 :]), axis=1)
-                for x in (scores, masks, logits)
+                np.concatenate((x[:, :best_idx], x[:, best_idx + 1 :]), axis=1) for x in (scores, masks, logits)
             )
 
         if len(scores[0]) == 0:
@@ -688,7 +693,8 @@ def _point_selection(
     # Top-first point selection
     point_coords = np.where(mask_sim > threshold)
     fg_coords_scores = np.stack(
-        point_coords[::-1] + (mask_sim[point_coords],), axis=0
+        point_coords[::-1] + (mask_sim[point_coords],),
+        axis=0,
     ).T
 
     ## skip if there is no point coords
@@ -700,31 +706,26 @@ def _point_selection(
     n_w = width // downsizing
 
     ## get grid numbers
-    idx_grid = (
-        fg_coords_scores[:, 1] * ratio // downsizing * n_w
-        + fg_coords_scores[:, 0] * ratio // downsizing
-    )
+    idx_grid = fg_coords_scores[:, 1] * ratio // downsizing * n_w + fg_coords_scores[:, 0] * ratio // downsizing
     idx_grid_unique = np.unique(idx_grid.astype(np.int64))
 
     ## get matched indices
-    matched_matrix = (
-        np.expand_dims(idx_grid, axis=-1) == idx_grid_unique
-    )  # (totalN, uniqueN)
+    matched_matrix = np.expand_dims(idx_grid, axis=-1) == idx_grid_unique  # (totalN, uniqueN)
 
     ## sample fg_coords_scores matched by matched_matrix
     matched_grid = np.expand_dims(fg_coords_scores, axis=1) * np.expand_dims(
-        matched_matrix, axis=-1
+        matched_matrix,
+        axis=-1,
     )
 
     ## sample the highest score one of the samples that are in the same grid
-    matched_indices = _topk_numpy(matched_grid[..., -1], k=1, axis=0, largest=True)[1][
-        0
-    ].astype(np.int64)
+    matched_indices = _topk_numpy(matched_grid[..., -1], k=1, axis=0, largest=True)[1][0].astype(np.int64)
     points_scores = matched_grid[matched_indices].diagonal().T
 
     ## sort by the highest score
     sorted_points_scores_indices = np.flip(
-        np.argsort(points_scores[:, -1]), axis=-1
+        np.argsort(points_scores[:, -1]),
+        axis=-1,
     ).astype(np.int64)
     points_scores = points_scores[sorted_points_scores_indices]
 
@@ -739,7 +740,9 @@ def _point_selection(
 
 
 def _resize_to_original_shape(
-    masks: np.ndarray, image_size: int, original_shape: np.ndarray
+    masks: np.ndarray,
+    image_size: int,
+    original_shape: np.ndarray,
 ) -> np.ndarray:
     """Resize feature size to original shape."""
     # resize feature size to input size
@@ -763,7 +766,10 @@ def _get_prepadded_size(original_shape: np.ndarray, image_size: int) -> np.ndarr
 
 
 def _topk_numpy(
-    x: np.ndarray, k: int, axis: int = -1, largest: bool = True
+    x: np.ndarray,
+    k: int,
+    axis: int = -1,
+    largest: bool = True,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Top-k function for numpy same with torch.topk."""
     if largest:
@@ -787,10 +793,11 @@ def _inspect_overlapping_areas(
     threshold_iou: float = 0.8,
 ) -> None:
     def _calculate_mask_iou(
-        mask1: np.ndarray, mask2: np.ndarray
+        mask1: np.ndarray,
+        mask2: np.ndarray,
     ) -> tuple[float, np.ndarray | None]:
-        assert mask1.ndim == 2  # noqa: S101
-        assert mask2.ndim == 2  # noqa: S101
+        assert mask1.ndim == 2
+        assert mask2.ndim == 2
         # Avoid division by zero
         if (union := np.logical_or(mask1, mask2).sum().item()) == 0:
             return 0.0, None
@@ -798,7 +805,8 @@ def _inspect_overlapping_areas(
         return intersection.sum().item() / union, intersection
 
     for (label, masks), (other_label, other_masks) in product(
-        predicted_masks.items(), predicted_masks.items()
+        predicted_masks.items(),
+        predicted_masks.items(),
     ):
         if other_label <= label:
             continue
@@ -806,7 +814,8 @@ def _inspect_overlapping_areas(
         overlapped_label = []
         overlapped_other_label = []
         for (im, mask), (jm, other_mask) in product(
-            enumerate(masks), enumerate(other_masks)
+            enumerate(masks),
+            enumerate(other_masks),
         ):
             _mask_iou, _intersection = _calculate_mask_iou(mask, other_mask)
             if _mask_iou > threshold_iou:

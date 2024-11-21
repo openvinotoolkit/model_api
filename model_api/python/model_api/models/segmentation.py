@@ -1,31 +1,30 @@
-"""
- Copyright (c) 2020-2024 Intel Corporation
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
-
-from typing import Iterable, Union
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
 
-from .image_model import ImageModel
-from .types import BooleanValue, ListValue, NumericalValue, StringValue
-from .utils import Contour, ImageResultWithSoftPrediction, load_labels
+from model_api.models.image_model import ImageModel
+from model_api.models.result_types import Contour, ImageResultWithSoftPrediction
+from model_api.models.types import BooleanValue, ListValue, NumericalValue, StringValue
+from model_api.models.utils import load_labels
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from model_api.adapters.inference_adapter import InferenceAdapter
 
 
 def create_hard_prediction_from_soft_prediction(
-    soft_prediction: np.ndarray, soft_threshold: float, blur_strength: int
+    soft_prediction: np.ndarray,
+    soft_threshold: float,
+    blur_strength: int,
 ) -> np.ndarray:
     """Creates a hard prediction containing the final label index per pixel.
 
@@ -45,33 +44,56 @@ def create_hard_prediction_from_soft_prediction(
     """
     if blur_strength == -1 or soft_threshold == float("inf"):
         return np.argmax(soft_prediction, axis=2)
-    else:
-        soft_prediction_blurred = cv2.blur(
-            soft_prediction, (blur_strength, blur_strength)
-        )
-        assert len(soft_prediction.shape) == 3
-        soft_prediction_blurred[soft_prediction_blurred < soft_threshold] = 0
-        return np.argmax(soft_prediction_blurred, axis=2)
+    soft_prediction_blurred = cv2.blur(
+        soft_prediction,
+        (blur_strength, blur_strength),
+    )
+    assert len(soft_prediction.shape) == 3
+    soft_prediction_blurred[soft_prediction_blurred < soft_threshold] = 0
+    return np.argmax(soft_prediction_blurred, axis=2)
 
 
 class SegmentationModel(ImageModel):
+    """Segmentation Model.
+
+    Args:
+        inference_adapter (InferenceAdapter): Inference adapter
+        configuration (dict, optional): Configuration parameters. Defaults to {}.
+        preload (bool, optional): Whether to preload the model. Defaults to False.
+
+    Example:
+        >>> from model_api.models import SegmentationModel
+        >>> import cv2
+        >>> model = SegmentationModel.create_model("./path_to_model.xml")
+        >>> image = cv2.imread("path_to_image.jpg")
+        >>> result = model.predict(image)
+        ImageResultWithSoftPrediction(
+            ...
+        )
+    """
+
     __model__ = "Segmentation"
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
+    def __init__(self, inference_adapter: InferenceAdapter, configuration: dict = {}, preload: bool = False) -> None:
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, (1, 2))
+        self.labels: list[str]
+        self.path_to_labels: str
+        self.blur_strength: int
+        self.soft_threshold: float
+        self.return_soft_prediction: bool
         if self.path_to_labels:
             self.labels = load_labels(self.path_to_labels)
 
         self.output_blob_name = self._get_outputs()
 
-    def _get_outputs(self):
+    def _get_outputs(self) -> str:
         out_name = ""
         for name, output in self.outputs.items():
             if _feature_vector_name not in output.names:
                 if out_name:
                     self.raise_error(
-                        f"only {_feature_vector_name} and 1 other output are allowed"
+                        f"only {_feature_vector_name} and 1 other output are allowed",
                     )
                 else:
                     out_name = name
@@ -85,21 +107,19 @@ class SegmentationModel(ImageModel):
             self.out_channels = layer_shape[1]
         else:
             self.raise_error(
-                "Unexpected output layer shape {}. Only 4D and 3D output layers are supported".format(
-                    layer_shape
-                )
+                f"Unexpected output layer shape {layer_shape}. Only 4D and 3D output layers are supported",
             )
 
         return out_name
 
     @classmethod
-    def parameters(cls):
+    def parameters(cls) -> dict:
         parameters = super().parameters()
         parameters.update(
             {
                 "labels": ListValue(description="List of class labels"),
                 "path_to_labels": StringValue(
-                    description="Path to file with labels. Overrides the labels, if they sets via 'labels' parameter"
+                    description="Path to file with labels. Overrides the labels, if they sets via 'labels' parameter",
                 ),
                 "blur_strength": NumericalValue(
                     value_type=int,
@@ -108,18 +128,21 @@ class SegmentationModel(ImageModel):
                 ),
                 "soft_threshold": NumericalValue(
                     value_type=float,
-                    description="Probability threshold value for bounding box filtering. inf value means no blurring and no soft_threshold",
+                    description=(
+                        "Probability threshold value for bounding box filtering. "
+                        "inf value means no blurring and no soft_threshold"
+                    ),
                     default_value=float("-inf"),
                 ),
                 "return_soft_prediction": BooleanValue(
                     description="Return raw resized model prediction in addition to processed one",
                     default_value=True,
                 ),
-            }
+            },
         )
         return parameters
 
-    def postprocess(self, outputs, meta):
+    def postprocess(self, outputs: dict, meta: dict) -> ImageResultWithSoftPrediction | cv2.Mat:
         input_image_height = meta["original_shape"][0]
         input_image_width = meta["original_shape"][1]
         predictions = outputs[self.output_blob_name].squeeze()
@@ -155,11 +178,7 @@ class SegmentationModel(ImageModel):
             return ImageResultWithSoftPrediction(
                 hard_prediction,
                 soft_prediction,
-                (
-                    _get_activation_map(soft_prediction)
-                    if _feature_vector_name in outputs
-                    else np.ndarray(0)
-                ),
+                (_get_activation_map(soft_prediction) if _feature_vector_name in outputs else np.ndarray(0)),
                 outputs.get(_feature_vector_name, np.ndarray(0)),
             )
         return hard_prediction
@@ -171,13 +190,16 @@ class SegmentationModel(ImageModel):
         n_layers = prediction.soft_prediction.shape[2]
 
         if n_layers == 1:
-            raise RuntimeError("Cannot get contours from soft prediction with 1 layer")
+            msg = "Cannot get contours from soft prediction with 1 layer"
+            raise RuntimeError(msg)
         combined_contours = []
         for layer_index in range(1, n_layers):  # ignoring background
             label = self.get_label_name(layer_index - 1)
             if len(prediction.soft_prediction.shape) == 3:
                 current_label_soft_prediction = prediction.soft_prediction[
-                    :, :, layer_index
+                    :,
+                    :,
+                    layer_index,
                 ]
             else:
                 current_label_soft_prediction = prediction.soft_prediction
@@ -186,7 +208,9 @@ class SegmentationModel(ImageModel):
             label_index_map = obj_group.astype(np.uint8) * 255
 
             contours, _hierarchy = cv2.findContours(
-                label_index_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+                label_index_map,
+                cv2.RETR_EXTERNAL,
+                cv2.CHAIN_APPROX_NONE,
             )
 
             for contour in contours:
@@ -207,25 +231,24 @@ class SegmentationModel(ImageModel):
 class SalientObjectDetectionModel(SegmentationModel):
     __model__ = "Salient_Object_Detection"
 
-    def postprocess(self, outputs, meta):
+    def postprocess(self, outputs: dict, meta: dict) -> cv2.Mat:
         input_image_height = meta["original_shape"][0]
         input_image_width = meta["original_shape"][1]
         result = outputs[self.output_blob_name].squeeze()
         result = 1 / (1 + np.exp(-result))
-        result = cv2.resize(
+        return cv2.resize(
             result,
             (input_image_width, input_image_height),
             0,
             0,
             interpolation=cv2.INTER_NEAREST,
         )
-        return result
 
 
 _feature_vector_name = "feature_vector"
 
 
-def _get_activation_map(features: Union[np.ndarray, Iterable, int, float]):
+def _get_activation_map(features: np.ndarray | Iterable | int | float) -> np.ndarray:
     """Getter activation_map functions."""
     min_soft_score = np.min(features)
     max_soft_score = np.max(features)

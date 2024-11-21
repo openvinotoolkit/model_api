@@ -1,36 +1,25 @@
-"""
- Copyright (c) 2023-2024 Intel Corporation
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-"""
+#
+# Copyright (C) 2020-2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+#
 
 from contextlib import contextmanager
 
 import cv2 as cv
 import numpy as np
-from model_api.models.instance_segmentation import MaskRCNNModel, _segm_postprocess
-from model_api.models.utils import (
+
+from model_api.models import (
     InstanceSegmentationResult,
     SegmentedObject,
-    multiclass_nms,
 )
+from model_api.models.instance_segmentation import MaskRCNNModel, _segm_postprocess
+from model_api.models.utils import multiclass_nms
 
 from .detection import DetectionTiler
 
 
 class InstanceSegmentationTiler(DetectionTiler):
-    """
-    Tiler for object instance segmentation models.
+    """Tiler for object instance segmentation models.
     This tiler expects model to output a list of `SegmentedObject` objects.
 
     In addition, this tiler allows to use a tile classifier model,
@@ -41,12 +30,11 @@ class InstanceSegmentationTiler(DetectionTiler):
     def __init__(
         self,
         model,
-        configuration=dict(),
+        configuration: dict = {},
         execution_mode="async",
         tile_classifier_model=None,
     ):
-        """
-        Constructor for creating a semantic segmentation tiling pipeline
+        """Constructor for creating a semantic segmentation tiling pipeline
 
         Args:
             model: underlying model
@@ -90,7 +78,6 @@ class InstanceSegmentationTiler(DetectionTiler):
         Returns:
              a dict with postprocessed detections in 6-items format: (label id, score, bbox) and masks
         """
-
         output_dict = super()._postprocess_tile(predictions, coord)
         output_dict["masks"] = []
         for segm_res in predictions.segmentedObjects:
@@ -109,7 +96,6 @@ class InstanceSegmentationTiler(DetectionTiler):
         Returns:
              merged prediction
         """
-
         detections_array = np.empty((0, 6), dtype=np.float32)
         feature_vectors = []
         saliency_maps = []
@@ -133,14 +119,8 @@ class InstanceSegmentationTiler(DetectionTiler):
             )
         masks = [masks[keep_idx] for keep_idx in keep_idxs]
 
-        merged_vector = (
-            np.mean(feature_vectors, axis=0) if feature_vectors else np.ndarray(0)
-        )
-        saliency_map = (
-            self._merge_saliency_maps(saliency_maps, shape, tiles_coords)
-            if saliency_maps
-            else []
-        )
+        merged_vector = np.mean(feature_vectors, axis=0) if feature_vectors else np.ndarray(0)
+        saliency_map = self._merge_saliency_maps(saliency_maps, shape, tiles_coords) if saliency_maps else []
 
         detected_objects = []
         for i in range(detections_array.shape[0]):
@@ -149,7 +129,7 @@ class InstanceSegmentationTiler(DetectionTiler):
             bbox = list(detections_array[i][2:].astype(np.int32))
             masks[i] = _segm_postprocess(np.array(bbox), masks[i], *shape[:-1])
             detected_objects.append(
-                SegmentedObject(*bbox, score, label, self.model.labels[label], masks[i])
+                SegmentedObject(*bbox, score, label, self.model.labels[label], masks[i]),
             )
 
         return InstanceSegmentationResult(
@@ -169,7 +149,6 @@ class InstanceSegmentationTiler(DetectionTiler):
         Returns:
             Merged saliency map with shape (Nc, H, W)
         """
-
         if not saliency_maps:
             return None
 
@@ -197,11 +176,7 @@ class InstanceSegmentationTiler(DetectionTiler):
                 merged_map[class_idx][y_1:y_2, x_1:x_2] = np.maximum(tile_map, cls_map)
 
         for class_idx in range(num_classes):
-            image_map_cls = (
-                image_saliency_map[class_idx]
-                if self.tile_with_full_img
-                else np.ndarray(0)
-            )
+            image_map_cls = image_saliency_map[class_idx] if self.tile_with_full_img else np.ndarray(0)
             if len(image_map_cls.shape) < 2:
                 merged_map[class_idx] = np.round(merged_map[class_idx]).astype(np.uint8)
                 if np.sum(merged_map[class_idx]) == 0:

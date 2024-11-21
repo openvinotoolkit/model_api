@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2020-2024 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #include "models/detection_model_ext.h"
 
 #include <fstream>
@@ -21,8 +25,7 @@ DetectionModelExt::DetectionModelExt(std::shared_ptr<ov::Model>& model, const ov
     }
 }
 
-DetectionModelExt::DetectionModelExt(std::shared_ptr<InferenceAdapter>& adapter)
-    : DetectionModel(adapter) {
+DetectionModelExt::DetectionModelExt(std::shared_ptr<InferenceAdapter>& adapter) : DetectionModel(adapter) {
     const ov::AnyMap& configuration = adapter->getModelConfig();
     auto iou_threshold_iter = configuration.find("iou_threshold");
     if (iou_threshold_iter != configuration.end()) {
