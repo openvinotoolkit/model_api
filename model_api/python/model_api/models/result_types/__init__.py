@@ -16,8 +16,7 @@ from .segmentation import (
     Contour,
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
-    SegmentedObject,
-    SegmentedObjectWithRects,
+    RotatedSegmentationResult,
 )
 from .visual_prompting import PredictedMask, VisualPromptingResult, ZSLVisualPromptingResult
 
@@ -29,12 +28,11 @@ __all__ = [
     "DetectionResult",
     "DetectedKeypoints",
     "MultipleOutputParser",
-    "SegmentedObject",
-    "SegmentedObjectWithRects",
     "SingleOutputParser",
     "ImageResultWithSoftPrediction",
     "InstanceSegmentationResult",
     "PredictedMask",
     "VisualPromptingResult",
     "ZSLVisualPromptingResult",
+    "RotatedSegmentationResult",
 ]

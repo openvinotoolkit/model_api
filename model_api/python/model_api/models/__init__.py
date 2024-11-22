@@ -20,8 +20,7 @@ from .result_types import (
     ImageResultWithSoftPrediction,
     InstanceSegmentationResult,
     PredictedMask,
-    SegmentedObject,
-    SegmentedObjectWithRects,
+    RotatedSegmentationResult,
     VisualPromptingResult,
     ZSLVisualPromptingResult,
 )
@@ -94,8 +93,7 @@ __all__ = [
     "classification_models",
     "detection_models",
     "segmentation_models",
-    "SegmentedObject",
-    "SegmentedObjectWithRects",
+    "RotatedSegmentationResult",
     "add_rotated_rects",
     "get_contours",
 ]

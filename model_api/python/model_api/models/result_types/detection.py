@@ -53,16 +53,22 @@ class DetectionResult:
         self._feature_vector = feature_vector
 
     def __len__(self) -> int:
-        return len(self._bboxes)
+        return len(self.bboxes)
 
     def __str__(self) -> str:
-        return (
-            f"Num of boxes: {self._bboxes.shape}, "
-            f"Num of labels: {len(self._labels)}, "
-            f"Num of scores: {len(self._scores)}, "
-            f"Saliency Map: {array_shape_to_str(self._saliency_map)}, "
-            f"Feature Vec: {array_shape_to_str(self._feature_vector)}"
-        )
+        repr_str = ""
+        for box, score, label, name in zip(
+            self.bboxes,
+            self.scores,
+            self.labels,
+            self.label_names,
+            strict=True,
+        ):
+            x1, y1, x2, y2 = box
+            repr_str += f"{x1}, {y1}, {x2}, {y2}, {label} ({name}): {score:.3f}; "
+
+        repr_str += f"{array_shape_to_str(self.saliency_map)}; {array_shape_to_str(self.feature_vector)}"
+        return repr_str
 
     def get_obj_sizes(self) -> np.ndarray:
         """Get object sizes.
@@ -117,11 +123,11 @@ class DetectionResult:
         self._label_names = value
 
     @property
-    def saliency_map(self) -> np.ndarray:
+    def saliency_map(self):
         return self._saliency_map
 
     @saliency_map.setter
-    def saliency_map(self, value):
+    def saliency_map(self, value: np.ndarray):
         if not isinstance(value, np.ndarray):
             msg = "Saliency map must be numpy array."
             raise ValueError(msg)
@@ -168,8 +174,12 @@ class SingleOutputParser:
             labels.append(label)
         bboxes = np.array(bboxes)
         scores = np.array(scores)
-        labels = np.array(labels)
-        return DetectionResult(bboxes, scores, labels)
+        labels = np.array(labels).astype(np.int32)
+        return DetectionResult(
+            bboxes=bboxes,
+            labels=labels,
+            scores=scores,
+        )
 
 
 class MultipleOutputParser:
