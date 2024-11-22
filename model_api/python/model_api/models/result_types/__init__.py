@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from .anomaly import AnomalyResult
-from .classification import ClassificationResult
+from .classification import ClassificationResult, Label
 from .detection import (
     BoxesLabelsParser,
     DetectionResult,
@@ -29,6 +29,7 @@ __all__ = [
     "DetectedKeypoints",
     "MultipleOutputParser",
     "SingleOutputParser",
+    "Label",
     "ImageResultWithSoftPrediction",
     "InstanceSegmentationResult",
     "PredictedMask",
