@@ -114,7 +114,7 @@ class DetectionTiler(Tiler):
         saliency_map = self._merge_saliency_maps(saliency_maps, shape, tiles_coords) if saliency_maps else np.ndarray(0)
 
         return DetectionResult(
-            bboxes=detections_array[:, 2:],
+            bboxes=detections_array[:, 2:].astype(np.int32),
             labels=detections_array[:, 0].astype(np.int32),
             scores=detections_array[:, 1],
             saliency_map=saliency_map,

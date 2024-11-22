@@ -94,9 +94,10 @@ class DetectionModel(ImageModel):
         boxes = detection_result.bboxes
         boxes[:, 0::2] = (boxes[:, 0::2] * self.w - pad_left) * inverted_scale_x
         boxes[:, 1::2] = (boxes[:, 1::2] * self.h - pad_top) * inverted_scale_y
+        np.round(boxes, out=boxes)
         boxes[:, 0::2] = np.clip(boxes[:, 0::2], 0, input_img_widht)
         boxes[:, 1::2] = np.clip(boxes[:, 1::2], 0, input_img_height)
-        np.round(boxes, out=boxes)
+        detection_result.bboxes = boxes.astype(np.int32)
 
     def _filter_detections(self, detection_result: DetectionResult, box_area_threshold=0.0):
         """Filters detections by confidence threshold and box size threshold
