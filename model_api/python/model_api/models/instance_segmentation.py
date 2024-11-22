@@ -196,7 +196,7 @@ class MaskRCNNModel(ImageModel):
         masks = masks[keep]
 
         resized_masks, label_names = [], []
-        for box, label_idx, raw_mask in zip(boxes, labels, masks, strict=True):
+        for box, label_idx, raw_mask in zip(boxes, labels, masks):
             if self.labels:
                 label_names.append(self.labels[label_idx])
 

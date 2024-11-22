@@ -122,7 +122,7 @@ class InstanceSegmentationTiler(DetectionTiler):
         labels, scores, bboxes = np.hsplit(detections_array, [1, 2])
         labels = labels.astype(np.int32)
         resized_masks, label_names = [], []
-        for mask, box, label_idx in zip(masks, bboxes, labels, strict=True):
+        for mask, box, label_idx in zip(masks, bboxes, labels):
             label_names.append(self.model.labels[int(label_idx)])
             resized_masks.append(_segm_postprocess(box, mask, *shape[:-1]))
 
