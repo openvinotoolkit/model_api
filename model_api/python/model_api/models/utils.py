@@ -53,19 +53,15 @@ def get_contours(
     return combined_contours
 
 
-def clip_detections(detections: DetectionResult, size: tuple[int, int]) -> DetectionResult:
+def clip_detections(detections: DetectionResult, size: tuple[int, int]):
     """Clip bounding boxes to image size.
 
     Args:
         detections (DetectionResult): detection results including boxes, labels and scores.
         size (tuple[int, int]): image size of format (height, width).
-
-    Returns:
-        DetectionResult: clipped detection results.
     """
     detections.bboxes[:, 0::2] = np.clip(detections.bboxes[:, 0::2], 0, size[1])
     detections.bboxes[:, 1::2] = np.clip(detections.bboxes[:, 1::2], 0, size[0])
-    return detections
 
 
 class OutputTransform:

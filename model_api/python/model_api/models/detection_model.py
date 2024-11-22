@@ -67,7 +67,7 @@ class DetectionModel(ImageModel):
 
         return parameters
 
-    def _resize_detections(self, detection_result: DetectionResult, meta: dict) -> DetectionResult:
+    def _resize_detections(self, detection_result: DetectionResult, meta: dict):
         """Resizes detection bounding boxes according to initial image shape.
 
         It implements image resizing depending on the set `resize_type`(see `ImageModel` for details).
@@ -76,9 +76,6 @@ class DetectionModel(ImageModel):
         Args:
             detection_result (DetectionList): detection result with coordinates in normalized form
             meta (dict): the input metadata obtained from `preprocess` method
-
-        Returns:
-            - list of detections with resized and clipped coordinates to fit the initial image
         """
         input_img_height, input_img_widht = meta["original_shape"][:2]
         inverted_scale_x = input_img_widht / self.w
@@ -99,8 +96,7 @@ class DetectionModel(ImageModel):
         boxes[:, 1::2] = (boxes[:, 1::2] * self.h - pad_top) * inverted_scale_y
         boxes[:, 0::2] = np.clip(boxes[:, 0::2], 0, input_img_widht)
         boxes[:, 1::2] = np.clip(boxes[:, 1::2], 0, input_img_height)
-        detection_result.bboxes = boxes
-        return detection_result
+        np.round(boxes, out=boxes)
 
     def _filter_detections(self, detection_result: DetectionResult, box_area_threshold=0.0):
         """Filters detections by confidence threshold and box size threshold

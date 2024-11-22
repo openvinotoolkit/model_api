@@ -45,20 +45,23 @@ class DetectionResult:
         feature_vector: np.ndarray | None = None,
     ):
         super().__init__()
-        self.bboxes = bboxes
-        self.labels = labels
-        self.scores = scores if scores is not None else np.zeros(len(bboxes))
-        self.label_names = None if label_names is None else label_names
-        self.saliency_map = saliency_map
-        self.feature_vector = feature_vector
+        self._bboxes = bboxes
+        self._labels = labels
+        self._scores = scores if scores is not None else np.zeros(len(bboxes))
+        self._label_names = ["#"] * len(bboxes) if label_names is None else label_names
+        self._saliency_map = saliency_map
+        self._feature_vector = feature_vector
+
+    def __len__(self) -> int:
+        return len(self._bboxes)
 
     def __str__(self) -> str:
         return (
-            f"bboxes: {self.bboxes.shape}, "
-            f"labels: {len(self.labels)}, "
-            f"scores: {len(self.scores)}, "
-            f"{array_shape_to_str(self.saliency_map)}, "
-            f"{array_shape_to_str(self.feature_vector)}"
+            f"Num of boxes: {self._bboxes.shape}, "
+            f"Num of labels: {len(self._labels)}, "
+            f"Num of scores: {len(self._scores)}, "
+            f"Saliency Map: {array_shape_to_str(self._saliency_map)}, "
+            f"Feature Vec: {array_shape_to_str(self._feature_vector)}"
         )
 
     def get_obj_sizes(self) -> np.ndarray:
@@ -67,7 +70,73 @@ class DetectionResult:
         Returns:
             np.ndarray: Object sizes in dim of (N,).
         """
-        return (self.bboxes[:, 2] - self.bboxes[:, 0]) * (self.bboxes[:, 3] - self.bboxes[:, 1])
+        return (self._bboxes[:, 2] - self._bboxes[:, 0]) * (self._bboxes[:, 3] - self._bboxes[:, 1])
+
+    @property
+    def bboxes(self) -> np.ndarray:
+        return self._bboxes
+
+    @bboxes.setter
+    def bboxes(self, value):
+        if not isinstance(value, np.ndarray):
+            msg = "Bounding boxes must be numpy array."
+            raise ValueError(msg)
+        self._bboxes = value
+
+    @property
+    def labels(self) -> np.ndarray:
+        return self._labels
+
+    @labels.setter
+    def labels(self, value):
+        if not isinstance(value, np.ndarray):
+            msg = "Labels must be numpy array."
+            raise ValueError(msg)
+        self._labels = value
+
+    @property
+    def scores(self) -> np.ndarray:
+        return self._scores
+
+    @scores.setter
+    def scores(self, value):
+        if not isinstance(value, np.ndarray):
+            msg = "Scores must be numpy array."
+            raise ValueError(msg)
+        self._scores = value
+
+    @property
+    def label_names(self) -> list[str]:
+        return self._label_names
+
+    @label_names.setter
+    def label_names(self, value):
+        if not isinstance(value, list):
+            msg = "Label names must be list."
+            raise ValueError(msg)
+        self._label_names = value
+
+    @property
+    def saliency_map(self) -> np.ndarray:
+        return self._saliency_map
+
+    @saliency_map.setter
+    def saliency_map(self, value):
+        if not isinstance(value, np.ndarray):
+            msg = "Saliency map must be numpy array."
+            raise ValueError(msg)
+        self._saliency_map = value
+
+    @property
+    def feature_vector(self) -> np.ndarray:
+        return self._feature_vector
+
+    @feature_vector.setter
+    def feature_vector(self, value):
+        if not isinstance(value, np.ndarray):
+            msg = "Feature vector must be numpy array."
+            raise ValueError(msg)
+        self._feature_vector = value
 
 
 class SingleOutputParser:
