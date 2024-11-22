@@ -62,7 +62,6 @@ class DetectionResult:
             self.scores,
             self.labels,
             self.label_names,
-            strict=True,
         ):
             x1, y1, x2, y2 = box
             repr_str += f"{x1}, {y1}, {x2}, {y2}, {label} ({name}): {score:.3f}; "

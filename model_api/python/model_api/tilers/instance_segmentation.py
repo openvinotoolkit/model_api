@@ -120,16 +120,19 @@ class InstanceSegmentationTiler(DetectionTiler):
         saliency_map = self._merge_saliency_maps(saliency_maps, shape, tiles_coords) if saliency_maps else []
 
         labels, scores, bboxes = np.hsplit(detections_array, [1, 2])
-        resized_masks = []
-        for mask, box in zip(masks, bboxes, strict=True):
+        labels = labels.astype(np.int32)
+        resized_masks, label_names = [], []
+        for mask, box, label_idx in zip(masks, bboxes, labels, strict=True):
+            label_names.append(self.model.labels[int(label_idx)])
             resized_masks.append(_segm_postprocess(box, mask, *shape[:-1]))
 
         resized_masks = np.stack(resized_masks) if resized_masks else masks
         return InstanceSegmentationResult(
             bboxes=np.round(bboxes).astype(np.int32),
-            labels=labels.astype(np.int32).squeeze(),
+            labels=labels.squeeze(),
             scores=scores.squeeze(),
             masks=resized_masks,
+            label_names=label_names if label_names else None,
             saliency_map=saliency_map,
             feature_vector=merged_vector,
         )

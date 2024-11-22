@@ -46,7 +46,6 @@ def get_contours(seg_result: RotatedSegmentationResult | InstanceSegmentationRes
         seg_result.masks,
         seg_result.scores,
         seg_result.label_names,
-        strict=True,
     ):
         contours, _ = cv2.findContours(
             mask,
