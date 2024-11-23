@@ -32,8 +32,13 @@ model = SSD.create_model("model.xml")
 predictions = model(image)
 
 # Iterate over detection result
-for box, score, label in zip(predictions.boxes, predictions.scores, predictions.labels):
-    print(f"Box: {box}, Score: {score}, Label: {label}")
+for box, score, label, label_name in zip(
+    predictions.boxes,
+    predictions.scores,
+    predictions.labels,
+    predictions.label_names,
+):
+    print(f"Box: {box}, Score: {score}, Label: {label}, Label Name: {label_name}")
 ```
 
 ```{eval-rst}
