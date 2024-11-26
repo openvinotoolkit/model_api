@@ -5,12 +5,7 @@
 
 from .anomaly import AnomalyResult
 from .classification import ClassificationResult, Label
-from .detection import (
-    BoxesLabelsParser,
-    DetectionResult,
-    MultipleOutputParser,
-    SingleOutputParser,
-)
+from .detection import DetectionResult
 from .keypoint import DetectedKeypoints
 from .segmentation import (
     Contour,
@@ -22,13 +17,10 @@ from .visual_prompting import PredictedMask, VisualPromptingResult, ZSLVisualPro
 
 __all__ = [
     "AnomalyResult",
-    "BoxesLabelsParser",
     "ClassificationResult",
     "Contour",
     "DetectionResult",
     "DetectedKeypoints",
-    "MultipleOutputParser",
-    "SingleOutputParser",
     "Label",
     "ImageResultWithSoftPrediction",
     "InstanceSegmentationResult",
