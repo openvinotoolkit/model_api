@@ -190,7 +190,7 @@ def test_image_models(data, dump, result, model_data):
                 output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
-            elif isinstance(outputs, DetectionResult):
+            elif type(outputs) is DetectionResult:
                 assert 1 == len(test_data["reference"])
                 output_str = str(outputs)
                 assert test_data["reference"][0] == output_str
@@ -207,26 +207,14 @@ def test_image_models(data, dump, result, model_data):
                 output_str = str(outputs) + contour_str
                 assert test_data["reference"][0] == output_str
                 image_result = [output_str]
-            elif isinstance(outputs, InstanceSegmentationResult):
+            elif type(outputs) is InstanceSegmentationResult:
                 assert 1 == len(test_data["reference"])
-                output_str = (
-                    str(
-                        InstanceSegmentationResult(
-                            add_rotated_rects(outputs.segmentedObjects),
-                            outputs.saliency_map,
-                            outputs.feature_vector,
-                        )
-                    )
-                    + "; "
-                )
+                output_str = str(add_rotated_rects(outputs)) + "; "
                 try:
                     # getContours() assumes each instance generates only one contour.
                     # That doesn't hold for some models
                     output_str += (
-                        "; ".join(
-                            str(contour)
-                            for contour in get_contours(outputs.segmentedObjects)
-                        )
+                        "; ".join(str(contour) for contour in get_contours(outputs))
                         + "; "
                     )
                 except RuntimeError:

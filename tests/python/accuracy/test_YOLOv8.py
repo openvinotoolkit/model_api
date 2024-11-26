@@ -73,31 +73,19 @@ def test_alignment(impath, pt):
     im = cv2.imread(str(impath))
     assert im is not None
     impl_preds = impl_wrapper(im)
-    pred_boxes = np.array(
-        [
-            (
-                impl_pred.xmin,
-                impl_pred.ymin,
-                impl_pred.xmax,
-                impl_pred.ymax,
-                impl_pred.score,
-                impl_pred.id,
-            )
-            for impl_pred in impl_preds.objects
-        ],
-        dtype=np.float32,
-    )
+    pred_boxes = impl_preds.bboxes.astype(np.float32)
+    pred_scores = impl_preds.scores.astype(np.float32)
+    pred_labels = impl_preds.labels
     ref_predictions = ref_wrapper.predict(im)
     assert 1 == len(ref_predictions)
     ref_boxes = ref_predictions[0].boxes.data.numpy()
-    if 0 == pred_boxes.size == ref_boxes.size:
+    if 0 == len(pred_boxes) == len(ref_boxes):
         return  # np.isclose() doesn't work for empty arrays
     ref_boxes[:, :4] = np.round(ref_boxes[:, :4], out=ref_boxes[:, :4])
-    assert np.isclose(
-        pred_boxes[:, :4], ref_boxes[:, :4], 0, 1
-    ).all()  # Allow one pixel deviation because image preprocessing is imbedded into the model
-    assert np.isclose(pred_boxes[:, 4], ref_boxes[:, 4], 0.0, 0.02).all()
-    assert (pred_boxes[:, 5] == ref_boxes[:, 5]).all()
+    # Allow one pixel deviation because image preprocessing is imbedded into the model
+    assert np.isclose(pred_boxes, ref_boxes[:, :4], 0, 1).all()
+    assert np.isclose(pred_scores, ref_boxes[:, 4], 0.0, 0.02).all()
+    assert (pred_labels == ref_boxes[:, 5]).all()
     with open(ref_dir / impath.with_suffix(".txt").name, "w") as file:
         print(impl_preds, end="", file=file)
 
@@ -125,20 +113,16 @@ class Metrics(yolo.detect.DetectionValidator):
         )
         for batch in dataloader:
             im = cv2.imread(batch["im_file"][0])
-            pred = torch.tensor(
-                [
-                    (
-                        impl_pred.xmin / im.shape[1],
-                        impl_pred.ymin / im.shape[0],
-                        impl_pred.xmax / im.shape[1],
-                        impl_pred.ymax / im.shape[0],
-                        impl_pred.score,
-                        impl_pred.id,
-                    )
-                    for impl_pred in wrapper(im).objects
-                ],
-                dtype=torch.float32,
-            )[None]
+            result = wrapper(im)
+            bboxes = torch.from_numpy(result.bboxes) / torch.tile(
+                torch.tensor([im.shape[1], im.shape[0]], dtype=torch.float32), (1, 2)
+            )
+            scores = torch.from_numpy(result.scores)
+            labels = torch.from_numpy(result.labels)
+
+            pred = torch.cat(
+                [bboxes, scores[:, None], labels[:, None].float()], dim=1
+            ).unsqueeze(0)
             if not pred.numel():
                 pred = pred.view(1, 0, 6)
             self.update_metrics(pred, batch)
