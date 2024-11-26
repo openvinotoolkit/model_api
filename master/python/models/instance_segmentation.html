@@ -382,16 +382,13 @@
 </section>
 <section id="outputs">
 <h3>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h3>
-<p>Instance segmentation model outputs a list of segmented objects (i.e <code class="docutils literal notranslate"><span class="pre">list[SegmentedObject]</span></code>)wrapped in <code class="docutils literal notranslate"><span class="pre">InstanceSegmentationResult.segmentedObjects</span></code>, each containing the following attributes:</p>
+<p>Instance segmentation model outputs a <code class="docutils literal notranslate"><span class="pre">InstanceSegmentationResult</span></code> object containing the following attributes:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">mask</span></code> (numpy.ndarray) - A binary mask of the object.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">score</span></code> (float) - Confidence score of the object.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code> (int) - Class label of the object.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">str_label</span></code> (str) - String label of the object.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">xmin</span></code> (int) - X-coordinate of the top-left corner of the bounding box.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ymin</span></code> (int) - Y-coordinate of the top-left corner of the bounding box.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">xmax</span></code> (int) - X-coordinate of the bottom-right corner of the bounding box.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ymax</span></code> (int) - Y-coordinate of the bottom-right corner of the bounding box.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">boxes</span></code> (np.ndarray) - Bounding boxes of the detected objects. Each in format of x1, y1, x2 y2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scores</span></code> (np.ndarray) - Confidence scores of the detected objects.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">masks</span></code> (np.ndarray) - Segmentation masks of the detected objects.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">labels</span></code> (np.ndarray) - Class labels of the detected objects.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">label_names</span></code> (list[str]) - List of class names of the detected objects.</p></li>
 </ul>
 </section>
 </section>
@@ -407,11 +404,17 @@
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
 <span class="c1"># Iterate over the segmented objects</span>
-<span class="k">for</span> <span class="n">pred_obj</span> <span class="ow">in</span> <span class="n">predictions</span><span class="o">.</span><span class="n">segmentedObjects</span><span class="p">:</span>
-    <span class="n">pred_mask</span> <span class="o">=</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">mask</span>
-    <span class="n">pred_score</span> <span class="o">=</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">score</span>
-    <span class="n">label_id</span> <span class="o">=</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">id</span>
-    <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="n">pred_obj</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">xmax</span><span class="p">,</span> <span class="n">pred_obj</span><span class="o">.</span><span class="n">ymax</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">box</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">label_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+    <span class="n">predictions</span><span class="o">.</span><span class="n">boxes</span><span class="p">,</span>
+    <span class="n">predictions</span><span class="o">.</span><span class="n">scores</span><span class="p">,</span>
+    <span class="n">predictions</span><span class="o">.</span><span class="n">masks</span><span class="p">,</span>
+    <span class="n">predictions</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
+    <span class="n">predictions</span><span class="o">.</span><span class="n">label_names</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Box: </span><span class="si">{</span><span class="n">box</span><span class="si">}</span><span class="s2">, Score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">, Label: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">, Label Name: </span><span class="si">{</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Mask&quot;</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
 </pre></div>
 </div>
 <dl class="py class" id="module-model_api.models.instance_segmentation">

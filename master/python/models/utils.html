@@ -393,10 +393,10 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="model_api.models.utils.add_rotated_rects">
-<span class="sig-prename descclassname"><span class="pre">model_api.models.utils.</span></span><span class="sig-name descname"><span class="pre">add_rotated_rects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segmented_objects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.utils.add_rotated_rects" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">model_api.models.utils.</span></span><span class="sig-name descname"><span class="pre">add_rotated_rects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inst_seg_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.utils.add_rotated_rects" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SegmentedObjectWithRects</span></code>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">RotatedSegmentationResult</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -404,16 +404,20 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="model_api.models.utils.clip_detections">
 <span class="sig-prename descclassname"><span class="pre">model_api.models.utils.</span></span><span class="sig-name descname"><span class="pre">clip_detections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detections</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.utils.clip_detections" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Detection</span></code>]</span></p>
+<dd><p>Clip bounding boxes to image size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>detections</strong> (<em>DetectionResult</em>) – detection results including boxes, labels and scores.</p></li>
+<li><p><strong>size</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – image size of format (height, width).</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="model_api.models.utils.get_contours">
-<span class="sig-prename descclassname"><span class="pre">model_api.models.utils.</span></span><span class="sig-name descname"><span class="pre">get_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segmentedObjects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.utils.get_contours" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">model_api.models.utils.</span></span><span class="sig-name descname"><span class="pre">get_contours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seg_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.utils.get_contours" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Contour</span></code>]</span></p>

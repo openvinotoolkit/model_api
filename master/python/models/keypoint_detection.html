@@ -495,13 +495,13 @@ the type, default value and description must be provided.</p>
 <p>Pipeline implementing top down keypoint detection approach.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detections</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.keypoint_detection.TopDownKeypointDetectionPipeline.predict" title="Link to this definition">#</a></dt>
 <dd><p>Predicts keypoints for the given image and detections.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>image</strong> (<em>np.ndarray</em>) – input full-size image</p></li>
-<li><p><strong>detections</strong> (<em>list</em><em>[</em><em>Detection</em><em>]</em>) – detections located within the given image</p></li>
+<li><p><strong>detection_result</strong> (<em>detection_result</em>) – detections located within the given image</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

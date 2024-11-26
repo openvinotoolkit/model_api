@@ -377,7 +377,19 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.models.ssd.BoxesLabelsParser.__call__">
 <span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.ssd.BoxesLabelsParser.__call__" title="Link to this definition">#</a></dt>
-<dd><p>Call self as a function.</p>
+<dd><p>Parse model outputs.</p>
+<p>Note: Bounding boxes layer from outputs are expected to be in format [xmin, ymin, xmax, ymax, score].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputs</strong> (<em>dict</em>) – Model outputs wrapped in dict.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed model outputs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DetectionResult</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -394,7 +406,18 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.models.ssd.MultipleOutputParser.__call__">
 <span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.ssd.MultipleOutputParser.__call__" title="Link to this definition">#</a></dt>
-<dd><p>Call self as a function.</p>
+<dd><p>Parse model outputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputs</strong> (<em>dict</em>) – Model outputs wrapped in dict.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed model outputs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DetectionResult</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -438,8 +461,11 @@ initialization. If <cite>preload=False</cite>, the model must be loaded via <cit
 <li><p><strong>meta</strong> (<em>dict</em>) – the input metadata obtained from <cite>preprocess</cite> method</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectionResult</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
 <li><p>postprocessed data in the format defined by wrapper</p></li>
 </ul>
 </p>
@@ -501,7 +527,18 @@ additional supported inputs, the <cite>preprocess</cite> should be overloaded in
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.models.ssd.SingleOutputParser.__call__">
 <span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.ssd.SingleOutputParser.__call__" title="Link to this definition">#</a></dt>
-<dd><p>Call self as a function.</p>
+<dd><p>Parse model outputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputs</strong> (<em>dict</em>) – Model outputs wrapped in dict.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed model outputs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DetectionResult</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
