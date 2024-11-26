@@ -9,7 +9,7 @@ from typing import Any
 import numpy as np
 
 from .inference_adapter import InferenceAdapter, Metadata
-from .utils import Layout
+from .utils import Layout, get_rt_info_from_dict
 
 
 class OVMSAdapter(InferenceAdapter):
@@ -17,67 +17,69 @@ class OVMSAdapter(InferenceAdapter):
 
     def __init__(self, target_model: str):
         """Expected format: <address>:<port>/models/<model_name>[:<model_version>]"""
-        import ovmsclient
+        import tritonclient.http as httpclient
 
         service_url, self.model_name, self.model_version = _parse_model_arg(
             target_model,
         )
-        self.client = ovmsclient.make_grpc_client(url=service_url)
-        _verify_model_available(self.client, self.model_name, self.model_version)
+        self.client = httpclient.InferenceServerClient(service_url)
+        if not self.client.is_model_ready(self.model_name, self.model_version):
+            msg = f"Requested model: {self.model_name}, version: {self.model_version} is not accessible"
+            raise RuntimeError(msg)
 
         self.metadata = self.client.get_model_metadata(
             model_name=self.model_name,
             model_version=self.model_version,
         )
+        self.inputs = self.get_input_layers()
 
     def get_input_layers(self):
         return {
-            name: Metadata(
-                {name},
+            meta["name"]: Metadata(
+                {meta["name"]},
                 meta["shape"],
                 Layout.from_shape(meta["shape"]),
-                _tf2ov_precision.get(meta["dtype"], meta["dtype"]),
+                meta["datatype"],
             )
-            for name, meta in self.metadata["inputs"].items()
+            for meta in self.metadata["inputs"]
         }
 
     def get_output_layers(self):
         return {
-            name: Metadata(
-                {name},
+            meta["name"]: Metadata(
+                {meta["name"]},
                 shape=meta["shape"],
-                precision=_tf2ov_precision.get(meta["dtype"], meta["dtype"]),
+                precision=meta["datatype"],
             )
-            for name, meta in self.metadata["outputs"].items()
+            for meta in self.metadata["outputs"]
         }
 
     def infer_sync(self, dict_data):
-        inputs = _prepare_inputs(dict_data, self.metadata["inputs"])
-        raw_result = self.client.predict(
-            inputs,
+        inputs = _prepare_inputs(dict_data, self.inputs)
+        raw_result = self.client.infer(
             model_name=self.model_name,
             model_version=self.model_version,
+            inputs=inputs,
         )
-        # For models with single output ovmsclient returns ndarray with results,
-        # so the dict must be created to correctly implement interface.
-        if isinstance(raw_result, np.ndarray):
-            output_name = next(iter(self.metadata["outputs"].keys()))
-            return {output_name: raw_result}
-        return raw_result
+
+        inference_results = {}
+        for output in self.metadata["outputs"]:
+            inference_results[output["name"]] = raw_result.as_numpy(output["name"])
+
+        return inference_results
 
     def infer_async(self, dict_data, callback_data):
-        inputs = _prepare_inputs(dict_data, self.metadata["inputs"])
-        raw_result = self.client.predict(
-            inputs,
+        inputs = _prepare_inputs(dict_data, self.inputs)
+        raw_result = self.client.infer(
             model_name=self.model_name,
             model_version=self.model_version,
+            inputs=inputs,
         )
-        # For models with single output ovmsclient returns ndarray with results,
-        # so the dict must be created to correctly implement interface.
-        if isinstance(raw_result, np.ndarray):
-            output_name = list(self.metadata["outputs"].keys())[0]
-            raw_result = {output_name: raw_result}
-        self.callback_fn(raw_result, (lambda x: x, callback_data))
+        inference_results = {}
+        for output in self.metadata["outputs"]:
+            inference_results[output["name"]] = raw_result.as_numpy(output["name"])
+
+        self.callback_fn(inference_results, (lambda x: x, callback_data))
 
     def set_callback(self, callback_fn):
         self.callback_fn = callback_fn
@@ -120,8 +122,7 @@ class OVMSAdapter(InferenceAdapter):
         raise NotImplementedError
 
     def get_rt_info(self, path):
-        msg = "OVMSAdapter does not support RT info getting"
-        raise NotImplementedError(msg)
+        return get_rt_info_from_dict(self.metadata["rt_info"], path)
 
     def update_model_info(self, model_info: dict[str, Any]):
         msg = "OVMSAdapter does not support updating model info"
@@ -132,29 +133,16 @@ class OVMSAdapter(InferenceAdapter):
         raise NotImplementedError(msg)
 
 
-_tf2ov_precision = {
-    "DT_INT64": "I64",
-    "DT_UINT64": "U64",
-    "DT_FLOAT": "FP32",
-    "DT_UINT32": "U32",
-    "DT_INT32": "I32",
-    "DT_HALF": "FP16",
-    "DT_INT16": "I16",
-    "DT_INT8": "I8",
-    "DT_UINT8": "U8",
-}
-
-
-_tf2np_precision = {
-    "DT_INT64": np.int64,
-    "DT_UINT64": np.uint64,
-    "DT_FLOAT": np.float32,
-    "DT_UINT32": np.uint32,
-    "DT_INT32": np.int32,
-    "DT_HALF": np.float16,
-    "DT_INT16": np.int16,
-    "DT_INT8": np.int8,
-    "DT_UINT8": np.uint8,
+_triton2np_precision = {
+    "INT64": np.int64,
+    "UINT64": np.uint64,
+    "FLOAT": np.float32,
+    "UINT32": np.uint32,
+    "INT32": np.int32,
+    "HALF": np.float16,
+    "INT16": np.int16,
+    "INT8": np.int8,
+    "UINT8": np.uint8,
 }
 
 
@@ -173,40 +161,33 @@ def _parse_model_arg(target_model: str):
     model_spec = model.split(":")
     if len(model_spec) == 1:
         # model version not specified - use latest
-        return service_url, model_spec[0], 0
+        return service_url, model_spec[0], ""
     if len(model_spec) == 2:
-        return service_url, model_spec[0], int(model_spec[1])
-    msg = "invalid target_model format"
+        return service_url, model_spec[0], model_spec[1]
+    msg = "Invalid target_model format"
     raise ValueError(msg)
 
 
-def _verify_model_available(client, model_name, model_version):
-    import ovmsclient
-
-    version = "latest" if model_version == 0 else model_version
-    try:
-        model_status = client.get_model_status(model_name, model_version)
-    except ovmsclient.ModelNotFoundError as e:
-        msg = f"Requested model: {model_name}, version: {version} has not been found"
-        raise RuntimeError(msg) from e
-    target_version = max(model_status.keys())
-    version_status = model_status[target_version]
-    if version_status["state"] != "AVAILABLE" or version_status["error_code"] != 0:
-        msg = f"Requested model: {model_name}, version: {version} is not in available state"
-        raise RuntimeError(msg)
-
-
 def _prepare_inputs(dict_data, inputs_meta):
-    inputs = {}
+    import tritonclient.http as httpclient
+
+    inputs = []
     for input_name, input_data in dict_data.items():
         if input_name not in inputs_meta:
             msg = "Input data does not match model inputs"
             raise ValueError(msg)
         input_info = inputs_meta[input_name]
-        model_precision = _tf2np_precision[input_info["dtype"]]
+        model_precision = _triton2np_precision[input_info.precision]
         if isinstance(input_data, np.ndarray) and input_data.dtype != model_precision:
             input_data = input_data.astype(model_precision)
         elif isinstance(input_data, list):
             input_data = np.array(input_data, dtype=model_precision)
-        inputs[input_name] = input_data
+
+        infer_input = httpclient.InferInput(
+            input_name,
+            input_data.shape,
+            input_info.precision,
+        )
+        infer_input.set_data_from_numpy(input_data)
+        inputs.append(infer_input)
     return inputs
