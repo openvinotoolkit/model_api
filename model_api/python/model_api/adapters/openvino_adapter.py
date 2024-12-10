@@ -7,7 +7,7 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 
 import logging as log
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
     from os import PathLike
@@ -300,7 +300,7 @@ class OpenvinoAdapter(InferenceAdapter):
     def infer_async(self, dict_data, callback_data) -> None:
         self.async_queue.start_async(dict_data, callback_data)
 
-    def set_callback(self, callback_fn):
+    def set_callback(self, callback_fn: Callable):
         self.async_queue.set_callback(callback_fn)
 
     def is_ready(self) -> bool:

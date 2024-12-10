@@ -7,7 +7,7 @@ from __future__ import annotations  # TODO: remove when Python3.9 support is dro
 
 import sys
 from functools import partial, reduce
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 
@@ -111,7 +111,7 @@ class ONNXRuntimeAdapter(InferenceAdapter):
     def infer_async(self, dict_data, callback_data):
         raise NotImplementedError
 
-    def set_callback(self, callback_fn):
+    def set_callback(self, callback_fn: Callable):
         self.callback_fn = callback_fn
 
     def is_ready(self):
@@ -126,7 +126,7 @@ class ONNXRuntimeAdapter(InferenceAdapter):
     def await_any(self):
         pass
 
-    def get_raw_result(self, infer_result):
+    def get_raw_result(self, infer_result: dict):
         pass
 
     def embed_preprocessing(

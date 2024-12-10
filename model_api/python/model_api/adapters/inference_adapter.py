@@ -5,7 +5,7 @@
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 
 @dataclass
@@ -135,6 +135,15 @@ class InferenceAdapter(ABC):
                     'output_layer_name_2': raw_result_2,
                     ...
                 }
+        """
+
+    @abstractmethod
+    def set_callback(self, callback_fn: Callable):
+        """
+        Sets callback that grabs results of async inference.
+
+        Args:
+            callback_fn (Callable): Callback function.
         """
 
     @abstractmethod

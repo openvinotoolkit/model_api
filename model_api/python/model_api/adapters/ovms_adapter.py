@@ -4,7 +4,7 @@
 #
 
 import re
-from typing import Any
+from typing import Any, Callable
 
 import numpy as np
 
@@ -79,7 +79,7 @@ class OVMSAdapter(InferenceAdapter):
             raw_result = {output_name: raw_result}
         self.callback_fn(raw_result, (lambda x: x, callback_data))
 
-    def set_callback(self, callback_fn):
+    def set_callback(self, callback_fn: Callable):
         self.callback_fn = callback_fn
 
     def is_ready(self):
@@ -98,7 +98,7 @@ class OVMSAdapter(InferenceAdapter):
     def await_any(self):
         pass
 
-    def get_raw_result(self, infer_result):
+    def get_raw_result(self, infer_result: dict):
         pass
 
     def embed_preprocessing(
