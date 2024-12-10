@@ -202,7 +202,7 @@ class ONNXRuntimeAdapter(InferenceAdapter):
             else:
                 meta.value = str(model_info[item])
 
-    def save_model(self, path: str, weights_path: str | None, version: str | None):
+    def save_model(self, path: str, weights_path: str | None = None, version: str | None = None):
         """
         Serializes model to the filesystem.
 

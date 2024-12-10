@@ -441,7 +441,7 @@ class OpenvinoAdapter(InferenceAdapter):
         for name in model_info:
             self.model.set_rt_info(model_info[name], ["model_info", name])
 
-    def save_model(self, path: str, weights_path: str | None, version: str | None):
+    def save_model(self, path: str, weights_path: str | None = None, version: str | None = None):
         """
         Saves OV model as two files: .xml (architecture) and .bin (weights).
 

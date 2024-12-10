@@ -548,7 +548,7 @@ class Model:
                 f"precision: {metadata.precision}, layout: {metadata.layout}",
             )
 
-    def save(self, path: str, weights_path: str | None, version: str | None):
+    def save(self, path: str, weights_path: str | None = None, version: str | None = None):
         """
         Serializes model to the filesystem. Model format depends in the InferenceAdapter being used.
 
