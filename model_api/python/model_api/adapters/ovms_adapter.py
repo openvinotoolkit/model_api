@@ -127,7 +127,7 @@ class OVMSAdapter(InferenceAdapter):
         msg = "OVMSAdapter does not support updating model info"
         raise NotImplementedError(msg)
 
-    def save_model(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+    def save_model(self, path: str, weights_path: str | None, version: str | None):
         msg = "OVMSAdapter does not support saving a model"
         raise NotImplementedError(msg)
 

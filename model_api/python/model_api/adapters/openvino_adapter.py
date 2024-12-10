@@ -333,6 +333,15 @@ class OpenvinoAdapter(InferenceAdapter):
         return layers_info
 
     def get_rt_info(self, path: list[str]) -> OVAny:
+        """
+        Gets an attribute value from OV.model_info structure.
+
+        Args:
+            path (list[str]): a suquence of tag names leading to the attribute.
+
+        Returns:
+            OVAny: attribute value wrapped into OVAny object.
+        """
         if self.is_onnx_file:
             return get_rt_info_from_dict(self.onnx_metadata, path)
         return self.model.get_rt_info(path)
@@ -350,6 +359,9 @@ class OpenvinoAdapter(InferenceAdapter):
         scale: list[Any] | None = None,
         input_idx: int = 0,
     ) -> None:
+        """
+        Embeds OpenVINO PrePostProcessor module into the model.
+        """
         ppp = PrePostProcessor(self.model)
 
         # Change the input type to the 8-bit image
@@ -429,7 +441,20 @@ class OpenvinoAdapter(InferenceAdapter):
         for name in model_info:
             self.model.set_rt_info(model_info[name], ["model_info", name])
 
-    def save_model(self, path: str, weights_path: str = "", version: str = "UNSPECIFIED"):
+    def save_model(self, path: str, weights_path: str | None, version: str | None):
+        """
+        Saves OV model as two files: .xml (architecture) and .bin (weights).
+
+        Args:
+            path (str): path to save the model files (.xml and .bin).
+            weights_path (str, optional): Optional path to save .bin if it differs from .xml path. Defaults to None.
+            version (str, optional): Output IR model version (for instance, IR_V10). Defaults to None.
+        """
+        if weights_path is None:
+            weights_path = ""
+        if version is None:
+            version = "UNSPECIFIED"
+
         ov.serialize(self.get_model(), path, weights_path, version)
 
 
