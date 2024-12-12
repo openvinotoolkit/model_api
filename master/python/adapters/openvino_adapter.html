@@ -408,7 +408,7 @@ busy infer request until it becomes available for the data submission.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.embed_preprocessing">
 <span class="sig-name descname"><span class="pre">embed_preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'int'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brg2rgb=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_idx=0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.embed_preprocessing" title="Link to this definition">#</a></dt>
-<dd><p>Embeds preprocessing into the model using OpenVINO preprocessing API</p>
+<dd><p>Embeds OpenVINO PrePostProcessor module into the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -509,10 +509,16 @@ in OpenVINO format, meta (optional)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.get_rt_info">
 <span class="sig-name descname"><span class="pre">get_rt_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.get_rt_info" title="Link to this definition">#</a></dt>
-<dd><p>Forwards to openvino.Model.get_rt_info(path)</p>
+<dd><p>Gets an attribute value from OV.model_info structure.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – a suquence of tag names leading to the attribute.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>attribute value wrapped into OVAny object.</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">OVAny</span></code></span></p>
+<dd class="field-odd"><p>OVAny</p>
 </dd>
 </dl>
 </dd></dl>
@@ -650,14 +656,29 @@ list of new shape as values in the following format:
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.save_model">
-<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'UNSPECIFIED'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.save_model" title="Link to this definition">#</a></dt>
-<dd><p>Serializes model to the filesystem.</p>
+<span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.save_model" title="Link to this definition">#</a></dt>
+<dd><p>Saves OV model as two files: .xml (architecture) and .bin (weights).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – path to save the model files (.xml and .bin).</p></li>
+<li><p><strong>weights_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Optional path to save .bin if it differs from .xml path. Defaults to None.</p></li>
+<li><p><strong>version</strong> (<em>str</em><em>, </em><em>optional</em>) – Output IR model version (for instance, IR_V10). Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.set_callback">
 <span class="sig-name descname"><span class="pre">set_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback_fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.openvino_adapter.OpenvinoAdapter.set_callback" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Sets callback that grabs results of async inference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callback_fn</strong> (<em>Callable</em>) – Callback function.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.openvino_adapter.OpenvinoAdapter.update_model_info">

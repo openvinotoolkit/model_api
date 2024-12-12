@@ -404,7 +404,26 @@ busy infer request until it becomes available for the data submission.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.embed_preprocessing">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embed_preprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resize_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'int'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">brg2rgb=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_idx=0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.embed_preprocessing" title="Link to this definition">#</a></dt>
-<dd><p>Embeds preprocessing into the model using OpenVINO preprocessing API</p>
+<dd><p>Embeds preprocessing into the model if possible with the adapter being used.
+In some cases, this method would just add extra python preprocessing steps
+instaed actuall of embedding it into the model representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layout</strong> (<em>str</em>) – Layout, for instance NCHW.</p></li>
+<li><p><strong>resize_mode</strong> (<em>str</em>) – Resize type to use for preprocessing.</p></li>
+<li><p><strong>interpolation_mode</strong> (<em>str</em>) – Resize interpolation mode.</p></li>
+<li><p><strong>target_shape</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>) – Target resize shape.</p></li>
+<li><p><strong>pad_value</strong> (<em>int</em>) – Value to pad with if resize implies padding.</p></li>
+<li><p><strong>dtype</strong> (<em>type</em><em>, </em><em>optional</em>) – Input data type for the preprocessing module. Defaults to int.</p></li>
+<li><p><strong>bgr2rgb</strong> (<em>bool</em><em>, </em><em>optional</em>) – Defines if we need to swap R and B channels in case of image input.</p></li>
+<li><p><strong>False.</strong> (<em>Defaults to</em>)</p></li>
+<li><p><strong>mean</strong> (<em>list</em><em>[</em><em>Any</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) – Mean values to perform input normalization. Defaults to None.</p></li>
+<li><p><strong>scale</strong> (<em>list</em><em>[</em><em>Any</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) – Scale values to perform input normalization. Defaults to None.</p></li>
+<li><p><strong>input_idx</strong> (<em>int</em><em>, </em><em>optional</em>) – Index of the model input to apply preprocessing to. Defaults to 0.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -479,7 +498,18 @@ in OpenVINO format, meta (optional)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.get_rt_info">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_rt_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.get_rt_info" title="Link to this definition">#</a></dt>
-<dd><p>Forwards to openvino.Model.get_rt_info(path)</p>
+<dd><p>Returns an attribute stored in model info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – a sequence of tag names leading to the attribute.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a value stored under corresponding tag sequence.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -548,8 +578,11 @@ of inference from the model.</p>
 <dd><p>In case of asynchronous execution checks if one can submit input data
 to the model for inference, or all infer requests are busy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
 <li><dl class="simple">
 <dt>the boolean flag whether the input data can be</dt><dd><p>submitted to the model for inference or not</p>
 </dd>
@@ -591,12 +624,38 @@ list of new shape as values in the following format:
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.save_model">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.save_model" title="Link to this definition">#</a></dt>
 <dd><p>Serializes model to the filesystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Path to write the resulting model.</p></li>
+<li><p><strong>weights_path</strong> (<em>str</em><em> | </em><em>None</em>) – Optional path to save weights if they are stored separately.</p></li>
+<li><p><strong>version</strong> (<em>str</em><em> | </em><em>None</em>) – Optional model version.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.set_callback">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callback_fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.set_callback" title="Link to this definition">#</a></dt>
+<dd><p>Sets callback that grabs results of async inference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callback_fn</strong> (<em>Callable</em>) – Callback function.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model_api.adapters.inference_adapter.InferenceAdapter.update_model_info">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_model_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.adapters.inference_adapter.InferenceAdapter.update_model_info" title="Link to this definition">#</a></dt>
-<dd><p>Updates model with the provided model info.</p>
+<dd><p>Updates model with the provided model info.  Model info dict can
+also contain nested dicts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_info</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – model info dict to write to the model.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -706,6 +765,7 @@ list of new shape as values in the following format:
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.load_model"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.load_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.reshape_model"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.reshape_model()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.save_model"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.save_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.set_callback"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.set_callback()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.update_model_info"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.update_model_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.adapters.inference_adapter.InferenceAdapter.precisions"><code class="docutils literal notranslate"><span class="pre">InferenceAdapter.precisions</span></code></a></li>
 </ul>
