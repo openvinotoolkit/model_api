@@ -12,15 +12,12 @@ A single input image of shape (H, W, 3) where H and W are the height and width o
 
 ### Outputs
 
-Detection model outputs a list of detection objects (i.e `list[Detection]`) wrapped in `DetectionResult`, each object containing the following attributes:
+Detection model outputs a `DetectionResult` objects containing the following attributes:
 
-- `score` (float) - Confidence score of the object.
-- `id` (int) - Class label of the object.
-- `str_label` (str) - String label of the object.
-- `xmin` (int) - X-coordinate of the top-left corner of the bounding box.
-- `ymin` (int) - Y-coordinate of the top-left corner of the bounding box.
-- `xmax` (int) - X-coordinate of the bottom-right corner of the bounding box.
-- `ymax` (int) - Y-coordinate of the bottom-right corner of the bounding box.
+- `boxes` (np.ndarray) - Bounding boxes of the detected objects. Each in format of x1, y1, x2 y2.
+- `scores` (np.ndarray) - Confidence scores of the detected objects.
+- `labels` (np.ndarray) - Class labels of the detected objects.
+- `label_names` (list[str]) - List of class names of the detected objects.
 
 ## Example
 
@@ -34,11 +31,14 @@ model = SSD.create_model("model.xml")
 # Forward pass
 predictions = model(image)
 
-# Iterate over the segmented objects
-for pred_obj in predictions.objects:
-    pred_score = pred_obj.score
-    label_id = pred_obj.id
-    bbox = [pred_obj.xmin, pred_obj.ymin, pred_obj.xmax, pred_obj.ymax]
+# Iterate over detection result
+for box, score, label, label_name in zip(
+    predictions.boxes,
+    predictions.scores,
+    predictions.labels,
+    predictions.label_names,
+):
+    print(f"Box: {box}, Score: {score}, Label: {label}, Label Name: {label_name}")
 ```
 
 ```{eval-rst}
