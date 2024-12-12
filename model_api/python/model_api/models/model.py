@@ -437,7 +437,7 @@ class Model:
         Reshapes the model inputs to fit the new input shape.
 
         Args:
-            new_shape (_type_): a dictionary with inputs names as keys and
+            new_shape (dict): a dictionary with inputs names as keys and
             list of new shape as values in the following format.
         """
         if self.model_loaded:

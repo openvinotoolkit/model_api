@@ -128,7 +128,7 @@ class InferenceAdapter(ABC):
         """Gets raw results from the internal inference framework representation as a dict.
 
         Args:
-            - infer_resul (dict): framework-specific result of inference from the model
+            - infer_result (dict): framework-specific result of inference from the model
 
         Returns:
             - raw result (dict) - model raw output in the following format:
