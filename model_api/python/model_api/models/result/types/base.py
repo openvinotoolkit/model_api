@@ -5,8 +5,6 @@
 
 from abc import ABC
 
-from model_api.visualizer.visualize_mixin import VisualizeMixin
 
-
-class Result(VisualizeMixin, ABC):
+class Result(ABC):
     """Base result type."""

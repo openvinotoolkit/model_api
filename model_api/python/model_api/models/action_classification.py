@@ -12,7 +12,7 @@ import numpy as np
 from model_api.adapters.utils import RESIZE_TYPES, InputTransform
 
 from .model import Model
-from .result_types import ClassificationResult
+from .result import ClassificationResult
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
 from .utils import load_labels
 

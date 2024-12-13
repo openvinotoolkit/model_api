@@ -7,8 +7,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from model_api.visualizer.primitives import Label
-
 from .base import Result
 from .utils import array_shape_to_str
 
@@ -38,8 +36,3 @@ class ClassificationResult(Result):
             f"{labels}, {array_shape_to_str(self.saliency_map)}, {array_shape_to_str(self.feature_vector)}, "
             f"{array_shape_to_str(self.raw_scores)}"
         )
-
-    def _register_primitives(self) -> None:
-        # TODO add saliency map
-        for idx, label, confidence in self.top_labels:
-            self._add_primitive(Label(f"Rank: {idx}, {label}: {confidence:.3f}"))

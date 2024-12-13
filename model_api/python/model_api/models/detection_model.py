@@ -4,7 +4,7 @@
 #
 
 from .image_model import ImageModel
-from .result_types import Detection
+from .result import Detection
 from .types import ListValue, NumericalValue, StringValue
 from .utils import load_labels
 

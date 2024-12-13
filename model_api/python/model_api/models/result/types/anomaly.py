@@ -9,7 +9,6 @@ import cv2
 import numpy as np
 
 from model_api.visualizer.layout import Flatten, Layout
-from model_api.visualizer.primitives import BoundingBoxes, Label, Overlay, Polygon
 
 from .base import Result
 
@@ -46,23 +45,4 @@ class AnomalyResult(Result):
             f"pred_score:{np.round(self.pred_score, 1) if self.pred_score else 0.0};"
             f"pred_label:{self.pred_label};"
             f"pred_mask min:{pred_mask_min} max:{pred_mask_max};"
-        )
-
-    def _register_primitives(self) -> None:
-        """Converts the result to primitives."""
-        anomaly_map = cv2.applyColorMap(self.anomaly_map, cv2.COLORMAP_JET)
-        self._add_primitive(Overlay(anomaly_map))
-        for box in self.pred_boxes:
-            self._add_primitive(BoundingBoxes(*box))
-        if self.pred_label is not None:
-            self._add_primitive(Label(self.pred_label, bg_color="red" if self.pred_label == "Anomaly" else "green"))
-        self._add_primitive(Label(f"Score: {self.pred_score}"))
-        self._add_primitive(Polygon(mask=self.pred_mask))
-
-    @property
-    def default_layout(self) -> Layout:
-        return Flatten(
-            Overlay,
-            Polygon,
-            Label,
         )

@@ -9,7 +9,7 @@ import numpy as np
 from model_api.adapters.inference_adapter import InferenceAdapter
 
 from .image_model import ImageModel
-from .result_types import InstanceSegmentationResult, SegmentedObject
+from .result import InstanceSegmentationResult, SegmentedObject
 from .types import BooleanValue, ListValue, NumericalValue, StringValue
 from .utils import load_labels
 

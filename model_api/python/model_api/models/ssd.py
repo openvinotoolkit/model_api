@@ -6,7 +6,7 @@
 import numpy as np
 
 from .detection_model import DetectionModel
-from .result_types import Detection, DetectionResult
+from .result import Detection, DetectionResult
 
 
 class SSD(DetectionModel):

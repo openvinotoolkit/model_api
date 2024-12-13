@@ -8,14 +8,11 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from model_api.visualizer.primitives import Label
-
 if TYPE_CHECKING:
     from PIL import Image
 
-    from model_api.visualizer.visualize_mixin import VisualizeMixin
-
     from .layout import Layout
+    from .media import Media
 
 
 class Visualizer:
@@ -25,7 +22,7 @@ class Visualizer:
     def show(
         self,
         image: Image,
-        result: VisualizeMixin,
+        result: Media,
     ) -> None:
         result: Image = self._generate(image, result)
         result.show()
@@ -33,13 +30,13 @@ class Visualizer:
     def save(
         self,
         image: Image,
-        result: VisualizeMixin,
+        result: Media,
         path: str,
     ) -> None:
         result: Image = self._generate(image, result)
         result.save(path)
 
-    def _generate(self, image: Image, result: VisualizeMixin) -> Image:
+    def _generate(self, image: Image, result: Media) -> Image:
         if self.layout is not None:
             return self.layout(image, result)
         return result.default_layout(image, result)

@@ -10,7 +10,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from model_api.models.result_types import Contour, Detection, SegmentedObject, SegmentedObjectWithRects
+from model_api.models.result import Contour, Detection, SegmentedObject, SegmentedObjectWithRects
 
 
 def add_rotated_rects(segmented_objects: list[SegmentedObject]) -> list[SegmentedObjectWithRects]:
