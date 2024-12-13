@@ -145,6 +145,7 @@ _triton2np_precision = {
     "INT16": np.int16,
     "INT8": np.int8,
     "UINT8": np.uint8,
+    "FP32": np.float32,
 }
 
 
@@ -154,12 +155,12 @@ def _parse_model_arg(target_model: str):
         raise TypeError(msg)
     # Expected format: <address>:<port>/models/<model_name>[:<model_version>]
     if not re.fullmatch(
-        r"(\w+\.*\-*)*\w+:\d+\/models\/[a-zA-Z0-9._-]+(\:\d+)*",
+        r"(\w+\.*\-*)*\w+:\d+\/v2/models\/[a-zA-Z0-9._-]+(\:\d+)*",
         target_model,
     ):
         msg = "invalid --model option format"
         raise ValueError(msg)
-    service_url, _, model = target_model.split("/")
+    service_url, _, _, model = target_model.split("/")
     model_spec = model.split(":")
     if len(model_spec) == 1:
         # model version not specified - use latest
