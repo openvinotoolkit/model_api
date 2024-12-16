@@ -28,7 +28,7 @@ This example demonstrates how to use a Python API of OpenVINO Model API for a re
 - Run docker with OVMS server:
 
   ```bash
-  docker run -d -v /home/user/models:/models -p 9000:9000 openvino/model_server:latest --model_path /models/ssd_mobilenet_v1_fpn_coco --model_name ssd_mobilenet_v1_fpn_coco --port 9000 --shape auto --nireq 4 --target_device CPU --plugin_config "{\"CPU_THROUGHPUT_STREAMS\": \"CPU_THROUGHPUT_AUTO\"}"
+  docker run -d -v /home/user/models:/models -p 8000:8000 openvino/model_server:latest --model_path /models/ssd_mobilenet_v1_fpn_coco --model_name ssd_mobilenet_v1_fpn_coco --rest_port 8000 --nireq 4 --target_device CPU
   ```
 
 ## Run example
