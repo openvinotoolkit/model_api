@@ -20,7 +20,7 @@ def main():
 
     # Create Object Detection model specifying the OVMS server URL
     model = DetectionModel.create_model(
-        "localhost:9000/models/ssd_mobilenet_v1_fpn_coco", model_type="ssd"
+        "localhost:8000/v2/models/ssd_mobilenet_v1_fpn_coco", model_type="ssd"
     )
     detections = model(image)
     print(f"Detection results: {detections}")
