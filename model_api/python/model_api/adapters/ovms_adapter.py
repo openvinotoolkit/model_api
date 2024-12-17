@@ -15,10 +15,15 @@ from .utils import Layout, get_rt_info_from_dict
 
 
 class OVMSAdapter(InferenceAdapter):
-    """Class that allows working with models served by the OpenVINO Model Server"""
+    """Inference adapter that allows working with models served by the OpenVINO Model Server"""
 
     def __init__(self, target_model: str):
-        """Expected format: <address>:<port>/models/<model_name>[:<model_version>]"""
+        """
+        Initializes OVMS adapter.
+
+        Args:
+            target_model (str): Model URL. Expected format: <address>:<port>/v2/models/<model_name>[:<model_version>]
+        """
         import tritonclient.http as httpclient
 
         service_url, self.model_name, self.model_version = _parse_model_arg(
@@ -35,7 +40,13 @@ class OVMSAdapter(InferenceAdapter):
         )
         self.inputs = self.get_input_layers()
 
-    def get_input_layers(self):
+    def get_input_layers(self) -> dict[str, Metadata]:
+        """
+        Retrieves information about remote model's inputs.
+
+        Returns:
+            dict[str, Metadata]: metadata for each input.
+        """
         return {
             meta["name"]: Metadata(
                 {meta["name"]},
@@ -46,7 +57,13 @@ class OVMSAdapter(InferenceAdapter):
             for meta in self.metadata["inputs"]
         }
 
-    def get_output_layers(self):
+    def get_output_layers(self) -> dict[str, Metadata]:
+        """
+        Retrieves information about remote model's outputs.
+
+        Returns:
+            dict[str, Metadata]: metadata for each output.
+        """
         return {
             meta["name"]: Metadata(
                 {meta["name"]},
@@ -56,7 +73,16 @@ class OVMSAdapter(InferenceAdapter):
             for meta in self.metadata["outputs"]
         }
 
-    def infer_sync(self, dict_data):
+    def infer_sync(self, dict_data: dict) -> dict:
+        """
+        Performs the synchronous model inference. The infer is a blocking method.
+
+        Args:
+            dict_data (dict): data for each input layer.
+
+        Returns:
+            dict: model raw outputs.
+        """
         inputs = _prepare_inputs(dict_data, self.inputs)
         raw_result = self.client.infer(
             model_name=self.model_name,
@@ -70,7 +96,8 @@ class OVMSAdapter(InferenceAdapter):
 
         return inference_results
 
-    def infer_async(self, dict_data, callback_data):
+    def infer_async(self, dict_data: dict, callback_data: Any):
+        """A stub method imitating async inference with a blocking call."""
         inputs = _prepare_inputs(dict_data, self.inputs)
         raw_result = self.client.infer(
             model_name=self.model_name,
@@ -120,17 +147,22 @@ class OVMSAdapter(InferenceAdapter):
     ):
         pass
 
-    def reshape_model(self, new_shape):
-        raise NotImplementedError
+    def reshape_model(self, new_shape: dict):
+        """OVMS adapter can not modify the remote model. This method raises an exception."""
+        msg = "OVMSAdapter does not support model reshaping"
+        raise NotImplementedError(msg)
 
-    def get_rt_info(self, path):
+    def get_rt_info(self, path: list[str]) -> Any:
+        """Returns an attribute stored in model info."""
         return get_rt_info_from_dict(self.metadata["rt_info"], path)
 
     def update_model_info(self, model_info: dict[str, Any]):
+        """OVMS adapter can not update the source model info. This method raises an exception."""
         msg = "OVMSAdapter does not support updating model info"
         raise NotImplementedError(msg)
 
     def save_model(self, path: str, weights_path: str | None = None, version: str | None = None):
+        """OVMS adapter can not retrieve the source model. This method raises an exception."""
         msg = "OVMSAdapter does not support saving a model"
         raise NotImplementedError(msg)
 
@@ -150,6 +182,7 @@ _triton2np_precision = {
 
 
 def _parse_model_arg(target_model: str):
+    """Parses OVMS model URL."""
     if not isinstance(target_model, str):
         msg = "target_model must be str"
         raise TypeError(msg)
@@ -171,7 +204,8 @@ def _parse_model_arg(target_model: str):
     raise ValueError(msg)
 
 
-def _prepare_inputs(dict_data, inputs_meta):
+def _prepare_inputs(dict_data: dict, inputs_meta: dict[str, Metadata]):
+    """Converts raw model inputs into OVMS-specific representation."""
     import tritonclient.http as httpclient
 
     inputs = []
