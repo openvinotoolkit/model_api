@@ -4,7 +4,7 @@
 #
 
 import numpy as np
-from model_api.models.result_types import ClassificationResult, Label
+from model_api.models.result import ClassificationResult, Label
 
 
 def test_cls_result():
