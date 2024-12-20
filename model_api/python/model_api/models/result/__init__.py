@@ -3,6 +3,14 @@
 # Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
+from .scene import (
+    AnomalyScene,
+    ClassificationScene,
+    DetectionScene,
+    KeypointScene,
+    SegmentationScene,
+    VisualPromptingScene,
+)
 from .types import (
     AnomalyResult,
     ClassificationResult,
@@ -33,4 +41,10 @@ __all__ = [
     "VisualPromptingResult",
     "ZSLVisualPromptingResult",
     "RotatedSegmentationResult",
+    "AnomalyScene",
+    "ClassificationScene",
+    "DetectionScene",
+    "KeypointScene",
+    "SegmentationScene",
+    "VisualPromptingScene",
 ]
