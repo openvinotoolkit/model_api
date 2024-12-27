@@ -83,6 +83,8 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "^GNU|(Apple)?Clang$")
     target_compile_options(model_api PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
+add_subdirectory(py_bindings)
+
 include(GenerateExportHeader)
 
 generate_export_header(model_api)
