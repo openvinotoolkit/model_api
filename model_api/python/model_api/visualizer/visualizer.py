@@ -9,16 +9,13 @@ from PIL import Image
 
 from model_api.models.result import (
     AnomalyResult,
-    AnomalyScene,
     ClassificationResult,
-    ClassificationScene,
     DetectionResult,
-    DetectionScene,
     Result,
 )
 
 from .layout import Layout
-from .scene import Scene
+from .scene import AnomalyScene, ClassificationScene, DetectionScene, Scene
 
 
 class Visualizer:

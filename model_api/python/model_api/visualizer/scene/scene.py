@@ -10,12 +10,12 @@ from typing import TYPE_CHECKING
 import numpy as np
 from PIL import Image
 
-from .primitive import Overlay, Primitive
+from model_api.visualizer.primitive import Overlay, Primitive
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from .layout import Layout
+    from model_api.visualizer.layout import Layout
 
 
 class Scene:

@@ -5,10 +5,11 @@
 
 from PIL import Image
 
-from model_api.models.result.types import ClassificationResult
+from model_api.models.result import ClassificationResult
 from model_api.visualizer.layout import Flatten, Layout
 from model_api.visualizer.primitive import Overlay
-from model_api.visualizer.scene import Scene
+
+from .scene import Scene
 
 
 class ClassificationScene(Scene):

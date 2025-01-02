@@ -7,6 +7,7 @@ from .anomaly import AnomalyScene
 from .classification import ClassificationScene
 from .detection import DetectionScene
 from .keypoint import KeypointScene
+from .scene import Scene
 from .segmentation import SegmentationScene
 from .visual_prompting import VisualPromptingScene
 
@@ -15,6 +16,7 @@ __all__ = [
     "ClassificationScene",
     "DetectionScene",
     "KeypointScene",
+    "Scene",
     "SegmentationScene",
     "VisualPromptingScene",
 ]

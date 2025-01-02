@@ -3,8 +3,9 @@
 # Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-from model_api.models.result.types import VisualPromptingResult
-from model_api.visualizer import Scene
+from model_api.models.result import VisualPromptingResult
+
+from .scene import Scene
 
 
 class VisualPromptingScene(Scene):

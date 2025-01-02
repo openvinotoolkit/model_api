@@ -3,29 +3,13 @@
 # Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-from .scene import (
-    AnomalyScene,
-    ClassificationScene,
-    DetectionScene,
-    KeypointScene,
-    SegmentationScene,
-    VisualPromptingScene,
-)
-from .types import (
-    AnomalyResult,
-    ClassificationResult,
-    Contour,
-    DetectedKeypoints,
-    DetectionResult,
-    ImageResultWithSoftPrediction,
-    InstanceSegmentationResult,
-    Label,
-    PredictedMask,
-    Result,
-    RotatedSegmentationResult,
-    VisualPromptingResult,
-    ZSLVisualPromptingResult,
-)
+from .anomaly import AnomalyResult
+from .base import Result
+from .classification import ClassificationResult, Label
+from .detection import DetectionResult
+from .keypoint import DetectedKeypoints
+from .segmentation import Contour, ImageResultWithSoftPrediction, InstanceSegmentationResult, RotatedSegmentationResult
+from .visual_prompting import PredictedMask, VisualPromptingResult, ZSLVisualPromptingResult
 
 __all__ = [
     "AnomalyResult",
@@ -41,10 +25,4 @@ __all__ = [
     "VisualPromptingResult",
     "ZSLVisualPromptingResult",
     "RotatedSegmentationResult",
-    "AnomalyScene",
-    "ClassificationScene",
-    "DetectionScene",
-    "KeypointScene",
-    "SegmentationScene",
-    "VisualPromptingScene",
 ]

@@ -5,8 +5,9 @@
 
 from PIL import Image
 
-from model_api.models.result.types import DetectionResult
-from model_api.visualizer import Scene
+from model_api.models.result import DetectionResult
+
+from .scene import Scene
 
 
 class DetectionScene(Scene):
