@@ -5,5 +5,4 @@
 :hidden:
 
 ./model-configuration
-./releasing-to-PyPI
 ```
