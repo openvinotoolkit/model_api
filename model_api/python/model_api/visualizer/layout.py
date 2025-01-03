@@ -45,5 +45,7 @@ class Flatten(Layout):
     def __call__(self, scene: Scene) -> PIL.Image:
         _image: PIL.Image = scene.base.copy()
         for child in self.children:
-            _image = self._compute_on_primitive(child, _image, scene)
+            output = self._compute_on_primitive(child, _image, scene)
+            if output is not None:
+                _image = output
         return _image

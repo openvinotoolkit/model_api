@@ -19,3 +19,9 @@ def test_flatten_layout(mock_image: Image, mock_scene: Scene):
     expected_image = Image.blend(mock_image, overlay, 0.4)
     mock_scene.layout = Flatten(Overlay)
     assert mock_scene.render() == expected_image
+
+
+def test_flatten_layout_with_no_primitives(mock_image: Image, mock_scene: Scene):
+    """Test if the layout is created correctly."""
+    mock_scene.layout = Flatten()
+    assert mock_scene.render() == mock_image
