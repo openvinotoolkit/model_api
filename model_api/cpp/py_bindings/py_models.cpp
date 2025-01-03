@@ -13,6 +13,19 @@
 
 namespace nb = nanobind;
 
+namespace {
+cv::Mat wrap_np_mat(const nb::ndarray<>& input) {
+    if (input.ndim() != 3 || input.shape(2) != 3 || input.dtype() != nb::dtype<uint8_t>()) {
+        throw std::runtime_error("Input image should have HWC_8U layout");
+    }
+
+    int height = input.shape(0);
+    int width = input.shape(1);
+
+    return cv::Mat(height, width, CV_8UC3, input.data());
+}
+}  // namespace
+
 NB_MODULE(py_model_api, m) {
     m.doc() = "Nanobind binding for OpenVINO Vision API library";
     nb::class_<ResultBase>(m, "ResultBase").def(nb::init<>());
@@ -42,15 +55,18 @@ NB_MODULE(py_model_api, m) {
             nb::arg("preload") = true,
             nb::arg("device") = "AUTO")
 
-        .def("infer", [](ClassificationModel& self, const nb::ndarray<>& input) {
-            if (input.ndim() != 3 || input.shape(2) != 3 || input.dtype() != nb::dtype<uint8_t>()) {
-                throw std::runtime_error("Input image should have HWC_8U layout");
+        .def("__call__",
+             [](ClassificationModel& self, const nb::ndarray<>& input) {
+                 return self.infer(wrap_np_mat(input));
+             })
+        .def("infer_batch", [](ClassificationModel& self, const std::vector<nb::ndarray<>> inputs) {
+            std::vector<ImageInputData> input_mats;
+            input_mats.reserve(inputs.size());
+
+            for (const auto& input : inputs) {
+                input_mats.push_back(wrap_np_mat(input));
             }
 
-            int height = input.shape(0);
-            int width = input.shape(1);
-
-            cv::Mat mat_wrapper(height, width, CV_8UC3, input.data());
-            return self.infer(mat_wrapper);
+            return self.inferBatch(input_mats);
         });
 }
