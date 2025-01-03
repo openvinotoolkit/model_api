@@ -7,6 +7,7 @@
 #include <nanobind/stl/vector.h>
 
 #include <opencv2/core/types.hpp>
+#include <openvino/openvino.hpp>
 
 #include "models/classification_model.h"
 #include "models/results.h"
@@ -41,7 +42,15 @@ NB_MODULE(py_model_api, m) {
         .def_ro("topLabels", &ClassificationResult::topLabels)
         .def("__repr__", &ClassificationResult::operator std::string);
 
-    nb::class_<ClassificationModel>(m, "ClassificationModel")
+    nb::class_<ModelBase>(m, "ModelBase")
+        .def("load", [](ModelBase& self, const std::string& device, size_t num_infer_requests) {
+            auto core = ov::Core();
+            self.load(core, device, num_infer_requests);
+        });
+
+    nb::class_<ImageModel, ModelBase>(m, "ImageModel");
+
+    nb::class_<ClassificationModel, ImageModel>(m, "ClassificationModel")
         .def_static(
             "create_model",
             [](const std::string& model_path,
