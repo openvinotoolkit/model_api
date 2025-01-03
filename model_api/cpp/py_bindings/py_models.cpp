@@ -25,6 +25,19 @@ cv::Mat wrap_np_mat(const nb::ndarray<>& input) {
 
     return cv::Mat(height, width, CV_8UC3, input.data());
 }
+
+ov::Any py_object_to_any(const nb::object& py_obj, std::string property_name) {
+    if (nb::isinstance<nb::str>(py_obj)) {
+        return ov::Any(std::string(static_cast<nb::str>(py_obj).c_str()));
+    } else if (nb::isinstance<nb::float_>(py_obj)) {
+        return ov::Any(static_cast<double>(static_cast<nb::float_>(py_obj)));
+    } else if (nb::isinstance<nb::int_>(py_obj)) {
+        return ov::Any(static_cast<int>(static_cast<nb::int_>(py_obj)));
+    } else {
+        OPENVINO_THROW("Property \"" + property_name + "\" has unsupported type.");
+    }
+}
+
 }  // namespace
 
 NB_MODULE(py_model_api, m) {
@@ -57,7 +70,12 @@ NB_MODULE(py_model_api, m) {
                const std::map<std::string, nb::object>& configuration,
                bool preload,
                const std::string& device) {
-                return ClassificationModel::create_model(model_path, {}, preload, device);
+                auto ov_any_config = ov::AnyMap();
+                for (const auto& item : configuration) {
+                    ov_any_config[item.first] = py_object_to_any(item.second, item.first);
+                }
+
+                return ClassificationModel::create_model(model_path, ov_any_config, preload, device);
             },
             nb::arg("model_path"),
             nb::arg("configuration") = ov::AnyMap({}),
