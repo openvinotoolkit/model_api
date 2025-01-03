@@ -81,6 +81,7 @@ if(MSVC)
         /EHsc)  # Enable standard C++ stack unwinding, assume functions with extern "C" never throw
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "^GNU|(Apple)?Clang$")
     target_compile_options(model_api PRIVATE -Wall -Wextra -Wpedantic)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
 add_subdirectory(py_bindings)
