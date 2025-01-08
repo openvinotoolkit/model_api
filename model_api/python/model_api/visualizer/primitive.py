@@ -21,7 +21,20 @@ class Primitive(ABC):
 
 
 class BoundingBox(Primitive):
-    """Bounding box primitive."""
+    """Bounding box primitive.
+
+    Args:
+        x1 (int): x-coordinate of the top-left corner of the bounding box.
+        y1 (int): y-coordinate of the top-left corner of the bounding box.
+        x2 (int): x-coordinate of the bottom-right corner of the bounding box.
+        y2 (int): y-coordinate of the bottom-right corner of the bounding box.
+        label (str | None): Label of the bounding box.
+        color (str | tuple[int, int, int]): Color of the bounding box.
+
+    Example:
+        >>> bounding_box = BoundingBox(x1=10, y1=10, x2=100, y2=100, label="Label Name")
+        >>> bounding_box.compute(image)
+    """
 
     def __init__(
         self,
