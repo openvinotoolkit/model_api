@@ -58,7 +58,31 @@ NB_MODULE(py_model_api, m) {
     nb::class_<ClassificationResult, ResultBase>(m, "ClassificationResult")
         .def(nb::init<>())
         .def_ro("topLabels", &ClassificationResult::topLabels)
-        .def("__repr__", &ClassificationResult::operator std::string);
+        .def("__repr__", &ClassificationResult::operator std::string)
+        .def_prop_ro(
+            "feature_vector",
+            [](ClassificationResult& r) {
+                if (!r.feature_vector) {
+                    return nb::ndarray<float, nb::numpy, nb::c_contig>();
+                }
+
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(r.feature_vector.data(),
+                                                                   r.feature_vector.get_shape().size(),
+                                                                   r.feature_vector.get_shape().data());
+            },
+            nb::rv_policy::reference_internal)
+        .def_prop_ro(
+            "saliency_map",
+            [](ClassificationResult& r) {
+                if (!r.saliency_map) {
+                    return nb::ndarray<float, nb::numpy, nb::c_contig>();
+                }
+
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(r.saliency_map.data(),
+                                                                   r.saliency_map.get_shape().size(),
+                                                                   r.saliency_map.get_shape().data());
+            },
+            nb::rv_policy::reference_internal);
 
     nb::class_<ModelBase>(m, "ModelBase")
         .def("load", [](ModelBase& self, const std::string& device, size_t num_infer_requests) {
@@ -102,3 +126,4 @@ NB_MODULE(py_model_api, m) {
             return self.inferBatch(input_mats);
         });
 }
+
