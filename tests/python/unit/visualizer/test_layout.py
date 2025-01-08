@@ -30,11 +30,11 @@ def test_flatten_layout_with_no_primitives(mock_image: Image, mock_scene: Scene)
 def test_hstack_layout():
     """Test if the layout is created correctly."""
     blue_overlay = np.zeros((100, 100, 3), dtype=np.uint8)
-    blue_overlay[50, 50] = [255, 0, 0]
+    blue_overlay[50, 50] = [0, 0, 255]
     blue_overlay = Image.fromarray(blue_overlay)
 
     red_overlay = np.zeros((100, 100, 3), dtype=np.uint8)
-    red_overlay[50, 50] = [0, 0, 255]
+    red_overlay[50, 50] = [255, 0, 0]
     red_overlay = Image.fromarray(red_overlay)
 
     mock_scene = Scene(
