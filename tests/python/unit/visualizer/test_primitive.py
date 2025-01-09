@@ -5,8 +5,9 @@
 
 import numpy as np
 import PIL
+from PIL import ImageDraw
 
-from model_api.visualizer import Overlay
+from model_api.visualizer import BoundingBox, Overlay
 
 
 def test_overlay(mock_image: PIL.Image):
@@ -22,3 +23,12 @@ def test_overlay(mock_image: PIL.Image):
     data *= 255
     overlay = Overlay(data)
     assert overlay.compute(empty_image) == expected_image
+
+
+def test_bounding_box(mock_image: PIL.Image):
+    """Test if the bounding box is created correctly."""
+    expected_image = mock_image.copy()
+    draw = ImageDraw.Draw(expected_image)
+    draw.rectangle((10, 10, 100, 100), outline="blue", width=2)
+    bounding_box = BoundingBox(x1=10, y1=10, x2=100, y2=100)
+    assert bounding_box.compute(mock_image) == expected_image

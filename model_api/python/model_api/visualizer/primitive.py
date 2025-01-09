@@ -9,14 +9,55 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import PIL
+from PIL import Image, ImageDraw
 
 
 class Primitive(ABC):
     """Primitive class."""
 
     @abstractmethod
-    def compute(self, image: PIL.Image) -> PIL.Image:
+    def compute(self, image: Image) -> Image:
         pass
+
+
+class BoundingBox(Primitive):
+    """Bounding box primitive."""
+
+    def __init__(
+        self,
+        x1: int,
+        y1: int,
+        x2: int,
+        y2: int,
+        label: str | None = None,
+        color: str | tuple[int, int, int] = "blue",
+    ) -> None:
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+        self.label = label
+        self.color = color
+        self.y_buffer = 5  # Text at the bottom of the text box is clipped. This prevents that.
+
+    def compute(self, image: Image) -> Image:
+        draw = ImageDraw.Draw(image)
+        # draw rectangle
+        draw.rectangle((self.x1, self.y1, self.x2, self.y2), outline=self.color, width=2)
+        # add label
+        if self.label:
+            # draw the background of the label
+            textbox = draw.textbbox((0, 0), self.label)
+            label_image = Image.new(
+                "RGB",
+                (textbox[2] - textbox[0], textbox[3] + self.y_buffer - textbox[1]),
+                self.color,
+            )
+            draw = ImageDraw.Draw(label_image)
+            # write the label on the background
+            draw.text((0, 0), self.label, fill="white")
+            image.paste(label_image, (self.x1, self.y1))
+        return image
 
 
 class Overlay(Primitive):
