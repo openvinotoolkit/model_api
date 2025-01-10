@@ -25,7 +25,7 @@ jobs:
         run: |
           source venv/bin/activate
           python -m pip install --upgrade pip
-          pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
+          pip install model_api/python/[tests, build] --extra-index-url https://download.pytorch.org/whl/cpu
       - name: Prepare test data
         run: |
           source venv/bin/activate
@@ -35,11 +35,12 @@ jobs:
           source venv/bin/activate
           pytest --data=./data tests/python/accuracy/test_accuracy.py
           DATA=data pytest --data=./data tests/python/accuracy/test_YOLOv8.py
-      - name: Install CPP ependencies
+      - name: Install CPP dependencies
         run: |
           sudo bash model_api/cpp/install_dependencies.sh
       - name: Build CPP Test
         run: |
+          source venv/bin/activate
           mkdir build && cd build
           cmake ../tests/cpp/accuracy/ -DCMAKE_CXX_FLAGS=-Werror
           make -j
