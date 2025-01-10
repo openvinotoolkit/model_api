@@ -40,9 +40,9 @@ jobs:
           sudo bash model_api/cpp/install_dependencies.sh
       - name: Build CPP Test
         run: |
-          source venv/bin/activate
+          pip install nanobind==2.4.0
           mkdir build && cd build
-          cmake ../tests/cpp/accuracy/ -DCMAKE_CXX_FLAGS=-Werror -DPython3_FIND_VIRTUALENV=ONLY
+          cmake ../tests/cpp/accuracy/ -DCMAKE_CXX_FLAGS=-Werror
           make -j
       - name: Run CPP Test
         run: |

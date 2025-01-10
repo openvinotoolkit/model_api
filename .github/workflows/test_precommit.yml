@@ -72,9 +72,9 @@ jobs:
           python tests/cpp/precommit/prepare_data.py -d data -p tests/cpp/precommit/public_scope.json
       - name: Build
         run: |
-          source venv/bin/activate
           mkdir build && cd build
-          cmake ../tests/cpp/precommit/ -DCMAKE_CXX_FLAGS=-Werror -DPython3_FIND_VIRTUALENV=ONLY
+          pip install nanobind==2.4.0
+          cmake ../tests/cpp/precommit/ -DCMAKE_CXX_FLAGS=-Werror
           cmake --build . -j $((`nproc`*2+2))
       - name: Run test
         run: |
