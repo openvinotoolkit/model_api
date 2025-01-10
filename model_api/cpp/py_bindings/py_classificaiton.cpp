@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2025 Intel Corporation
  * SPDX-License-Identifier: Apache-2.0
@@ -53,7 +52,6 @@ void init_classification(nb::module_& m) {
                                                                    r.saliency_map.get_shape().data());
             },
             nb::rv_policy::reference_internal);
-
 
     nb::class_<ClassificationModel, ImageModel>(m, "ClassificationModel")
         .def_static(
