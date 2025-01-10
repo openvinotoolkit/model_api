@@ -74,7 +74,7 @@ jobs:
         run: |
           source venv/bin/activate
           mkdir build && cd build
-          Python3_ROOT_DIR= cmake ../tests/cpp/precommit/ -DCMAKE_CXX_FLAGS=-Werror
+          cmake ../tests/cpp/precommit/ -DCMAKE_CXX_FLAGS=-Werror -DPython3_FIND_VIRTUALENV=ONLY
           cmake --build . -j $((`nproc`*2+2))
       - name: Run test
         run: |
