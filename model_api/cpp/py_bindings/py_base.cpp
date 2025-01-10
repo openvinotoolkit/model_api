@@ -8,8 +8,8 @@
 
 #include <openvino/openvino.hpp>
 
-#include "models/results.h"
 #include "models/image_model.h"
+#include "models/results.h"
 
 namespace nb = nanobind;
 

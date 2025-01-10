@@ -12,7 +12,6 @@
 
 #include "models/classification_model.h"
 #include "models/results.h"
-
 #include "py_utils.hpp"
 
 namespace pyutils = vision::nanobind::utils;

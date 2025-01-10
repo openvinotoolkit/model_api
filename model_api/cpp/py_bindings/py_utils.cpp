@@ -30,4 +30,4 @@ ov::Any py_object_to_any(const nb::object& py_obj, const std::string& property_n
     }
 }
 
-}
+}  // namespace vision::nanobind::utils
