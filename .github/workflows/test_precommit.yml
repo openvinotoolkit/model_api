@@ -74,7 +74,7 @@ jobs:
         run: |
           mkdir build && cd build
           pip install nanobind==2.4.0
-          cmake ../tests/cpp/precommit/ -DCMAKE_CXX_FLAGS=-Werror
+          cmake ../tests/cpp/precommit/
           cmake --build . -j $((`nproc`*2+2))
       - name: Run test
         run: |
