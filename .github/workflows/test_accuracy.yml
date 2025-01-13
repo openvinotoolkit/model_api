@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test_accuracy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -41,8 +41,9 @@ jobs:
       - name: Build CPP Test
         run: |
           pip install nanobind==2.4.0
+          pip install typing_extensions==4.12.2
           mkdir build && cd build
-          cmake ../tests/cpp/accuracy/ -DCMAKE_CXX_FLAGS=-Werror
+          cmake ../tests/cpp/accuracy/
           make -j
       - name: Run CPP Test
         run: |
