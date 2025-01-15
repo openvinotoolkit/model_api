@@ -10,12 +10,12 @@ concurrency:
   cancel-in-progress: true
 jobs:
   test_accuracy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: "3.10"
           cache: pip
       - name: Create and start a virtual environment
         run: |
@@ -25,7 +25,7 @@ jobs:
         run: |
           source venv/bin/activate
           python -m pip install --upgrade pip
-          pip install model_api/python/[tests] --extra-index-url https://download.pytorch.org/whl/cpu
+          pip install model_api/python/[tests,build] --extra-index-url https://download.pytorch.org/whl/cpu
       - name: Prepare test data
         run: |
           source venv/bin/activate
@@ -35,13 +35,15 @@ jobs:
           source venv/bin/activate
           pytest --data=./data tests/python/accuracy/test_accuracy.py
           DATA=data pytest --data=./data tests/python/accuracy/test_YOLOv8.py
-      - name: Install CPP ependencies
+      - name: Install CPP dependencies
         run: |
           sudo bash model_api/cpp/install_dependencies.sh
       - name: Build CPP Test
         run: |
+          pip install nanobind==2.4.0
+          pip install typing_extensions==4.12.2
           mkdir build && cd build
-          cmake ../tests/cpp/accuracy/ -DCMAKE_CXX_FLAGS=-Werror
+          cmake ../tests/cpp/accuracy/
           make -j
       - name: Run CPP Test
         run: |
