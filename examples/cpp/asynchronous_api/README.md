@@ -13,8 +13,8 @@ This example demonstrates how to use a C++ API of OpenVINO Model API for asynchr
 - Install third party dependencies by running the following script:
 
   ```bash
-  chmod +x ../../../model_api/cpp/install_dependencies.sh
-  sudo ../../../model_api/cpp/install_dependencies.sh
+  chmod +x ../../../src/cpp/install_dependencies.sh
+  sudo ../../../src/cpp/install_dependencies.sh
   ```
 
 - Build example:
