@@ -30,7 +30,7 @@ jobs:
       - name: Install clang-format
         run: sudo apt-get install -y clang-format-10
       - name: Install dependencies
-        run: pip install 'model_api/python/.[full]'
+        run: pip install 'src/python/.[full]'
       - name: Run pre-commit checks
         run: pre-commit run --all-files
   Unit-Tests:
@@ -43,6 +43,6 @@ jobs:
         with:
           python-version: "3.9"
       - name: Install dependencies
-        run: pip install 'model_api/python/.[tests,ovms]'
+        run: pip install 'src/python/.[tests,ovms]'
       - name: Run python unit tests
         run: pytest tests/python/unit

@@ -24,20 +24,20 @@ jobs:
           python -m pip install --upgrade build
       - name: Build sdist
         run: |
-          sed -i '/omz_tools/d' model_api/python/pyproject.toml
-          python -m build --sdist model_api/python/
+          sed -i '/omz_tools/d' src/python/pyproject.toml
+          python -m build --sdist src/python/
       - uses: actions/upload-artifact@v4
         with:
           name: artifact-sdist
-          path: model_api/python/dist/*.tar.gz
+          path: src/python/dist/*.tar.gz
       - name: Build wheel
         run: |
-          sed -i '/omz_tools/d' model_api/python/pyproject.toml
-          python -m build --wheel model_api/python/
+          sed -i '/omz_tools/d' src/python/pyproject.toml
+          python -m build --wheel src/python/
       - uses: actions/upload-artifact@v4
         with:
           name: artifact-wheel
-          path: model_api/python/dist/*.whl
+          path: src/python/dist/*.whl
 
   publish_package:
     name: Publish package
@@ -52,7 +52,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          path: model_api/python/dist
+          path: src/python/dist
           pattern: artifact-*
           merge-multiple: true
       # to determine where to publish the package distribution to PyPI or TestPyPI
@@ -67,7 +67,7 @@ jobs:
         uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: model_api/python/dist/*
+          file: src/python/dist/*
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
