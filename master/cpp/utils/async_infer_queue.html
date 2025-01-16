@@ -377,74 +377,10 @@
                   
   <section id="async-infer-queue">
 <h1>Async Infer Queue<a class="headerlink" href="#async-infer-queue" title="Link to this heading">#</a></h1>
-<dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv415AsyncInferQueue">
-<span class="target" id="classAsyncInferQueue"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AsyncInferQueue</span></span></span><a class="headerlink" href="#_CPPv415AsyncInferQueue" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue15AsyncInferQueueEv">
-<span class="target" id="classAsyncInferQueue_1abbd965578392dc28f97d2e85efb1ba43"></span><span class="sig-name descname"><span class="n"><span class="pre">AsyncInferQueue</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue15AsyncInferQueueEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue15AsyncInferQueueERN2ov13CompiledModelE6size_t">
-<span class="target" id="classAsyncInferQueue_1a772d7205335dbf0a340b170b4d93834c"></span><span class="sig-name descname"><span class="n"><span class="pre">AsyncInferQueue</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">CompiledModel</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">jobs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue15AsyncInferQueueERN2ov13CompiledModelE6size_t" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueueD0Ev">
-<span class="target" id="classAsyncInferQueue_1aa8c2f8fa00cbd32b86bad6c61591c96f"></span><span class="sig-name descname"><span class="n"><span class="pre">~AsyncInferQueue</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N15AsyncInferQueueD0Ev" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue8is_readyEv">
-<span class="target" id="classAsyncInferQueue_1a8ab3213301edf05e91827e6e2a5003c8"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_ready</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue8is_readyEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue19get_idle_request_idEv">
-<span class="target" id="classAsyncInferQueue_1a25cdf8e8eeedd02d520f82f5d7156395"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_idle_request_id</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue19get_idle_request_idEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue8wait_allEv">
-<span class="target" id="classAsyncInferQueue_1a95a54f014d22c1abd25b7ed45908bf4c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">wait_all</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue8wait_allEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue21set_default_callbacksEv">
-<span class="target" id="classAsyncInferQueue_1a14a94275cdf1e8c99b20014668aabcee"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_default_callbacks</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue21set_default_callbacksEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue20set_custom_callbacksENSt8functionIFvN2ov12InferRequestENSt10shared_ptrIN2ov6AnyMapEEEEEE">
-<span class="target" id="classAsyncInferQueue_1ad7f0c41e70aece0f2ed69a9f838062e6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set_custom_callbacks</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">InferRequest</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n"><span class="pre">callback_args</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">f_callback</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue20set_custom_callbacksENSt8functionIFvN2ov12InferRequestENSt10shared_ptrIN2ov6AnyMapEEEEEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK15AsyncInferQueue4sizeEv">
-<span class="target" id="classAsyncInferQueue_1a54d78b69f4323e6f2311b1204fadd2e7"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK15AsyncInferQueue4sizeEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue11start_asyncERKN2ov6TensorENSt10shared_ptrIN2ov6AnyMapEEE">
-<span class="target" id="classAsyncInferQueue_1ade1feb340ba64faf887899cdf0842666"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">start_async</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">input</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">userdata</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue11start_asyncERKN2ov6TensorENSt10shared_ptrIN2ov6AnyMapEEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueue11start_asyncERKNSt3mapINSt6stringEN2ov6TensorEEENSt10shared_ptrIN2ov6AnyMapEEE">
-<span class="target" id="classAsyncInferQueue_1a01969bcf43af93c1bd98945f7c0640cc"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">start_async</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">input</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">userdata</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueue11start_asyncERKNSt3mapINSt6stringEN2ov6TensorEEENSt10shared_ptrIN2ov6AnyMapEEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15AsyncInferQueueixE6size_t">
-<span class="target" id="classAsyncInferQueue_1a32ad297d715c8aa1c5c9f32e58f819ae"></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">InferRequest</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">[]</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15AsyncInferQueueixE6size_t" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenclass: Cannot find class “AsyncInferQueue” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-</dd></dl>
-
 </section>
 
 
@@ -485,32 +421,6 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv415AsyncInferQueue"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue15AsyncInferQueueEv"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::AsyncInferQueue()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue15AsyncInferQueueERN2ov13CompiledModelE6size_t"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::AsyncInferQueue()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueueD0Ev"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::~AsyncInferQueue()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue8is_readyEv"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::is_ready()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue19get_idle_request_idEv"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::get_idle_request_id()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue8wait_allEv"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::wait_all()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue21set_default_callbacksEv"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::set_default_callbacks()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue20set_custom_callbacksENSt8functionIFvN2ov12InferRequestENSt10shared_ptrIN2ov6AnyMapEEEEEE"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::set_custom_callbacks()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4NK15AsyncInferQueue4sizeEv"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::size()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue11start_asyncERKN2ov6TensorENSt10shared_ptrIN2ov6AnyMapEEE"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::start_async()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueue11start_asyncERKNSt3mapINSt6stringEN2ov6TensorEEENSt10shared_ptrIN2ov6AnyMapEEE"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::start_async()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15AsyncInferQueueixE6size_t"><code class="docutils literal notranslate"><span class="pre">AsyncInferQueue::operator[]()</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

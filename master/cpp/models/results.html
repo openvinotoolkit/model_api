@@ -379,715 +379,129 @@
 <h1>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h1>
 <section id="result-base">
 <h2>Result Base<a class="headerlink" href="#result-base" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv410ResultBase">
-<span class="target" id="structResultBase"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ResultBase</span></span></span><a class="headerlink" href="#_CPPv410ResultBase" title="Link to this definition">#</a><br /></dt>
-<dd><p>Subclassed by AnomalyResult, ClassificationResult, DetectionResult, HumanPoseResult, ImageResult, InferenceResult, InstanceSegmentationResult, KeypointDetectionResult</p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBase10ResultBaseE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structResultBase_1a7ae0529e01073912969e58b024be314d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ResultBase</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10ResultBase10ResultBaseE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBaseD0Ev">
-<span class="target" id="structResultBase_1a1c90745435280b812a6ddc904a5da85d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~ResultBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10ResultBaseD0Ev" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBase7IsEmptyEv">
-<span class="target" id="structResultBase_1a1614304290f9a11e5947b640c0cde1df"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IsEmpty</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10ResultBase7IsEmptyEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN10ResultBase5asRefER1Tv">
-<span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structResultBase_1ae21d45b7d2f25926eee6b3702cc4c91f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN10ResultBase5asRefER1Tv" title="ResultBase::asRef::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">asRef</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN10ResultBase5asRefER1Tv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0ENK10ResultBase5asRefERK1Tv">
-<span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structResultBase_1a19710e89032ddc591e7327b75b23457d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0ENK10ResultBase5asRefERK1Tv" title="ResultBase::asRef::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">asRef</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4I0ENK10ResultBase5asRefERK1Tv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “ResultBase” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBase7frameIdE">
-<span class="target" id="structResultBase_1a0898dee71c62fa53f10a86fea287f680"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">frameId</span></span></span><a class="headerlink" href="#_CPPv4N10ResultBase7frameIdE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBase8metaDataE">
-<span class="target" id="structResultBase_1a8b455992f337d8c31eac529f376f65b5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">metaData</span></span></span><a class="headerlink" href="#_CPPv4N10ResultBase8metaDataE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="anomaly-result">
 <h2>Anomaly Result<a class="headerlink" href="#anomaly-result" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv413AnomalyResult">
-<span class="target" id="structAnomalyResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AnomalyResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><a class="headerlink" href="#_CPPv413AnomalyResult" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13AnomalyResult13AnomalyResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structAnomalyResult_1a2de9661761587bca47de97845a34f84d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AnomalyResult</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13AnomalyResult13AnomalyResultE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13AnomalyResultcvNSt6stringEEv">
-<span class="target" id="structAnomalyResult_1a22a78ac61cee9e3f435bf1a41ad6d9d0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13AnomalyResultcvNSt6stringEEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “AnomalyResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N13AnomalyResult11anomaly_mapE">
-<span class="target" id="structAnomalyResult_1ad3ebb2df4c4bf1f2054ab08802307738"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">anomaly_map</span></span></span><a class="headerlink" href="#_CPPv4N13AnomalyResult11anomaly_mapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N13AnomalyResult10pred_boxesE">
-<span class="target" id="structAnomalyResult_1ac5f2f1d7967b567dd909ffb4408067a7"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Rect</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pred_boxes</span></span></span><a class="headerlink" href="#_CPPv4N13AnomalyResult10pred_boxesE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N13AnomalyResult10pred_labelE">
-<span class="target" id="structAnomalyResult_1aa93a82e9152a51a9ae7bc211aba938e0"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pred_label</span></span></span><a class="headerlink" href="#_CPPv4N13AnomalyResult10pred_labelE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N13AnomalyResult9pred_maskE">
-<span class="target" id="structAnomalyResult_1a4c6030b7bab9be3f2bde2d3a88dd8414"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pred_mask</span></span></span><a class="headerlink" href="#_CPPv4N13AnomalyResult9pred_maskE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N13AnomalyResult10pred_scoreE">
-<span class="target" id="structAnomalyResult_1aacd83a83fdfb8d29f193434a2219ce2e"></span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pred_score</span></span></span><a class="headerlink" href="#_CPPv4N13AnomalyResult10pred_scoreE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13AnomalyResultlsERNSt7ostreamERK13AnomalyResult">
-<span class="target" id="structAnomalyResult_1a76472028d62e6387465c0256d3c5d6c2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv413AnomalyResult" title="AnomalyResult"><span class="n"><span class="pre">AnomalyResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13AnomalyResultlsERNSt7ostreamERK13AnomalyResult" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="inference-result">
 <h2>Inference Result<a class="headerlink" href="#inference-result" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv415InferenceResult">
-<span class="target" id="structInferenceResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InferenceResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><a class="headerlink" href="#_CPPv415InferenceResult" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15InferenceResult20getFirstOutputTensorEv">
-<span class="target" id="structInferenceResult_1acbe52838e556b8a40a972284e206d191"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getFirstOutputTensor</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15InferenceResult20getFirstOutputTensorEv" title="Link to this definition">#</a><br /></dt>
-<dd><p>Returns the first output tensor This function is a useful addition to direct access to outputs list as many models have only one output </p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>first output tensor </p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15InferenceResult7IsEmptyEv">
-<span class="target" id="structInferenceResult_1a348dcac633bdea6e7c125cf2e10f2009"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IsEmpty</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15InferenceResult7IsEmptyEv" title="Link to this definition">#</a><br /></dt>
-<dd><p>Returns true if object contains no valid data </p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>true if object contains no valid data </p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “InferenceResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N15InferenceResult17internalModelDataE">
-<span class="target" id="structInferenceResult_1a1683abf0517e9c6e2d81f28417a92495"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="internal_model_data.html#_CPPv417InternalModelData" title="InternalModelData"><span class="n"><span class="pre">InternalModelData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">internalModelData</span></span></span><a class="headerlink" href="#_CPPv4N15InferenceResult17internalModelDataE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N15InferenceResult11outputsDataE">
-<span class="target" id="structInferenceResult_1a890ecc019c77d2e1813baa355459d383"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">outputsData</span></span></span><a class="headerlink" href="#_CPPv4N15InferenceResult11outputsDataE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="classification-result">
 <h2>Classification Result<a class="headerlink" href="#classification-result" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv420ClassificationResult">
-<span class="target" id="structClassificationResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ClassificationResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><a class="headerlink" href="#_CPPv420ClassificationResult" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult20ClassificationResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structClassificationResult_1a6127560511b4211c8f71cdbb2b1a6793"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ClassificationResult</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ClassificationResult20ClassificationResultE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResultcvNSt6stringEEv">
-<span class="target" id="structClassificationResult_1af19b9a7383b23243aacd7304658b78d0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ClassificationResultcvNSt6stringEEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “ClassificationResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult9topLabelsE">
-<span class="target" id="structClassificationResult_1a241df078a9c4b9819237657fbb041a4f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N20ClassificationResult14ClassificationE" title="ClassificationResult::Classification"><span class="n"><span class="pre">Classification</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">topLabels</span></span></span><a class="headerlink" href="#_CPPv4N20ClassificationResult9topLabelsE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult12saliency_mapE">
-<span class="target" id="structClassificationResult_1adc8f831a5de910c8ba728b56265465ad"></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saliency_map</span></span></span><a class="headerlink" href="#_CPPv4N20ClassificationResult12saliency_mapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult14feature_vectorE">
-<span class="target" id="structClassificationResult_1a954351ff022f15f0639fb213ab0aca6b"></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">feature_vector</span></span></span><a class="headerlink" href="#_CPPv4N20ClassificationResult14feature_vectorE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult10raw_scoresE">
-<span class="target" id="structClassificationResult_1a7b4ae0c19a874b2df6e4d2bb29239110"></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">raw_scores</span></span></span><a class="headerlink" href="#_CPPv4N20ClassificationResult10raw_scoresE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResultlsERNSt7ostreamERK20ClassificationResult">
-<span class="target" id="structClassificationResult_1ae415113f246facaf9f71d42fe8027365"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv420ClassificationResult" title="ClassificationResult"><span class="n"><span class="pre">ClassificationResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ClassificationResultlsERNSt7ostreamERK20ClassificationResult" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult14ClassificationE">
-<span class="target" id="structClassificationResult_1_1Classification"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Classification</span></span></span><a class="headerlink" href="#_CPPv4N20ClassificationResult14ClassificationE" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult14Classification14ClassificationEjRKNSt6stringEf">
-<span class="target" id="structClassificationResult_1_1Classification_1a45464b0b4367a27d762a2212558ea6d2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Classification</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">id</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">label</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">score</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ClassificationResult14Classification14ClassificationEjRKNSt6stringEf" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult14Classification2idE">
-<span class="target" id="structClassificationResult_1_1Classification_1aa85ab5f47ec274d53a1f7beffd2c1f2d"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">id</span></span></span><a class="headerlink" href="#_CPPv4N20ClassificationResult14Classification2idE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult14Classification5labelE">
-<span class="target" id="structClassificationResult_1_1Classification_1ad6155410bf7f4eb6f2a600ee052f74b8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">label</span></span></span><a class="headerlink" href="#_CPPv4N20ClassificationResult14Classification5labelE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult14Classification5scoreE">
-<span class="target" id="structClassificationResult_1_1Classification_1a696fe920dfc744fbfa276a81eb78165c"></span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">score</span></span></span><a class="headerlink" href="#_CPPv4N20ClassificationResult14Classification5scoreE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N20ClassificationResult14ClassificationlsERNSt7ostreamERK14Classification">
-<span class="target" id="structClassificationResult_1_1Classification_1a20e0534aebb9d54ceded3a9c1dc5843d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N20ClassificationResult14ClassificationE" title="ClassificationResult::Classification"><span class="n"><span class="pre">Classification</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N20ClassificationResult14ClassificationlsERNSt7ostreamERK14Classification" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 <section id="detected-object">
 <h2>Detected Object<a class="headerlink" href="#detected-object" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv414DetectedObject">
-<span class="target" id="structDetectedObject"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DetectedObject</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Rect2f</span></span><a class="headerlink" href="#_CPPv414DetectedObject" title="Link to this definition">#</a><br /></dt>
-<dd><p>Subclassed by SegmentedObject</p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N14DetectedObject7labelIDE">
-<span class="target" id="structDetectedObject_1a4a848bd485422d18ed439b925c1e0b4c"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">labelID</span></span></span><a class="headerlink" href="#_CPPv4N14DetectedObject7labelIDE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N14DetectedObject5labelE">
-<span class="target" id="structDetectedObject_1afb63060f9413de45bf4bec90b6c3d7b9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">label</span></span></span><a class="headerlink" href="#_CPPv4N14DetectedObject5labelE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N14DetectedObject10confidenceE">
-<span class="target" id="structDetectedObject_1a4d6a9b4d7bd1579aeefd38b70abe3ebb"></span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">confidence</span></span></span><a class="headerlink" href="#_CPPv4N14DetectedObject10confidenceE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “DetectedObject” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N14DetectedObjectlsERNSt7ostreamERK14DetectedObject">
-<span class="target" id="structDetectedObject_1a002577079dda7ef74aa0175f6f118045"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv414DetectedObject" title="DetectedObject"><span class="n"><span class="pre">DetectedObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">detection</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N14DetectedObjectlsERNSt7ostreamERK14DetectedObject" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="detection-result">
 <h2>Detection Result<a class="headerlink" href="#detection-result" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv415DetectionResult">
-<span class="target" id="structDetectionResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DetectionResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><a class="headerlink" href="#_CPPv415DetectionResult" title="Link to this definition">#</a><br /></dt>
-<dd><p>Subclassed by RetinaFaceDetectionResult</p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15DetectionResult15DetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structDetectionResult_1a9b619969475c493cdee8287eba8a1104"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DetectionResult</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15DetectionResult15DetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15DetectionResultcvNSt6stringEEv">
-<span class="target" id="structDetectionResult_1a244832904772c85c7ea05a37cce26dd4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15DetectionResultcvNSt6stringEEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “DetectionResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N15DetectionResult7objectsE">
-<span class="target" id="structDetectionResult_1aadb35e9fa6048f0429cedf39d0276656"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv414DetectedObject" title="DetectedObject"><span class="n"><span class="pre">DetectedObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">objects</span></span></span><a class="headerlink" href="#_CPPv4N15DetectionResult7objectsE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N15DetectionResult12saliency_mapE">
-<span class="target" id="structDetectionResult_1ae7be3bed279c902b44f36e49f0a60de1"></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saliency_map</span></span></span><a class="headerlink" href="#_CPPv4N15DetectionResult12saliency_mapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N15DetectionResult14feature_vectorE">
-<span class="target" id="structDetectionResult_1a8f5af944e033c35e0978c6758ce62960"></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">feature_vector</span></span></span><a class="headerlink" href="#_CPPv4N15DetectionResult14feature_vectorE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15DetectionResultlsERNSt7ostreamERK15DetectionResult">
-<span class="target" id="structDetectionResult_1ad78b626ba9349fc1eac2e84419e93b73"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415DetectionResult" title="DetectionResult"><span class="n"><span class="pre">DetectionResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15DetectionResultlsERNSt7ostreamERK15DetectionResult" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="retinaface-detection-result">
 <h2>RetinaFace Detection Result<a class="headerlink" href="#retinaface-detection-result" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv425RetinaFaceDetectionResult">
-<span class="target" id="structRetinaFaceDetectionResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RetinaFaceDetectionResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415DetectionResult" title="DetectionResult"><span class="n"><span class="pre">DetectionResult</span></span></a><a class="headerlink" href="#_CPPv425RetinaFaceDetectionResult" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N25RetinaFaceDetectionResult25RetinaFaceDetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structRetinaFaceDetectionResult_1a9c56ff6d9cf1053f672d3288ddc0eb8e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RetinaFaceDetectionResult</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N25RetinaFaceDetectionResult25RetinaFaceDetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “RetinaFaceDetectionResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N25RetinaFaceDetectionResult9landmarksE">
-<span class="target" id="structRetinaFaceDetectionResult_1a821f4bf9ee6b3a1fbd8d5faac7170cf9"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Point2f</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">landmarks</span></span></span><a class="headerlink" href="#_CPPv4N25RetinaFaceDetectionResult9landmarksE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="resultbase">
 <h2>ResultBase<a class="headerlink" href="#resultbase" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv410ResultBase">
-<span class="target" id="structResultBase"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ResultBase</span></span></span><br /></dt>
-<dd><p>Subclassed by AnomalyResult, ClassificationResult, DetectionResult, HumanPoseResult, ImageResult, InferenceResult, InstanceSegmentationResult, KeypointDetectionResult</p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBase10ResultBaseE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structResultBase_1a7ae0529e01073912969e58b024be314d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ResultBase</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBaseD0Ev">
-<span class="target" id="structResultBase_1a1c90745435280b812a6ddc904a5da85d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~ResultBase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBase7IsEmptyEv">
-<span class="target" id="structResultBase_1a1614304290f9a11e5947b640c0cde1df"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IsEmpty</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN10ResultBase5asRefER1Tv">
-<span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structResultBase_1ae21d45b7d2f25926eee6b3702cc4c91f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN10ResultBase5asRefER1Tv" title="ResultBase::asRef::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">asRef</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0ENK10ResultBase5asRefERK1Tv">
-<span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structResultBase_1a19710e89032ddc591e7327b75b23457d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0ENK10ResultBase5asRefERK1Tv" title="ResultBase::asRef::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">asRef</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “ResultBase” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBase7frameIdE">
-<span class="target" id="structResultBase_1a0898dee71c62fa53f10a86fea287f680"></span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">frameId</span></span></span><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N10ResultBase8metaDataE">
-<span class="target" id="structResultBase_1a8b455992f337d8c31eac529f376f65b5"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">metaData</span></span></span><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="segmented-object">
 <h2>Segmented Object<a class="headerlink" href="#segmented-object" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv415SegmentedObject">
-<span class="target" id="structSegmentedObject"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SegmentedObject</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv414DetectedObject" title="DetectedObject"><span class="n"><span class="pre">DetectedObject</span></span></a><a class="headerlink" href="#_CPPv415SegmentedObject" title="Link to this definition">#</a><br /></dt>
-<dd><p>Subclassed by SegmentedObjectWithRects</p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N15SegmentedObject4maskE">
-<span class="target" id="structSegmentedObject_1a15c89bd113a3afdff34dc0b71545ec3f"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mask</span></span></span><a class="headerlink" href="#_CPPv4N15SegmentedObject4maskE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “SegmentedObject” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15SegmentedObjectlsERNSt7ostreamERK15SegmentedObject">
-<span class="target" id="structSegmentedObject_1a8a73d0dd74fa5e519c31c42f50ddf07d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415SegmentedObject" title="SegmentedObject"><span class="n"><span class="pre">SegmentedObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15SegmentedObjectlsERNSt7ostreamERK15SegmentedObject" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="segmented-object-with-rects">
 <h2>Segmented Object With Rects<a class="headerlink" href="#segmented-object-with-rects" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv424SegmentedObjectWithRects">
-<span class="target" id="structSegmentedObjectWithRects"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SegmentedObjectWithRects</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415SegmentedObject" title="SegmentedObject"><span class="n"><span class="pre">SegmentedObject</span></span></a><a class="headerlink" href="#_CPPv424SegmentedObjectWithRects" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentedObjectWithRects24SegmentedObjectWithRectsERK15SegmentedObject">
-<span class="target" id="structSegmentedObjectWithRects_1a39bbbabb58a34320e06fe31632795600"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SegmentedObjectWithRects</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415SegmentedObject" title="SegmentedObject"><span class="n"><span class="pre">SegmentedObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">segmented_object</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24SegmentedObjectWithRects24SegmentedObjectWithRectsERK15SegmentedObject" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “SegmentedObjectWithRects” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentedObjectWithRects12rotated_rectE">
-<span class="target" id="structSegmentedObjectWithRects_1afbd6aa42f64c090d7531314638536e53"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">RotatedRect</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rotated_rect</span></span></span><a class="headerlink" href="#_CPPv4N24SegmentedObjectWithRects12rotated_rectE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentedObjectWithRectslsERNSt7ostreamERK24SegmentedObjectWithRects">
-<span class="target" id="structSegmentedObjectWithRects_1afa990e057bb895e0150f87dceca1c022"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv424SegmentedObjectWithRects" title="SegmentedObjectWithRects"><span class="n"><span class="pre">SegmentedObjectWithRects</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24SegmentedObjectWithRectslsERNSt7ostreamERK24SegmentedObjectWithRects" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="instance-segmentation-result">
 <h2>Instance Segmentation Result<a class="headerlink" href="#instance-segmentation-result" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv426InstanceSegmentationResult">
-<span class="target" id="structInstanceSegmentationResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InstanceSegmentationResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><a class="headerlink" href="#_CPPv426InstanceSegmentationResult" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N26InstanceSegmentationResult26InstanceSegmentationResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structInstanceSegmentationResult_1a2adc47238e2ea5fa0d79fe1dd637115f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">InstanceSegmentationResult</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N26InstanceSegmentationResult26InstanceSegmentationResultE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “InstanceSegmentationResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N26InstanceSegmentationResult16segmentedObjectsE">
-<span class="target" id="structInstanceSegmentationResult_1ad8c5b1f607064415272de0116e7d126a"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv415SegmentedObject" title="SegmentedObject"><span class="n"><span class="pre">SegmentedObject</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">segmentedObjects</span></span></span><a class="headerlink" href="#_CPPv4N26InstanceSegmentationResult16segmentedObjectsE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N26InstanceSegmentationResult12saliency_mapE">
-<span class="target" id="structInstanceSegmentationResult_1a06dc46a3069a2710c87512b27512fc19"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat_</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">uint8_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saliency_map</span></span></span><a class="headerlink" href="#_CPPv4N26InstanceSegmentationResult12saliency_mapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N26InstanceSegmentationResult14feature_vectorE">
-<span class="target" id="structInstanceSegmentationResult_1a0ea626c4e08e9faf7fb6536731d43a78"></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">feature_vector</span></span></span><a class="headerlink" href="#_CPPv4N26InstanceSegmentationResult14feature_vectorE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="image-result">
 <h2>Image Result<a class="headerlink" href="#image-result" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv411ImageResult">
-<span class="target" id="structImageResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ImageResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><a class="headerlink" href="#_CPPv411ImageResult" title="Link to this definition">#</a><br /></dt>
-<dd><p>Subclassed by ImageResultWithSoftPrediction</p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11ImageResult11ImageResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structImageResult_1a5ac0cd9b124f7f30e19153ee5180665a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ImageResult</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ImageResult11ImageResultE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11ImageResultcvNSt6stringEEv">
-<span class="target" id="structImageResult_1ac67c594ffb824ca0dfd6aa6070bcabb8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ImageResultcvNSt6stringEEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “ImageResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11ImageResult11resultImageE">
-<span class="target" id="structImageResult_1ac038a3ce91accae9c2a3c1908d4ec76f"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resultImage</span></span></span><a class="headerlink" href="#_CPPv4N11ImageResult11resultImageE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11ImageResultlsERNSt7ostreamERK11ImageResult">
-<span class="target" id="structImageResult_1a4d9fec96596d4ffcf56b407ca835ea33"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411ImageResult" title="ImageResult"><span class="n"><span class="pre">ImageResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11ImageResultlsERNSt7ostreamERK11ImageResult" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="imageresult-with-soft-prediction">
 <h2>ImageResult With Soft Prediction<a class="headerlink" href="#imageresult-with-soft-prediction" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv429ImageResultWithSoftPrediction">
-<span class="target" id="structImageResultWithSoftPrediction"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ImageResultWithSoftPrediction</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411ImageResult" title="ImageResult"><span class="n"><span class="pre">ImageResult</span></span></a><a class="headerlink" href="#_CPPv429ImageResultWithSoftPrediction" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N29ImageResultWithSoftPrediction29ImageResultWithSoftPredictionE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structImageResultWithSoftPrediction_1aa9bc9336fc039087601d4b11fcfbae28"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ImageResultWithSoftPrediction</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29ImageResultWithSoftPrediction29ImageResultWithSoftPredictionE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “ImageResultWithSoftPrediction” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N29ImageResultWithSoftPrediction15soft_predictionE">
-<span class="target" id="structImageResultWithSoftPrediction_1aaea7b17a5a2cf1f40253035e3bc4e065"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">soft_prediction</span></span></span><a class="headerlink" href="#_CPPv4N29ImageResultWithSoftPrediction15soft_predictionE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N29ImageResultWithSoftPrediction12saliency_mapE">
-<span class="target" id="structImageResultWithSoftPrediction_1a9517029baed07c529add6663cf67cbe2"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">saliency_map</span></span></span><a class="headerlink" href="#_CPPv4N29ImageResultWithSoftPrediction12saliency_mapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N29ImageResultWithSoftPrediction14feature_vectorE">
-<span class="target" id="structImageResultWithSoftPrediction_1ab1837cebfce72ac4fe468a838e8931d7"></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Tensor</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">feature_vector</span></span></span><a class="headerlink" href="#_CPPv4N29ImageResultWithSoftPrediction14feature_vectorE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N29ImageResultWithSoftPredictionlsERNSt7ostreamERK29ImageResultWithSoftPrediction">
-<span class="target" id="structImageResultWithSoftPrediction_1ae11fec3a477c1dac45c1845683872a37"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv429ImageResultWithSoftPrediction" title="ImageResultWithSoftPrediction"><span class="n"><span class="pre">ImageResultWithSoftPrediction</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N29ImageResultWithSoftPredictionlsERNSt7ostreamERK29ImageResultWithSoftPrediction" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="contour">
 <h2>Contour<a class="headerlink" href="#contour" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv47Contour">
-<span class="target" id="structContour"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Contour</span></span></span><a class="headerlink" href="#_CPPv47Contour" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7Contour5labelE">
-<span class="target" id="structContour_1a688581854d53bca59e4699c36e17741f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">label</span></span></span><a class="headerlink" href="#_CPPv4N7Contour5labelE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7Contour11probabilityE">
-<span class="target" id="structContour_1ab54e8f0bac69a13fb4580e82bdf4959f"></span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">probability</span></span></span><a class="headerlink" href="#_CPPv4N7Contour11probabilityE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7Contour5shapeE">
-<span class="target" id="structContour_1acb708fc1fccd3cb872ccf7838b5d327e"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Point</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shape</span></span></span><a class="headerlink" href="#_CPPv4N7Contour5shapeE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “Contour” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7ContourlsERNSt7ostreamERK7Contour">
-<span class="target" id="structContour_1a042897eafa7388e9cf5536ca1cb28677"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv47Contour" title="Contour"><span class="n"><span class="pre">Contour</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">contour</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7ContourlsERNSt7ostreamERK7Contour" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="humanpose">
 <h2>HumanPose<a class="headerlink" href="#humanpose" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv49HumanPose">
-<span class="target" id="structHumanPose"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HumanPose</span></span></span><a class="headerlink" href="#_CPPv49HumanPose" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N9HumanPose9keypointsE">
-<span class="target" id="structHumanPose_1a1d86e6c1daf263ebf0986886f70b5a1b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Point2f</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keypoints</span></span></span><a class="headerlink" href="#_CPPv4N9HumanPose9keypointsE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N9HumanPose5scoreE">
-<span class="target" id="structHumanPose_1aa9797c7c2440e7c0e262bcf53b66b73b"></span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">score</span></span></span><a class="headerlink" href="#_CPPv4N9HumanPose5scoreE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “HumanPose” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-</dd></dl>
-
 </section>
 <section id="humanposeresult">
 <h2>HumanPoseResult<a class="headerlink" href="#humanposeresult" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv415HumanPoseResult">
-<span class="target" id="structHumanPoseResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HumanPoseResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><a class="headerlink" href="#_CPPv415HumanPoseResult" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15HumanPoseResult15HumanPoseResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structHumanPoseResult_1a751ab14c1b788ae437a4df80647f06bf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HumanPoseResult</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15HumanPoseResult15HumanPoseResultE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “HumanPoseResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N15HumanPoseResult5posesE">
-<span class="target" id="structHumanPoseResult_1a30cd1560c231ce18be0009f5cdc1fbb8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv49HumanPose" title="HumanPose"><span class="n"><span class="pre">HumanPose</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">poses</span></span></span><a class="headerlink" href="#_CPPv4N15HumanPoseResult5posesE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="detectedkeypoints">
 <h2>DetectedKeypoints<a class="headerlink" href="#detectedkeypoints" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv417DetectedKeypoints">
-<span class="target" id="structDetectedKeypoints"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DetectedKeypoints</span></span></span><a class="headerlink" href="#_CPPv417DetectedKeypoints" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N17DetectedKeypointscvNSt6stringEEv">
-<span class="target" id="structDetectedKeypoints_1ad8d8493d34671d4fdd85d01ba2052976"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N17DetectedKeypointscvNSt6stringEEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “DetectedKeypoints” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N17DetectedKeypoints9keypointsE">
-<span class="target" id="structDetectedKeypoints_1a82d9b4cd5731021b408a3142de1a0c02"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Point2f</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">keypoints</span></span></span><a class="headerlink" href="#_CPPv4N17DetectedKeypoints9keypointsE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N17DetectedKeypoints6scoresE">
-<span class="target" id="structDetectedKeypoints_1a991a54e66c976fae2a3cea89fa71bc96"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">float</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">scores</span></span></span><a class="headerlink" href="#_CPPv4N17DetectedKeypoints6scoresE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N17DetectedKeypointslsERNSt7ostreamERK17DetectedKeypoints">
-<span class="target" id="structDetectedKeypoints_1a7fbb6cee95163b8e97c42995a3d9bcb7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv417DetectedKeypoints" title="DetectedKeypoints"><span class="n"><span class="pre">DetectedKeypoints</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">prediction</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N17DetectedKeypointslsERNSt7ostreamERK17DetectedKeypoints" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 <section id="keypointdetectionresult">
 <h2>KeypointDetectionResult<a class="headerlink" href="#keypointdetectionresult" title="Link to this heading">#</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv423KeypointDetectionResult">
-<span class="target" id="structKeypointDetectionResult"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">KeypointDetectionResult</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><a class="headerlink" href="#_CPPv423KeypointDetectionResult" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N23KeypointDetectionResult23KeypointDetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE">
-<span class="target" id="structKeypointDetectionResult_1a1291ed054a95dec410e22f54b633d442"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">KeypointDetectionResult</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">frameId</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">MetaData</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">metaData</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N23KeypointDetectionResult23KeypointDetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenstruct: Cannot find class “KeypointDetectionResult” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N23KeypointDetectionResult5posesE">
-<span class="target" id="structKeypointDetectionResult_1a658a05cf151795bc2204f8f3d5feb9a8"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv417DetectedKeypoints" title="DetectedKeypoints"><span class="n"><span class="pre">DetectedKeypoints</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">poses</span></span></span><a class="headerlink" href="#_CPPv4N23KeypointDetectionResult5posesE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 </section>
 
@@ -1138,199 +552,24 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-base">Result Base</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv410ResultBase"><code class="docutils literal notranslate"><span class="pre">ResultBase</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBase10ResultBaseE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">ResultBase::ResultBase()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBaseD0Ev"><code class="docutils literal notranslate"><span class="pre">ResultBase::~ResultBase()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBase7IsEmptyEv"><code class="docutils literal notranslate"><span class="pre">ResultBase::IsEmpty()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN10ResultBase5asRefER1Tv"><code class="docutils literal notranslate"><span class="pre">ResultBase::asRef()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0ENK10ResultBase5asRefERK1Tv"><code class="docutils literal notranslate"><span class="pre">ResultBase::asRef()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBase7frameIdE"><code class="docutils literal notranslate"><span class="pre">ResultBase::frameId</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBase8metaDataE"><code class="docutils literal notranslate"><span class="pre">ResultBase::metaData</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#anomaly-result">Anomaly Result</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv413AnomalyResult"><code class="docutils literal notranslate"><span class="pre">AnomalyResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13AnomalyResult13AnomalyResultE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">AnomalyResult::AnomalyResult()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13AnomalyResultcvNSt6stringEEv"><code class="docutils literal notranslate"><span class="pre">AnomalyResult::operator</span> <span class="pre">std::string()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13AnomalyResult11anomaly_mapE"><code class="docutils literal notranslate"><span class="pre">AnomalyResult::anomaly_map</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13AnomalyResult10pred_boxesE"><code class="docutils literal notranslate"><span class="pre">AnomalyResult::pred_boxes</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13AnomalyResult10pred_labelE"><code class="docutils literal notranslate"><span class="pre">AnomalyResult::pred_label</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13AnomalyResult9pred_maskE"><code class="docutils literal notranslate"><span class="pre">AnomalyResult::pred_mask</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13AnomalyResult10pred_scoreE"><code class="docutils literal notranslate"><span class="pre">AnomalyResult::pred_score</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13AnomalyResultlsERNSt7ostreamERK13AnomalyResult"><code class="docutils literal notranslate"><span class="pre">AnomalyResult::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-result">Inference Result</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv415InferenceResult"><code class="docutils literal notranslate"><span class="pre">InferenceResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15InferenceResult20getFirstOutputTensorEv"><code class="docutils literal notranslate"><span class="pre">InferenceResult::getFirstOutputTensor()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15InferenceResult7IsEmptyEv"><code class="docutils literal notranslate"><span class="pre">InferenceResult::IsEmpty()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15InferenceResult17internalModelDataE"><code class="docutils literal notranslate"><span class="pre">InferenceResult::internalModelData</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15InferenceResult11outputsDataE"><code class="docutils literal notranslate"><span class="pre">InferenceResult::outputsData</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classification-result">Classification Result</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv420ClassificationResult"><code class="docutils literal notranslate"><span class="pre">ClassificationResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult20ClassificationResultE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::ClassificationResult()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResultcvNSt6stringEEv"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::operator</span> <span class="pre">std::string()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult9topLabelsE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::topLabels</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult12saliency_mapE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::saliency_map</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult14feature_vectorE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::feature_vector</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult10raw_scoresE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::raw_scores</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResultlsERNSt7ostreamERK20ClassificationResult"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::operator&lt;&lt;()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult14ClassificationE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::Classification</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult14Classification14ClassificationEjRKNSt6stringEf"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::Classification::Classification()</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult14Classification2idE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::Classification::id</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult14Classification5labelE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::Classification::label</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult14Classification5scoreE"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::Classification::score</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N20ClassificationResult14ClassificationlsERNSt7ostreamERK14Classification"><code class="docutils literal notranslate"><span class="pre">ClassificationResult::Classification::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detected-object">Detected Object</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv414DetectedObject"><code class="docutils literal notranslate"><span class="pre">DetectedObject</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14DetectedObject7labelIDE"><code class="docutils literal notranslate"><span class="pre">DetectedObject::labelID</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14DetectedObject5labelE"><code class="docutils literal notranslate"><span class="pre">DetectedObject::label</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14DetectedObject10confidenceE"><code class="docutils literal notranslate"><span class="pre">DetectedObject::confidence</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N14DetectedObjectlsERNSt7ostreamERK14DetectedObject"><code class="docutils literal notranslate"><span class="pre">DetectedObject::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detection-result">Detection Result</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv415DetectionResult"><code class="docutils literal notranslate"><span class="pre">DetectionResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15DetectionResult15DetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">DetectionResult::DetectionResult()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15DetectionResultcvNSt6stringEEv"><code class="docutils literal notranslate"><span class="pre">DetectionResult::operator</span> <span class="pre">std::string()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15DetectionResult7objectsE"><code class="docutils literal notranslate"><span class="pre">DetectionResult::objects</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15DetectionResult12saliency_mapE"><code class="docutils literal notranslate"><span class="pre">DetectionResult::saliency_map</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15DetectionResult14feature_vectorE"><code class="docutils literal notranslate"><span class="pre">DetectionResult::feature_vector</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15DetectionResultlsERNSt7ostreamERK15DetectionResult"><code class="docutils literal notranslate"><span class="pre">DetectionResult::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retinaface-detection-result">RetinaFace Detection Result</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv425RetinaFaceDetectionResult"><code class="docutils literal notranslate"><span class="pre">RetinaFaceDetectionResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N25RetinaFaceDetectionResult25RetinaFaceDetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">RetinaFaceDetectionResult::RetinaFaceDetectionResult()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N25RetinaFaceDetectionResult9landmarksE"><code class="docutils literal notranslate"><span class="pre">RetinaFaceDetectionResult::landmarks</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultbase">ResultBase</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv410ResultBase"><code class="docutils literal notranslate"><span class="pre">ResultBase</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBase10ResultBaseE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">ResultBase::ResultBase()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBaseD0Ev"><code class="docutils literal notranslate"><span class="pre">ResultBase::~ResultBase()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBase7IsEmptyEv"><code class="docutils literal notranslate"><span class="pre">ResultBase::IsEmpty()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0EN10ResultBase5asRefER1Tv"><code class="docutils literal notranslate"><span class="pre">ResultBase::asRef()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4I0ENK10ResultBase5asRefERK1Tv"><code class="docutils literal notranslate"><span class="pre">ResultBase::asRef()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBase7frameIdE"><code class="docutils literal notranslate"><span class="pre">ResultBase::frameId</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ResultBase8metaDataE"><code class="docutils literal notranslate"><span class="pre">ResultBase::metaData</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#segmented-object">Segmented Object</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv415SegmentedObject"><code class="docutils literal notranslate"><span class="pre">SegmentedObject</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15SegmentedObject4maskE"><code class="docutils literal notranslate"><span class="pre">SegmentedObject::mask</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15SegmentedObjectlsERNSt7ostreamERK15SegmentedObject"><code class="docutils literal notranslate"><span class="pre">SegmentedObject::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#segmented-object-with-rects">Segmented Object With Rects</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv424SegmentedObjectWithRects"><code class="docutils literal notranslate"><span class="pre">SegmentedObjectWithRects</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N24SegmentedObjectWithRects24SegmentedObjectWithRectsERK15SegmentedObject"><code class="docutils literal notranslate"><span class="pre">SegmentedObjectWithRects::SegmentedObjectWithRects()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N24SegmentedObjectWithRects12rotated_rectE"><code class="docutils literal notranslate"><span class="pre">SegmentedObjectWithRects::rotated_rect</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N24SegmentedObjectWithRectslsERNSt7ostreamERK24SegmentedObjectWithRects"><code class="docutils literal notranslate"><span class="pre">SegmentedObjectWithRects::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instance-segmentation-result">Instance Segmentation Result</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv426InstanceSegmentationResult"><code class="docutils literal notranslate"><span class="pre">InstanceSegmentationResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N26InstanceSegmentationResult26InstanceSegmentationResultE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">InstanceSegmentationResult::InstanceSegmentationResult()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N26InstanceSegmentationResult16segmentedObjectsE"><code class="docutils literal notranslate"><span class="pre">InstanceSegmentationResult::segmentedObjects</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N26InstanceSegmentationResult12saliency_mapE"><code class="docutils literal notranslate"><span class="pre">InstanceSegmentationResult::saliency_map</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N26InstanceSegmentationResult14feature_vectorE"><code class="docutils literal notranslate"><span class="pre">InstanceSegmentationResult::feature_vector</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#image-result">Image Result</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv411ImageResult"><code class="docutils literal notranslate"><span class="pre">ImageResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11ImageResult11ImageResultE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">ImageResult::ImageResult()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11ImageResultcvNSt6stringEEv"><code class="docutils literal notranslate"><span class="pre">ImageResult::operator</span> <span class="pre">std::string()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11ImageResult11resultImageE"><code class="docutils literal notranslate"><span class="pre">ImageResult::resultImage</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11ImageResultlsERNSt7ostreamERK11ImageResult"><code class="docutils literal notranslate"><span class="pre">ImageResult::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imageresult-with-soft-prediction">ImageResult With Soft Prediction</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv429ImageResultWithSoftPrediction"><code class="docutils literal notranslate"><span class="pre">ImageResultWithSoftPrediction</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N29ImageResultWithSoftPrediction29ImageResultWithSoftPredictionE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">ImageResultWithSoftPrediction::ImageResultWithSoftPrediction()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N29ImageResultWithSoftPrediction15soft_predictionE"><code class="docutils literal notranslate"><span class="pre">ImageResultWithSoftPrediction::soft_prediction</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N29ImageResultWithSoftPrediction12saliency_mapE"><code class="docutils literal notranslate"><span class="pre">ImageResultWithSoftPrediction::saliency_map</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N29ImageResultWithSoftPrediction14feature_vectorE"><code class="docutils literal notranslate"><span class="pre">ImageResultWithSoftPrediction::feature_vector</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N29ImageResultWithSoftPredictionlsERNSt7ostreamERK29ImageResultWithSoftPrediction"><code class="docutils literal notranslate"><span class="pre">ImageResultWithSoftPrediction::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contour">Contour</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv47Contour"><code class="docutils literal notranslate"><span class="pre">Contour</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N7Contour5labelE"><code class="docutils literal notranslate"><span class="pre">Contour::label</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N7Contour11probabilityE"><code class="docutils literal notranslate"><span class="pre">Contour::probability</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N7Contour5shapeE"><code class="docutils literal notranslate"><span class="pre">Contour::shape</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N7ContourlsERNSt7ostreamERK7Contour"><code class="docutils literal notranslate"><span class="pre">Contour::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#humanpose">HumanPose</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv49HumanPose"><code class="docutils literal notranslate"><span class="pre">HumanPose</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N9HumanPose9keypointsE"><code class="docutils literal notranslate"><span class="pre">HumanPose::keypoints</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N9HumanPose5scoreE"><code class="docutils literal notranslate"><span class="pre">HumanPose::score</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#humanposeresult">HumanPoseResult</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv415HumanPoseResult"><code class="docutils literal notranslate"><span class="pre">HumanPoseResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15HumanPoseResult15HumanPoseResultE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">HumanPoseResult::HumanPoseResult()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15HumanPoseResult5posesE"><code class="docutils literal notranslate"><span class="pre">HumanPoseResult::poses</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detectedkeypoints">DetectedKeypoints</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv417DetectedKeypoints"><code class="docutils literal notranslate"><span class="pre">DetectedKeypoints</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N17DetectedKeypointscvNSt6stringEEv"><code class="docutils literal notranslate"><span class="pre">DetectedKeypoints::operator</span> <span class="pre">std::string()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N17DetectedKeypoints9keypointsE"><code class="docutils literal notranslate"><span class="pre">DetectedKeypoints::keypoints</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N17DetectedKeypoints6scoresE"><code class="docutils literal notranslate"><span class="pre">DetectedKeypoints::scores</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N17DetectedKeypointslsERNSt7ostreamERK17DetectedKeypoints"><code class="docutils literal notranslate"><span class="pre">DetectedKeypoints::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#keypointdetectionresult">KeypointDetectionResult</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv423KeypointDetectionResult"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionResult</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N23KeypointDetectionResult23KeypointDetectionResultE7int64_tRKNSt10shared_ptrI8MetaDataEE"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionResult::KeypointDetectionResult()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N23KeypointDetectionResult5posesE"><code class="docutils literal notranslate"><span class="pre">KeypointDetectionResult::poses</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-base">Result Base</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#anomaly-result">Anomaly Result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-result">Inference Result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classification-result">Classification Result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detected-object">Detected Object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detection-result">Detection Result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retinaface-detection-result">RetinaFace Detection Result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resultbase">ResultBase</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#segmented-object">Segmented Object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#segmented-object-with-rects">Segmented Object With Rects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instance-segmentation-result">Instance Segmentation Result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#image-result">Image Result</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imageresult-with-soft-prediction">ImageResult With Soft Prediction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contour">Contour</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#humanpose">HumanPose</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#humanposeresult">HumanPoseResult</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detectedkeypoints">DetectedKeypoints</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#keypointdetectionresult">KeypointDetectionResult</a></li>
 </ul>
   </nav></div>
 

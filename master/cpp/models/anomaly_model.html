@@ -383,68 +383,10 @@
 <li><p>Padim</p></li>
 <li><p>STFPM</p></li>
 </ul>
-<dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv412AnomalyModel">
-<span class="target" id="classAnomalyModel"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AnomalyModel</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="image_model.html#_CPPv410ImageModel" title="ImageModel"><span class="n"><span class="pre">ImageModel</span></span></a><a class="headerlink" href="#_CPPv412AnomalyModel" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModel12AnomalyModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">
-<span class="target" id="classAnomalyModel_1a5a4465e128cd2f174ac2107985293584"></span><span class="sig-name descname"><span class="n"><span class="pre">AnomalyModel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Model</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AnomalyModel12AnomalyModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModel12AnomalyModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">
-<span class="target" id="classAnomalyModel_1af35e2c0c50e25abada1dda0d6cc11af4"></span><span class="sig-name descname"><span class="n"><span class="pre">AnomalyModel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../adapters/index.html#_CPPv416InferenceAdapter" title="InferenceAdapter"><span class="n"><span class="pre">InferenceAdapter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">adapter</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AnomalyModel12AnomalyModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModel5inferERK14ImageInputData">
-<span class="target" id="classAnomalyModel_1a586253756fa284ed20d55da9b9f4e8bd"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="results.html#_CPPv413AnomalyResult" title="AnomalyResult"><span class="n"><span class="pre">AnomalyResult</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">infer</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="input_data.html#_CPPv414ImageInputData" title="ImageInputData"><span class="n"><span class="pre">ImageInputData</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inputData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AnomalyModel5inferERK14ImageInputData" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModel10inferBatchERKNSt6vectorI14ImageInputDataEE">
-<span class="target" id="classAnomalyModel_1a475c1d6584cecbf2b18942b607cefb5f"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="results.html#_CPPv413AnomalyResult" title="AnomalyResult"><span class="n"><span class="pre">AnomalyResult</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inferBatch</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="input_data.html#_CPPv414ImageInputData" title="ImageInputData"><span class="n"><span class="pre">ImageInputData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inputImgs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AnomalyModel10inferBatchERKNSt6vectorI14ImageInputDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModel11postprocessER15InferenceResult">
-<span class="target" id="classAnomalyModel_1a59b41fc696ba53d5af5acb20fd5dfa09"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="results.html#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postprocess</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="results.html#_CPPv415InferenceResult" title="InferenceResult"><span class="n"><span class="pre">InferenceResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">infResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N12AnomalyModel11postprocessER15InferenceResult" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenclass: Cannot find class “AnomalyModel” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE">
-<span class="target" id="classAnomalyModel_1ae4b520bbeb0a34f646cf83bda482d7ed"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412AnomalyModel" title="AnomalyModel"><span class="n"><span class="pre">AnomalyModel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">create_model</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">modelFile</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">preload</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">device</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;AUTO&quot;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AnomalyModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE">
-<span class="target" id="classAnomalyModel_1a4ba8f839de23b531afd001a82da1161e"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412AnomalyModel" title="AnomalyModel"><span class="n"><span class="pre">AnomalyModel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">create_model</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../adapters/index.html#_CPPv416InferenceAdapter" title="InferenceAdapter"><span class="n"><span class="pre">InferenceAdapter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">adapter</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AnomalyModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-attributes">Public Static Attributes</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModel9ModelTypeE">
-<span class="target" id="classAnomalyModel_1ad6905eab20606959539d8c5f86e16ce6"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ModelType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;AnomalyDetection&quot;</span></span><a class="headerlink" href="#_CPPv4N12AnomalyModel9ModelTypeE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N12AnomalyModellsERNSt7ostreamERNSt10unique_ptrI12AnomalyModelEE">
-<span class="target" id="classAnomalyModel_1ae6c090a20a5207039a25a4228c359528"></span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv412AnomalyModel" title="AnomalyModel"><span class="n"><span class="pre">AnomalyModel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">model</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N12AnomalyModellsERNSt7ostreamERNSt10unique_ptrI12AnomalyModelEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 
 
@@ -485,29 +427,6 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv412AnomalyModel"><code class="docutils literal notranslate"><span class="pre">AnomalyModel</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModel12AnomalyModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::AnomalyModel()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModel12AnomalyModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::AnomalyModel()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModel5inferERK14ImageInputData"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::infer()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModel10inferBatchERKNSt6vectorI14ImageInputDataEE"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::inferBatch()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModel11postprocessER15InferenceResult"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::postprocess()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::create_model()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::create_model()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModel9ModelTypeE"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::ModelType</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N12AnomalyModellsERNSt7ostreamERNSt10unique_ptrI12AnomalyModelEE"><code class="docutils literal notranslate"><span class="pre">AnomalyModel::operator&lt;&lt;()</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

@@ -377,68 +377,10 @@
                   
   <section id="instance-segmentation">
 <h1>Instance Segmentation<a class="headerlink" href="#instance-segmentation" title="Link to this heading">#</a></h1>
-<dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv413MaskRCNNModel">
-<span class="target" id="classMaskRCNNModel"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MaskRCNNModel</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="image_model.html#_CPPv410ImageModel" title="ImageModel"><span class="n"><span class="pre">ImageModel</span></span></a><a class="headerlink" href="#_CPPv413MaskRCNNModel" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel13MaskRCNNModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">
-<span class="target" id="classMaskRCNNModel_1a519ca66ad869227d57338ccc69bcab18"></span><span class="sig-name descname"><span class="n"><span class="pre">MaskRCNNModel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Model</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel13MaskRCNNModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel13MaskRCNNModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">
-<span class="target" id="classMaskRCNNModel_1adb124376d771f161d52b64753d54f37b"></span><span class="sig-name descname"><span class="n"><span class="pre">MaskRCNNModel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../adapters/index.html#_CPPv416InferenceAdapter" title="InferenceAdapter"><span class="n"><span class="pre">InferenceAdapter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">adapter</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel13MaskRCNNModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel11postprocessER15InferenceResult">
-<span class="target" id="classMaskRCNNModel_1a5baf99247f18342ef2bdc808d24ce166"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="results.html#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postprocess</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="results.html#_CPPv415InferenceResult" title="InferenceResult"><span class="n"><span class="pre">InferenceResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">infResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel11postprocessER15InferenceResult" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel5inferERK14ImageInputData">
-<span class="target" id="classMaskRCNNModel_1aebc33f58b8c3e0bf96d0efdbe1cd3fe0"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="results.html#_CPPv426InstanceSegmentationResult" title="InstanceSegmentationResult"><span class="n"><span class="pre">InstanceSegmentationResult</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">infer</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="input_data.html#_CPPv414ImageInputData" title="ImageInputData"><span class="n"><span class="pre">ImageInputData</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inputData</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel5inferERK14ImageInputData" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel10inferBatchERKNSt6vectorI14ImageInputDataEE">
-<span class="target" id="classMaskRCNNModel_1a5681b9f15d84ec58af63bda575b1f1bc"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="results.html#_CPPv426InstanceSegmentationResult" title="InstanceSegmentationResult"><span class="n"><span class="pre">InstanceSegmentationResult</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inferBatch</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="input_data.html#_CPPv414ImageInputData" title="ImageInputData"><span class="n"><span class="pre">ImageInputData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inputImgs</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel10inferBatchERKNSt6vectorI14ImageInputDataEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenclass: Cannot find class “MaskRCNNModel” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel26postprocess_semantic_masksE">
-<span class="target" id="classMaskRCNNModel_1ae8ea76b07ab4243caf94d4914d7fcbb3"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postprocess_semantic_masks</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel26postprocess_semantic_masksE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE">
-<span class="target" id="classMaskRCNNModel_1a30a2ae85d2b069888ccf2bacb4d3b3ae"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv413MaskRCNNModel" title="MaskRCNNModel"><span class="n"><span class="pre">MaskRCNNModel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">create_model</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">modelFile</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">preload</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">device</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;AUTO&quot;</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE">
-<span class="target" id="classMaskRCNNModel_1a0063f2a7879b7d0762cf9d8248e93645"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv413MaskRCNNModel" title="MaskRCNNModel"><span class="n"><span class="pre">MaskRCNNModel</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">create_model</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../adapters/index.html#_CPPv416InferenceAdapter" title="InferenceAdapter"><span class="n"><span class="pre">InferenceAdapter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">adapter</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-attributes">Public Static Attributes</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N13MaskRCNNModel9ModelTypeE">
-<span class="target" id="classMaskRCNNModel_1a3f5d17a342b89549bfbcdacc4af48a0a"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ModelType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;MaskRCNN&quot;</span></span><a class="headerlink" href="#_CPPv4N13MaskRCNNModel9ModelTypeE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 
 
@@ -479,29 +421,6 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv413MaskRCNNModel"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel13MaskRCNNModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::MaskRCNNModel()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel13MaskRCNNModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::MaskRCNNModel()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel11postprocessER15InferenceResult"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::postprocess()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel5inferERK14ImageInputData"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::infer()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel10inferBatchERKNSt6vectorI14ImageInputDataEE"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::inferBatch()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel26postprocess_semantic_masksE"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::postprocess_semantic_masks</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel12create_modelERKNSt6stringERKN2ov6AnyMapEbRKNSt6stringE"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::create_model()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel12create_modelERNSt10shared_ptrI16InferenceAdapterEE"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::create_model()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N13MaskRCNNModel9ModelTypeE"><code class="docutils literal notranslate"><span class="pre">MaskRCNNModel::ModelType</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

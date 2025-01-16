@@ -377,130 +377,10 @@
                   
   <section id="kuhn-munkres">
 <h1>Kuhn Munkres<a class="headerlink" href="#kuhn-munkres" title="Link to this heading">#</a></h1>
-<dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv411KuhnMunkres">
-<span class="target" id="classKuhnMunkres"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">KuhnMunkres</span></span></span><a class="headerlink" href="#_CPPv411KuhnMunkres" title="Link to this definition">#</a><br /></dt>
-<dd><p>The KuhnMunkres class. </p>
-<p>Solves the assignment problem. </p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres11KuhnMunkresEb">
-<span class="target" id="classKuhnMunkres_1a7229de6fc94c1ea04d33cd064208f20a"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">KuhnMunkres</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">greedy</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres11KuhnMunkresEb" title="Link to this definition">#</a><br /></dt>
-<dd><p>Initializes the class for assignment problem solving. </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>greedy</strong> – <strong>[in]</strong> If a faster greedy matching algorithm should be used. </p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres5SolveERKN2cv3MatE">
-<span class="target" id="classKuhnMunkres_1a0b62765fb89609390ec7db1b9ccddd95"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Solve</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dissimilarity_matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres5SolveERKN2cv3MatE" title="Link to this definition">#</a><br /></dt>
-<dd><p>Solves the assignment problem for given dissimilarity matrix. It returns a vector that where each element is a column index for corresponding row (e.g. result[0] stores optimal column index for very first row in the dissimilarity matrix). </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dissimilarity_matrix</strong> – CV_32F dissimilarity matrix. </p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Optimal column index for each row. -1 means that there is no column for row. </p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenclass: Cannot find class “KuhnMunkres” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres13TrySimpleCaseEv">
-<span class="target" id="classKuhnMunkres_1a11f36c4516bd6fc3a54781a3a0a6fe0e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">TrySimpleCase</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres13TrySimpleCaseEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres21CheckIfOptimumIsFoundEv">
-<span class="target" id="classKuhnMunkres_1a1ed61fd0c1b6760e5025fc4deb20355b"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CheckIfOptimumIsFound</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres21CheckIfOptimumIsFoundEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres22FindUncoveredMinValPosEv">
-<span class="target" id="classKuhnMunkres_1a57238557f9b95aa9c3a744b5d615f6fc"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Point</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FindUncoveredMinValPos</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres22FindUncoveredMinValPosEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres25UpdateDissimilarityMatrixEf">
-<span class="target" id="classKuhnMunkres_1a066668935a9372c16bef92388f1f8174"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UpdateDissimilarityMatrix</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres25UpdateDissimilarityMatrixEf" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres9FindInRowEii">
-<span class="target" id="classKuhnMunkres_1a1f7ad1a7d1907606b2eb1764af833a6f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FindInRow</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">what</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres9FindInRowEii" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres9FindInColEii">
-<span class="target" id="classKuhnMunkres_1ab14f1921ddf58bac8521166066aa769f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FindInCol</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">col</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">what</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres9FindInColEii" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres3RunEv">
-<span class="target" id="classKuhnMunkres_1a12dfd9c464ce22474d16355ca26aa5aa"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Run</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11KuhnMunkres3RunEv" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres3dm_E">
-<span class="target" id="classKuhnMunkres_1a280544aba2c136a839d9a90d6a6ef74c"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">dm_</span></span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres3dm_E" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres7marked_E">
-<span class="target" id="classKuhnMunkres_1a0d425f2b27fdf50120cd9f3a620fc680"></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Mat</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">marked_</span></span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres7marked_E" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres7points_E">
-<span class="target" id="classKuhnMunkres_1a1083044d9a4fec1fd609759a34328e56"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Point</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">points_</span></span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres7points_E" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres15is_row_visited_E">
-<span class="target" id="classKuhnMunkres_1a36896d0223570a15e2b31f40d29b841b"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_row_visited_</span></span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres15is_row_visited_E" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres15is_col_visited_E">
-<span class="target" id="classKuhnMunkres_1abadeb37a8d3e6b392315f441fe832641"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_col_visited_</span></span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres15is_col_visited_E" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres2n_E">
-<span class="target" id="classKuhnMunkres_1a9d2d882978f242625dd1a6e5ae5baf6a"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n_</span></span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres2n_E" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres7greedy_E">
-<span class="target" id="classKuhnMunkres_1a656fd94a72c46fdf3f096dcb075a1905"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">greedy_</span></span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres7greedy_E" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres5kStarE">
-<span class="target" id="classKuhnMunkres_1a4faf551411f28ee4693027eb1e60d425"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kStar</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres5kStarE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N11KuhnMunkres6kPrimeE">
-<span class="target" id="classKuhnMunkres_1ac135dbdb402f7564ccd4ca81990bc83d"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">kPrime</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N11KuhnMunkres6kPrimeE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 
 
@@ -541,38 +421,6 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv411KuhnMunkres"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres11KuhnMunkresEb"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::KuhnMunkres()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres5SolveERKN2cv3MatE"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::Solve()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres13TrySimpleCaseEv"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::TrySimpleCase()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres21CheckIfOptimumIsFoundEv"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::CheckIfOptimumIsFound()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres22FindUncoveredMinValPosEv"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::FindUncoveredMinValPos()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres25UpdateDissimilarityMatrixEf"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::UpdateDissimilarityMatrix()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres9FindInRowEii"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::FindInRow()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres9FindInColEii"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::FindInCol()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres3RunEv"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::Run()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres3dm_E"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::dm_</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres7marked_E"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::marked_</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres7points_E"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::points_</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres15is_row_visited_E"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::is_row_visited_</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres15is_col_visited_E"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::is_col_visited_</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres2n_E"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::n_</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres7greedy_E"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::greedy_</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres5kStarE"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::kStar</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N11KuhnMunkres6kPrimeE"><code class="docutils literal notranslate"><span class="pre">KuhnMunkres::kPrime</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

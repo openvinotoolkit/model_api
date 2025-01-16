@@ -377,52 +377,10 @@
                   
   <section id="detection-model-yolox">
 <h1>Detection Model YoloX<a class="headerlink" href="#detection-model-yolox" title="Link to this heading">#</a></h1>
-<dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv410ModelYoloX">
-<span class="target" id="classModelYoloX"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ModelYoloX</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE" title="ModelYoloX::DetectionModelExt"><span class="n"><span class="pre">DetectionModelExt</span></span></a><a class="headerlink" href="#_CPPv410ModelYoloX" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ModelYoloX10ModelYoloXERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">
-<span class="target" id="classModelYoloX_1a92b42d992163d691ecdc480faaf8dc0f"></span><span class="sig-name descname"><span class="n"><span class="pre">ModelYoloX</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Model</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10ModelYoloX10ModelYoloXERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ModelYoloX10ModelYoloXERNSt10shared_ptrI16InferenceAdapterEE">
-<span class="target" id="classModelYoloX_1a4bd8accf8d42a19daa7e9d1d37f1f9dc"></span><span class="sig-name descname"><span class="n"><span class="pre">ModelYoloX</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../adapters/index.html#_CPPv416InferenceAdapter" title="InferenceAdapter"><span class="n"><span class="pre">InferenceAdapter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">adapter</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10ModelYoloX10ModelYoloXERNSt10shared_ptrI16InferenceAdapterEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ModelYoloX11postprocessER15InferenceResult">
-<span class="target" id="classModelYoloX_1a6bf5e08a47e6e648b0c50d780dd65ec9"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="results.html#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postprocess</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="results.html#_CPPv415InferenceResult" title="InferenceResult"><span class="n"><span class="pre">InferenceResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">infResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N10ModelYoloX11postprocessER15InferenceResult" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ModelYoloX10preprocessERK9InputDataR14InferenceInput">
-<span class="target" id="classModelYoloX_1a371d9c583e8ead7c6ae095c9132db2cf"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="internal_model_data.html#_CPPv417InternalModelData" title="InternalModelData"><span class="n"><span class="pre">InternalModelData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">preprocess</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="input_data.html#_CPPv49InputData" title="InputData"><span class="n"><span class="pre">InputData</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inputData</span></span>, <span class="n"><span class="pre">InferenceInput</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">input</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N10ModelYoloX10preprocessERK9InputDataR14InferenceInput" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">
-<span class="target" id="classModelYoloX_1a9dc792acbe18a11795328be96e2e84a4"></span><span class="sig-name descname"><span class="n"><span class="pre">DetectionModelExt</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Model</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrI16InferenceAdapterEE">
-<span class="target" id="classModelYoloX_1a41411072e059ced0248a06623c01616f"></span><span class="sig-name descname"><span class="n"><span class="pre">DetectionModelExt</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../adapters/index.html#_CPPv416InferenceAdapter" title="InferenceAdapter"><span class="n"><span class="pre">InferenceAdapter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">adapter</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrI16InferenceAdapterEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenclass: Cannot find class “ModelYoloX” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-attributes">Public Static Attributes</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N10ModelYoloX9ModelTypeE">
-<span class="target" id="classModelYoloX_1a7016394be83e34093194e78b24890a77"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ModelType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="s"><span class="pre">&quot;yolox&quot;</span></span><a class="headerlink" href="#_CPPv4N10ModelYoloX9ModelTypeE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 
 
@@ -463,27 +421,6 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv410ModelYoloX"><code class="docutils literal notranslate"><span class="pre">ModelYoloX</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ModelYoloX10ModelYoloXERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">ModelYoloX::ModelYoloX()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ModelYoloX10ModelYoloXERNSt10shared_ptrI16InferenceAdapterEE"><code class="docutils literal notranslate"><span class="pre">ModelYoloX::ModelYoloX()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ModelYoloX11postprocessER15InferenceResult"><code class="docutils literal notranslate"><span class="pre">ModelYoloX::postprocess()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ModelYoloX10preprocessERK9InputDataR14InferenceInput"><code class="docutils literal notranslate"><span class="pre">ModelYoloX::preprocess()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">ModelYoloX::DetectionModelExt()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ModelYoloX17DetectionModelExtERNSt10shared_ptrI16InferenceAdapterEE"><code class="docutils literal notranslate"><span class="pre">ModelYoloX::DetectionModelExt()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N10ModelYoloX9ModelTypeE"><code class="docutils literal notranslate"><span class="pre">ModelYoloX::ModelType</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

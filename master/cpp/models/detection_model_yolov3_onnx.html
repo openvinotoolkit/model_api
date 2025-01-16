@@ -377,44 +377,10 @@
                   
   <section id="detection-model-yolov3-onnx">
 <h1>Detection Model Yolov3 ONNX<a class="headerlink" href="#detection-model-yolov3-onnx" title="Link to this heading">#</a></h1>
-<dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv415ModelYoloV3ONNX">
-<span class="target" id="classModelYoloV3ONNX"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ModelYoloV3ONNX</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE" title="ModelYoloV3ONNX::DetectionModel"><span class="n"><span class="pre">DetectionModel</span></span></a><a class="headerlink" href="#_CPPv415ModelYoloV3ONNX" title="Link to this definition">#</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15ModelYoloV3ONNX15ModelYoloV3ONNXERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">
-<span class="target" id="classModelYoloV3ONNX_1abb07c609508affee6d2b595575730764"></span><span class="sig-name descname"><span class="n"><span class="pre">ModelYoloV3ONNX</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Model</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ModelYoloV3ONNX15ModelYoloV3ONNXERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15ModelYoloV3ONNX15ModelYoloV3ONNXERNSt10shared_ptrI16InferenceAdapterEE">
-<span class="target" id="classModelYoloV3ONNX_1a1d04de01efde09026c6fbea53d314c1c"></span><span class="sig-name descname"><span class="n"><span class="pre">ModelYoloV3ONNX</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../adapters/index.html#_CPPv416InferenceAdapter" title="InferenceAdapter"><span class="n"><span class="pre">InferenceAdapter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">adapter</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ModelYoloV3ONNX15ModelYoloV3ONNXERNSt10shared_ptrI16InferenceAdapterEE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15ModelYoloV3ONNX11postprocessER15InferenceResult">
-<span class="target" id="classModelYoloV3ONNX_1a2ce47a19315984d79c23bcfab84e0846"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unique_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="results.html#_CPPv410ResultBase" title="ResultBase"><span class="n"><span class="pre">ResultBase</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">postprocess</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="results.html#_CPPv415InferenceResult" title="InferenceResult"><span class="n"><span class="pre">InferenceResult</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">infResult</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N15ModelYoloV3ONNX11postprocessER15InferenceResult" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15ModelYoloV3ONNX10preprocessERK9InputDataR14InferenceInput">
-<span class="target" id="classModelYoloV3ONNX_1a13b853477e5d958a03beb6d238c051e0"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="internal_model_data.html#_CPPv417InternalModelData" title="InternalModelData"><span class="n"><span class="pre">InternalModelData</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">preprocess</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="input_data.html#_CPPv49InputData" title="InputData"><span class="n"><span class="pre">InputData</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">inputData</span></span>, <span class="n"><span class="pre">InferenceInput</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">input</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N15ModelYoloV3ONNX10preprocessERK9InputDataR14InferenceInput" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE">
-<span class="target" id="classModelYoloV3ONNX_1aa9ae793899345d37dbd9d4f886f81cea"></span><span class="sig-name descname"><span class="n"><span class="pre">DetectionModel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Model</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">model</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE">
-<span class="target" id="classModelYoloV3ONNX_1a21405acbe91bd423c27a334e7e130ba5"></span><span class="sig-name descname"><span class="n"><span class="pre">DetectionModel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="../adapters/index.html#_CPPv416InferenceAdapter" title="InferenceAdapter"><span class="n"><span class="pre">InferenceAdapter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">adapter</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ov</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AnyMap</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">configuration</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE" title="Link to this definition">#</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenclass: Cannot find class “ModelYoloV3ONNX” in doxygen xml output for project “InferenceSDK” from directory: /home/runner/work/model_api/model_api/docs/build_cpp/xml</p>
 </div>
-</dd></dl>
-
 </section>
 
 
@@ -455,26 +421,6 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv415ModelYoloV3ONNX"><code class="docutils literal notranslate"><span class="pre">ModelYoloV3ONNX</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15ModelYoloV3ONNX15ModelYoloV3ONNXERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">ModelYoloV3ONNX::ModelYoloV3ONNX()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15ModelYoloV3ONNX15ModelYoloV3ONNXERNSt10shared_ptrI16InferenceAdapterEE"><code class="docutils literal notranslate"><span class="pre">ModelYoloV3ONNX::ModelYoloV3ONNX()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15ModelYoloV3ONNX11postprocessER15InferenceResult"><code class="docutils literal notranslate"><span class="pre">ModelYoloV3ONNX::postprocess()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15ModelYoloV3ONNX10preprocessERK9InputDataR14InferenceInput"><code class="docutils literal notranslate"><span class="pre">ModelYoloV3ONNX::preprocess()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrIN2ov5ModelEEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">ModelYoloV3ONNX::DetectionModel()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#_CPPv4N15ModelYoloV3ONNX14DetectionModelERNSt10shared_ptrI16InferenceAdapterEERKN2ov6AnyMapE"><code class="docutils literal notranslate"><span class="pre">ModelYoloV3ONNX::DetectionModel()</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
