@@ -13,8 +13,7 @@
 #include <iomanip>
 #include <iostream>
 #include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
 #include <openvino/openvino.hpp>
 #include <stdexcept>
 #include <string>
@@ -41,6 +40,12 @@ int main(int argc, char* argv[]) try {
                   << std::setw(4) << int(obj.x) << " | " << std::setw(4) << int(obj.y) << " | " << std::setw(4)
                   << int(obj.x + obj.width) << " | " << std::setw(4) << int(obj.y + obj.height) << "\n";
     }
+
+    // could be improved with an iterator
+    for (size_t i = 0; i < result->size(); ++i) {
+        std::cout << result->getDetection(i) << "\n";
+    }
+
 } catch (const std::exception& error) {
     std::cerr << error.what() << '\n';
     return 1;

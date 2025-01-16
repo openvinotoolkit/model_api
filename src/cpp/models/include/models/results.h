@@ -147,6 +147,9 @@ struct ClassificationResult : public ResultBase {
 };
 
 struct DetectedObject : public cv::Rect2f {
+    DetectedObject() {}
+    DetectedObject(const cv::Rect2f& rect) : cv::Rect2f(rect) {}
+
     size_t labelID;
     std::string label;
     float confidence;
@@ -161,8 +164,27 @@ struct DetectedObject : public cv::Rect2f {
 struct DetectionResult : public ResultBase {
     DetectionResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
-    std::vector<DetectedObject> objects;
-    ov::Tensor saliency_map, feature_vector;  // Contan "saliency_map" and "feature_vector" model outputs if such exist
+
+    // memory to forward as np.array
+    cv::Mat_<float> scores;
+    cv::Mat_<float> bboxes;
+    cv::Mat_<int> labels;
+    std::vector<std::string> label_names;
+
+    std::vector<DetectedObject> objects; // to remove
+    ov::Tensor saliency_map, feature_vector;  // Contain "saliency_map" and "feature_vector" model outputs if such exist
+
+    size_t size() const {
+        return label_names.size();
+    }
+
+    DetectedObject getDetection(size_t idx) {
+        DetectedObject result(bboxes.at<cv::Rect2f>(idx));
+        result.labelID = labels.at<size_t>(idx);
+        result.label = label_names[idx];
+        result.confidence = scores.at<float>(idx);
+        return result;
+    }
 
     friend std::ostream& operator<<(std::ostream& os, const DetectionResult& prediction) {
         for (const DetectedObject& obj : prediction.objects) {

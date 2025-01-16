@@ -131,6 +131,7 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
         }
     }
 
+    result->label_names.reserve(numAndStep.detectionsNum);
     for (size_t i = 0; i < numAndStep.detectionsNum; i++) {
         float image_id = detections[i * numAndStep.objectSize + 0];
         if (image_id < 0) {
@@ -165,6 +166,12 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
                       floatInputImgHeight) -
                 desc.y;
             result->objects.push_back(desc);
+
+            auto label_idx = static_cast<int>(detections[i * numAndStep.objectSize + 1]);
+            result->labels.at<int>(i) = label_idx;
+            result->scores.at<float>(i) = confidence;
+            result->bboxes.at<cv::Rect2f>(i) = cv::Rect2f(desc.x, desc.y, desc.width, desc.height);
+            result->label_names.push_back(getLabelName(label_idx));
         }
     }
 
@@ -200,6 +207,18 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessMultipleOutputs(InferenceResult
     float widthScale = scores ? netInputWidth : 1.0f;
     float heightScale = scores ? netInputHeight : 1.0f;
 
+    size_t detections_num = 0;
+    for (size_t i = 0; i < numAndStep.detectionsNum; i++) {
+        float confidence = scores ? scores[i] : boxes[i * numAndStep.objectSize + 4];
+        if (confidence > confidence_threshold) {
+            ++detections_num;
+        }
+    }
+    result->label_names.reserve(detections_num);
+    result->labels = cv::Mat(1, detections_num, CV_32S);
+    result->scores = cv::Mat(1, detections_num, CV_32F);
+    result->bboxes = cv::Mat(1, detections_num, CV_32FC4);
+
     for (size_t i = 0; i < numAndStep.detectionsNum; i++) {
         float confidence = scores ? scores[i] : boxes[i * numAndStep.objectSize + 4];
 
@@ -229,6 +248,11 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessMultipleOutputs(InferenceResult
             if (desc.width * desc.height >= box_area_threshold) {
                 result->objects.push_back(desc);
             }
+            auto label_idx = static_cast<int>(labels[i]);
+            result->labels.at<int>(i) = label_idx;
+            result->scores.at<float>(i) = confidence;
+            result->bboxes.at<cv::Rect2f>(i) = cv::Rect2f(desc.x, desc.y, desc.width, desc.height);
+            result->label_names.push_back(getLabelName(label_idx));
         }
     }
 
