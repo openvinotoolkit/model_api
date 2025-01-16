@@ -25,7 +25,7 @@ jobs:
         run: |
           source venv/bin/activate
           python -m pip install --upgrade pip
-          pip install model_api/python/[tests,build] --extra-index-url https://download.pytorch.org/whl/cpu
+          pip install src/python/[tests,build] --extra-index-url https://download.pytorch.org/whl/cpu
       - name: Prepare test data
         run: |
           source venv/bin/activate
@@ -37,7 +37,7 @@ jobs:
           DATA=data pytest --data=./data tests/python/accuracy/test_YOLOv8.py
       - name: Install CPP dependencies
         run: |
-          sudo bash model_api/cpp/install_dependencies.sh
+          sudo bash src/cpp/install_dependencies.sh
       - name: Build CPP Test
         run: |
           pip install nanobind==2.4.0

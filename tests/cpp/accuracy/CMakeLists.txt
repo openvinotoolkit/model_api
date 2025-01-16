@@ -66,7 +66,7 @@ include(../cmake/common.cmake)
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 
-add_subdirectory(../../../model_api/cpp ${tests_BINARY_DIR}/model_api/cpp)
+add_subdirectory(../../../src/cpp ${tests_BINARY_DIR}/model_api/cpp)
 
 add_test(NAME test_accuracy SOURCES test_accuracy.cpp DEPENDENCIES model_api)
 add_test(NAME test_YOLOv8 SOURCES test_YOLOv8.cpp DEPENDENCIES model_api)
