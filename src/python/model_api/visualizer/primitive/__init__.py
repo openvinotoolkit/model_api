@@ -5,6 +5,7 @@
 
 from .bounding_box import BoundingBox
 from .overlay import Overlay
+from .polygon import Polygon
 from .primitive import Primitive
 
-__all__ = ["Primitive", "BoundingBox", "Overlay"]
+__all__ = ["Primitive", "BoundingBox", "Overlay", "Polygon"]
