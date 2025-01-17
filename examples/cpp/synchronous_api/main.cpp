@@ -35,17 +35,11 @@ int main(int argc, char* argv[]) try {
     auto result = model->infer(image);
 
     // Process detections
-    for (auto& obj : result->objects) {
+    for (auto obj : *result) {
         std::cout << " " << std::left << std::setw(9) << obj.label << " | " << std::setw(10) << obj.confidence << " | "
                   << std::setw(4) << int(obj.x) << " | " << std::setw(4) << int(obj.y) << " | " << std::setw(4)
                   << int(obj.x + obj.width) << " | " << std::setw(4) << int(obj.y + obj.height) << "\n";
     }
-
-    // could be improved with an iterator
-    for (size_t i = 0; i < result->size(); ++i) {
-        std::cout << result->getDetection(i) << "\n";
-    }
-
 } catch (const std::exception& error) {
     std::cerr << error.what() << '\n';
     return 1;

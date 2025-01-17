@@ -165,20 +165,45 @@ struct DetectionResult : public ResultBase {
     DetectionResult(int64_t frameId = -1, const std::shared_ptr<MetaData>& metaData = nullptr)
         : ResultBase(frameId, metaData) {}
 
-    // memory to forward as np.array
     cv::Mat_<float> scores;
     cv::Mat_<float> bboxes;
     cv::Mat_<int> labels;
     std::vector<std::string> label_names;
-
-    std::vector<DetectedObject> objects; // to remove
     ov::Tensor saliency_map, feature_vector;  // Contain "saliency_map" and "feature_vector" model outputs if such exist
+
+    struct DetectionIterator {
+        const DetectionResult& result;
+        size_t index;
+
+        DetectionIterator(const DetectionResult& result, size_t index) : result(result), index(index) {}
+
+        bool operator!=(const DetectionIterator& other) const {
+            return index != other.index;
+        }
+
+        DetectionIterator& operator++() {
+            ++index;
+            return *this;
+        }
+
+        DetectedObject operator*() const {
+            return result.getObject(index);
+        }
+    };
+
+    DetectionIterator begin() const {
+        return DetectionIterator(*this, 0);
+    }
+
+    DetectionIterator end() const {
+        return DetectionIterator(*this, size());
+    }
 
     size_t size() const {
         return label_names.size();
     }
 
-    DetectedObject getDetection(size_t idx) {
+    DetectedObject getObject(size_t idx) const {
         DetectedObject result(bboxes.at<cv::Rect2f>(idx));
         result.labelID = labels.at<size_t>(idx);
         result.label = label_names[idx];
@@ -187,7 +212,7 @@ struct DetectionResult : public ResultBase {
     }
 
     friend std::ostream& operator<<(std::ostream& os, const DetectionResult& prediction) {
-        for (const DetectedObject& obj : prediction.objects) {
+        for (const DetectedObject obj : prediction) {
             os << obj << "; ";
         }
         try {

@@ -131,7 +131,18 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
         }
     }
 
-    result->label_names.reserve(numAndStep.detectionsNum);
+    size_t detections_num = 0;
+    for (size_t i = 0; i < numAndStep.detectionsNum; i++) {
+        float confidence = detections[i * numAndStep.objectSize + 2];
+        if (confidence > confidence_threshold) {
+            ++detections_num;
+        }
+    }
+    result->label_names.reserve(detections_num);
+    result->labels = cv::Mat(1, detections_num, CV_32S);
+    result->scores = cv::Mat(1, detections_num, CV_32F);
+    result->bboxes = cv::Mat(1, detections_num, CV_32FC4);
+
     for (size_t i = 0; i < numAndStep.detectionsNum; i++) {
         float image_id = detections[i * numAndStep.objectSize + 0];
         if (image_id < 0) {
@@ -142,11 +153,7 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
 
         /** Filtering out objects with confidence < confidence_threshold probability **/
         if (confidence > confidence_threshold) {
-            DetectedObject desc;
-
-            desc.confidence = confidence;
-            desc.labelID = static_cast<size_t>(detections[i * numAndStep.objectSize + 1]);
-            desc.label = getLabelName(desc.labelID);
+            cv::Rect2f desc;
             desc.x =
                 clamp(round((detections[i * numAndStep.objectSize + 3] * netInputWidth - padLeft) * invertedScaleX),
                       0.f,
@@ -165,12 +172,12 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessSingleOutput(InferenceResult& i
                       0.f,
                       floatInputImgHeight) -
                 desc.y;
-            result->objects.push_back(desc);
 
+            size_t det_idx = result->label_names.size();
             auto label_idx = static_cast<int>(detections[i * numAndStep.objectSize + 1]);
-            result->labels.at<int>(i) = label_idx;
-            result->scores.at<float>(i) = confidence;
-            result->bboxes.at<cv::Rect2f>(i) = cv::Rect2f(desc.x, desc.y, desc.width, desc.height);
+            result->labels.at<int>(det_idx) = label_idx;
+            result->scores.at<float>(det_idx) = confidence;
+            result->bboxes.at<cv::Rect2f>(det_idx) = desc;
             result->label_names.push_back(getLabelName(label_idx));
         }
     }
@@ -224,11 +231,8 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessMultipleOutputs(InferenceResult
 
         /** Filtering out objects with confidence < confidence_threshold probability **/
         if (confidence > confidence_threshold) {
-            DetectedObject desc;
+            cv::Rect2f desc;
 
-            desc.confidence = confidence;
-            desc.labelID = labels[i];
-            desc.label = getLabelName(desc.labelID);
             desc.x = clamp_and_round((boxes[i * numAndStep.objectSize] * widthScale - padLeft) * invertedScaleX,
                                      0.f,
                                      floatInputImgWidth);
@@ -248,10 +252,12 @@ std::unique_ptr<ResultBase> ModelSSD::postprocessMultipleOutputs(InferenceResult
             if (desc.width * desc.height >= box_area_threshold) {
                 result->objects.push_back(desc);
             }
+
+            size_t det_idx = result->label_names.size();
             auto label_idx = static_cast<int>(labels[i]);
-            result->labels.at<int>(i) = label_idx;
-            result->scores.at<float>(i) = confidence;
-            result->bboxes.at<cv::Rect2f>(i) = cv::Rect2f(desc.x, desc.y, desc.width, desc.height);
+            result->labels.at<int>(det_idx) = label_idx;
+            result->scores.at<float>(det_idx) = confidence;
+            result->bboxes.at<cv::Rect2f>(det_idx) = desc;
             result->label_names.push_back(getLabelName(label_idx));
         }
     }
