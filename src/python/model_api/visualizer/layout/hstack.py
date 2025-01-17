@@ -30,8 +30,8 @@ class HStack(Layout):
         if scene.has_primitives(primitive):
             images = []
             for _primitive in scene.get_primitives(primitive):
-                _image = _primitive.compute(image.copy())
-                images.append(_image)
+                image_ = _primitive.compute(image.copy())
+                images.append(image_)
             return self._stitch(*images)
         return None
 
@@ -70,9 +70,9 @@ class HStack(Layout):
         images: list[PIL.Image] = []
         for child in self.children:
             if isinstance(child, Layout):
-                _image = child(scene)
+                image_ = child(scene)
             else:
-                _image = self._compute_on_primitive(child, scene.base.copy(), scene)
-            if _image is not None:
-                images.append(_image)
+                image_ = self._compute_on_primitive(child, scene.base.copy(), scene)
+            if image_ is not None:
+                images.append(image_)
         return self._stitch(*images)

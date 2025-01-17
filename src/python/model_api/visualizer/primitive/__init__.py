@@ -4,8 +4,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from .bounding_box import BoundingBox
+from .label import Label
 from .overlay import Overlay
 from .polygon import Polygon
 from .primitive import Primitive
 
-__all__ = ["Primitive", "BoundingBox", "Overlay", "Polygon"]
+__all__ = ["Primitive", "BoundingBox", "Label", "Overlay", "Polygon"]

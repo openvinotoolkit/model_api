@@ -7,7 +7,7 @@ import numpy as np
 import PIL
 from PIL import ImageDraw
 
-from model_api.visualizer import BoundingBox, Overlay, Polygon
+from model_api.visualizer import BoundingBox, Label, Overlay, Polygon
 
 
 def test_overlay(mock_image: PIL.Image):
@@ -51,3 +51,9 @@ def test_polygon(mock_image: PIL.Image):
     draw.polygon([(10, 10), (100, 10), (100, 100), (10, 100)], fill="red")
     polygon = Polygon(mask=mask, color="red")
     assert polygon.compute(mock_image) == expected_image
+
+
+def test_label(mock_image: PIL.Image):
+    label = Label(label="Label")
+    # When using a single label, compute and overlay_labels should return the same image
+    assert label.compute(mock_image) == Label.overlay_labels(mock_image, [label])
