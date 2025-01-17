@@ -5,7 +5,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type, Union
+from typing import TYPE_CHECKING, Type, Union, cast
+
+from model_api.visualizer.primitive import Label
 
 from .layout import Layout
 
@@ -29,13 +31,19 @@ class Flatten(Layout):
     def _compute_on_primitive(self, primitive: Type[Primitive], image: PIL.Image, scene: Scene) -> PIL.Image | None:
         if scene.has_primitives(primitive):
             primitives = scene.get_primitives(primitive)
-            for _primitive in primitives:
-                image = _primitive.compute(image)
+            if primitive == Label:  # Labels need to be rendered next to each other
+                # cast is needed as mypy does not know that the primitives are of type Label.
+                primitives_ = cast("list[Label]", primitives)
+                image = Label.overlay_labels(image, primitives_)
+            else:
+                # Other primitives are rendered on top of each other
+                for _primitive in primitives:
+                    image = _primitive.compute(image)
             return image
         return None
 
     def __call__(self, scene: Scene) -> PIL.Image:
-        _image: PIL.Image = scene.base.copy()
+        image_: PIL.Image = scene.base.copy()
         for child in self.children:
-            _image = child(scene) if isinstance(child, Layout) else self._compute_on_primitive(child, _image, scene)
-        return _image
+            image_ = child(scene) if isinstance(child, Layout) else self._compute_on_primitive(child, image_, scene)
+        return image_
