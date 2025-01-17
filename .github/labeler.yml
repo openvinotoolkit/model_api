@@ -3,12 +3,12 @@
 cpp:
   - changed-files:
       - any-glob-to-any-file:
-          - model_api/cpp/**
+          - src/cpp/**
 
 python:
   - changed-files:
       - any-glob-to-any-file:
-          - model_api/python/**
+          - src/python/**
 
 tests:
   - changed-files:
