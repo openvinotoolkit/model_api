@@ -40,20 +40,41 @@ void init_instance_segmentation(nb::module_& m) {
              [](MaskRCNNModel& self, const nb::ndarray<>& input) {
                  return self.infer(pyutils::wrap_np_mat(input));
              })
-        .def("infer_batch", [](MaskRCNNModel& self, const std::vector<nb::ndarray<>> inputs) {
-            std::vector<ImageInputData> input_mats;
-            input_mats.reserve(inputs.size());
+        .def("infer_batch",
+             [](MaskRCNNModel& self, const std::vector<nb::ndarray<>> inputs) {
+                 std::vector<ImageInputData> input_mats;
+                 input_mats.reserve(inputs.size());
 
-            for (const auto& input : inputs) {
-                input_mats.push_back(pyutils::wrap_np_mat(input));
-            }
+                 for (const auto& input : inputs) {
+                     input_mats.push_back(pyutils::wrap_np_mat(input));
+                 }
 
-            return self.inferBatch(input_mats);
-        })
-        .def("postprocess", [](MaskRCNNModel& self, InferenceResult& infResult) {
-            return self.postprocess(infResult);
-        })
+                 return self.inferBatch(input_mats);
+             })
+        .def("postprocess",
+             [](MaskRCNNModel& self, InferenceResult& infResult) {
+                 return self.postprocess(infResult);
+             })
         .def_prop_ro_static("__model__", [](nb::object) {
             return MaskRCNNModel::ModelType;
         });
+
+
+    nb::class_<InstanceSegmentationResult, ResultBase>(m, "InstanceSegmentationResult")
+        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(),
+             nb::arg("frameId") = -1,
+             nb::arg("metaData") = nullptr)
+        .def_ro("segmentedObjects", &InstanceSegmentationResult::segmentedObjects)
+        .def_prop_ro(
+            "feature_vector",
+            [](InstanceSegmentationResult& r) {
+                if (!r.feature_vector) {
+                    return nb::ndarray<float, nb::numpy, nb::c_contig>();
+                }
+
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(r.feature_vector.data(),
+                                                                   r.feature_vector.get_shape().size(),
+                                                                   r.feature_vector.get_shape().data());
+            },
+            nb::rv_policy::reference_internal);
 }

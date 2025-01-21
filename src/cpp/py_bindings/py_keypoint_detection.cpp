@@ -35,20 +35,33 @@ void init_keypoint_detection(nb::module_& m) {
              [](KeypointDetectionModel& self, const nb::ndarray<>& input) {
                  return self.infer(pyutils::wrap_np_mat(input));
              })
-        .def("infer_batch", [](KeypointDetectionModel& self, const std::vector<nb::ndarray<>> inputs) {
-            std::vector<ImageInputData> input_mats;
-            input_mats.reserve(inputs.size());
+        .def("infer_batch",
+             [](KeypointDetectionModel& self, const std::vector<nb::ndarray<>> inputs) {
+                 std::vector<ImageInputData> input_mats;
+                 input_mats.reserve(inputs.size());
 
-            for (const auto& input : inputs) {
-                input_mats.push_back(pyutils::wrap_np_mat(input));
-            }
+                 for (const auto& input : inputs) {
+                     input_mats.push_back(pyutils::wrap_np_mat(input));
+                 }
 
-            return self.inferBatch(input_mats);
-        })
-        .def("postprocess", [](KeypointDetectionModel& self, InferenceResult& infResult) {
-            return self.postprocess(infResult);
-        })
+                 return self.inferBatch(input_mats);
+             })
+        .def("postprocess",
+             [](KeypointDetectionModel& self, InferenceResult& infResult) {
+                 return self.postprocess(infResult);
+             })
         .def_prop_ro_static("__model__", [](nb::object) {
             return KeypointDetectionModel::ModelType;
         });
+
+    nb::class_<KeypointDetectionResult, ResultBase>(m, "KeypointDetectionResult")
+        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(),
+            nb::arg("frameId") = -1,
+            nb::arg("metaData") = nullptr)
+        .def_ro("poses", &KeypointDetectionResult::poses);
+
+    nb::class_<DetectedKeypoints>(m, "DetectedKeypoints")
+        .def(nb::init<>())
+        .def_ro("keypoints", &DetectedKeypoints::keypoints)
+        .def_ro("scores", &DetectedKeypoints::scores);
 }

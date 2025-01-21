@@ -56,4 +56,17 @@ void init_segmentation(nb::module_& m) {
         .def_prop_ro_static("__model__", [](nb::object) {
             return SegmentationModel::ModelType;
         });
+
+    nb::class_<ImageResult, ResultBase>(m, "ImageResult")
+        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(),
+             nb::arg("frameId") = -1,
+             nb::arg("metaData") = nullptr)
+        .def_prop_ro(
+            "resultImage",
+            [](ImageResult& r) {
+                return nb::ndarray<uint8_t, nb::numpy, nb::c_contig>(r.resultImage.data,
+                    {static_cast<size_t>(r.resultImage.rows), static_cast<size_t>(r.resultImage.cols), static_cast<size_t>(r.resultImage.channels())});
+            },
+            nb::rv_policy::reference_internal
+        );
 }
