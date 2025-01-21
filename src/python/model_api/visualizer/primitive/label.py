@@ -40,13 +40,13 @@ class Label(Primitive):
 
     def __init__(
         self,
-        label: str,
+        label: Union[str, float],
         fg_color: Union[str, tuple[int, int, int]] = "black",
         bg_color: Union[str, tuple[int, int, int]] = "yellow",
         font_path: Union[str, BytesIO, None] = None,
         size: int = 16,
     ) -> None:
-        self.label = label
+        self.label = str(label)
         self.fg_color = fg_color
         self.bg_color = bg_color
         self.font = ImageFont.load_default(size=size) if font_path is None else ImageFont.truetype(font_path, size)
