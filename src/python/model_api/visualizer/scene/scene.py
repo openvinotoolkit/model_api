@@ -40,7 +40,8 @@ class Scene:
         self.polygon = self._to_polygon(polygon)
         self.layout = layout
 
-    def show(self) -> Image: ...
+    def show(self) -> None:
+        self.render().show()
 
     def save(self, path: Path) -> None:
         self.render().save(path)

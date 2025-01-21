@@ -3,6 +3,8 @@
 # Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
+from typing import Union
+
 from PIL import Image
 
 from model_api.models.result import ClassificationResult
@@ -15,7 +17,7 @@ from .scene import Scene
 class ClassificationScene(Scene):
     """Classification Scene."""
 
-    def __init__(self, image: Image, result: ClassificationResult) -> None:
+    def __init__(self, image: Image, result: ClassificationResult, layout: Union[Layout, None] = None) -> None:
         self.image = image
         self.result = result
 
