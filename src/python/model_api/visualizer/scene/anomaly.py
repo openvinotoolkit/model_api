@@ -42,10 +42,8 @@ class AnomalyScene(Scene):
 
     def _get_labels(self, result: AnomalyResult) -> list[Label]:
         labels = []
-        if result.pred_label is not None:
-            labels.append(Label(result.pred_label))
-        if result.pred_score is not None:
-            labels.append(Label(result.pred_score))
+        if result.pred_label is not None and result.pred_score is not None:
+            labels.append(Label(label=result.pred_label, score=result.pred_score))
         return labels
 
     def _get_polygons(self, result: AnomalyResult) -> list[Polygon]:
