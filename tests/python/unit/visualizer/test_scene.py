@@ -8,7 +8,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from model_api.models.result import AnomalyResult
+from model_api.models.result import AnomalyResult, ClassificationResult
+from model_api.models.result.classification import Label
 from model_api.visualizer import Visualizer
 
 
@@ -32,3 +33,19 @@ def test_anomaly_scene(mock_image: Image, tmpdir: Path):
     visualizer = Visualizer()
     visualizer.save(mock_image, anomaly_result, tmpdir / "anomaly_scene.jpg")
     assert Path(tmpdir / "anomaly_scene.jpg").exists()
+
+
+def test_classification_scene(mock_image: Image, tmpdir: Path):
+    """Test if the classification scene is created."""
+    classification_result = ClassificationResult(
+        top_labels=[
+            Label(name="cat", confidence=0.95),
+            Label(name="dog", confidence=0.90),
+        ],
+        saliency_map=np.ones(mock_image.size, dtype=np.uint8),
+    )
+    visualizer = Visualizer()
+    visualizer.save(
+        mock_image, classification_result, tmpdir / "classification_scene.jpg"
+    )
+    assert Path(tmpdir / "classification_scene.jpg").exists()
