@@ -64,7 +64,6 @@ void init_instance_segmentation(nb::module_& m) {
         .def(nb::init<int64_t, std::shared_ptr<MetaData>>(),
              nb::arg("frameId") = -1,
              nb::arg("metaData") = nullptr)
-        .def_ro("segmentedObjects", &InstanceSegmentationResult::segmentedObjects)
         .def_prop_ro(
             "feature_vector",
             [](InstanceSegmentationResult& r) {
