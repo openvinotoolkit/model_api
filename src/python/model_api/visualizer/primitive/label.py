@@ -19,6 +19,7 @@ class Label(Primitive):
 
     Args:
         label (str): Text of the label.
+        score (float | None): Score of the label. This is optional.
         fg_color (str | tuple[int, int, int]): Foreground color of the label.
         bg_color (str | tuple[int, int, int]): Background color of the label.
         font_path (str | None | BytesIO): Path to the font file.
@@ -41,12 +42,13 @@ class Label(Primitive):
     def __init__(
         self,
         label: str,
+        score: Union[float, None] = None,
         fg_color: Union[str, tuple[int, int, int]] = "black",
         bg_color: Union[str, tuple[int, int, int]] = "yellow",
         font_path: Union[str, BytesIO, None] = None,
         size: int = 16,
     ) -> None:
-        self.label = label
+        self.label = f"{label} ({score:.2f})" if score is not None else label
         self.fg_color = fg_color
         self.bg_color = bg_color
         self.font = ImageFont.load_default(size=size) if font_path is None else ImageFont.truetype(font_path, size)
