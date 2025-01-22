@@ -3,7 +3,6 @@
 # Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-from itertools import starmap
 from typing import Union
 
 import cv2
@@ -22,27 +21,28 @@ class DetectionScene(Scene):
     def __init__(self, image: Image, result: DetectionResult, layout: Union[Layout, None] = None) -> None:
         super().__init__(
             base=image,
-            label=self._get_labels(result),
             bounding_box=self._get_bounding_boxes(result),
             overlay=self._get_overlays(result),
             layout=layout,
         )
 
-    def _get_labels(self, result: DetectionResult) -> list[Label]:
-        labels = []
-        for label, score, label_name in zip(result.labels, result.scores, result.label_names):
-            labels.append(Label(label=f"{label} {label_name}", score=score))
-        return labels
-
     def _get_overlays(self, result: DetectionResult) -> list[Overlay]:
         overlays = []
-        for saliency_map in result.saliency_map[0][1:]:  # Assumes only one batch. Skip background class.
-            saliency_map = cv2.applyColorMap(saliency_map, cv2.COLORMAP_JET)
-            overlays.append(Overlay(saliency_map))
+        # Add only the overlays that are predicted
+        label_index_mapping = dict(zip(result.labels, result.label_names))
+        for label_index, label_name in label_index_mapping.items():
+            # Index 0 as it assumes only one batch
+            saliency_map = cv2.applyColorMap(result.saliency_map[0][label_index], cv2.COLORMAP_JET)
+            overlays.append(Overlay(saliency_map, label=label_name.title()))
         return overlays
 
     def _get_bounding_boxes(self, result: DetectionResult) -> list[BoundingBox]:
-        return list(starmap(BoundingBox, result.bboxes))
+        bounding_boxes = []
+        for score, label_name, bbox in zip(result.scores, result.label_names, result.bboxes):
+            x1, y1, x2, y2 = bbox
+            label = f"{label_name} ({score:.2f})"
+            bounding_boxes.append(BoundingBox(x1=x1, y1=y1, x2=x2, y2=y2, label=label))
+        return bounding_boxes
 
     @property
     def default_layout(self) -> Layout:
