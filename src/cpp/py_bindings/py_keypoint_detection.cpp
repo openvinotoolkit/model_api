@@ -59,9 +59,7 @@ void init_keypoint_detection(nb::module_& m) {
         });
 
     nb::class_<KeypointDetectionResult, ResultBase>(m, "KeypointDetectionResult")
-        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(),
-            nb::arg("frameId") = -1,
-            nb::arg("metaData") = nullptr)
+        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(), nb::arg("frameId") = -1, nb::arg("metaData") = nullptr)
         .def_ro("poses", &KeypointDetectionResult::poses);
 
     nb::class_<DetectedKeypoints>(m, "DetectedKeypoints")

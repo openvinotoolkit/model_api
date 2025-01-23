@@ -75,16 +75,17 @@ void init_classification(nb::module_& m) {
              [](ClassificationModel& self, const nb::ndarray<>& input) {
                  return self.infer(pyutils::wrap_np_mat(input));
              })
-        .def("infer_batch", [](ClassificationModel& self, const std::vector<nb::ndarray<>> inputs) {
-            std::vector<ImageInputData> input_mats;
-            input_mats.reserve(inputs.size());
+        .def("infer_batch",
+             [](ClassificationModel& self, const std::vector<nb::ndarray<>> inputs) {
+                 std::vector<ImageInputData> input_mats;
+                 input_mats.reserve(inputs.size());
 
-            for (const auto& input : inputs) {
-                input_mats.push_back(pyutils::wrap_np_mat(input));
-            }
+                 for (const auto& input : inputs) {
+                     input_mats.push_back(pyutils::wrap_np_mat(input));
+                 }
 
-            return self.inferBatch(input_mats);
-        })
+                 return self.inferBatch(input_mats);
+             })
         .def_prop_ro_static("__model__", [](nb::object) {
             return ClassificationModel::ModelType;
         });

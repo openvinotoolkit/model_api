@@ -10,8 +10,8 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 
-#include "models/segmentation_model.h"
 #include "models/results.h"
+#include "models/segmentation_model.h"
 #include "py_utils.hpp"
 
 namespace pyutils = vision::nanobind::utils;
@@ -40,33 +40,34 @@ void init_segmentation(nb::module_& m) {
              [](SegmentationModel& self, const nb::ndarray<>& input) {
                  return self.infer(pyutils::wrap_np_mat(input));
              })
-        .def("infer_batch", [](SegmentationModel& self, const std::vector<nb::ndarray<>> inputs) {
-            std::vector<ImageInputData> input_mats;
-            input_mats.reserve(inputs.size());
+        .def("infer_batch",
+             [](SegmentationModel& self, const std::vector<nb::ndarray<>> inputs) {
+                 std::vector<ImageInputData> input_mats;
+                 input_mats.reserve(inputs.size());
 
-            for (const auto& input : inputs) {
-                input_mats.push_back(pyutils::wrap_np_mat(input));
-            }
+                 for (const auto& input : inputs) {
+                     input_mats.push_back(pyutils::wrap_np_mat(input));
+                 }
 
-            return self.inferBatch(input_mats);
-        })
-        .def("postprocess", [](SegmentationModel& self, InferenceResult& infResult) {
-            return self.postprocess(infResult);
-        })
+                 return self.inferBatch(input_mats);
+             })
+        .def("postprocess",
+             [](SegmentationModel& self, InferenceResult& infResult) {
+                 return self.postprocess(infResult);
+             })
         .def_prop_ro_static("__model__", [](nb::object) {
             return SegmentationModel::ModelType;
         });
 
     nb::class_<ImageResult, ResultBase>(m, "ImageResult")
-        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(),
-             nb::arg("frameId") = -1,
-             nb::arg("metaData") = nullptr)
+        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(), nb::arg("frameId") = -1, nb::arg("metaData") = nullptr)
         .def_prop_ro(
             "resultImage",
             [](ImageResult& r) {
                 return nb::ndarray<uint8_t, nb::numpy, nb::c_contig>(r.resultImage.data,
-                    {static_cast<size_t>(r.resultImage.rows), static_cast<size_t>(r.resultImage.cols), static_cast<size_t>(r.resultImage.channels())});
+                                                                     {static_cast<size_t>(r.resultImage.rows),
+                                                                      static_cast<size_t>(r.resultImage.cols),
+                                                                      static_cast<size_t>(r.resultImage.channels())});
             },
-            nb::rv_policy::reference_internal
-        );
+            nb::rv_policy::reference_internal);
 }

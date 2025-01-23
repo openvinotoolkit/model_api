@@ -59,11 +59,8 @@ void init_instance_segmentation(nb::module_& m) {
             return MaskRCNNModel::ModelType;
         });
 
-
     nb::class_<InstanceSegmentationResult, ResultBase>(m, "InstanceSegmentationResult")
-        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(),
-             nb::arg("frameId") = -1,
-             nb::arg("metaData") = nullptr)
+        .def(nb::init<int64_t, std::shared_ptr<MetaData>>(), nb::arg("frameId") = -1, nb::arg("metaData") = nullptr)
         .def_prop_ro(
             "feature_vector",
             [](InstanceSegmentationResult& r) {
