@@ -29,7 +29,9 @@ class ClassificationScene(Scene):
     def _get_labels(self, result: ClassificationResult) -> list[Label]:
         labels = []
         if result.top_labels is not None and len(result.top_labels) > 0:
-            labels.extend([Label(label=str(label)) for label in result.top_labels])
+            for label in result.top_labels:
+                if label.name is not None:
+                    labels.append(Label(label=label.name, score=label.confidence))
         return labels
 
     def _get_overlays(self, result: ClassificationResult) -> list[Overlay]:
