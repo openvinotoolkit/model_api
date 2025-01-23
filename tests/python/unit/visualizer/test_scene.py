@@ -55,7 +55,7 @@ def test_detection_scene(mock_image: Image, tmpdir: Path):
     """Test if the detection scene is created."""
     detection_result = DetectionResult(
         bboxes=np.array([[0, 0, 128, 128], [32, 32, 96, 96]]),
-        labels=np.array([1, 2]),
+        labels=np.array([0, 1]),
         label_names=["person", "car"],
         scores=np.array([0.85, 0.75]),
         saliency_map=(np.ones((1, 2, 6, 8)) * 255).astype(np.uint8),
