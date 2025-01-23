@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, Type, Union
 
 import PIL
 
+from model_api.visualizer.primitive import Overlay
+
 from .layout import Layout
 
 if TYPE_CHECKING:
@@ -31,6 +33,8 @@ class HStack(Layout):
             images = []
             for _primitive in scene.get_primitives(primitive):
                 image_ = _primitive.compute(image.copy())
+                if isinstance(_primitive, Overlay):
+                    image_ = Overlay.overlay_labels(image=image_, labels=_primitive.label)
                 images.append(image_)
             return self._stitch(*images)
         return None

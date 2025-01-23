@@ -111,6 +111,11 @@ class DetectionResult(Result):
 
     @property
     def saliency_map(self):
+        """Saliency map for XAI.
+
+        Returns:
+            np.ndarray: Saliency map in dim of (B, N_CLASSES, H, W).
+        """
         return self._saliency_map
 
     @saliency_map.setter
