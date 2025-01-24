@@ -8,7 +8,13 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from model_api.models.result import AnomalyResult, ClassificationResult, DetectionResult
+from model_api.models.result import (
+    AnomalyResult,
+    ClassificationResult,
+    DetectionResult,
+    ImageResultWithSoftPrediction,
+    InstanceSegmentationResult,
+)
 from model_api.models.result.classification import Label
 from model_api.visualizer import Visualizer
 
@@ -63,3 +69,46 @@ def test_detection_scene(mock_image: Image, tmpdir: Path):
     visualizer = Visualizer()
     visualizer.save(mock_image, detection_result, tmpdir / "detection_scene.jpg")
     assert Path(tmpdir / "detection_scene.jpg").exists()
+
+
+def test_segmentation_scene(mock_image: Image, tmpdir: Path):
+    """Test if the segmentation scene is created."""
+    visualizer = Visualizer()
+
+    instance_segmentation_result = InstanceSegmentationResult(
+        bboxes=np.array([[0, 0, 128, 128], [32, 32, 96, 96]]),
+        labels=np.array([0, 1]),
+        masks=np.array(
+            [
+                np.ones((128, 128), dtype=np.uint8),
+            ]
+        ),
+        scores=np.array([0.85, 0.75]),
+        label_names=["person", "car"],
+        saliency_map=[np.ones((128, 128), dtype=np.uint8) * 255],
+        feature_vector=np.array([1, 2, 3, 4]),
+    )
+
+    visualizer.save(
+        mock_image,
+        instance_segmentation_result,
+        tmpdir / "instance_segmentation_scene.jpg",
+    )
+    assert Path(tmpdir / "instance_segmentation_scene.jpg").exists()
+
+    # Test ImageResultWithSoftPrediction
+    soft_prediction_result = ImageResultWithSoftPrediction(
+        resultImage=np.array(
+            [[0, 1, 2], [1, 2, 0], [2, 0, 1]], dtype=np.uint8
+        ),  # 3x3 test image with 3 classes
+        soft_prediction=np.ones(
+            (3, 3, 3), dtype=np.float32
+        ),  # 3 classes, 3x3 prediction
+        saliency_map=np.ones((3, 3), dtype=np.uint8) * 255,
+        feature_vector=np.array([1, 2, 3, 4]),
+    )
+
+    visualizer.save(
+        mock_image, soft_prediction_result, tmpdir / "soft_prediction_scene.jpg"
+    )
+    assert Path(tmpdir / "soft_prediction_scene.jpg").exists()

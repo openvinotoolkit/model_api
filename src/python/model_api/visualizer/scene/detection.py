@@ -32,8 +32,9 @@ class DetectionScene(Scene):
         label_index_mapping = dict(zip(result.labels, result.label_names))
         for label_index, label_name in label_index_mapping.items():
             # Index 0 as it assumes only one batch
-            saliency_map = cv2.applyColorMap(result.saliency_map[0][label_index], cv2.COLORMAP_JET)
-            overlays.append(Overlay(saliency_map, label=label_name.title()))
+            if result.saliency_map is not None and result.saliency_map.size > 0:
+                saliency_map = cv2.applyColorMap(result.saliency_map[0][label_index], cv2.COLORMAP_JET)
+                overlays.append(Overlay(saliency_map, label=label_name.title()))
         return overlays
 
     def _get_bounding_boxes(self, result: DetectionResult) -> list[BoundingBox]:

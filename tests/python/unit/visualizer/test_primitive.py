@@ -5,9 +5,10 @@
 
 import numpy as np
 import PIL
+import pytest
 from PIL import ImageDraw
 
-from model_api.visualizer import BoundingBox, Label, Overlay, Polygon
+from model_api.visualizer import BoundingBox, Keypoint, Label, Overlay, Polygon
 
 
 def test_overlay(mock_image: PIL.Image):
@@ -39,8 +40,13 @@ def test_polygon(mock_image: PIL.Image):
     # Test from points
     expected_image = mock_image.copy()
     draw = ImageDraw.Draw(expected_image)
-    draw.polygon([(10, 10), (100, 10), (100, 100), (10, 100)], fill="red")
-    polygon = Polygon(points=[(10, 10), (100, 10), (100, 100), (10, 100)], color="red")
+    draw.polygon([(10, 10), (100, 10), (100, 100), (10, 100)], fill="red", width=1)
+    polygon = Polygon(
+        points=[(10, 10), (100, 10), (100, 100), (10, 100)],
+        color="red",
+        opacity=1,
+        outline_width=1,
+    )
     assert polygon.compute(mock_image) == expected_image
 
     # Test from mask
@@ -48,12 +54,23 @@ def test_polygon(mock_image: PIL.Image):
     mask[10:100, 10:100] = 255
     expected_image = mock_image.copy()
     draw = ImageDraw.Draw(expected_image)
-    draw.polygon([(10, 10), (100, 10), (100, 100), (10, 100)], fill="red")
-    polygon = Polygon(mask=mask, color="red")
+    draw.polygon([(10, 10), (100, 10), (100, 100), (10, 100)], fill="red", width=1)
+    polygon = Polygon(mask=mask, color="red", opacity=1, outline_width=1)
     assert polygon.compute(mock_image) == expected_image
+
+    with pytest.raises(ValueError, match="No contours found in the mask."):
+        polygon = Polygon(mask=np.zeros((100, 100), dtype=np.uint8))
+        polygon.compute(mock_image)
 
 
 def test_label(mock_image: PIL.Image):
     label = Label(label="Label")
     # When using a single label, compute and overlay_labels should return the same image
     assert label.compute(mock_image) == Label.overlay_labels(mock_image, [label])
+
+
+def test_keypoint(mock_image: PIL.Image):
+    keypoint = Keypoint(keypoints=np.array([[100, 100]]), color="red", keypoint_size=3)
+    draw = ImageDraw.Draw(mock_image)
+    draw.ellipse((97, 97, 103, 103), fill="red")
+    assert keypoint.compute(mock_image) == mock_image
