@@ -20,7 +20,7 @@ void init_classification(nb::module_& m) {
     nb::class_<ClassificationResult::Classification>(m, "Classification")
         .def(nb::init<unsigned int, const std::string, float>())
         .def_rw("id", &ClassificationResult::Classification::id)
-        .def_rw("label", &ClassificationResult::Classification::label)
+        .def_rw("name", &ClassificationResult::Classification::label)
         .def_rw("score", &ClassificationResult::Classification::score);
 
     nb::class_<ClassificationResult, ResultBase>(m, "ClassificationResult")
@@ -37,6 +37,18 @@ void init_classification(nb::module_& m) {
                 return nb::ndarray<float, nb::numpy, nb::c_contig>(r.feature_vector.data(),
                                                                    r.feature_vector.get_shape().size(),
                                                                    r.feature_vector.get_shape().data());
+            },
+            nb::rv_policy::reference_internal)
+        .def_prop_ro(
+            "raw_scores",
+            [](ClassificationResult& r) {
+                if (!r.raw_scores) {
+                    return nb::ndarray<float, nb::numpy, nb::c_contig>();
+                }
+
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(r.raw_scores.data(),
+                                                                   r.raw_scores.get_shape().size(),
+                                                                   r.raw_scores.get_shape().data());
             },
             nb::rv_policy::reference_internal)
         .def_prop_ro(

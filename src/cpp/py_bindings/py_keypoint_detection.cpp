@@ -50,20 +50,33 @@ void init_keypoint_detection(nb::module_& m) {
 
                  return self.inferBatch(input_mats);
              })
-        .def("postprocess",
-             [](KeypointDetectionModel& self, InferenceResult& infResult) {
-                 return self.postprocess(infResult);
-             })
         .def_prop_ro_static("__model__", [](nb::object) {
             return KeypointDetectionModel::ModelType;
         });
 
     nb::class_<KeypointDetectionResult, ResultBase>(m, "KeypointDetectionResult")
         .def(nb::init<int64_t, std::shared_ptr<MetaData>>(), nb::arg("frameId") = -1, nb::arg("metaData") = nullptr)
-        .def_ro("poses", &KeypointDetectionResult::poses);
-
-    nb::class_<DetectedKeypoints>(m, "DetectedKeypoints")
-        .def(nb::init<>())
-        .def_ro("keypoints", &DetectedKeypoints::keypoints)
-        .def_ro("scores", &DetectedKeypoints::scores);
+        .def_prop_ro("keypoints", [](const KeypointDetectionResult& result) {
+            if (!result.poses.empty()) {
+                std::vector<size_t> shape = {result.poses[0].keypoints.size(), 2};
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(
+                    const_cast<void*>(static_cast<const void*>(result.poses[0].keypoints.data())),
+                    shape.size(),
+                    shape.data());
+           }
+           return nb::ndarray<float, nb::numpy, nb::c_contig>();
+        },
+        nb::rv_policy::reference_internal)
+        .def_prop_ro("scores", [](const KeypointDetectionResult& result) {
+            if (!result.poses.empty()) {
+                std::vector<size_t> shape = {result.poses[0].scores.size()};
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(
+                    const_cast<void*>(static_cast<const void*>(result.poses[0].scores.data())),
+                    shape.size(),
+                    shape.data());
+            }
+            return nb::ndarray<float, nb::numpy, nb::c_contig>();
+        },
+        nb::rv_policy::reference_internal
+        );
 }
