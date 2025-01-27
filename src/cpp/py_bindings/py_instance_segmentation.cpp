@@ -51,10 +51,6 @@ void init_instance_segmentation(nb::module_& m) {
 
                  return self.inferBatch(input_mats);
              })
-        .def("postprocess",
-             [](MaskRCNNModel& self, InferenceResult& infResult) {
-                 return self.postprocess(infResult);
-             })
         .def_prop_ro_static("__model__", [](nb::object) {
             return MaskRCNNModel::ModelType;
         });
