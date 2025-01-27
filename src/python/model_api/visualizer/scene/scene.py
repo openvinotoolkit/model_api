@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, cast
 import numpy as np
 from PIL import Image
 
-from model_api.visualizer.primitive import BoundingBox, Label, Overlay, Polygon, Primitive
+from model_api.visualizer.primitive import BoundingBox, Keypoint, Label, Overlay, Polygon, Primitive
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -31,6 +31,7 @@ class Scene:
         label: Label | list[Label] | None = None,
         overlay: Overlay | list[Overlay] | np.ndarray | None = None,
         polygon: Polygon | list[Polygon] | None = None,
+        keypoints: Keypoint | list[Keypoint] | np.ndarray | None = None,
         layout: Layout | None = None,
     ) -> None:
         self.base = base
@@ -38,6 +39,7 @@ class Scene:
         self.bounding_box = self._to_bounding_box(bounding_box)
         self.label = self._to_label(label)
         self.polygon = self._to_polygon(polygon)
+        self.keypoints = self._to_keypoints(keypoints)
         self.layout = layout
 
     def show(self) -> None:
@@ -60,6 +62,8 @@ class Scene:
             return bool(self.label)
         if primitive == Polygon:
             return bool(self.polygon)
+        if primitive == Keypoint:
+            return bool(self.keypoints)
         return False
 
     def get_primitives(self, primitive: type[Primitive]) -> list[Primitive]:
@@ -86,6 +90,8 @@ class Scene:
             primitives = cast("list[Primitive]", self.label)
         elif primitive == Polygon:
             primitives = cast("list[Primitive]", self.polygon)
+        elif primitive == Keypoint:
+            primitives = cast("list[Primitive]", self.keypoints)
         else:
             msg = f"Primitive {primitive} not found"
             raise ValueError(msg)
@@ -119,3 +125,10 @@ class Scene:
         if isinstance(polygon, Polygon):
             return [polygon]
         return polygon
+
+    def _to_keypoints(self, keypoints: Keypoint | list[Keypoint] | np.ndarray | None) -> list[Keypoint] | None:
+        if isinstance(keypoints, Keypoint):
+            return [keypoints]
+        if isinstance(keypoints, np.ndarray):
+            return [Keypoint(keypoints)]
+        return keypoints

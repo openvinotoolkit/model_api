@@ -5,15 +5,18 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 import cv2
-from PIL import Image, ImageDraw
+from PIL import Image, ImageColor, ImageDraw
 
 from .primitive import Primitive
 
 if TYPE_CHECKING:
     import numpy as np
+
+logger = logging.getLogger(__name__)
 
 
 class Polygon(Primitive):
@@ -38,9 +41,13 @@ class Polygon(Primitive):
         points: list[tuple[int, int]] | None = None,
         mask: np.ndarray | None = None,
         color: str | tuple[int, int, int] = "blue",
+        opacity: float = 0.4,
+        outline_width: int = 2,
     ) -> None:
         self.points = self._get_points(points, mask)
         self.color = color
+        self.opacity = opacity
+        self.outline_width = outline_width
 
     def _get_points(self, points: list[tuple[int, int]] | None, mask: np.ndarray | None) -> list[tuple[int, int]]:
         """Get points from either points or mask.
@@ -76,6 +83,13 @@ class Polygon(Primitive):
             List of points.
         """
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # incase of multiple contours, use the one with the largest area
+        if len(contours) > 1:
+            logger.warning("Multiple contours found in the mask. Using the largest one.")
+            contours = sorted(contours, key=cv2.contourArea, reverse=True)
+        if len(contours) == 0:
+            msg = "No contours found in the mask."
+            raise ValueError(msg)
         points_ = contours[0].squeeze().tolist()
         return [tuple(point) for point in points_]
 
@@ -88,6 +102,8 @@ class Polygon(Primitive):
         Returns:
             Image with the polygon drawn on it.
         """
-        draw = ImageDraw.Draw(image)
-        draw.polygon(self.points, fill=self.color)
+        draw = ImageDraw.Draw(image, "RGBA")
+        # Draw polygon with darker edge and a semi-transparent fill.
+        ink = ImageColor.getrgb(self.color)
+        draw.polygon(self.points, fill=(*ink, int(255 * self.opacity)), outline=self.color, width=self.outline_width)
         return image

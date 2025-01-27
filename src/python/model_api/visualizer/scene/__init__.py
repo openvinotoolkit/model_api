@@ -8,13 +8,14 @@ from .classification import ClassificationScene
 from .detection import DetectionScene
 from .keypoint import KeypointScene
 from .scene import Scene
-from .segmentation import SegmentationScene
+from .segmentation import InstanceSegmentationScene, SegmentationScene
 from .visual_prompting import VisualPromptingScene
 
 __all__ = [
     "AnomalyScene",
     "ClassificationScene",
     "DetectionScene",
+    "InstanceSegmentationScene",
     "KeypointScene",
     "Scene",
     "SegmentationScene",

@@ -11,12 +11,23 @@ from PIL import Image
 from model_api.models.result import (
     AnomalyResult,
     ClassificationResult,
+    DetectedKeypoints,
     DetectionResult,
+    ImageResultWithSoftPrediction,
+    InstanceSegmentationResult,
     Result,
 )
 
 from .layout import Layout
-from .scene import AnomalyScene, ClassificationScene, DetectionScene, Scene
+from .scene import (
+    AnomalyScene,
+    ClassificationScene,
+    DetectionScene,
+    InstanceSegmentationScene,
+    KeypointScene,
+    Scene,
+    SegmentationScene,
+)
 
 
 class Visualizer:
@@ -39,8 +50,16 @@ class Visualizer:
             scene = AnomalyScene(image, result, self.layout)
         elif isinstance(result, ClassificationResult):
             scene = ClassificationScene(image, result, self.layout)
+        elif isinstance(result, InstanceSegmentationResult):
+            # Note: This has to be before DetectionScene because InstanceSegmentationResult is a subclass
+            # of DetectionResult
+            scene = InstanceSegmentationScene(image, result, self.layout)
+        elif isinstance(result, ImageResultWithSoftPrediction):
+            scene = SegmentationScene(image, result, self.layout)
         elif isinstance(result, DetectionResult):
             scene = DetectionScene(image, result, self.layout)
+        elif isinstance(result, DetectedKeypoints):
+            scene = KeypointScene(image, result, self.layout)
         else:
             msg = f"Unsupported result type: {type(result)}"
             raise ValueError(msg)
