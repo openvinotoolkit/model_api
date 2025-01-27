@@ -51,10 +51,6 @@ void init_segmentation(nb::module_& m) {
 
                  return self.inferBatch(input_mats);
              })
-        .def("postprocess",
-             [](SegmentationModel& self, InferenceResult& infResult) {
-                 return self.postprocess(infResult);
-             })
         .def_prop_ro_static("__model__", [](nb::object) {
             return SegmentationModel::ModelType;
         });

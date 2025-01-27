@@ -12,6 +12,7 @@ void init_classification(nb::module_& m);
 void init_segmentation(nb::module_& m);
 void init_instance_segmentation(nb::module_& m);
 void init_keypoint_detection(nb::module_& m);
+void init_anomaly_detection(nb::module_& m);
 
 NB_MODULE(py_model_api, m) {
     m.doc() = "Nanobind binding for OpenVINO Vision API library";
@@ -20,4 +21,5 @@ NB_MODULE(py_model_api, m) {
     init_keypoint_detection(m);
     init_segmentation(m);
     init_instance_segmentation(m);
+    init_anomaly_detection(m);
 }

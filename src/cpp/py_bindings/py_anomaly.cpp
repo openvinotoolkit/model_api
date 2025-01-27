@@ -9,14 +9,14 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 
-#include "models/keypoint_detection.h"
+#include "models/anomaly_model.h"
 #include "models/results.h"
 #include "py_utils.hpp"
 
 namespace pyutils = vision::nanobind::utils;
 
-void init_keypoint_detection(nb::module_& m) {
-    nb::class_<KeypointDetectionModel, ImageModel>(m, "KeypointDetectionModel")
+void init_anomaly_detection(nb::module_& m) {
+    nb::class_<AnomalyModel, ImageModel>(m, "AnomalyDetection")
         .def_static(
             "create_model",
             [](const std::string& model_path,
@@ -28,7 +28,7 @@ void init_keypoint_detection(nb::module_& m) {
                     ov_any_config[item.first] = pyutils::py_object_to_any(item.second, item.first);
                 }
 
-                return KeypointDetectionModel::create_model(model_path, ov_any_config, preload, device);
+                return AnomalyModel::create_model(model_path, ov_any_config, preload, device);
             },
             nb::arg("model_path"),
             nb::arg("configuration") = ov::AnyMap({}),
@@ -36,11 +36,11 @@ void init_keypoint_detection(nb::module_& m) {
             nb::arg("device") = "AUTO")
 
         .def("__call__",
-             [](KeypointDetectionModel& self, const nb::ndarray<>& input) {
+             [](AnomalyModel& self, const nb::ndarray<>& input) {
                  return self.infer(pyutils::wrap_np_mat(input));
              })
         .def("infer_batch",
-             [](KeypointDetectionModel& self, const std::vector<nb::ndarray<>> inputs) {
+             [](AnomalyModel& self, const std::vector<nb::ndarray<>> inputs) {
                  std::vector<ImageInputData> input_mats;
                  input_mats.reserve(inputs.size());
 
@@ -51,31 +51,30 @@ void init_keypoint_detection(nb::module_& m) {
                  return self.inferBatch(input_mats);
              })
         .def_prop_ro_static("__model__", [](nb::object) {
-            return KeypointDetectionModel::ModelType;
+            return AnomalyModel::ModelType;
         });
 
-    nb::class_<KeypointDetectionResult, ResultBase>(m, "KeypointDetectionResult")
+    nb::class_<AnomalyResult, ResultBase>(m, "AnomalyResult")
         .def(nb::init<int64_t, std::shared_ptr<MetaData>>(), nb::arg("frameId") = -1, nb::arg("metaData") = nullptr)
         .def_prop_ro(
-            "keypoints",
-            [](const KeypointDetectionResult& result) {
-                if (!result.poses.empty()) {
-                    return nb::ndarray<float, nb::numpy, nb::c_contig>(
-                        const_cast<void*>(static_cast<const void*>(result.poses[0].keypoints.data())),
-                        {static_cast<size_t>(result.poses[0].keypoints.size()), 2});
-                }
-                return nb::ndarray<float, nb::numpy, nb::c_contig>();
+            "anomaly_map",
+            [](AnomalyResult& r) {
+                return nb::ndarray<uint8_t, nb::numpy, nb::c_contig>(r.anomaly_map.data,
+                                                                     {static_cast<size_t>(r.anomaly_map.rows),
+                                                                      static_cast<size_t>(r.anomaly_map.cols),
+                                                                      static_cast<size_t>(r.anomaly_map.channels())});
             },
             nb::rv_policy::reference_internal)
+        .def_ro("pred_boxes", &AnomalyResult::pred_boxes)
+        .def_ro("pred_label", &AnomalyResult::pred_label)
         .def_prop_ro(
-            "scores",
-            [](const KeypointDetectionResult& result) {
-                if (!result.poses.empty()) {
-                    return nb::ndarray<float, nb::numpy, nb::c_contig>(
-                        const_cast<void*>(static_cast<const void*>(result.poses[0].scores.data())),
-                        {static_cast<size_t>(result.poses[0].scores.size())});
-                }
-                return nb::ndarray<float, nb::numpy, nb::c_contig>();
+            "pred_mask",
+            [](AnomalyResult& r) {
+                return nb::ndarray<uint8_t, nb::numpy, nb::c_contig>(r.pred_mask.data,
+                                                                     {static_cast<size_t>(r.pred_mask.rows),
+                                                                      static_cast<size_t>(r.pred_mask.cols),
+                                                                      static_cast<size_t>(r.pred_mask.channels())});
             },
-            nb::rv_policy::reference_internal);
+            nb::rv_policy::reference_internal)
+        .def_ro("pred_score", &AnomalyResult::pred_score);
 }
