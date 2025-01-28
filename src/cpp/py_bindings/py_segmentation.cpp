@@ -65,5 +65,39 @@ void init_segmentation(nb::module_& m) {
                                                                       static_cast<size_t>(r.resultImage.cols),
                                                                       static_cast<size_t>(r.resultImage.channels())});
             },
+            nb::rv_policy::reference_internal)
+        .def_prop_ro(
+            "feature_vector",
+            [](ResultBase& r) {
+                ImageResultWithSoftPrediction ir = r.asRef<ImageResultWithSoftPrediction>();
+                if (!ir.feature_vector) {
+                    return nb::ndarray<float, nb::numpy, nb::c_contig>();
+                }
+
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(ir.feature_vector.data(),
+                                                                   ir.feature_vector.get_shape().size(),
+                                                                   ir.feature_vector.get_shape().data());
+            },
+            nb::rv_policy::reference_internal)
+        .def_prop_ro(
+            "soft_prediction",
+            [](ResultBase& r) {
+                ImageResultWithSoftPrediction ir = r.asRef<ImageResultWithSoftPrediction>();
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(
+                    ir.soft_prediction.data,
+                    {static_cast<size_t>(ir.soft_prediction.rows),
+                     static_cast<size_t>(ir.soft_prediction.cols),
+                     static_cast<size_t>(ir.soft_prediction.channels())});
+            },
+            nb::rv_policy::reference_internal)
+        .def_prop_ro(
+            "saliency_map",
+            [](ResultBase& r) {
+                ImageResultWithSoftPrediction ir = r.asRef<ImageResultWithSoftPrediction>();
+                return nb::ndarray<float, nb::numpy, nb::c_contig>(ir.saliency_map.data,
+                                                                   {static_cast<size_t>(ir.saliency_map.rows),
+                                                                    static_cast<size_t>(ir.saliency_map.cols),
+                                                                    static_cast<size_t>(ir.saliency_map.channels())});
+            },
             nb::rv_policy::reference_internal);
 }
