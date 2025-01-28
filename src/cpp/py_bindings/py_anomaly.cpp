@@ -65,7 +65,13 @@ void init_anomaly_detection(nb::module_& m) {
                                                                       static_cast<size_t>(r.anomaly_map.channels())});
             },
             nb::rv_policy::reference_internal)
-        .def_ro("pred_boxes", &AnomalyResult::pred_boxes)
+        .def_prop_ro(
+            "pred_boxes",
+            [](AnomalyResult& r) {
+                return nb::ndarray<int, nb::numpy, nb::c_contig>(r.pred_boxes.data(),
+                                                                 {static_cast<size_t>(r.pred_boxes.size()), 4});
+            },
+            nb::rv_policy::reference_internal)
         .def_ro("pred_label", &AnomalyResult::pred_label)
         .def_prop_ro(
             "pred_mask",
