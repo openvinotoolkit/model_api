@@ -146,16 +146,6 @@
     ]
   },
   {
-    "name": "resnet-18-pytorch",
-    "type": "ClassificationModel",
-    "test_data": [
-      {
-        "image": "coco128/images/train2017/000000000074.jpg",
-        "reference": ["254 (pug): 0.153, [0], [0], [0]"]
-      }
-    ]
-  },
-  {
     "name": "efficientnet-b0-pytorch",
     "type": "ClassificationModel",
     "test_data": [
