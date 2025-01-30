@@ -63,8 +63,15 @@ FetchContent_MakeAvailable(json googletest)
 
 include(../cmake/common.cmake)
 
+find_package(Python3 REQUIRED)
+execute_process(
+    COMMAND ${Python3_EXECUTABLE} -c "from openvino.utils import get_cmake_path; print(get_cmake_path(), end='')"
+    OUTPUT_VARIABLE OpenVINO_DIR_PY
+    ERROR_QUIET
+)
+
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
-find_package(OpenVINO REQUIRED COMPONENTS Runtime)
+find_package(OpenVINO REQUIRED COMPONENTS Runtime HINTS "${OpenVINO_DIR_PY}")
 
 add_subdirectory(../../../src/cpp ${tests_BINARY_DIR}/model_api/cpp)
 
