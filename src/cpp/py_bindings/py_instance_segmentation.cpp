@@ -32,7 +32,6 @@ void init_instance_segmentation(nb::module_& m) {
                     ov_any_config[item.first] = pyutils::py_object_to_any(item.second, item.first);
                 }
 
-
                 return MaskRCNNModel::create_model(model_path, ov_any_config, preload, device);
             },
             nb::arg("model_path"),
@@ -74,76 +73,76 @@ void init_instance_segmentation(nb::module_& m) {
             },
             nb::rv_policy::reference_internal)
         .def_prop_ro("label_names",
-                [](InstanceSegmentationResult& r) {
-                    size_t labels_count = static_cast<size_t>(r.segmentedObjects.size());
-                    std::vector<std::string> labels(labels_count);
+                     [](InstanceSegmentationResult& r) {
+                         size_t labels_count = static_cast<size_t>(r.segmentedObjects.size());
+                         std::vector<std::string> labels(labels_count);
 
-                    for (size_t i = 0; i < labels_count; ++i) {
-                        labels[i] = r.segmentedObjects[i].label;
-                    }
+                         for (size_t i = 0; i < labels_count; ++i) {
+                             labels[i] = r.segmentedObjects[i].label;
+                         }
 
-                    return labels;
-                })
+                         return labels;
+                     })
         .def_prop_ro("labels",
-                [](InstanceSegmentationResult& r) {
-                    size_t labels_count = static_cast<size_t>(r.segmentedObjects.size());
-                    std::vector<size_t> labels(labels_count);
+                     [](InstanceSegmentationResult& r) {
+                         size_t labels_count = static_cast<size_t>(r.segmentedObjects.size());
+                         std::vector<size_t> labels(labels_count);
 
-                    for (size_t i = 0; i < labels_count; ++i) {
-                        labels[i] = r.segmentedObjects[i].labelID;
-                    }
+                         for (size_t i = 0; i < labels_count; ++i) {
+                             labels[i] = r.segmentedObjects[i].labelID;
+                         }
 
-                    return LabelsOutput(labels.data(), {labels_count}).cast();
-                })
+                         return LabelsOutput(labels.data(), {labels_count}).cast();
+                     })
         .def_prop_ro("scores",
-                [](InstanceSegmentationResult& r) {
-                    size_t scores_count = static_cast<size_t>(r.segmentedObjects.size());
-                    std::vector<float> scores(scores_count);
+                     [](InstanceSegmentationResult& r) {
+                         size_t scores_count = static_cast<size_t>(r.segmentedObjects.size());
+                         std::vector<float> scores(scores_count);
 
-                    for (size_t i = 0; i < scores_count; ++i) {
-                        scores[i] = r.segmentedObjects[i].confidence;
-                    }
+                         for (size_t i = 0; i < scores_count; ++i) {
+                             scores[i] = r.segmentedObjects[i].confidence;
+                         }
 
-                    return ScoresOutput(scores.data(), {scores_count}).cast();
-                })
+                         return ScoresOutput(scores.data(), {scores_count}).cast();
+                     })
         .def_prop_ro("bboxes",
-                [](InstanceSegmentationResult& r) {
-                    size_t boxes_count = static_cast<size_t>(r.segmentedObjects.size());
-                    std::vector<std::vector<int>> boxes(boxes_count);
+                     [](InstanceSegmentationResult& r) {
+                         size_t boxes_count = static_cast<size_t>(r.segmentedObjects.size());
+                         std::vector<std::vector<int>> boxes(boxes_count);
 
-                    for (size_t i = 0; i < boxes_count; ++i) {
-                        std::vector<int> box(4);
-                        box[0]  = r.segmentedObjects[i].tl().x;
-                        box[1] = r.segmentedObjects[i].tl().y;
-                        box[2] = r.segmentedObjects[i].br().x;
-                        box[3] = r.segmentedObjects[i].br().y;
-                        boxes[i] = box;
-                    }
+                         for (size_t i = 0; i < boxes_count; ++i) {
+                             std::vector<int> box(4);
+                             box[0] = r.segmentedObjects[i].tl().x;
+                             box[1] = r.segmentedObjects[i].tl().y;
+                             box[2] = r.segmentedObjects[i].br().x;
+                             box[3] = r.segmentedObjects[i].br().y;
+                             boxes[i] = box;
+                         }
 
-                    return boxes;
-                })
+                         return boxes;
+                     })
         .def_prop_ro("masks",
-                [](InstanceSegmentationResult& r) {
-                    size_t elements_count = static_cast<size_t>(r.segmentedObjects.size());
-                    std::vector<std::vector<std::vector<int>>> masks(elements_count);
+                     [](InstanceSegmentationResult& r) {
+                         size_t elements_count = static_cast<size_t>(r.segmentedObjects.size());
+                         std::vector<std::vector<std::vector<int>>> masks(elements_count);
 
-                    for (size_t i = 0; i < elements_count; ++i) {
-                        int rows = r.segmentedObjects[i].mask.rows;
-                        int cols = r.segmentedObjects[i].mask.cols;
+                         for (size_t i = 0; i < elements_count; ++i) {
+                             int rows = r.segmentedObjects[i].mask.rows;
+                             int cols = r.segmentedObjects[i].mask.cols;
 
-                        std::vector<std::vector<int>> mask(rows, std::vector<int>(cols));
+                             std::vector<std::vector<int>> mask(rows, std::vector<int>(cols));
 
-                        for (int row = 0; row < rows; ++row) {
-                            for (int col = 0; col < cols; ++col) {
-                                mask[row][col] = r.segmentedObjects[i].mask.at<uint8_t>(row, col);
-                            }
-                        }
+                             for (int row = 0; row < rows; ++row) {
+                                 for (int col = 0; col < cols; ++col) {
+                                     mask[row][col] = r.segmentedObjects[i].mask.at<uint8_t>(row, col);
+                                 }
+                             }
 
-                        masks[i] = mask;
-                    }
+                             masks[i] = mask;
+                         }
 
-                    return masks;
-                })
+                         return masks;
+                     })
         .def_prop_ro(
             "saliency_map",
             [](InstanceSegmentationResult& r) {
@@ -154,10 +153,9 @@ void init_instance_segmentation(nb::module_& m) {
                 int cols = r.saliency_map[0].cols;
                 int num_matrices = r.saliency_map.size();
 
-                return nb::ndarray<uint8_t, nb::numpy, nb::c_contig>(&r.saliency_map,
-                                                              {static_cast<size_t>(num_matrices),
-                                                               static_cast<size_t>(rows),
-                                                               static_cast<size_t>(cols)});
+                return nb::ndarray<uint8_t, nb::numpy, nb::c_contig>(
+                    &r.saliency_map,
+                    {static_cast<size_t>(num_matrices), static_cast<size_t>(rows), static_cast<size_t>(cols)});
             },
             nb::rv_policy::reference_internal);
 }
