@@ -35,7 +35,7 @@ find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 
 # Looking for OpenVINO in the python distribution. It doesn't work for cross-compiling build
 if(NOT CMAKE_CROSSCOMPILING)
-    set(Python_FIND_VIRTUALENV ONLY)
+    set(Python_FIND_VIRTUALENV FIRST)
     find_package(Python COMPONENTS Interpreter Development REQUIRED)
     execute_process(
         COMMAND ${Python_EXECUTABLE} -c "from openvino.utils import get_cmake_path; print(get_cmake_path(), end='')"

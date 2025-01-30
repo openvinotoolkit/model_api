@@ -65,7 +65,7 @@ include(../cmake/common.cmake)
 
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 
-set(Python_FIND_VIRTUALENV ONLY)
+set(Python_FIND_VIRTUALENV FIRST)
 find_package(Python REQUIRED)
 execute_process(
     COMMAND ${Python_EXECUTABLE} -c "from openvino.utils import get_cmake_path; print(get_cmake_path(), end='')"
