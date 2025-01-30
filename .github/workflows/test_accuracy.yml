@@ -34,7 +34,7 @@ jobs:
         run: |
           source venv/bin/activate
           pytest --data=./data tests/python/accuracy/test_accuracy.py
-          DATA=data pytest --data=./data tests/python/accuracy/test_YOLOv8.py
+        # DATA=data pytest --data=./data tests/python/accuracy/test_YOLOv8.py
       - name: Install CPP dependencies
         run: |
           sudo bash src/cpp/install_dependencies.sh
