@@ -35,13 +35,12 @@ macro(add_test)
         target_include_directories(${TEST_NAME} PRIVATE ${TEST_INCLUDE_DIRECTORIES})
     endif()
 
-    target_link_libraries(${TEST_NAME} PRIVATE ${OpenCV_LIBRARIES} openvino::runtime ${TEST_DEPENDENCIES})
+    target_link_libraries(${TEST_NAME} PRIVATE ${OpenCV_LIBRARIES} ${TEST_DEPENDENCIES})
 
     if(UNIX)
         target_link_libraries(${TEST_NAME} PRIVATE pthread)
     endif()
 
-    target_link_libraries(${TEST_NAME} PRIVATE gtest gtest_main)
-    target_link_libraries(${TEST_NAME} PRIVATE nlohmann_json::nlohmann_json)
+    target_link_libraries(${TEST_NAME} PRIVATE gtest_main gmock_main nlohmann_json::nlohmann_json)
 
 endmacro()

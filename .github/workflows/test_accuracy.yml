@@ -40,6 +40,7 @@ jobs:
           sudo bash src/cpp/install_dependencies.sh
       - name: Build CPP Test
         run: |
+          source venv/bin/activate
           pip install nanobind==2.4.0
           pip install typing_extensions==4.12.2
           mkdir build && cd build
