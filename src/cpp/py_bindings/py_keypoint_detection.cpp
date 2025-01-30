@@ -62,7 +62,7 @@ void init_keypoint_detection(nb::module_& m) {
                 if (!result.poses.empty()) {
                     return nb::ndarray<float, nb::numpy, nb::c_contig>(
                         const_cast<void*>(static_cast<const void*>(result.poses[0].keypoints.data())),
-                        {static_cast<size_t>(result.poses[0].keypoints.size()), 2});
+                        {result.poses[0].keypoints.size(), 2});
                 }
                 return nb::ndarray<float, nb::numpy, nb::c_contig>();
             },
@@ -73,7 +73,7 @@ void init_keypoint_detection(nb::module_& m) {
                 if (!result.poses.empty()) {
                     return nb::ndarray<float, nb::numpy, nb::c_contig>(
                         const_cast<void*>(static_cast<const void*>(result.poses[0].scores.data())),
-                        {static_cast<size_t>(result.poses[0].scores.size())});
+                        {result.poses[0].scores.size()});
                 }
                 return nb::ndarray<float, nb::numpy, nb::c_contig>();
             },

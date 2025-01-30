@@ -68,8 +68,7 @@ void init_anomaly_detection(nb::module_& m) {
         .def_prop_ro(
             "pred_boxes",
             [](AnomalyResult& r) {
-                return nb::ndarray<int, nb::numpy, nb::c_contig>(r.pred_boxes.data(),
-                                                                 {static_cast<size_t>(r.pred_boxes.size()), 4});
+                return nb::ndarray<int, nb::numpy, nb::c_contig>(r.pred_boxes.data(), {r.pred_boxes.size(), 4});
             },
             nb::rv_policy::reference_internal)
         .def_ro("pred_label", &AnomalyResult::pred_label)
