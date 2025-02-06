@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 import numpy as np
-import openvino.runtime as ov
+import openvino as ov
 from model_api.adapters.utils import (
     resize_image_with_aspect,
     resize_image_with_aspect_ocv,
