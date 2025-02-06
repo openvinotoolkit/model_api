@@ -40,9 +40,10 @@ jobs:
           sudo bash src/cpp/install_dependencies.sh
       - name: Build CPP Test
         run: |
-          source venv/bin/activate
           mkdir build && cd build
-          cmake ../tests/cpp/accuracy/ -DPython_ROOT_DIR=$(python -c "import sys; print(sys.prefix)")
+          pip install nanobind==2.4.0
+          pip install typing_extensions==4.12.2
+          cmake ../tests/cpp/accuracy/
           make -j
       - name: Run CPP Test
         run: |
