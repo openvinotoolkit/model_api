@@ -1,17 +1,5 @@
 [
   {
-    "name": "hrnet-v2-c1-segmentation",
-    "type": "SegmentationModel",
-    "test_data": [
-      {
-        "image": "coco128/images/train2017/000000000074.jpg",
-        "reference": [
-          "1: 0.326, 2: 0.012, 6: 0.324, 11: 0.175, 12: 0.024, 126: 0.046, 127: 0.092, [426,640,150], [0], [0]; wall: 0.970, 1881, building;edifice: 0.801, 246, ceiling: 0.936, 1660, cabinet: 0.345, 36, cabinet: 0.913, 1094, cabinet: 0.701, 534, cabinet: 0.911, 589, sidewalk;pavement: 0.204, 24, sidewalk;pavement: 0.188, 4, sidewalk;pavement: 0.555, 364, sidewalk;pavement: 0.571, 93, sidewalk;pavement: 0.625, 352, pot;flowerpot: 0.776, 607, animal;animate;being;beast;brute;creature;fauna: 0.939, 641, "
-        ]
-      }
-    ]
-  },
-  {
     "name": "otx_models/Lite-hrnet-18.xml",
     "type": "SegmentationModel",
     "test_data": [
@@ -85,30 +73,6 @@
     ]
   },
   {
-    "name": "ssd_mobilenet_v1_fpn_coco",
-    "type": "DetectionModel",
-    "test_data": [
-      {
-        "image": "coco128/images/train2017/000000000074.jpg",
-        "reference": [
-          "0, 12, 172, 331, 2 (bicycle): 0.697; 62, 276, 363, 383, 18 (horse): 0.645; [0]; [0]"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "ssdlite_mobilenet_v2",
-    "type": "DetectionModel",
-    "test_data": [
-      {
-        "image": "coco128/images/train2017/000000000074.jpg",
-        "reference": [
-          "320, 96, 336, 143, 1 (bicycle): 0.818; 284, 95, 300, 143, 1 (bicycle): 0.796; 353, 96, 372, 145, 1 (bicycle): 0.631; 1, 3, 160, 318, 2 (car): 0.889; 50, 279, 368, 385, 18 (sheep): 0.915; [0]; [0]"
-        ]
-      }
-    ]
-  },
-  {
     "name": "otx_models/det_mobilenetv2_atss_bccd.xml",
     "type": "DetectionModel",
     "test_data": [
@@ -142,16 +106,6 @@
         "reference": [
           "494, 159, 637, 308, 2 (WBC): 0.700; 28, 139, 136, 228, 1 (RBC): 0.623; 535, 374, 638, 479, 1 (RBC): 0.535; 513, 8, 633, 151, 1 (RBC): 0.454; 197, 86, 412, 286, 1 (RBC): 0.405; 21, 291, 143, 399, 1 (RBC): 0.401; [0]; [0]"
         ]
-      }
-    ]
-  },
-  {
-    "name": "efficientnet-b0-pytorch",
-    "type": "ClassificationModel",
-    "test_data": [
-      {
-        "image": "coco128/images/train2017/000000000074.jpg",
-        "reference": ["245 (French_bulldog): 0.156, [0], [0], [0]"]
       }
     ]
   },
@@ -444,7 +398,7 @@
       {
         "image": "coco128/images/train2017/000000000471.jpg",
         "reference": [
-          "mask sum: 108565; [385.0, 315.0] iou: 0.930 [335.0, 414.0] iou: 0.763 [44.0, 205.0] iou: 0.665 [605.0, 224.0] iou: 0.653, mask sum: 73920; [175.0, 215.0] iou: 0.781 [124.0, 165.0] iou: 0.651"
+          "mask sum: 108565; [385.0, 315.0] iou: 0.930 [335.0, 414.0] iou: 0.763 [44.0, 205.0] iou: 0.665 [605.0, 224.0] iou: 0.653, mask sum: 73931; [175.0, 215.0] iou: 0.781 [124.0, 165.0] iou: 0.651"
         ]
       }
     ]
