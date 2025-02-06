@@ -44,6 +44,7 @@ tests = [
     "ultralytics>=8.0.114,<=8.0.205",
     "onnx",
     "onnxruntime",
+    "torch<2.6",
 ]
 docs = [
   "myst-parser",
