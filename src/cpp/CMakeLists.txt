@@ -33,19 +33,8 @@ endif()
 
 find_package(OpenCV REQUIRED COMPONENTS core imgproc)
 
-# Looking for OpenVINO in the python distribution. It doesn't work for cross-compiling build
-if(NOT CMAKE_CROSSCOMPILING)
-    find_package(Python3 REQUIRED)
-    execute_process(
-        COMMAND ${Python3_EXECUTABLE} -c "from openvino.utils import get_cmake_path; print(get_cmake_path(), end='')"
-        OUTPUT_VARIABLE OpenVINO_DIR_PY
-        ERROR_QUIET
-    )
-endif()
-
 find_package(OpenVINO REQUIRED
-             COMPONENTS Runtime Threading
-             HINTS "${OpenVINO_DIR_PY}")
+             COMPONENTS Runtime Threading)
 
 include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
