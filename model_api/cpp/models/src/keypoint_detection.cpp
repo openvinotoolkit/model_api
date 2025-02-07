@@ -34,7 +34,7 @@ void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values) {
     dst_locs = cv::Mat::zeros(src.rows, 1, CV_32S);
     dst_values = cv::Mat::zeros(src.rows, 1, CV_32F);
 
-    for (int row = 0; row < src.rows; row++) {
+    for (int row = 0; row < src.rows; ++row) {
         const float *ptr_row = src.ptr<float>(row);
         int max_val_idx = 0;
         dst_values.at<float>(row) = ptr_row[max_val_idx];
@@ -48,9 +48,44 @@ void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values) {
     }
 }
 
-DetectedKeypoints decode_simcc(const cv::Mat& simcc_x, const cv::Mat& simcc_y,
+
+cv::Mat softmax_row(const cv::Mat& src) {
+    cv::Mat result = src.clone();
+
+    for (int row = 0; row < result.rows; ++row) {
+        float* ptr_row = result.ptr<float>(row);
+        float max_val = ptr_row[0];
+        for (int col = 1; col < result.cols; ++col) {
+            if (ptr_row[col] > max_val) {
+                max_val = ptr_row[col];
+            }
+        }
+        float sum = 0.0f;
+        for (int col = 0; col < result.cols; col++) {
+            ptr_row[col] = exp(ptr_row[col] - max_val);
+            sum += ptr_row[col];
+        }
+        for (int col = 0; col < result.cols; ++col) {
+            ptr_row[col] /= sum;
+        }
+    }
+
+    return result;
+}
+
+
+DetectedKeypoints decode_simcc(const cv::Mat& simcc_x_input, const cv::Mat& simcc_y_input,
                                const cv::Point2f& extra_scale = cv::Point2f(1.f, 1.f),
-                               float simcc_split_ratio = 2.0f) {
+                               float simcc_split_ratio = 2.0f,
+                               bool apply_softmax=false) {
+    cv::Mat simcc_x = simcc_x_input;
+    cv::Mat simcc_y = simcc_y_input;
+
+    if (apply_softmax) {
+        simcc_x = softmax_row(simcc_x);
+        simcc_x = softmax_row(simcc_y);
+    }
+
     cv::Mat x_locs, max_val_x;
     colArgMax(simcc_x, x_locs, max_val_x);
 
@@ -77,6 +112,7 @@ std::string KeypointDetectionModel::ModelType = "keypoint_detection";
 
 void KeypointDetectionModel::init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority) {
     labels = get_from_any_maps("labels", top_priority, mid_priority, labels);
+    apply_softmax = get_from_any_maps("apply_softmax", top_priority, mid_priority, apply_softmax);
 }
 
 KeypointDetectionModel::KeypointDetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration) : ImageModel(model, configuration) {
@@ -200,7 +236,7 @@ std::unique_ptr<ResultBase> KeypointDetectionModel::postprocess(InferenceResult&
     float inverted_scale_x = static_cast<float>(image_data.inputImgWidth) / netInputWidth,
           inverted_scale_y = static_cast<float>(image_data.inputImgHeight) / netInputHeight;
 
-    result->poses.emplace_back(decode_simcc(pred_x_mat, pred_y_mat, {inverted_scale_x, inverted_scale_y}));
+    result->poses.emplace_back(decode_simcc(pred_x_mat, pred_y_mat, {inverted_scale_x, inverted_scale_y}, apply_softmax));
     return std::unique_ptr<ResultBase>(result);
 }
 
