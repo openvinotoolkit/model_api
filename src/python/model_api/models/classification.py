@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020-2024 Intel Corporation
+# Copyright (C) 2020-2025 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -12,9 +12,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
+from openvino import Model, Type
+from openvino import opset10 as opset
 from openvino.preprocess import PrePostProcessor
-from openvino.runtime import Model, Type
-from openvino.runtime import opset10 as opset
 
 from model_api.models.image_model import ImageModel
 from model_api.models.result import ClassificationResult, Label

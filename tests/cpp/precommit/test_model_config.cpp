@@ -25,7 +25,7 @@
 using json = nlohmann::json;
 
 std::string DATA_DIR = "../data";
-std::string MODEL_PATH_TEMPLATE = "public/%s/FP16/%s.xml";
+std::string MODEL_PATH_TEMPLATE = "otx_models/%s.xml";
 std::string IMAGE_PATH = "coco128/images/train2017/000000000074.jpg";
 
 std::string TMP_MODEL_FILE = "tmp_model.xml";
@@ -115,6 +115,7 @@ TEST_P(ClassificationModelParameterizedTestSaveLoad, TestClassificationCorrectne
     }
 
     auto model_path = string_format(MODEL_PATH_TEMPLATE, GetParam().name.c_str(), GetParam().name.c_str());
+    std::cout << model_path << "\n";
     bool preload = true;
     auto model = ClassificationModel::create_model(DATA_DIR + "/" + model_path, {}, preload, "CPU");
 
@@ -260,16 +261,16 @@ TEST_P(DetectionModelParameterizedTestSaveLoad, TestDetctionCorrectnessAfterSave
 
 INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance,
                          ClassificationModelParameterizedTest,
-                         ::testing::Values(ModelData("efficientnet-b0-pytorch")));
+                         ::testing::Values(ModelData("mlc_mobilenetv3_large_voc")));
 INSTANTIATE_TEST_SUITE_P(ClassificationTestInstance,
                          ClassificationModelParameterizedTestSaveLoad,
-                         ::testing::Values(ModelData("efficientnet-b0-pytorch")));
+                         ::testing::Values(ModelData("mlc_mobilenetv3_large_voc")));
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance,
                          SSDModelParameterizedTest,
-                         ::testing::Values(ModelData("ssdlite_mobilenet_v2"), ModelData("ssd_mobilenet_v1_fpn_coco")));
+                         ::testing::Values(ModelData("detection_model_with_xai_head")));
 INSTANTIATE_TEST_SUITE_P(SSDTestInstance,
                          DetectionModelParameterizedTestSaveLoad,
-                         ::testing::Values(ModelData("ssdlite_mobilenet_v2"), ModelData("ssd_mobilenet_v1_fpn_coco")));
+                         ::testing::Values(ModelData("detection_model_with_xai_head")));
 
 class InputParser {
 public:

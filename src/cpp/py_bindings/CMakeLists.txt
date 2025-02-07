@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(DEV_MODULE Development.Module)
-
-find_package(Python COMPONENTS Interpreter ${DEV_MODULE} REQUIRED)
+set(Python_FIND_VIRTUALENV FIRST)
+find_package(Python COMPONENTS Interpreter Development REQUIRED)
 
 execute_process(
   COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir

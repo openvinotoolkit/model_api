@@ -35,7 +35,7 @@ macro(add_test)
         target_include_directories(${TEST_NAME} PRIVATE ${TEST_INCLUDE_DIRECTORIES})
     endif()
 
-    target_link_libraries(${TEST_NAME} PRIVATE ${OpenCV_LIBRARIES} openvino::runtime ${TEST_DEPENDENCIES})
+    target_link_libraries(${TEST_NAME} PRIVATE ${OpenCV_LIBRARIES} ${TEST_DEPENDENCIES})
 
     if(UNIX)
         target_link_libraries(${TEST_NAME} PRIVATE pthread)
