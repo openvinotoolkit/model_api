@@ -63,8 +63,8 @@ FetchContent_MakeAvailable(json googletest)
 include(../cmake/common.cmake)
 
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
-find_package(OpenVINO REQUIRED COMPONENTS Runtime)
 
+set(ENABLE_PY_BINDINGS OFF)
 add_subdirectory(../../../src/cpp ${tests_BINARY_DIR}/model_api/cpp)
 
 add_test(NAME test_sanity SOURCES test_sanity.cpp DEPENDENCIES model_api)

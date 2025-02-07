@@ -12,13 +12,12 @@ from model_api.adapters import ONNXRuntimeAdapter
 from model_api.adapters.utils import load_parameters_from_onnx
 
 
-def test_detector_save(tmp_path):
-    downloaded = Model.create_model(
-        "ssd_mobilenet_v1_fpn_coco",
-        configuration={"mean_values": [0, 0, 0], "confidence_threshold": 0.6},
+def test_detector_save(tmp_path, data):
+    detector = Model.create_model(
+        Path(data) / "otx_models/detection_model_with_xai_head.xml",
     )
     xml_path = str(tmp_path / "a.xml")
-    downloaded.save(xml_path)
+    detector.save(xml_path)
     deserialized = Model.create_model(xml_path)
 
     assert (
@@ -26,17 +25,17 @@ def test_detector_save(tmp_path):
         .get_rt_info(["model_info", "embedded_processing"])
         .astype(bool)
     )
-    assert type(downloaded) is type(deserialized)
-    for attr in downloaded.parameters():
-        assert getattr(downloaded, attr) == getattr(deserialized, attr)
+    assert type(detector) is type(deserialized)
+    for attr in detector.parameters():
+        assert getattr(detector, attr) == getattr(deserialized, attr)
 
 
-def test_classifier_save(tmp_path):
-    downloaded = Model.create_model(
-        "efficientnet-b0-pytorch", configuration={"scale_values": [1, 1, 1], "topk": 6}
+def test_classifier_save(tmp_path, data):
+    classifier = Model.create_model(
+        Path(data) / "otx_models/tinynet_imagenet.xml",
     )
     xml_path = str(tmp_path / "a.xml")
-    downloaded.save(xml_path)
+    classifier.save(xml_path)
     deserialized = Model.create_model(xml_path)
 
     assert (
@@ -44,18 +43,17 @@ def test_classifier_save(tmp_path):
         .get_rt_info(["model_info", "embedded_processing"])
         .astype(bool)
     )
-    assert type(downloaded) is type(deserialized)
-    for attr in downloaded.parameters():
-        assert getattr(downloaded, attr) == getattr(deserialized, attr)
+    assert type(classifier) is type(deserialized)
+    for attr in classifier.parameters():
+        assert getattr(classifier, attr) == getattr(deserialized, attr)
 
 
-def test_segmentor_save(tmp_path):
-    downloaded = Model.create_model(
-        "hrnet-v2-c1-segmentation",
-        configuration={"reverse_input_channels": True, "labels": ["first", "second"]},
+def test_segmentor_save(tmp_path, data):
+    segmenter = Model.create_model(
+        Path(data) / "otx_models/Lite-hrnet-18_mod2.xml",
     )
     xml_path = str(tmp_path / "a.xml")
-    downloaded.save(xml_path)
+    segmenter.save(xml_path)
     deserialized = Model.create_model(xml_path)
 
     assert (
@@ -63,9 +61,9 @@ def test_segmentor_save(tmp_path):
         .get_rt_info(["model_info", "embedded_processing"])
         .astype(bool)
     )
-    assert type(downloaded) is type(deserialized)
-    for attr in downloaded.parameters():
-        assert getattr(downloaded, attr) == getattr(deserialized, attr)
+    assert type(segmenter) is type(deserialized)
+    for attr in segmenter.parameters():
+        assert getattr(segmenter, attr) == getattr(deserialized, attr)
 
 
 def test_onnx_save(tmp_path, data):

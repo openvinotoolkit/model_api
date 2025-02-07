@@ -77,5 +77,7 @@ if __name__ == "__main__":
     prepare_model(args.data_dir, args.public_scope)
     prepare_data(args.data_dir)
     retrieve_otx_model(args.data_dir, "mlc_mobilenetv3_large_voc")
+    retrieve_otx_model(args.data_dir, "detection_model_with_xai_head")
+    retrieve_otx_model(args.data_dir, "Lite-hrnet-18_mod2")
     retrieve_otx_model(args.data_dir, "tinynet_imagenet")
     retrieve_otx_model(args.data_dir, "cls_mobilenetv3_large_cars", "onnx")

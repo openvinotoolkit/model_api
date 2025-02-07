@@ -3,9 +3,11 @@
 # Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
-from pathlib import Path
-from typing import Union
+from __future__ import annotations  # TODO: remove when Python3.9 support is dropped
 
+from typing import TYPE_CHECKING
+
+import numpy as np
 from PIL import Image
 
 from model_api.models.result import (
@@ -18,7 +20,6 @@ from model_api.models.result import (
     Result,
 )
 
-from .layout import Layout
 from .scene import (
     AnomalyScene,
     ClassificationScene,
@@ -29,18 +30,27 @@ from .scene import (
     SegmentationScene,
 )
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from .layout import Layout
+
 
 class Visualizer:
     """Utility class to automatically select the correct scene and render/show it."""
 
-    def __init__(self, layout: Union[Layout, None] = None) -> None:
+    def __init__(self, layout: Layout | None = None) -> None:
         self.layout = layout
 
-    def show(self, image: Image, result: Result) -> Image:
+    def show(self, image: Image | np.ndarray, result: Result) -> None:
+        if isinstance(image, np.ndarray):
+            image = Image.fromarray(image)
         scene = self._scene_from_result(image, result)
         return scene.show()
 
-    def save(self, image: Image, result: Result, path: Path) -> None:
+    def save(self, image: Image | np.ndarray, result: Result, path: Path) -> None:
+        if isinstance(image, np.ndarray):
+            image = Image.fromarray(image)
         scene = self._scene_from_result(image, result)
         scene.save(path)
 

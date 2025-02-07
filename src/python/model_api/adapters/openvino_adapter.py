@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020-2024 Intel Corporation
+# Copyright (C) 2020-2025 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from numpy import ndarray
 
 try:
-    import openvino.runtime as ov
+    import openvino as ov
     from openvino import (
         AsyncInferQueue,
         Core,

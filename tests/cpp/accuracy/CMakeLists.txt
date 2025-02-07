@@ -65,17 +65,7 @@ include(../cmake/common.cmake)
 
 find_package(OpenCV REQUIRED COMPONENTS core highgui videoio imgproc imgcodecs)
 
-set(Python_FIND_VIRTUALENV FIRST)
-find_package(Python REQUIRED)
-execute_process(
-    COMMAND ${Python_EXECUTABLE} -c "from openvino.utils import get_cmake_path; print(get_cmake_path(), end='')"
-    OUTPUT_VARIABLE OpenVINO_DIR_PY
-    ERROR_QUIET
-)
-find_package(OpenVINO REQUIRED
-         COMPONENTS Runtime Threading
-         HINTS "${OpenVINO_DIR_PY}")
-
+set(ENABLE_PY_BINDINGS OFF)
 add_subdirectory(../../../src/cpp ${tests_BINARY_DIR}/model_api/cpp)
 
 add_test(NAME test_accuracy SOURCES test_accuracy.cpp DEPENDENCIES model_api)

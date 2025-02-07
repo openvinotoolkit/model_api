@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020-2024 Intel Corporation
+# Copyright (C) 2020-2025 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -11,10 +11,9 @@ from typing import TYPE_CHECKING, Any
 
 import cv2
 import numpy as np
-from openvino import Model, OVAny, Type, layout_helpers
-from openvino.runtime import Input, Node, Output
-from openvino.runtime import opset10 as opset
-from openvino.runtime.utils.decorators import custom_preprocess_function
+from openvino import Input, Model, Node, Output, OVAny, Type, layout_helpers
+from openvino import opset10 as opset
+from openvino.utils.decorators import custom_preprocess_function
 
 if TYPE_CHECKING:
     from collections.abc import Callable
