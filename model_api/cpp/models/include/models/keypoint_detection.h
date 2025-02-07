@@ -45,6 +45,7 @@ public:
     static std::string ModelType;
 
 protected:
+    bool apply_softmax = true;
 
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void updateModelInfo() override;
