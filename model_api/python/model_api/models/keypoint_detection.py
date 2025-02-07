@@ -59,7 +59,9 @@ class KeypointDetectionModel(ImageModel):
             DetectedKeypoints: detected keypoints
         """
         encoded_kps = list(outputs.values())
-        batch_keypoints, batch_scores = _decode_simcc(*encoded_kps, apply_softmax=self.apply_softmax)
+        batch_keypoints, batch_scores = _decode_simcc(
+            *encoded_kps, apply_softmax=self.apply_softmax
+        )
         orig_h, orig_w = meta["original_shape"][:2]
         kp_scale_h = orig_h / self.h
         kp_scale_w = orig_w / self.w
@@ -75,7 +77,8 @@ class KeypointDetectionModel(ImageModel):
                     description="List of class labels", value_type=str, default_value=[]
                 ),
                 "apply_softmax": BooleanValue(
-                    default_value=True, description="Whether to apply softmax on the heatmap."
+                    default_value=True,
+                    description="Whether to apply softmax on the heatmap.",
                 ),
             }
         )
@@ -130,7 +133,9 @@ class TopDownKeypointDetectionPipeline:
 
 
 def _decode_simcc(
-    simcc_x: np.ndarray, simcc_y: np.ndarray, simcc_split_ratio: float = 2.0,
+    simcc_x: np.ndarray,
+    simcc_y: np.ndarray,
+    simcc_split_ratio: float = 2.0,
     apply_softmax: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Decodes keypoint coordinates from SimCC representations. The decoded coordinates are in the input image space.
