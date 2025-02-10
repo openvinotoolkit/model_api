@@ -425,7 +425,7 @@
       {
         "image": "coco128/images/train2017/000000000471.jpg",
         "reference": [
-          "keypoints: (17, 2), keypoints_x_sum: 5700.000, scores: (17,)"
+          "keypoints: (17, 2), keypoints_x_sum: 5700.000, scores: (17,) 0.049"
         ]
       }
     ]
