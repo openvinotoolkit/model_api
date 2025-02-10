@@ -17,5 +17,5 @@ class DetectedKeypoints(Result):
         return (
             f"keypoints: {self.keypoints.shape}, "
             f"keypoints_x_sum: {np.sum(self.keypoints[:, :1]):.3f}, "
-            f"scores: {self.scores.shape}"
+            f"scores: {self.scores.shape} {np.sum(self.scores):.3f}"
         )

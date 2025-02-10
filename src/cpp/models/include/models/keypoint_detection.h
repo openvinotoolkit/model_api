@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 Intel Corporation
+ * Copyright (C) 2020-2025 Intel Corporation
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -38,6 +38,8 @@ public:
     static std::string ModelType;
 
 protected:
+    bool apply_softmax = true;
+
     void prepareInputsOutputs(std::shared_ptr<ov::Model>& model) override;
     void updateModelInfo() override;
     void init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority);
