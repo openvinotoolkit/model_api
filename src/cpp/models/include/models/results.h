@@ -360,8 +360,8 @@ struct DetectedKeypoints {
         float scores_sum = std::accumulate(prediction.scores.begin(), prediction.scores.end(), 0.f);
 
         os << "keypoints: (" << prediction.keypoints.size() << ", 2), keypoints_x_sum: ";
-        os << std::fixed << std::setprecision(3) << kp_x_sum << ", scores: (" << prediction.scores.size()
-        << ",) " << std::fixed << std::setprecision(3) << scores_sum;
+        os << std::fixed << std::setprecision(3) << kp_x_sum << ", scores: (" << prediction.scores.size() << ",) "
+           << std::fixed << std::setprecision(3) << scores_sum;
         return os;
     }
 
