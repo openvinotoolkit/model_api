@@ -18,66 +18,46 @@
 
 namespace {
 
-void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values) {
+void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values, bool apply_softmax = false, float eps = 1e-6f) {
     dst_locs = cv::Mat::zeros(src.rows, 1, CV_32S);
     dst_values = cv::Mat::zeros(src.rows, 1, CV_32F);
 
     for (int row = 0; row < src.rows; ++row) {
         const float* ptr_row = src.ptr<float>(row);
         int max_val_idx = 0;
-        dst_values.at<float>(row) = ptr_row[max_val_idx];
+        float max_val = ptr_row[0];
         for (int col = 1; col < src.cols; ++col) {
-            if (ptr_row[col] > ptr_row[max_val_idx]) {
+            if (ptr_row[col] > max_val) {
                 max_val_idx = col;
                 dst_locs.at<int>(row) = max_val_idx;
-                dst_values.at<float>(row) = ptr_row[col];
-            }
-        }
-    }
-}
-
-cv::Mat softmax_row(const cv::Mat& src) {
-    cv::Mat result = src.clone();
-
-    for (int row = 0; row < result.rows; ++row) {
-        float* ptr_row = result.ptr<float>(row);
-        float max_val = ptr_row[0];
-        for (int col = 1; col < result.cols; ++col) {
-            if (ptr_row[col] > max_val) {
                 max_val = ptr_row[col];
             }
         }
-        float sum = 0.0f;
-        for (int col = 0; col < result.cols; col++) {
-            ptr_row[col] = exp(ptr_row[col] - max_val);
-            sum += ptr_row[col];
+
+        if (apply_softmax) {
+            float sum = 0.0f;
+            for (int col = 0; col < src.cols; ++col) {
+                sum += exp(ptr_row[col] - max_val);
+            }
+            dst_values.at<float>(row) = exp(ptr_row[max_val_idx] - max_val) / (sum + eps);
         }
-        for (int col = 0; col < result.cols; ++col) {
-            ptr_row[col] /= sum;
+        else {
+            dst_values.at<float>(row) = max_val;
         }
     }
-
-    return result;
 }
 
-DetectedKeypoints decode_simcc(const cv::Mat& simcc_x_input,
-                               const cv::Mat& simcc_y_input,
+DetectedKeypoints decode_simcc(const cv::Mat& simcc_x,
+                               const cv::Mat& simcc_y,
                                const cv::Point2f& extra_scale = cv::Point2f(1.f, 1.f),
-                               float simcc_split_ratio = 2.0f,
-                               bool apply_softmax = false) {
-    cv::Mat simcc_x = simcc_x_input;
-    cv::Mat simcc_y = simcc_y_input;
-
-    if (apply_softmax) {
-        simcc_x = softmax_row(simcc_x);
-        simcc_x = softmax_row(simcc_y);
-    }
-
+                               bool apply_softmax = false,
+                               float simcc_split_ratio = 2.0f
+                               ) {
     cv::Mat x_locs, max_val_x;
-    colArgMax(simcc_x, x_locs, max_val_x);
+    colArgMax(simcc_x, x_locs, max_val_x, apply_softmax);
 
     cv::Mat y_locs, max_val_y;
-    colArgMax(simcc_y, y_locs, max_val_y);
+    colArgMax(simcc_y, y_locs, max_val_y, apply_softmax);
 
     std::vector<cv::Point2f> keypoints(x_locs.rows);
     cv::Mat scores = cv::Mat::zeros(x_locs.rows, 1, CV_32F);
