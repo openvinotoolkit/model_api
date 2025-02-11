@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2020-2024 Intel Corporation
+# Copyright (C) 2020-2025 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -11,7 +11,7 @@ import numpy as np
 
 from .image_model import ImageModel
 from .result import DetectedKeypoints, DetectionResult
-from .types import ListValue
+from .types import BooleanValue, ListValue
 
 
 class KeypointDetectionModel(ImageModel):
@@ -30,6 +30,7 @@ class KeypointDetectionModel(ImageModel):
         """
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 2)
+        self.apply_softmax: bool
 
     def postprocess(
         self,
@@ -46,7 +47,11 @@ class KeypointDetectionModel(ImageModel):
             DetectedKeypoints: detected keypoints
         """
         encoded_kps = list(outputs.values())
-        batch_keypoints, batch_scores = _decode_simcc(*encoded_kps)
+        batch_keypoints, batch_scores = _decode_simcc(
+            encoded_kps[0],
+            encoded_kps[1],
+            apply_softmax=self.apply_softmax,
+        )
         orig_h, orig_w = meta["original_shape"][:2]
         kp_scale_h = orig_h / self.h
         kp_scale_w = orig_w / self.w
@@ -62,6 +67,10 @@ class KeypointDetectionModel(ImageModel):
                     description="List of class labels",
                     value_type=str,
                     default_value=[],
+                ),
+                "apply_softmax": BooleanValue(
+                    default_value=True,
+                    description="Whether to apply softmax on the heatmap.",
                 ),
             },
         )
@@ -119,6 +128,7 @@ def _decode_simcc(
     simcc_x: np.ndarray,
     simcc_y: np.ndarray,
     simcc_split_ratio: float = 2.0,
+    apply_softmax: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Decodes keypoint coordinates from SimCC representations. The decoded coordinates are in the input image space.
 
@@ -126,6 +136,8 @@ def _decode_simcc(
         simcc_x (np.ndarray): SimCC label for x-axis
         simcc_y (np.ndarray): SimCC label for y-axis
         simcc_split_ratio (float): The ratio of the label size to the input size.
+        apply_softmax (bool): whether to apply softmax on the heatmap.
+            Defaults to False.
 
     Returns:
         tuple:
@@ -133,7 +145,7 @@ def _decode_simcc(
         - scores (np.ndarray): The keypoint scores in shape (N, K).
             It usually represents the confidence of the keypoint prediction
     """
-    keypoints, scores = _get_simcc_maximum(simcc_x, simcc_y)
+    keypoints, scores = _get_simcc_maximum(simcc_x, simcc_y, apply_softmax)
 
     # Unsqueeze the instance dimension for single-instance results
     if keypoints.ndim == 2:
@@ -148,6 +160,8 @@ def _decode_simcc(
 def _get_simcc_maximum(
     simcc_x: np.ndarray,
     simcc_y: np.ndarray,
+    apply_softmax: bool = False,
+    softmax_eps: float = 1e-06,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Get maximum response location and value from simcc representations.
 
@@ -160,6 +174,10 @@ def _get_simcc_maximum(
     Args:
         simcc_x (np.ndarray): x-axis SimCC in shape (K, Wx) or (N, K, Wx)
         simcc_y (np.ndarray): y-axis SimCC in shape (K, Hy) or (N, K, Hy)
+        apply_softmax (bool): whether to apply softmax on the heatmap.
+            Defaults to False.
+        softmax_eps (flat): a constant to avoid division by zero in softmax.
+            Defaults to 1e-6.
 
     Returns:
         tuple:
@@ -184,6 +202,13 @@ def _get_simcc_maximum(
         simcc_y = simcc_y.reshape(batch_size * num_keypoints, -1)
     else:
         batch_size = None
+
+    if apply_softmax:
+        simcc_x = simcc_x - np.max(simcc_x, axis=1, keepdims=True)
+        simcc_y = simcc_y - np.max(simcc_y, axis=1, keepdims=True)
+        ex, ey = np.exp(simcc_x), np.exp(simcc_y)
+        simcc_x = ex / (np.sum(ex, axis=1, keepdims=True) + softmax_eps)
+        simcc_y = ey / (np.sum(ey, axis=1, keepdims=True) + softmax_eps)
 
     x_locs = np.argmax(simcc_x, axis=1)
     y_locs = np.argmax(simcc_y, axis=1)

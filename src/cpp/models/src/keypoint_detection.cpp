@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 Intel Corporation
+ * Copyright (C) 2020-2025 Intel Corporation
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -18,20 +18,34 @@
 
 namespace {
 
-void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values) {
+void colArgMax(const cv::Mat& src,
+               cv::Mat& dst_locs,
+               cv::Mat& dst_values,
+               bool apply_softmax = false,
+               float eps = 1e-6f) {
     dst_locs = cv::Mat::zeros(src.rows, 1, CV_32S);
     dst_values = cv::Mat::zeros(src.rows, 1, CV_32F);
 
-    for (int row = 0; row < src.rows; row++) {
+    for (int row = 0; row < src.rows; ++row) {
         const float* ptr_row = src.ptr<float>(row);
         int max_val_idx = 0;
-        dst_values.at<float>(row) = ptr_row[max_val_idx];
+        float max_val = ptr_row[0];
         for (int col = 1; col < src.cols; ++col) {
-            if (ptr_row[col] > ptr_row[max_val_idx]) {
+            if (ptr_row[col] > max_val) {
                 max_val_idx = col;
                 dst_locs.at<int>(row) = max_val_idx;
-                dst_values.at<float>(row) = ptr_row[col];
+                max_val = ptr_row[col];
             }
+        }
+
+        if (apply_softmax) {
+            float sum = 0.0f;
+            for (int col = 0; col < src.cols; ++col) {
+                sum += exp(ptr_row[col] - max_val);
+            }
+            dst_values.at<float>(row) = exp(ptr_row[max_val_idx] - max_val) / (sum + eps);
+        } else {
+            dst_values.at<float>(row) = max_val;
         }
     }
 }
@@ -39,12 +53,13 @@ void colArgMax(const cv::Mat& src, cv::Mat& dst_locs, cv::Mat& dst_values) {
 DetectedKeypoints decode_simcc(const cv::Mat& simcc_x,
                                const cv::Mat& simcc_y,
                                const cv::Point2f& extra_scale = cv::Point2f(1.f, 1.f),
+                               bool apply_softmax = false,
                                float simcc_split_ratio = 2.0f) {
     cv::Mat x_locs, max_val_x;
-    colArgMax(simcc_x, x_locs, max_val_x);
+    colArgMax(simcc_x, x_locs, max_val_x, apply_softmax);
 
     cv::Mat y_locs, max_val_y;
-    colArgMax(simcc_y, y_locs, max_val_y);
+    colArgMax(simcc_y, y_locs, max_val_y, apply_softmax);
 
     std::vector<cv::Point2f> keypoints(x_locs.rows);
     cv::Mat scores = cv::Mat::zeros(x_locs.rows, 1, CV_32F);
@@ -67,6 +82,7 @@ std::string KeypointDetectionModel::ModelType = "keypoint_detection";
 
 void KeypointDetectionModel::init_from_config(const ov::AnyMap& top_priority, const ov::AnyMap& mid_priority) {
     labels = get_from_any_maps("labels", top_priority, mid_priority, labels);
+    apply_softmax = get_from_any_maps("apply_softmax", top_priority, mid_priority, apply_softmax);
 }
 
 KeypointDetectionModel::KeypointDetectionModel(std::shared_ptr<ov::Model>& model, const ov::AnyMap& configuration)
@@ -204,7 +220,8 @@ std::unique_ptr<ResultBase> KeypointDetectionModel::postprocess(InferenceResult&
     float inverted_scale_x = static_cast<float>(image_data.inputImgWidth) / netInputWidth,
           inverted_scale_y = static_cast<float>(image_data.inputImgHeight) / netInputHeight;
 
-    result->poses.emplace_back(decode_simcc(pred_x_mat, pred_y_mat, {inverted_scale_x, inverted_scale_y}));
+    result->poses.emplace_back(
+        decode_simcc(pred_x_mat, pred_y_mat, {inverted_scale_x, inverted_scale_y}, apply_softmax));
     return std::unique_ptr<ResultBase>(result);
 }
 

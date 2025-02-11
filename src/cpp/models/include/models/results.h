@@ -6,6 +6,7 @@
 #pragma once
 #include <map>
 #include <memory>
+#include <numeric>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <openvino/openvino.hpp>
@@ -356,8 +357,11 @@ struct DetectedKeypoints {
         for (const cv::Point2f& keypoint : prediction.keypoints) {
             kp_x_sum += keypoint.x;
         }
+        float scores_sum = std::accumulate(prediction.scores.begin(), prediction.scores.end(), 0.f);
+
         os << "keypoints: (" << prediction.keypoints.size() << ", 2), keypoints_x_sum: ";
-        os << std::fixed << std::setprecision(3) << kp_x_sum << ", scores: (" << prediction.scores.size() << ",)";
+        os << std::fixed << std::setprecision(3) << kp_x_sum << ", scores: (" << prediction.scores.size() << ",) "
+           << std::fixed << std::setprecision(3) << scores_sum;
         return os;
     }
 
