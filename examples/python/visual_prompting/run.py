@@ -26,7 +26,7 @@ def main():
     parser.add_argument("prompts", nargs="+", type=int)
     args = parser.parse_args()
 
-    image = cv2.imread(args.image)
+    image = cv2.cvtColor(cv2.imread(args.image), cv2.COLOR_BGR2RGB)
     if image is None:
         raise RuntimeError("Failed to read the image")
 
@@ -47,7 +47,7 @@ def main():
         masked_img = np.where(result.processed_mask[i][..., None], colors[i], image)
         image = cv2.addWeighted(image, 0.2, masked_img, 0.8, 0)
 
-    cv2.imwrite("sam_result.jpg", image)
+    cv2.imwrite("sam_result.jpg", cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
 
 
 if __name__ == "__main__":

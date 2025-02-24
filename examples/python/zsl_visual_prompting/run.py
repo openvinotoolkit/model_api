@@ -28,11 +28,11 @@ def main():
     parser.add_argument("-t", "--threshold", type=float, default=0.65)
     args = parser.parse_args()
 
-    image = cv2.imread(args.image_source)
+    image = cv2.cvtColor(cv2.imread(args.image_source), cv2.COLOR_BGR2RGB)
     if image is None:
         raise RuntimeError("Failed to read the source image")
 
-    image_target = cv2.imread(args.image_target)
+    image_target = cv2.cvtColor(cv2.imread(args.image_target), cv2.COLOR_BGR2RGB)
     if image_target is None:
         raise RuntimeError("Failed to read the target image")
 
@@ -64,7 +64,7 @@ def main():
                 image_target, prompt_point, radius=0, color=(0, 0, 255), thickness=5
             )
 
-    cv2.imwrite("zsl_sam_result.jpg", image_target)
+    cv2.imwrite("zsl_sam_result.jpg", cv2.cvtColor(image_target, cv2.COLOR_RGB2BGR))
 
 
 if __name__ == "__main__":

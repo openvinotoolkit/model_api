@@ -6,7 +6,6 @@
 import argparse
 from argparse import Namespace
 
-import cv2
 import numpy as np
 from PIL import Image
 
@@ -19,8 +18,7 @@ def main(args: Namespace):
 
     model = Model.create_model(args.model)
 
-    image_array = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
-    predictions = model(image_array)
+    predictions = model(np.array(image))
     visualizer = Visualizer()
 
     if args.output:
