@@ -29,3 +29,8 @@ build:
           - ".pre-commit-config.yaml"
           - "pyproject.toml"
           - "**/CMakeLists.txt"
+
+samples:
+  - changed-files:
+      - any-glob-to-any-file:
+          - examples/**
