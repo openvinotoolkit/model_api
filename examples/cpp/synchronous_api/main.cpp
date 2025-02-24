@@ -13,8 +13,7 @@
 #include <iomanip>
 #include <iostream>
 #include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
 #include <openvino/openvino.hpp>
 #include <stdexcept>
 #include <string>
@@ -25,6 +24,8 @@ int main(int argc, char* argv[]) try {
     }
 
     cv::Mat image = cv::imread(argv[2]);
+    cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
+
     if (!image.data) {
         throw std::runtime_error{"Failed to read the image"};
     }

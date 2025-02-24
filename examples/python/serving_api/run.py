@@ -14,7 +14,7 @@ def main():
     if len(sys.argv) != 2:
         raise RuntimeError(f"Usage: {sys.argv[0]} <path_to_image>")
 
-    image = cv2.imread(sys.argv[1])
+    image = cv2.cvtColor(cv2.imread(sys.argv[1]), cv2.COLOR_BGR2RGB)
     if image is None:
         raise RuntimeError("Failed to read the image")
 
