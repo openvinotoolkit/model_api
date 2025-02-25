@@ -34,7 +34,7 @@ class DetectionResult(Result):
     ):
         super().__init__()
         self._bboxes = bboxes
-        self._labels = labels
+        self._labels = labels.astype(np.int32)
         self._scores = scores if scores is not None else np.zeros(len(bboxes))
         self._label_names = ["#"] * len(bboxes) if label_names is None else label_names
         self._saliency_map = saliency_map
