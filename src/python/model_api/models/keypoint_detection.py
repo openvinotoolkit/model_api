@@ -55,7 +55,19 @@ class KeypointDetectionModel(ImageModel):
         orig_h, orig_w = meta["original_shape"][:2]
         kp_scale_h = orig_h / self.h
         kp_scale_w = orig_w / self.w
-        batch_keypoints = batch_keypoints.squeeze() * np.array([kp_scale_w, kp_scale_h])
+
+        batch_keypoints = batch_keypoints.squeeze()
+
+        if self.resize_type in ["fit_to_window", "fit_to_window_letterbox"]:
+            inverted_scale = max(kp_scale_h, kp_scale_w)
+            kp_scale_h = kp_scale_w = inverted_scale
+            if self.resize_type == "fit_to_window_letterbox":
+                pad_left = (self.w - round(orig_w / inverted_scale)) // 2
+                pad_top = (self.h - round(orig_h / inverted_scale)) // 2
+                batch_keypoints -= np.array([pad_left, pad_top])
+
+        batch_keypoints *= np.array([kp_scale_w, kp_scale_h])
+
         return DetectedKeypoints(batch_keypoints, batch_scores.squeeze())
 
     @classmethod
