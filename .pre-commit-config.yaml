@@ -45,4 +45,4 @@ repos:
     rev: v0.5.1
     hooks:
       - id: clang-format
-        args: [--style=file, --version=10]
+        args: [--style=file, --version=13]
