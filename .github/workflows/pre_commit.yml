@@ -15,7 +15,7 @@ on:
 
 jobs:
   Code-Quality-Checks:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: CHECKOUT REPOSITORY
         uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: 22
       - name: Install clang-format
-        run: sudo apt-get install -y clang-format-10
+        run: sudo apt-get install -y clang-format-13
       - name: Install dependencies
         run: pip install 'src/python/.[full]'
       - name: Run pre-commit checks

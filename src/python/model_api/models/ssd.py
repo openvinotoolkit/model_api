@@ -87,7 +87,12 @@ class MultipleOutputParser:
         bboxes = np.array(outputs[self.bboxes_layer][0])
         scores = np.array(outputs[self.scores_layer][0])
         labels = np.array(outputs[self.labels_layer][0])
-        return DetectionResult(bboxes, scores, labels)
+
+        return DetectionResult(
+            bboxes=bboxes,
+            labels=labels,
+            scores=scores,
+        )
 
 
 class BoxesLabelsParser:
