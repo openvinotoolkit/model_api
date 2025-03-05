@@ -62,7 +62,7 @@ DetectedKeypoints decode_simcc(const cv::Mat& simcc_x,
     colArgMax(simcc_x, x_locs, max_val_x, false);
 
     cv::Mat y_locs, max_val_y;
-    colArgMax(simcc_y, y_locs, max_val_x, false);
+    colArgMax(simcc_y, y_locs, max_val_y, false);
 
     if (apply_softmax) {
         cv::Mat tmp_locs;
