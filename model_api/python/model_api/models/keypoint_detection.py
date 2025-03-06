@@ -26,30 +26,29 @@ from .utils import DetectedKeypoints, Detection
 
 
 class KeypointDetectionModel(ImageModel):
-    """
-    A wrapper that implements a basic keypoint regression model.
-    """
+    """A wrapper that implements a basic keypoint regression model."""
 
     __model__ = "keypoint_detection"
 
-    def __init__(self, inference_adapter, configuration=dict(), preload=False):
-        """
-        Initializes the keypoint detection model.
+    def __init__(self, inference_adapter, configuration: dict = {}, preload=False):
+        """Initializes the keypoint detection model.
 
         Args:
             inference_adapter (InferenceAdapter): inference adapter containing the underlying model.
             configuration (dict, optional): configuration overrides the model parameters (see parameters() method).
-              Defaults to dict().
+              Defaults to {}.
             preload (bool, optional): forces inference adapter to load the model. Defaults to False.
         """
         super().__init__(inference_adapter, configuration, preload)
         self._check_io_number(1, 2)
+        self.apply_softmax: bool
 
     def postprocess(
-        self, outputs: dict[str, np.ndarray], meta: dict[str, Any]
+        self,
+        outputs: dict[str, np.ndarray],
+        meta: dict[str, Any],
     ) -> DetectedKeypoints:
-        """
-        Applies SCC decoded to the model outputs.
+        """Applies SCC decoded to the model outputs.
 
         Args:
             outputs (dict[str, np.ndarray]): raw outputs of the model
@@ -60,12 +59,26 @@ class KeypointDetectionModel(ImageModel):
         """
         encoded_kps = list(outputs.values())
         batch_keypoints, batch_scores = _decode_simcc(
-            *encoded_kps, apply_softmax=self.apply_softmax
+            encoded_kps[0],
+            encoded_kps[1],
+            apply_softmax=self.apply_softmax,
         )
         orig_h, orig_w = meta["original_shape"][:2]
         kp_scale_h = orig_h / self.h
         kp_scale_w = orig_w / self.w
-        batch_keypoints = batch_keypoints.squeeze() * np.array([kp_scale_w, kp_scale_h])
+
+        batch_keypoints = batch_keypoints.squeeze()
+
+        if self.resize_type in ["fit_to_window", "fit_to_window_letterbox"]:
+            inverted_scale = max(kp_scale_h, kp_scale_w)
+            kp_scale_h = kp_scale_w = inverted_scale
+            if self.resize_type == "fit_to_window_letterbox":
+                pad_left = (self.w - round(orig_w / inverted_scale)) // 2
+                pad_top = (self.h - round(orig_h / inverted_scale)) // 2
+                batch_keypoints -= np.array([pad_left, pad_top])
+
+        batch_keypoints *= np.array([kp_scale_w, kp_scale_h])
+
         return DetectedKeypoints(batch_keypoints, batch_scores.squeeze())
 
     @classmethod
@@ -74,13 +87,15 @@ class KeypointDetectionModel(ImageModel):
         parameters.update(
             {
                 "labels": ListValue(
-                    description="List of class labels", value_type=str, default_value=[]
+                    description="List of class labels",
+                    value_type=str,
+                    default_value=[],
                 ),
                 "apply_softmax": BooleanValue(
                     default_value=True,
                     description="Whether to apply softmax on the heatmap.",
                 ),
-            }
+            },
         )
         return parameters
 
@@ -137,6 +152,8 @@ def _decode_simcc(
     simcc_y: np.ndarray,
     simcc_split_ratio: float = 2.0,
     apply_softmax: bool = False,
+    decode_beta: float = 150.0,
+    sigma: float | int = 6.0,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Decodes keypoint coordinates from SimCC representations. The decoded coordinates are in the input image space.
 
@@ -144,8 +161,12 @@ def _decode_simcc(
         simcc_x (np.ndarray): SimCC label for x-axis
         simcc_y (np.ndarray): SimCC label for y-axis
         simcc_split_ratio (float): The ratio of the label size to the input size.
-        apply_softmax (bool): whether to apply softmax on the heatmap.
+        apply_softmax (bool): whether to apply softmax during scores generation.
             Defaults to False.
+        decode_beta (float): The beta value for decoding scores with softmax. Defaults
+            to 150.0.
+        sigma (float | int): The sigma value in the Gaussian SimCC
+            label. Defaults to 6.0
 
     Returns:
         tuple:
@@ -153,7 +174,11 @@ def _decode_simcc(
         - scores (np.ndarray): The keypoint scores in shape (N, K).
             It usually represents the confidence of the keypoint prediction
     """
-    keypoints, scores = _get_simcc_maximum(simcc_x, simcc_y, apply_softmax)
+    keypoints, scores = _get_simcc_maximum(simcc_x, simcc_y)
+    if apply_softmax:
+        _, scores = _get_simcc_maximum(
+            decode_beta * sigma * simcc_x, decode_beta * sigma * simcc_y, apply_softmax
+        )
 
     # Unsqueeze the instance dimension for single-instance results
     if keypoints.ndim == 2:
@@ -169,6 +194,7 @@ def _get_simcc_maximum(
     simcc_x: np.ndarray,
     simcc_y: np.ndarray,
     apply_softmax: bool = False,
+    softmax_eps: float = 1e-06,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Get maximum response location and value from simcc representations.
 
@@ -183,6 +209,8 @@ def _get_simcc_maximum(
         simcc_y (np.ndarray): y-axis SimCC in shape (K, Hy) or (N, K, Hy)
         apply_softmax (bool): whether to apply softmax on the heatmap.
             Defaults to False.
+        softmax_eps (flat): a constant to avoid division by zero in softmax.
+            Defaults to 1e-6.
 
     Returns:
         tuple:
@@ -212,17 +240,21 @@ def _get_simcc_maximum(
         simcc_x = simcc_x - np.max(simcc_x, axis=1, keepdims=True)
         simcc_y = simcc_y - np.max(simcc_y, axis=1, keepdims=True)
         ex, ey = np.exp(simcc_x), np.exp(simcc_y)
-        simcc_x = ex / np.sum(ex, axis=1, keepdims=True)
-        simcc_y = ey / np.sum(ey, axis=1, keepdims=True)
+        simcc_x = ex / (np.sum(ex, axis=1, keepdims=True) + softmax_eps)
+        simcc_y = ey / (np.sum(ey, axis=1, keepdims=True) + softmax_eps)
 
     x_locs = np.argmax(simcc_x, axis=1)
     y_locs = np.argmax(simcc_y, axis=1)
     locs = np.stack((x_locs, y_locs), axis=-1).astype(np.float32)
     max_val_x = np.take_along_axis(
-        simcc_x, np.expand_dims(x_locs, axis=-1), axis=-1
+        simcc_x,
+        np.expand_dims(x_locs, axis=-1),
+        axis=-1,
     ).squeeze(axis=-1)
     max_val_y = np.take_along_axis(
-        simcc_y, np.expand_dims(y_locs, axis=-1), axis=-1
+        simcc_y,
+        np.expand_dims(y_locs, axis=-1),
+        axis=-1,
     ).squeeze(axis=-1)
 
     mask = max_val_x > max_val_y
