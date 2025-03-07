@@ -55,7 +55,19 @@ class KeypointDetectionModel(ImageModel):
         orig_h, orig_w = meta["original_shape"][:2]
         kp_scale_h = orig_h / self.h
         kp_scale_w = orig_w / self.w
-        batch_keypoints = batch_keypoints.squeeze() * np.array([kp_scale_w, kp_scale_h])
+
+        batch_keypoints = batch_keypoints.squeeze()
+
+        if self.resize_type in ["fit_to_window", "fit_to_window_letterbox"]:
+            inverted_scale = max(kp_scale_h, kp_scale_w)
+            kp_scale_h = kp_scale_w = inverted_scale
+            if self.resize_type == "fit_to_window_letterbox":
+                pad_left = (self.w - round(orig_w / inverted_scale)) // 2
+                pad_top = (self.h - round(orig_h / inverted_scale)) // 2
+                batch_keypoints -= np.array([pad_left, pad_top])
+
+        batch_keypoints *= np.array([kp_scale_w, kp_scale_h])
+
         return DetectedKeypoints(batch_keypoints, batch_scores.squeeze())
 
     @classmethod
@@ -129,6 +141,8 @@ def _decode_simcc(
     simcc_y: np.ndarray,
     simcc_split_ratio: float = 2.0,
     apply_softmax: bool = False,
+    decode_beta: float = 150.0,
+    sigma: float | int = 6.0,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Decodes keypoint coordinates from SimCC representations. The decoded coordinates are in the input image space.
 
@@ -136,8 +150,12 @@ def _decode_simcc(
         simcc_x (np.ndarray): SimCC label for x-axis
         simcc_y (np.ndarray): SimCC label for y-axis
         simcc_split_ratio (float): The ratio of the label size to the input size.
-        apply_softmax (bool): whether to apply softmax on the heatmap.
+        apply_softmax (bool): whether to apply softmax during scores generation.
             Defaults to False.
+        decode_beta (float): The beta value for decoding scores with softmax. Defaults
+            to 150.0.
+        sigma (float | int): The sigma value in the Gaussian SimCC
+            label. Defaults to 6.0
 
     Returns:
         tuple:
@@ -145,7 +163,9 @@ def _decode_simcc(
         - scores (np.ndarray): The keypoint scores in shape (N, K).
             It usually represents the confidence of the keypoint prediction
     """
-    keypoints, scores = _get_simcc_maximum(simcc_x, simcc_y, apply_softmax)
+    keypoints, scores = _get_simcc_maximum(simcc_x, simcc_y)
+    if apply_softmax:
+        _, scores = _get_simcc_maximum(decode_beta * sigma * simcc_x, decode_beta * sigma * simcc_y, apply_softmax)
 
     # Unsqueeze the instance dimension for single-instance results
     if keypoints.ndim == 2:

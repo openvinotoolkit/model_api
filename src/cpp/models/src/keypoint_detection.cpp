@@ -53,19 +53,29 @@ void colArgMax(const cv::Mat& src,
 DetectedKeypoints decode_simcc(const cv::Mat& simcc_x,
                                const cv::Mat& simcc_y,
                                const cv::Point2f& extra_scale = cv::Point2f(1.f, 1.f),
+                               const cv::Point2i& extra_offset = cv::Point2f(0.f, 0.f),
                                bool apply_softmax = false,
-                               float simcc_split_ratio = 2.0f) {
+                               float simcc_split_ratio = 2.0f,
+                               float decode_beta = 150.0f,
+                               float sigma = 6.0f) {
     cv::Mat x_locs, max_val_x;
-    colArgMax(simcc_x, x_locs, max_val_x, apply_softmax);
+    colArgMax(simcc_x, x_locs, max_val_x, false);
 
     cv::Mat y_locs, max_val_y;
-    colArgMax(simcc_y, y_locs, max_val_y, apply_softmax);
+    colArgMax(simcc_y, y_locs, max_val_y, false);
+
+    if (apply_softmax) {
+        cv::Mat tmp_locs;
+        colArgMax(decode_beta * sigma * simcc_x, tmp_locs, max_val_x, true);
+        colArgMax(decode_beta * sigma * simcc_y, tmp_locs, max_val_y, true);
+    }
 
     std::vector<cv::Point2f> keypoints(x_locs.rows);
     cv::Mat scores = cv::Mat::zeros(x_locs.rows, 1, CV_32F);
-    for (int i = 0; i < x_locs.rows; i++) {
-        keypoints[i] =
-            cv::Point2f(x_locs.at<int>(i) * extra_scale.x, y_locs.at<int>(i) * extra_scale.y) / simcc_split_ratio;
+    for (int i = 0; i < x_locs.rows; ++i) {
+        keypoints[i] = cv::Point2f((x_locs.at<int>(i) - extra_offset.x) * extra_scale.x,
+                                   (y_locs.at<int>(i) - extra_offset.y) * extra_scale.y) /
+                       simcc_split_ratio;
         scores.at<float>(i) = std::min(max_val_x.at<float>(i), max_val_y.at<float>(i));
 
         if (scores.at<float>(i) <= 0.f) {
@@ -220,8 +230,22 @@ std::unique_ptr<ResultBase> KeypointDetectionModel::postprocess(InferenceResult&
     float inverted_scale_x = static_cast<float>(image_data.inputImgWidth) / netInputWidth,
           inverted_scale_y = static_cast<float>(image_data.inputImgHeight) / netInputHeight;
 
+    int pad_left = 0, pad_top = 0;
+    if (RESIZE_KEEP_ASPECT == resizeMode || RESIZE_KEEP_ASPECT_LETTERBOX == resizeMode) {
+        inverted_scale_x = inverted_scale_y = std::max(inverted_scale_x, inverted_scale_y);
+        if (RESIZE_KEEP_ASPECT_LETTERBOX == resizeMode) {
+            pad_left = (netInputWidth -
+                        static_cast<int>(std::round(static_cast<float>(image_data.inputImgWidth) / inverted_scale_x))) /
+                       2;
+            pad_top = (netInputHeight -
+                       static_cast<int>(std::round(static_cast<float>(image_data.inputImgHeight) / inverted_scale_y))) /
+                      2;
+        }
+    }
+
     result->poses.emplace_back(
-        decode_simcc(pred_x_mat, pred_y_mat, {inverted_scale_x, inverted_scale_y}, apply_softmax));
+        decode_simcc(pred_x_mat, pred_y_mat, {inverted_scale_x, inverted_scale_y}, {pad_left, pad_top}, apply_softmax));
+
     return std::unique_ptr<ResultBase>(result);
 }
 
