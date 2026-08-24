@@ -442,11 +442,11 @@
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">model_api.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassificationModel</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ClassificationModel</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;./path_to_model.xml&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;path_to_image.jpg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ClassificationModel</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">"./path_to_model.xml"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">"path_to_image.jpg"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 <span class="go">ClassificationResult(</span>
-<span class="go">    top_labels=[(1, &#39;bicycle&#39;, 0.90176445), (6, &#39;car&#39;, 0.85433626), (7, &#39;cat&#39;, 0.60699755)],</span>
+<span class="go">    top_labels=[(1, 'bicycle', 0.90176445), (6, 'car', 0.85433626), (7, 'cat', 0.60699755)],</span>
 <span class="go">    saliency_map=array([], dtype=float64),</span>
 <span class="go">    feature_vector=array([], dtype=float64),</span>
 <span class="go">    raw_scores=array([], dtype=float64)</span>

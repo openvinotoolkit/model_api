@@ -433,7 +433,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">model_api.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SSD</span>
 
 <span class="c1"># Load the model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">SSD</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;model.xml&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SSD</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">"model.xml"</span><span class="p">)</span>
 
 <span class="c1"># Forward pass</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -445,7 +445,7 @@
     <span class="n">predictions</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
     <span class="n">predictions</span><span class="o">.</span><span class="n">label_names</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Box: </span><span class="si">{</span><span class="n">box</span><span class="si">}</span><span class="s2">, Score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">, Label: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">, Label Name: </span><span class="si">{</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Box: </span><span class="si">{</span><span class="n">box</span><span class="si">}</span><span class="s2">, Score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">, Label: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">, Label Name: </span><span class="si">{</span><span class="n">label_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py class" id="module-model_api.models.detection_model">

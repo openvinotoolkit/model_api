@@ -410,10 +410,10 @@
 <p>To enable NMS for a model, you may set the parameters described above in the <code class="docutils literal notranslate"><span class="pre">model_info</span></code> section of the model configuration file. Below is an example of how to enable NMS for a detection model:</p>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;model_info&gt;</span>
 <span class="w">    </span>(...)
-<span class="w">    </span><span class="nt">&lt;nms_execute</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;True&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;iou_threshold</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;0.7&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;agnostic_nms</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;True&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
-<span class="w">    </span><span class="nt">&lt;nms_max_predictions</span><span class="w"> </span><span class="na">value=</span><span class="s">&quot;0&quot;</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;nms_execute</span><span class="w"> </span><span class="na">value=</span><span class="s">"True"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;iou_threshold</span><span class="w"> </span><span class="na">value=</span><span class="s">"0.7"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;agnostic_nms</span><span class="w"> </span><span class="na">value=</span><span class="s">"True"</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span><span class="nt">&lt;nms_max_predictions</span><span class="w"> </span><span class="na">value=</span><span class="s">"0"</span><span class="w"> </span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/model_info&gt;</span>
 </pre></div>
 </div>
@@ -427,18 +427,18 @@
 
 <span class="c1"># 1. Load model</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span>
-    <span class="s2">&quot;model.xml&quot;</span><span class="p">,</span>
-    <span class="n">device</span><span class="o">=</span><span class="s2">&quot;CPU&quot;</span><span class="p">,</span>
+    <span class="s2">"model.xml"</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="s2">"CPU"</span><span class="p">,</span>
     <span class="n">configuration</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;nms_execute&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s2">&quot;iou_threshold&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
-        <span class="s2">&quot;agnostic_nms&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="s2">&quot;nms_max_predictions&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"nms_execute"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"iou_threshold"</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+        <span class="s2">"agnostic_nms"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">"nms_max_predictions"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
 <span class="c1"># 2. Load image</span>
-<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;image.jpg&quot;</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">"image.jpg"</span><span class="p">)</span>
 
 <span class="c1"># 3. Run inference</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>

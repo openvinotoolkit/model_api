@@ -434,10 +434,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">model_api.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaskRCNNModel</span>
 
 <span class="c1"># Load the model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">MaskRCNNModel</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">&quot;model.xml&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">MaskRCNNModel</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">"model.xml"</span><span class="p">)</span>
 
 <span class="c1"># Load image</span>
-<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">&quot;image.jpg&quot;</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s2">"image.jpg"</span><span class="p">)</span>
 
 <span class="c1"># Forward pass</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
@@ -450,8 +450,8 @@
     <span class="n">predictions</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
     <span class="n">predictions</span><span class="o">.</span><span class="n">label_names</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Box: </span><span class="si">{</span><span class="n">box</span><span class="si">}</span><span class="s2">, Score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">, Label: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">, Label Name: </span><span class="si">{</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Mask&quot;</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Box: </span><span class="si">{</span><span class="n">box</span><span class="si">}</span><span class="s2">, Score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">, Label: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">, Label Name: </span><span class="si">{</span><span class="n">label_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">"Mask"</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">cv2</span><span class="o">.</span><span class="n">destroyAllWindows</span><span class="p">()</span>
 </pre></div>
