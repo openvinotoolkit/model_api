@@ -10,7 +10,6 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-
 from model_api.adapters.inference_adapter import InferenceAdapter
 from model_api.models import YOLODETR, Model
 from model_api.models.result import DetectionResult
@@ -56,6 +55,23 @@ class TestYOLODETRInit:
     def test_rejects_invalid_output_shape(self, output_shape):
         with pytest.raises(Exception, match="output"):
             YOLODETR(_make_adapter(output_shape=output_shape), configuration={})
+
+    def test_rejects_wrong_batch_dimension(self):
+        with pytest.raises(Exception, match="first output dimension"):
+            YOLODETR(_make_adapter(output_shape=(2, 10, 6)), configuration={})
+
+    def test_postprocess_rejects_multiple_outputs(self):
+        model = YOLODETR(_make_adapter(), configuration={})
+        output = np.zeros((1, 10, 6), dtype=np.float32)
+
+        with pytest.raises(Exception, match="expect 1 output"):
+            model.postprocess({"output1": output, "output2": output}, {"original_shape": (640, 640, 3)})
+
+    def test_postprocess_rejects_wrong_output_shape(self):
+        model = YOLODETR(_make_adapter(), configuration={})
+
+        with pytest.raises(Exception, match="shape \\[1, N, 6\\]"):
+            model.postprocess({"output": np.zeros((2, 10, 6))}, {"original_shape": (640, 640, 3)})
 
     def test_factory_resolves_wrapper(self):
         assert Model.get_model_class("YOLODETR") is YOLODETR
