@@ -138,6 +138,22 @@ class InferenceAdapter(ABC):
                     ...
                 }
         """
+    @abstractmethod
+    def copy_raw_result(self, infer_result: dict) -> dict:
+        """Gets raw results, detached from any buffer owned by the inference request.
+
+        Async callbacks post-process results while the underlying request may already be
+        recycled for the next input, and several model wrappers post-process arrays
+        in place. Adapters whose `get_raw_result` returns views into request-owned memory
+        must override this to return copies; for adapters that already return independent
+        data, the default delegation is correct.
+
+        Args:
+            - infer_result (dict): framework-specific result of inference from the model
+
+        Returns:
+            - raw result (dict), in the same format as `get_raw_result`
+        """
 
     @abstractmethod
     def set_callback(self, callback_fn: Callable):

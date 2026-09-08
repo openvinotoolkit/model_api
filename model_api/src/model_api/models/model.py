@@ -695,7 +695,7 @@ class Model:
             (
                 self,
                 meta,
-                self.inference_adapter.get_raw_result,
+                self.inference_adapter.copy_raw_result,
                 self.postprocess,
                 self.callback_fn,
                 user_data,

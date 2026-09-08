@@ -147,6 +147,9 @@ class OpenvinoAdapter(InferenceAdapter):
         )
         self.is_onnx_file = False
         self.onnx_metadata = {}
+        # Lazily built by `get_output_layers()`; reset whenever `self.model` is replaced
+        # or reshaped. See `get_output_layers()` for why caching matters.
+        self._output_layers_cache: dict[str, Metadata] | None = None
         self.preprocessor = lambda arg: arg
         self.use_python_preprocessing = False
 
@@ -307,8 +310,21 @@ class OpenvinoAdapter(InferenceAdapter):
         return input_layout
 
     def get_output_layers(self) -> dict[str, Metadata]:
+        """Return output layer metadata, computing it at most once per model topology.
+
+        This is called from the async inference callbacks (via `get_raw_result` /
+        `copy_raw_result`), which run on OpenVINO worker threads - potentially one per
+        in-flight InferRequest. Rebuilding the metadata there walked the whole `ov.Model`
+        graph (`get_ordered_ops()`) on every single inference, which is both a large
+        per-image cost and concurrent unsynchronised access to a shared, non-thread-safe
+        `ov.Model`. The result only depends on the topology, so it is cached and
+        invalidated whenever the model is reshaped or rebuilt.
+        """
+        if self._output_layers_cache is not None:
+            return self._output_layers_cache
+
         outputs = {}
-        for i, output in enumerate(self.model.outputs):
+        for output in self.model.outputs:
             output_shape = output.partial_shape.get_min_shape() if self.model.is_dynamic() else output.shape
 
             output_name = output.get_any_name() if output.get_names() else output
@@ -317,7 +333,12 @@ class OpenvinoAdapter(InferenceAdapter):
                 list(output_shape),
                 precision=output.get_element_type().get_type_name(),
             )
-        return self._get_meta_from_ngraph(outputs)
+        self._output_layers_cache = self._get_meta_from_ngraph(outputs)
+        return self._output_layers_cache
+
+    def _invalidate_layer_cache(self) -> None:
+        """Drop cached layer metadata after the underlying `ov.Model` changed."""
+        self._output_layers_cache = None
 
     def reshape_model(self, new_shape):
         new_shape = {
@@ -327,6 +348,7 @@ class OpenvinoAdapter(InferenceAdapter):
             for name, shape in new_shape.items()
         }
         self.model.reshape(new_shape)
+        self._invalidate_layer_cache()
 
     def get_raw_result(self, request: ov.InferRequest) -> dict[str, ndarray]:
         return {key: request.get_tensor(key).data for key in self.get_output_layers()}
@@ -542,6 +564,7 @@ class OpenvinoAdapter(InferenceAdapter):
             ppp.input(input_idx).preprocess().scale(scale)
 
         self.model = ppp.build()
+        self._invalidate_layer_cache()
         self.load_model()
 
     def get_model(self):
