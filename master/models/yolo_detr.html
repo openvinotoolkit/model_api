@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Detection Model &#8212; ModelAPI 2025 documentation</title>
+    <title>YOLO-DETR &#8212; ModelAPI 2025 documentation</title>
   
   
   
@@ -47,12 +47,12 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=6dbb43f8"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'models/detection_model';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'models/yolo_detr';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Anomaly" href="anomaly.html" />
-    <link rel="prev" title="Utils" href="utils.html" />
+    <link rel="next" title="Pipelines" href="../pipelines/index.html" />
+    <link rel="prev" title="Yolo" href="yolo.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -330,7 +330,7 @@
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Models</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Detection Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detection_model.html">Detection Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="anomaly.html">Anomaly</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ssd.html">Ssd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="keypoint_detection.html">Keypoint Detection</a></li>
@@ -344,7 +344,7 @@
 <li class="toctree-l1"><a class="reference internal" href="types.html">Types</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sam_models.html">Sam Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yolo.html">Yolo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="yolo_detr.html">YOLO-DETR</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">YOLO-DETR</a></li>
 </ul>
 </div>
 </nav></div>
@@ -388,7 +388,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Models</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Detection Model</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">YOLO-DETR</span></li>
   </ul>
 </nav>
 </div>
@@ -405,59 +405,38 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="detection-model">
-<h1>Detection Model<a class="headerlink" href="#detection-model" title="Link to this heading">#</a></h1>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>Detection model aims to detect objects in an image. The model outputs a list of detected objects, each containing a bounding box, score and class label.</p>
-</section>
-<section id="openvino-model-specifications">
-<h2>OpenVINO Model Specifications<a class="headerlink" href="#openvino-model-specifications" title="Link to this heading">#</a></h2>
-<section id="inputs">
-<h3>Inputs<a class="headerlink" href="#inputs" title="Link to this heading">#</a></h3>
-<p>A single input image of shape (H, W, 3) where H and W are the height and width of the image, respectively.</p>
-</section>
-<section id="outputs">
-<h3>Outputs<a class="headerlink" href="#outputs" title="Link to this heading">#</a></h3>
-<p>Detection model outputs a <code class="docutils literal notranslate"><span class="pre">DetectionResult</span></code> objects containing the following attributes:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">boxes</span></code> (np.ndarray) - Bounding boxes of the detected objects. Each in format of x1, y1, x2 y2.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scores</span></code> (np.ndarray) - Confidence scores of the detected objects.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">labels</span></code> (np.ndarray) - Class labels of the detected objects.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">label_names</span></code> (list[str]) - List of class names of the detected objects.</p></li>
-</ul>
-</section>
-</section>
-<section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">model_api.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">SSD</span>
-
-<span class="c1"># Load the model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">SSD</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">"model.xml"</span><span class="p">)</span>
-
-<span class="c1"># Forward pass</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
-
-<span class="c1"># Iterate over detection result</span>
-<span class="k">for</span> <span class="n">box</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">label_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-    <span class="n">predictions</span><span class="o">.</span><span class="n">boxes</span><span class="p">,</span>
-    <span class="n">predictions</span><span class="o">.</span><span class="n">scores</span><span class="p">,</span>
-    <span class="n">predictions</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
-    <span class="n">predictions</span><span class="o">.</span><span class="n">label_names</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Box: </span><span class="si">{</span><span class="n">box</span><span class="si">}</span><span class="s2">, Score: </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">, Label: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">, Label Name: </span><span class="si">{</span><span class="n">label_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <section id="yolo-detr">
+<h1>YOLO-DETR<a class="headerlink" href="#yolo-detr" title="Link to this heading">#</a></h1>
+<p>YOLO-DETR wraps detection models that export decoded query predictions as a single
+<code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">N,</span> <span class="pre">6]</span></code> tensor. Each prediction row contains:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[cx, cy, width, height, confidence, class_id]
 </pre></div>
 </div>
-<dl class="py class" id="module-model_api.models.detection_model">
-<dt class="sig sig-object py" id="model_api.models.detection_model.DetectionModel">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">model_api.models.detection_model.</span></span><span class="sig-name descname"><span class="pre">DetectionModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_adapter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.detection_model.DetectionModel" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="image_model.html#model_api.models.image_model.ImageModel" title="model_api.models.image_model.ImageModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageModel</span></code></a></p>
-<p>An abstract wrapper for object detection model</p>
-<p>The DetectionModel must have a single image input.
-It inherits <cite>preprocess</cite> from <cite>ImageModel</cite> wrapper. Also, it defines <cite>_resize_detections</cite> method,
-which should be used in <cite>postprocess</cite>, to clip bounding boxes and resize ones to original image shape.</p>
-<p>The <cite>postprocess</cite> method must be implemented in a specific inherited wrapper.</p>
+<p>The box coordinates are normalized to the model input dimensions. The wrapper
+converts them to <code class="docutils literal notranslate"><span class="pre">xyxy</span></code> coordinates, applies the configured confidence threshold,
+and rescales them to the original image dimensions.</p>
+<p>The wrapper uses <code class="docutils literal notranslate"><span class="pre">fit_to_window_letterbox</span></code> resizing and a default confidence
+threshold of <code class="docutils literal notranslate"><span class="pre">0.5</span></code>. Non-maximum suppression is disabled by default because the
+YOLO-DETR decoder already selects its query predictions. It can be enabled
+explicitly with <code class="docutils literal notranslate"><span class="pre">nms_execute=True</span></code> when required by a downstream workflow.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">model_api.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">create_model</span><span class="p">(</span><span class="s2">"yolo_detr.xml"</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The exported model should contain <code class="docutils literal notranslate"><span class="pre">YOLODETR</span></code> in
+<code class="docutils literal notranslate"><span class="pre">model_info.model_type</span></code>, allowing <code class="docutils literal notranslate"><span class="pre">Model.create_model()</span></code> to select this wrapper
+automatically.</p>
+<p id="module-model_api.models.yolo_detr">YOLO-DETR detection model wrapper.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="model_api.models.yolo_detr.YOLODETR">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">model_api.models.yolo_detr.</span></span><span class="sig-name descname"><span class="pre">YOLODETR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_adapter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.yolo_detr.YOLODETR" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="detection_model.html#model_api.models.detection_model.DetectionModel" title="model_api.models.detection_model.DetectionModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectionModel</span></code></a></p>
+<p>Detection wrapper for decoded YOLO-DETR query outputs.</p>
+<p>The model output is a single tensor with shape <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">N,</span> <span class="pre">6]</span></code>. Each row is
+<code class="docutils literal notranslate"><span class="pre">[center_x,</span> <span class="pre">center_y,</span> <span class="pre">width,</span> <span class="pre">height,</span> <span class="pre">confidence,</span> <span class="pre">class_id]</span></code> with box
+coordinates normalized to the model input dimensions.</p>
 <p>Detection Model constructor</p>
 <p>It extends the <cite>ImageModel</cite> construtor.</p>
 <dl class="field-list simple">
@@ -466,7 +445,7 @@ which should be used in <cite>postprocess</cite>, to clip bounding boxes and res
 <li><p><strong>inference_adapter</strong> (<a class="reference internal" href="../adapters/inference_adapter.html#model_api.adapters.inference_adapter.InferenceAdapter" title="model_api.adapters.inference_adapter.InferenceAdapter"><em>InferenceAdapter</em></a>) – allows working with the specified executor</p></li>
 <li><p><strong>configuration</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – it contains values for parameters accepted by specific
 wrapper (<cite>confidence_threshold</cite>, <cite>labels</cite> etc.) which are set as data attributes</p></li>
-<li><p><strong>preload</strong> (<em>bool</em><em>, </em><em>optional</em>) – a flag whether the model is loaded to device while
+<li><p><strong>preload</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – a flag whether the model is loaded to device while
 initialization. If <cite>preload=False</cite>, the model must be loaded via <cite>load</cite> method before inference</p></li>
 </ul>
 </dd>
@@ -475,8 +454,8 @@ initialization. If <cite>preload=False</cite>, the model must be loaded via <cit
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="model_api.models.detection_model.DetectionModel.parameters">
-<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.detection_model.DetectionModel.parameters" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="model_api.models.yolo_detr.YOLODETR.parameters">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.yolo_detr.YOLODETR.parameters" title="Link to this definition">#</a></dt>
 <dd><p>Defines the description and type of configurable data parameters for the wrapper.</p>
 <p>See <cite>types.py</cite> to find available types of the data parameter. For each parameter
 the type, default value and description must be provided.</p>
@@ -500,32 +479,18 @@ the type, default value and description must be provided.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="model_api.models.detection_model.DetectionModel.preprocess">
-<span class="sig-name descname"><span class="pre">preprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.detection_model.DetectionModel.preprocess" title="Link to this definition">#</a></dt>
-<dd><p>Interface for preprocess hook.</p>
+<dt class="sig sig-object py" id="model_api.models.yolo_detr.YOLODETR.postprocess">
+<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model_api.models.yolo_detr.YOLODETR.postprocess" title="Link to this definition">#</a></dt>
+<dd><p>Convert decoded normalized query detections to ModelAPI results.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dict_inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – preprocessed data</p></li>
-<li><p><strong>meta</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – input metadata</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>the preprocessed data</p></li>
-<li><p>the input metadata</p></li>
-</ul>
-</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectionResult</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
-</section>
 </section>
 
 
@@ -539,20 +504,20 @@ the type, default value and description must be provided.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="utils.html"
+       href="yolo.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Utils</p>
+        <p class="prev-next-title">Yolo</p>
       </div>
     </a>
     <a class="right-next"
-       href="anomaly.html"
+       href="../pipelines/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Anomaly</p>
+        <p class="prev-next-title">Pipelines</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -575,18 +540,9 @@ the type, default value and description must be provided.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#description">Description</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openvino-model-specifications">OpenVINO Model Specifications</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inputs">Inputs</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#outputs">Outputs</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.detection_model.DetectionModel"><code class="docutils literal notranslate"><span class="pre">DetectionModel</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.detection_model.DetectionModel.parameters"><code class="docutils literal notranslate"><span class="pre">DetectionModel.parameters()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.detection_model.DetectionModel.preprocess"><code class="docutils literal notranslate"><span class="pre">DetectionModel.preprocess()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.yolo_detr.YOLODETR"><code class="docutils literal notranslate"><span class="pre">YOLODETR</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.yolo_detr.YOLODETR.parameters"><code class="docutils literal notranslate"><span class="pre">YOLODETR.parameters()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model_api.models.yolo_detr.YOLODETR.postprocess"><code class="docutils literal notranslate"><span class="pre">YOLODETR.postprocess()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -595,7 +551,7 @@ the type, default value and description must be provided.</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../_sources/models/detection_model.md.txt">
+    <a href="../_sources/models/yolo_detr.md.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>
