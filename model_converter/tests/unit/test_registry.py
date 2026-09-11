@@ -447,9 +447,11 @@ class TestPyTorchConverterSharedLogic:
     ):
         """export_to_openvino converts the model and saves FP32 and FP16 artifacts."""
         dummy_input = object()
+        dynamic_shape = object()
         openvino_module = types.ModuleType("openvino")
         openvino_module.convert_model = MagicMock(return_value=mock_ov_model)
         openvino_module.save_model = MagicMock()
+        openvino_module.PartialShape = MagicMock(return_value=dynamic_shape)
 
         with (
             patch.dict(sys.modules, {"openvino": openvino_module}),
@@ -473,8 +475,13 @@ class TestPyTorchConverterSharedLogic:
         assert fp32_path == converter.output_dir / "test_model-fp16-ov" / "test_model_fp32.xml"
         mock_prepare.assert_called_once_with(mock_torch_model, sample_model_config)
         mock_example_input.assert_called_once_with([1, 3, 224, 224], sample_model_config)
-        openvino_module.convert_model.assert_called_once_with(mock_torch_model, example_input=dummy_input)
-        mock_ov_model.reshape.assert_called_once_with({"input": [1, 3, 224, 224]})
+        openvino_module.PartialShape.assert_called_once_with([-1, 3, 224, 224])
+        openvino_module.convert_model.assert_called_once_with(
+            mock_torch_model,
+            example_input=dummy_input,
+            input=(dynamic_shape,),
+        )
+        mock_ov_model.reshape.assert_called_once_with({"input": dynamic_shape})
         mock_postprocess.assert_called_once_with(
             mock_ov_model,
             input_names=["input"],
