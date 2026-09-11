@@ -154,6 +154,7 @@ class PyTorchConverter(BaseConverter):
         input_names: list[str] | None = None,
         output_names: list[str] | None = None,
         metadata: dict[tuple[str, str], str] | None = None,
+        batch_size: int = -1,
     ) -> tuple[Path, Path]:
         """Export PyTorch model to OpenVINO format.
 
@@ -165,6 +166,9 @@ class PyTorchConverter(BaseConverter):
             input_names: Names for input tensors
             output_names: Names for output tensors
             metadata: Metadata to embed in the model
+            batch_size: Batch dimension for the exported model. Use ``-1`` (default) to
+                keep the batch dimension dynamic so any batch size works at inference,
+                or a positive integer to fix the batch dimension to that value.
 
         Returns:
             Tuple of (fp16_model_path, fp32_model_path) - FP16 for final use, FP32 for quantization
@@ -175,19 +179,20 @@ class PyTorchConverter(BaseConverter):
             model = self._prepare_model_for_export(model, model_config)
             model.eval()
             dummy_input = self._create_example_input(input_shape, model_config)
-            # Keep spatial dims static, but let the batch dimension be dynamic so any batch size works at inference.
-            dynamic_shape = ov.PartialShape([-1, *input_shape[1:]])
+            # Keep spatial dims static; the batch dimension follows ``batch_size``
+            # (``-1`` keeps it dynamic so any batch size works at inference).
+            target_shape = ov.PartialShape([batch_size, *input_shape[1:]])
 
             self.logger.info("Direct PyTorch to OpenVINO conversion")
-            ov_model = ov.convert_model(model, example_input=dummy_input, input=(dynamic_shape,))
+            ov_model = ov.convert_model(model, example_input=dummy_input, input=(target_shape,))
             self.logger.info("✓ PyTorch to OpenVINO conversion complete")
 
-            # Reshape model to fixed input shape (remove dynamic dimensions)
+            # Reshape model to the requested input shape (dynamic batch when batch_size == -1)
             first_input = ov_model.input(0)
             input_name_for_reshape = next(iter(first_input.get_names())) if first_input.get_names() else 0
 
-            self.logger.debug(f"Setting fixed input shape: {input_shape}")
-            ov_model.reshape({input_name_for_reshape: input_shape})
+            self.logger.debug(f"Setting input shape: {target_shape}")
+            ov_model.reshape({input_name_for_reshape: target_shape})
 
             # Post-process the model
             ov_model = self._postprocess_openvino_model(

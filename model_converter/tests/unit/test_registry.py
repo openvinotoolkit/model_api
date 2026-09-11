@@ -481,7 +481,7 @@ class TestPyTorchConverterSharedLogic:
             example_input=dummy_input,
             input=(dynamic_shape,),
         )
-        mock_ov_model.reshape.assert_called_once_with({"input": [1, 3, 224, 224]})
+        mock_ov_model.reshape.assert_called_once_with({"input": dynamic_shape})
         mock_postprocess.assert_called_once_with(
             mock_ov_model,
             input_names=["input"],
