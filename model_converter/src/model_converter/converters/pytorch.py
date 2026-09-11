@@ -175,8 +175,11 @@ class PyTorchConverter(BaseConverter):
             model = self._prepare_model_for_export(model, model_config)
             model.eval()
             dummy_input = self._create_example_input(input_shape, model_config)
+            # Keep spatial dims static, but let the batch dimension be dynamic so any batch size works at inference.
+            dynamic_shape = ov.PartialShape([-1, *input_shape[1:]])
+
             self.logger.info("Direct PyTorch to OpenVINO conversion")
-            ov_model = ov.convert_model(model, example_input=dummy_input)
+            ov_model = ov.convert_model(model, example_input=dummy_input, input=(dynamic_shape,))
             self.logger.info("✓ PyTorch to OpenVINO conversion complete")
 
             # Reshape model to fixed input shape (remove dynamic dimensions)
